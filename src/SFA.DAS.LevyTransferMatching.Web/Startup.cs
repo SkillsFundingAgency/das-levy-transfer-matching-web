@@ -56,6 +56,9 @@ namespace SFA.DAS.LevyTransferMatching.Web
             services.AddConfigurationOptions(_configuration);
             var config = _configuration.GetSection<LevyTransferMatchingWeb>();
 
+            services.AddSingleton(config);
+            services.AddSingleton(_configuration.GetSection<LevyTransferMatchingApi>());
+
             services.AddControllersWithViews();
 
             services.AddMvc(options =>
@@ -71,6 +74,7 @@ namespace SFA.DAS.LevyTransferMatching.Web
             services.AddCookieTempDataProvider();
             services.AddDasDataProtection(config, _environment);
             services.AddDasHealthChecks();
+            services.AddServiceRegistrations();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
