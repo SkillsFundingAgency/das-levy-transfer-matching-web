@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30225.117
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.LevyTransferMatching.Web", "SFA.DAS.LevyTransferMatching.Web\SFA.DAS.LevyTransferMatching.Web.csproj", "{351F112E-02EC-48A8-BD8B-0F9B0DDB68E0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.LevyTransferMatching.Web", "SFA.DAS.LevyTransferMatching.Web\SFA.DAS.LevyTransferMatching.Web.csproj", "{351F112E-02EC-48A8-BD8B-0F9B0DDB68E0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.LevyTransferMatching.Infrastructure", "SFA.DAS.LevyTransferMatching.Infrastructure\SFA.DAS.LevyTransferMatching.Infrastructure.csproj", "{0A98B78E-A278-4FED-AC24-7227AB15A452}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.LevyTransferMatching.Infrastructure", "SFA.DAS.LevyTransferMatching.Infrastructure\SFA.DAS.LevyTransferMatching.Infrastructure.csproj", "{0A98B78E-A278-4FED-AC24-7227AB15A452}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
