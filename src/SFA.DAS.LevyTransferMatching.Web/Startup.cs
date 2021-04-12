@@ -3,7 +3,6 @@ using System.IO;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,12 +17,12 @@ namespace SFA.DAS.LevyTransferMatching.Web
     public class Startup
     {
         private readonly IWebHostEnvironment _environment;
-        private IConfiguration _configuration { get; }
+        private IConfiguration Configuration { get; }
 
         public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             _environment = environment;
-            _configuration = configuration;
+            Configuration = configuration;
 
             var config = new ConfigurationBuilder()
                 .AddConfiguration(configuration)
@@ -46,18 +45,17 @@ namespace SFA.DAS.LevyTransferMatching.Web
                 );
             }
 
-            _configuration = config.Build();
+            Configuration = config.Build();
         }
-      
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddConfigurationOptions(_configuration);
-            var config = _configuration.GetSection<LevyTransferMatchingWeb>();
+            services.AddConfigurationOptions(Configuration);
+            var config = Configuration.GetSection<LevyTransferMatchingWeb>();
 
             services.AddSingleton(config);
-            services.AddSingleton(_configuration.GetSection<LevyTransferMatchingApi>());
+            services.AddSingleton(Configuration.GetSection<LevyTransferMatchingApi>());
 
             services.AddControllersWithViews();
 
