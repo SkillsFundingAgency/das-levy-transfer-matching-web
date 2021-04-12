@@ -3,6 +3,7 @@ using System.IO;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -53,7 +54,6 @@ namespace SFA.DAS.LevyTransferMatching.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddConfigurationOptions(_configuration);
-
             var config = _configuration.GetSection<LevyTransferMatchingWeb>();
 
             services.AddControllersWithViews();
@@ -67,18 +67,8 @@ namespace SFA.DAS.LevyTransferMatching.Web
             .AddControllersAsServices()
             .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
 
-
-            //TODO: Move to extension method
-            if (_environment.IsDevelopment())
-            {
-                services.AddDistributedMemoryCache();
-            }
-            else
-            {
-                services.AddStackExchangeRedisCache(
-                    options => { options.Configuration = config.RedisConnectionString; });
-            }
-
+            services.AddCache(_environment, config);
+            services.AddCookieTempDataProvider();
             services.AddDasDataProtection(config, _environment);
             services.AddDasHealthChecks();
         }
@@ -98,11 +88,8 @@ namespace SFA.DAS.LevyTransferMatching.Web
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseDasHealthChecks();
-
             app.UseRouting();
-
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
