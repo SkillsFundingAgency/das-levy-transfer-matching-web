@@ -68,6 +68,7 @@ namespace SFA.DAS.LevyTransferMatching.Web
             .AddControllersAsServices()
             .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
 
+            services.AddEmployerAuthentication(Configuration.GetSection<Authentication>());
             services.AddCache(_environment, config);
             services.AddCookieTempDataProvider();
             services.AddDasDataProtection(config, _environment);
@@ -92,6 +93,7 @@ namespace SFA.DAS.LevyTransferMatching.Web
             app.UseStaticFiles();
             app.UseDasHealthChecks();
             app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

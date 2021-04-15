@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.LevyTransferMatching.Web.Models;
@@ -27,6 +29,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+
+        [Authorize]
+        [Route("/secure")]
+        public IActionResult Secure()
+        {
+            return View();
         }
     }
 }
