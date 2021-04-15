@@ -27,10 +27,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
                     options.ClientId = configuration.ClientId;
                     options.ClientSecret = configuration.ClientSecret;
                     options.Authority = configuration.BaseAddress;
-                    options.MetadataAddress = $"{configuration.BaseAddress}/.well-known/openid-configuration";
-                    options.ResponseType = "code";
+                    options.ResponseType = configuration.ResponseType;
 
                     var scopes = configuration.Scopes.Split(' ');
+                    
                     foreach (var scope in scopes)
                     {
                         options.Scope.Add(scope);

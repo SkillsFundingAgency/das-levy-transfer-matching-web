@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
 using SFA.DAS.LevyTransferMatching.Web.Models;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
@@ -36,7 +37,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Route("/secure")]
         public IActionResult Secure()
         {
-            return View();
+            var userName =
+                HttpContext.User.Claims.FirstOrDefault(x => x.Type == $"{ClaimIdentifierConfiguration.ClaimsBaseUrl}{ClaimIdentifierConfiguration.DisplayName}");
+
+            var viewmodel = new SecureViewModel{ DisplayName = userName?.Value };
+            
+            return View(viewmodel);
         }
     }
 }
