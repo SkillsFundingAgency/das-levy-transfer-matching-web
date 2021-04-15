@@ -74,6 +74,10 @@ namespace SFA.DAS.LevyTransferMatching.Web
             services.AddDasDataProtection(config, _environment);
             services.AddDasHealthChecks();
             services.AddServiceRegistrations();
+
+            #if DEBUG
+            services.AddControllersWithViews().AddRazorRuntimeCompilation();
+            #endif
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
