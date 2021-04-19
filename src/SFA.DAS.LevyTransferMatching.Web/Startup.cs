@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -68,6 +69,7 @@ namespace SFA.DAS.LevyTransferMatching.Web
             .AddControllersAsServices()
             .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
 
+            services.AddEmployerAuthentication(Configuration.GetSection<Authentication>());
             services.AddCache(_environment, config);
             services.AddCookieTempDataProvider();
             services.AddDasDataProtection(config, _environment);
@@ -96,6 +98,7 @@ namespace SFA.DAS.LevyTransferMatching.Web
             app.UseStaticFiles();
             app.UseDasHealthChecks();
             app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
