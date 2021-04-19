@@ -44,5 +44,22 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             
             return View(viewmodel);
         }
+
+
+        //[Authorize]
+        [Route("/accounts/{accountId}")]
+        public IActionResult Accounts(string accountId)
+        
+        {
+            var userName =
+                HttpContext.User.Claims.FirstOrDefault(x => x.Type == $"{ClaimIdentifierConfiguration.ClaimsBaseUrl}{ClaimIdentifierConfiguration.DisplayName}");
+
+            var viewmodel = new SecureViewModel { DisplayName = userName?.Value };
+
+            ViewBag.HideNav = false;
+
+            return View(viewmodel);
+        }
+
     }
 }
