@@ -81,6 +81,7 @@ namespace SFA.DAS.LevyTransferMatching.Web
             services.AddCookieTempDataProvider();
             services.AddDasDataProtection(config, _environment);
             services.AddDasHealthChecks();
+            services.AddEncodingService(Configuration);
             services.AddServiceRegistrations();
             services.AddEmployerSharedUI(Configuration);
 
