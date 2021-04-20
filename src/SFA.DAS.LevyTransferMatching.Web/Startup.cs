@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using SFA.DAS.Authorization.Mvc.Extensions;
 using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.Employer.Shared.UI.Configuration;
@@ -17,6 +18,7 @@ using SFA.DAS.EmployerUrlHelper.Configuration;
 using SFA.DAS.EmployerUrlHelper.DependencyResolution;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
 using SFA.DAS.LevyTransferMatching.Web.StartupExtensions;
+using SFA.DAS.Validation.Mvc.Extensions;
 using SFA.DAS.Validation.Mvc.Filters;
 
 namespace SFA.DAS.LevyTransferMatching.Web
@@ -68,15 +70,16 @@ namespace SFA.DAS.LevyTransferMatching.Web
 
             services.AddMvc(options =>
             {
-                options.Filters.Add<ValidateModelStateFilter>(int.MaxValue);
+                options.AddAuthorization();
+                options.AddValidation();
                 options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
-
             })
             .AddControllersAsServices()
             .SetDefaultNavigationSection(NavigationSection.AccountsFinance)
             .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
 
-            services.AddEmployerAuthentication(Configuration.GetSection<Authentication>());
+            services.AddEmployerAuthentication(Configuration.GetSection<Infrastructure.Configuration.Authentication>());
+            services.AddDasAuthorization();
             services.AddCache(_environment, config);
             services.AddCookieTempDataProvider();
             services.AddDasDataProtection(config, _environment);
@@ -84,6 +87,7 @@ namespace SFA.DAS.LevyTransferMatching.Web
             services.AddEncodingService(Configuration);
             services.AddServiceRegistrations();
             services.AddEmployerSharedUI(Configuration);
+            
 
             #if DEBUG
             services.AddControllersWithViews().AddRazorRuntimeCompilation();

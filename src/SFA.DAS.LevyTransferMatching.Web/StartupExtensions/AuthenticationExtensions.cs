@@ -12,7 +12,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
 {
     public static class AuthenticationExtensions
     {
-        public static void AddEmployerAuthentication(this IServiceCollection services, Authentication configuration)
+        public static void AddEmployerAuthentication(this IServiceCollection services, Infrastructure.Configuration.Authentication configuration)
         {
             services
                 .AddAuthentication(sharedOptions =>

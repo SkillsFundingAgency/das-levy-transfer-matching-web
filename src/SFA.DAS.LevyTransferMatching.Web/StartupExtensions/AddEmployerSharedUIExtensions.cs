@@ -13,7 +13,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
     {
         public static void AddEmployerSharedUI(this IServiceCollection services, IConfiguration configuration)
         {
-            var authenticationConfig = configuration.GetSection<Authentication>();
+            var authenticationConfig = configuration.GetSection<Infrastructure.Configuration.Authentication>();
             services.AddEmployerUrlHelper(configuration);
             services.AddMaMenuConfiguration(configuration, "signout", authenticationConfig.ClientId);
 

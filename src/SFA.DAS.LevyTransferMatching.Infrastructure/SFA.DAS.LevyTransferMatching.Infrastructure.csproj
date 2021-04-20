@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="SFA.DAS.EmployerAccounts.Api.Client" Version="1.6.2978" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\SFA.DAS.LevyTransferMatching.Domain\SFA.DAS.LevyTransferMatching.Domain.csproj" />
   </ItemGroup>
 
