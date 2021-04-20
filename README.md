@@ -1,26 +1,19 @@
-# das-github-template
-
-This repo should be used as a template when creating new repos for the Apprenticeship Service
-
-## Contents
-
-* .github/CODEOWNERS - Defines required approvals for changes to files specified in the CODEOWNERS file
-* azure/template.json - Azure ARM template should be used to provision resources on the Azure platform
-* .gitignore - Intialised for Visual Studio
-* azure-pipelines.yml - Azure Pipelines definition file
-* GitVersion.yml - GitVersion configuration file
-* LICENSE - License information file
-* README.md - Populate with useful information about the repo, the projects it contains and how to get started.
-# ProjectName
+# das-levy-transfer-matching-web
 
 ## Introduction
 
-An introduction to the project goes here!
+This repository holds the web application component for Levy Transfer & Matching. See also:
+* Levy Transfer & Matching Api: https://github.com/SkillsFundingAgency/das-levy-transfer-matching-api
+* Apim endpoints: https://github.com/SkillsFundingAgency/das-apim-endpoints
 
 ## Developer Setup
 
-### Requirements
-
-### Setup
-
-### Config
+* Clone this repository
+* Add Azure table storage configuration for:
+  *  `SFA.DAS.LevyTransferMatching_1.0`
+  *  `SFA.DAS.EmployerUrlHelper_1.0`
+  *  `SFA.DAS.SFA.DAS.Employer.Shared.U_1.0`
+  *  `SFA.DAS.EncodingService_1.0`
+*  Run Levy Transfer & Matching API
+*  Run Apim endpoints
+*  Run `SFA.DAS.LEvyTransferMatching.Web` application
