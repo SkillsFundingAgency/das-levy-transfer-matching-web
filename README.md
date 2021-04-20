@@ -16,4 +16,4 @@ This repository holds the web application component for Levy Transfer & Matching
   *  `SFA.DAS.EncodingService_1.0`
 *  Run Levy Transfer & Matching API
 *  Run Apim endpoints
-*  Run `SFA.DAS.LEvyTransferMatching.Web` application
+*  Run `SFA.DAS.LevyTransferMatching.Web` application
