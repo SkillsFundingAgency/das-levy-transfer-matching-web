@@ -1,12 +1,8 @@
 ﻿using System.Diagnostics;
-using System.Linq;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.Encoding;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
 using SFA.DAS.LevyTransferMatching.Web.Models;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
@@ -48,34 +44,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         public void SignOutCleanup()
         {
             Response.Cookies.Delete("SFA.DAS.LevyTransferMatching.Web.Auth");
-        }
-
-        [Authorize]
-        [Route("/secure")]
-        public IActionResult Secure()
-        {
-            var userName =
-                HttpContext.User.Claims.FirstOrDefault(x => x.Type == $"{ClaimIdentifierConfiguration.ClaimsBaseUrl}{ClaimIdentifierConfiguration.DisplayName}");
-
-            var viewmodel = new SecureViewModel{ DisplayName = userName?.Value };
-            
-            return View(viewmodel);
-        }
-
-
-        //[Authorize]
-        [Route("/accounts/{accountId}")]
-        public IActionResult Accounts(string accountId)
-        
-        {
-            var userName =
-                HttpContext.User.Claims.FirstOrDefault(x => x.Type == $"{ClaimIdentifierConfiguration.ClaimsBaseUrl}{ClaimIdentifierConfiguration.DisplayName}");
-
-            var viewmodel = new SecureViewModel { DisplayName = userName?.Value };
-
-            ViewBag.HideNav = false;
-
-            return View(viewmodel);
         }
 
     }

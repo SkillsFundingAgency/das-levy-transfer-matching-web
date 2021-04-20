@@ -1,6 +1,7 @@
 ﻿@using SFA.DAS.Employer.Shared.UI.Models
+@using SFA.DAS.LevyTransferMatching.Web.Authorization
 @{
-    var accountId = ViewContext.RouteData.Values["accountId"] as string;
+    var accountId = ViewContext.RouteData.Values[RouteValueKeys.EncodedAccountId] as string;
     ViewBag.HideHeaderBorder = true;
     var footerModel = new FooterModel { AccountId = accountId, UsePrivacyV2 = true };
 }
