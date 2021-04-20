@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -32,6 +34,24 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
+        [Route("signout", Name= "signout")]
+        public IActionResult SignOut()
+        {
+            return SignOut(
+                new Microsoft.AspNetCore.Authentication.AuthenticationProperties
+                {
+                    RedirectUri = "",
+                    AllowRefresh = true
+                },
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                OpenIdConnectDefaults.AuthenticationScheme);
+        }
+
+        [Route("signoutcleanup")]
+        public void SignOutCleanup()
+        {
+            Response.Cookies.Delete("SFA.DAS.LevyTransferMatching.Web.Auth");
+        }
 
         [Authorize]
         [Route("/secure")]
