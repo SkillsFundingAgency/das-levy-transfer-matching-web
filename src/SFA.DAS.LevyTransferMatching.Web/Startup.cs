@@ -73,6 +73,7 @@ namespace SFA.DAS.LevyTransferMatching.Web
 
             })
             .AddControllersAsServices()
+            .SetDefaultNavigationSection(NavigationSection.AccountsFinance)
             .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
 
             services.AddEmployerAuthentication(Configuration.GetSection<Authentication>());
