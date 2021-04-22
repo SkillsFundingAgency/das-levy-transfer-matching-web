@@ -16,6 +16,7 @@ using SFA.DAS.Employer.Shared.UI.Configuration;
 using SFA.DAS.EmployerUrlHelper;
 using SFA.DAS.EmployerUrlHelper.Configuration;
 using SFA.DAS.EmployerUrlHelper.DependencyResolution;
+using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
 using SFA.DAS.LevyTransferMatching.Web.StartupExtensions;
 using SFA.DAS.Validation.Mvc.Extensions;
@@ -62,7 +63,7 @@ namespace SFA.DAS.LevyTransferMatching.Web
         {
             services.AddConfigurationOptions(Configuration);
             var config = Configuration.GetSection<LevyTransferMatchingWeb>();
-
+            
             services.AddSingleton(config);
             services.AddSingleton(Configuration.GetSection<LevyTransferMatchingApi>());
 
@@ -87,6 +88,7 @@ namespace SFA.DAS.LevyTransferMatching.Web
             services.AddEncodingService(Configuration);
             services.AddServiceRegistrations();
             services.AddEmployerSharedUI(Configuration);
+            services.AddEmployerAccountsApi(Configuration, _environment);
             
 
             #if DEBUG

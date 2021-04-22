@@ -5,7 +5,6 @@ using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.Employer.Shared.UI.Configuration;
 using SFA.DAS.EmployerUrlHelper.Configuration;
 using SFA.DAS.EmployerUrlHelper.DependencyResolution;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
 
 namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
 {
