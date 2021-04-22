@@ -14,7 +14,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
         {
             services
                 .AddHealthChecks()
-                .AddCheck<ApiHealthCheck>("Api health check");
+                .AddCheck<ApiHealthCheck>("Api health check")
+                .AddCheck<EmployerAccountsApiHealthCheck>("Employer Accounts Api health check");
 
             return services;
         }

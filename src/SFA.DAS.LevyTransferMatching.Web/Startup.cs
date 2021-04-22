@@ -1,26 +1,18 @@
 using System;
 using System.IO;
 using FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using SFA.DAS.Authorization.Mvc.Extensions;
 using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.Employer.Shared.UI;
-using SFA.DAS.Employer.Shared.UI.Configuration;
-using SFA.DAS.EmployerUrlHelper;
-using SFA.DAS.EmployerUrlHelper.Configuration;
-using SFA.DAS.EmployerUrlHelper.DependencyResolution;
-using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
 using SFA.DAS.LevyTransferMatching.Web.StartupExtensions;
 using SFA.DAS.Validation.Mvc.Extensions;
-using SFA.DAS.Validation.Mvc.Filters;
 
 namespace SFA.DAS.LevyTransferMatching.Web
 {
@@ -64,7 +56,7 @@ namespace SFA.DAS.LevyTransferMatching.Web
             services.AddConfigurationOptions(Configuration);
             var config = Configuration.GetSection<LevyTransferMatchingWeb>();
             
-            services.AddSingleton(config);
+            //services.AddSingleton(config);
             services.AddSingleton(Configuration.GetSection<LevyTransferMatchingApi>());
 
             services.AddControllersWithViews();
