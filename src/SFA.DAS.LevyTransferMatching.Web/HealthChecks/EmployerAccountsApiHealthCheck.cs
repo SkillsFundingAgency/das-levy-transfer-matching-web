@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using SFA.DAS.EmployerAccounts.Api.Client;
 using SFA.DAS.LevyTransferMatching.Domain.Interfaces;
 
 namespace SFA.DAS.LevyTransferMatching.Web.HealthChecks
 {
-    public class ApiHealthCheck : IHealthCheck
+    public class EmployerAccountsApiHealthCheck : IHealthCheck
     {
-        private readonly IApiClient _apiClient;
+        private readonly IEmployerAccountsApiClient _apiClient;
 
-        public ApiHealthCheck(IApiClient apiClient)
+        public EmployerAccountsApiHealthCheck(IEmployerAccountsApiClient apiClient)
         {
             _apiClient = apiClient;
         }
@@ -19,7 +20,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.HealthChecks
         public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context,
             CancellationToken cancellationToken = new CancellationToken())
         {
-            var description = "Ping of Levy Transfer Matching APIM inner API";
+            var description = "Ping of Employer Accounts Api [used in Employer Authorization]";
 
             try
             {

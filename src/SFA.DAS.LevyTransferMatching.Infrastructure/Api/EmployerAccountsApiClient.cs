@@ -40,9 +40,9 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Api
             return user != null && user.Roles.Any();
         }
 
-        public Task Ping(CancellationToken cancellationToken)
+        public async Task Ping(CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            await Get(new PingRequest(_configuration.ApiBaseUrl));
         }
 
         private async Task<AccountUser> GetUser(long accountId, Guid userRef, CancellationToken cancellationToken)
