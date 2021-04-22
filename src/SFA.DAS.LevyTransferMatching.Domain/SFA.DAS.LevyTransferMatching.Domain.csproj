@@ -4,4 +4,8 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="SFA.DAS.EmployerAccounts.Api.Client" Version="1.6.2978" />
+  </ItemGroup>
+
 </Project>
