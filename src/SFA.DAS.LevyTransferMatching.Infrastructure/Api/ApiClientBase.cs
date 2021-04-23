@@ -14,44 +14,38 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Api
         public async Task<TResponse> Get<TResponse>(IGetApiRequest request)
         {
             var accessToken = await GetAccessTokenAsync();
-            using (var client = new HttpClient())
-            {
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
-                var response = await client.GetAsync(request.GetUrl).ConfigureAwait(false);
+            var response = await client.GetAsync(request.GetUrl).ConfigureAwait(false);
 
-                response.EnsureSuccessStatusCode();
-                var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                return JsonConvert.DeserializeObject<TResponse>(json);
-            }
+            response.EnsureSuccessStatusCode();
+            var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            return JsonConvert.DeserializeObject<TResponse>(json);
         }
 
         public async Task Get(IGetApiRequest request)
         {
             var accessToken = await GetAccessTokenAsync();
-            using (var client = new HttpClient())
-            {
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
-                var response = await client.GetAsync(request.GetUrl).ConfigureAwait(false);
+            var response = await client.GetAsync(request.GetUrl).ConfigureAwait(false);
 
-                response.EnsureSuccessStatusCode();
-            }
+            response.EnsureSuccessStatusCode();
         }
 
         public async Task<IEnumerable<TResponse>> GetAll<TResponse>(IGetAllApiRequest request)
         {
             var accessToken = await GetAccessTokenAsync();
-            using (var client = new HttpClient())
-            {
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
-                var response = await client.GetAsync(request.GetAllUrl).ConfigureAwait(false);
+            var response = await client.GetAsync(request.GetAllUrl).ConfigureAwait(false);
 
-                response.EnsureSuccessStatusCode();
-                var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                return JsonConvert.DeserializeObject<IEnumerable<TResponse>>(json);
-            }
+            response.EnsureSuccessStatusCode();
+            var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            return JsonConvert.DeserializeObject<IEnumerable<TResponse>>(json);
         }
     }
 }

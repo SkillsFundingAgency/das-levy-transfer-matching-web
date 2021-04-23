@@ -74,14 +74,14 @@ namespace SFA.DAS.LevyTransferMatching.Web
             services.AddEmployerAuthentication(Configuration.GetSection<Infrastructure.Configuration.Authentication>());
             services.AddDasAuthorization();
             services.AddCache(_environment, config);
+            services.AddMemoryCache();
             services.AddCookieTempDataProvider();
             services.AddDasDataProtection(config, _environment);
             services.AddDasHealthChecks();
             services.AddEncodingService(Configuration);
             services.AddServiceRegistrations();
             services.AddEmployerSharedUI(Configuration);
-            services.AddEmployerAccountsApi(Configuration, _environment);
-            
+            services.AddEmployerAccountsApi();
 
             #if DEBUG
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
