@@ -56,9 +56,6 @@ namespace SFA.DAS.LevyTransferMatching.Web
             services.AddConfigurationOptions(Configuration);
             var config = Configuration.GetSection<LevyTransferMatchingWeb>();
             
-            //services.AddSingleton(config);
-            services.AddSingleton(Configuration.GetSection<LevyTransferMatchingApi>());
-
             services.AddControllersWithViews();
 
             services.AddMvc(options =>
