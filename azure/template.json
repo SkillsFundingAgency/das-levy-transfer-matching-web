@@ -68,7 +68,7 @@
             "name": "[variables('resourceGroupName')]",
             "type": "Microsoft.Resources/resourceGroups",
             "location": "[parameters('resourceGroupLocation')]",
-            "tags": "[parameters('tags')]",
+            "tags": "[parameters('dummyTest')]",
             "properties": {}
         },
         {
