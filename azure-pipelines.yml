@@ -6,16 +6,13 @@ trigger:
 
 variables:
 - name: SolutionBaseName
-  value: __SolutionBaseName__
+  value: SFA.DAS.LevyTransferMatching.Web
 - name: BuildConfiguration
   value: release
 - name: BuildPlatform
   value: any cpu
-
-pool:
-  name: DAS - Continuous Integration
-  workspace:
-    clean: all
+- group: RELEASE Management Resources
+- group: RELEASE das-levy-transfer-matching-web
 
 resources:
   repositories:
@@ -28,9 +25,25 @@ resources:
 
 stages:
 - stage: Build
+  pool:
+    name: DAS - Continuous Integration
   jobs:
   - template: pipeline-templates/job/code-build.yml
     parameters:
       SolutionBaseName: $(SolutionBaseName)
       BuildConfiguration: $(BuildConfiguration)
-    
+
+- stage: Deploy_AT
+  dependsOn: Build
+  displayName: Deploy to AT
+  variables:
+  - group: DevTest Management Resources
+  - group: AT DevTest Shared Resources
+  jobs:
+  - template: pipeline-templates/job/deploy.yml
+    parameters:
+      Environment: AT
+      ServiceConnection: SFA-DAS-DevTest-ARM
+      ResourceGroupLocation: $(ResourceGroupLocation)
+      SubscriptionId: $(SubscriptionId)
+      DeploymentPackagePath: $(Pipeline.Workspace)/LevyTransferMatchingApi/SFA.DAS.LevyTransferMatching.Web.zip
