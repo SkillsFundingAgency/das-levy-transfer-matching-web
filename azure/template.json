@@ -11,6 +11,10 @@
         "serviceName": {
             "type": "string"
         },
+        "dummyTest": {
+            "type": "array",
+            "defaultValue": []
+        },
         "sharedEnvResourceGroup": {
             "type": "string"
         },
