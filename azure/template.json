@@ -48,7 +48,7 @@
             "type": "string"
         },
         "frontEndAccessRestrictions": {
-            "type": "string"
+            "type": "array"
         }
     },
     "variables": {
