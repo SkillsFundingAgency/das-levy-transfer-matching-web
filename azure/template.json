@@ -11,10 +11,6 @@
         "serviceName": {
             "type": "string"
         },
-        "dummyTest": {
-            "type": "array",
-            "defaultValue": []
-        },
         "sharedEnvResourceGroup": {
             "type": "string"
         },
@@ -68,7 +64,7 @@
             "name": "[variables('resourceGroupName')]",
             "type": "Microsoft.Resources/resourceGroups",
             "location": "[parameters('resourceGroupLocation')]",
-            "tags": "[parameters('dummyTest')]",
+            "tags": "[parameters('tags')]",
             "properties": {}
         },
         {
