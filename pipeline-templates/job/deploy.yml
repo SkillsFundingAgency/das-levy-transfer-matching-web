@@ -22,7 +22,6 @@ jobs:
             Environment: ${{ parameters.Environment }}
             TemplatePath: $(Pipeline.Workspace)/LevyTransferMatchingWeb/azure/template.json
             ParametersPath: $(Pipeline.Workspace)/LevyTransferMatchingWeb/azure/template.parameters.json
-            #ConfigSchemaPath: $(Pipeline.Workspace)/das-employer-config/Configuration/das-levy-transfer-matching-web
             TemplateSecrets:
               LoggingRedisConnectionString: $(LoggingRedisConnectionString)
               ConfigurationStorageConnectionString: $(ConfigurationStorageConnectionString)
