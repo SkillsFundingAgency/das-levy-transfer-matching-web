@@ -27,6 +27,11 @@ resources:
     name: SkillsFundingAgency/das-platform-automation
     ref: refs/heads/DASD-8734_Array_Handling
     endpoint: GitHub (SFA)
+  pipelines:
+  - pipeline: das-employer-config
+    project: Digital Apprenticeship Service
+    source: das-employer-config
+    branch: master
 
 stages:
 - stage: Build
