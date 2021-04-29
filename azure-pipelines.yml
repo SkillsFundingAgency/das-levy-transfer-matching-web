@@ -54,6 +54,3 @@ stages:
     parameters:
       Environment: AT
       ServiceConnection: SFA-DAS-DevTest-ARM
-      ResourceGroupLocation: $(ResourceGroupLocation)
-      SubscriptionId: $(SubscriptionId)
-      DeploymentPackagePath: $(Pipeline.Workspace)/LevyTransferMatchingWeb/SFA.DAS.LevyTransferMatching.Web.zip
