@@ -25,7 +25,7 @@ resources:
   - repository: das-platform-automation
     type: github
     name: SkillsFundingAgency/das-platform-automation
-    ref: refs/heads/DASD-8734_Array_Handling_Fix
+    ref: refs/tags/4.3.5
     endpoint: GitHub (SFA)
   pipelines:
   - pipeline: das-employer-config
