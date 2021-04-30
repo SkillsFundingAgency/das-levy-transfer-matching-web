@@ -1,9 +1,6 @@
 parameters:
   ServiceConnection:
-  ResourceGroupLocation:
   Environment:
-  SubscriptionId:
-  DeploymentPackagePath:
 
 jobs:
 - deployment: DeployWebApp
