@@ -20,7 +20,7 @@ resources:
   - repository: das-platform-building-blocks
     type: github
     name: SkillsFundingAgency/das-platform-building-blocks
-    ref: refs/heads/master
+    ref: refs/tags/0.3.13
     endpoint: GitHub (SFA)
   - repository: das-platform-automation
     type: github
@@ -49,8 +49,48 @@ stages:
   variables:
   - group: DevTest Management Resources
   - group: AT DevTest Shared Resources
+  - group: AT das-levy-transfer-matching-web
   jobs:
   - template: pipeline-templates/job/deploy.yml
     parameters:
       Environment: AT
       ServiceConnection: SFA-DAS-DevTest-ARM
+
+- stage: Deploy_TEST
+  dependsOn: Build
+  displayName: Deploy to TEST
+  variables:
+  - group: DevTest Management Resources
+  - group: TEST DevTest Shared Resources
+  - group: TEST das-levy-transfer-matching-web
+  jobs:
+  - template: pipeline-templates/job/deploy.yml
+    parameters:
+      Environment: DEV
+      ServiceConnection: SFA-DAS-DevTest-ARM
+
+- stage: Deploy_TEST2
+  dependsOn: Build
+  displayName: Deploy to TEST2
+  variables:
+  - group: DevTest Management Resources
+  - group: TEST2 DevTest Shared Resources
+  - group: TEST2 das-levy-transfer-matching-web
+  jobs:
+  - template: pipeline-templates/job/deploy.yml
+    parameters:
+      Environment: DEV
+      ServiceConnection: SFA-DAS-DevTest-ARM
+
+- stage: Deploy_PP
+  dependsOn: Build
+  displayName: Deploy to PP
+  variables:
+  - group: PreProd Management Resources
+  - group: PreProd Shared Resources
+  - group: PP das-levy-transfer-matching-web
+  jobs:
+  - template: pipeline-templates/job/deploy.yml
+    parameters:
+      Environment: DEV
+      ServiceConnection: SFA-DAS-PreProd-ARM
