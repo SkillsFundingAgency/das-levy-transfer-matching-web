@@ -49,14 +49,16 @@
         },
         "frontEndAccessRestrictions": {
             "type": "array"
+        },
+        "configNames": {
+            "type": "string"
         }
     },
     "variables": {
         "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
         "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', parameters('serviceName')))]",
         "resourceGroupName": "[concat(variables('resourceNamePrefix'), '-rg')]",
-        "appServiceName": "[concat(variables('resourceNamePrefix'), '-as')]",
-        "configNames": "SFA.DAS.LevyTransferMatching.Web"
+        "appServiceName": "[concat(variables('resourceNamePrefix'), '-as')]"
     },
     "resources": [
         {
@@ -159,7 +161,7 @@
                                 },
                                 {
                                     "name": "ConfigNames",
-                                    "value": "[variables('configNames')]"
+                                    "value": "[parameters('configNames')]"
                                 },
                                 {
                                     "name": "Version",
