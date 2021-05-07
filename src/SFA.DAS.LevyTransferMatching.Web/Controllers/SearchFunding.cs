@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Authorization;
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
     [AllowAnonymous]
-    public class FindBusinessController : Controller
+    public class SearchFunding : Controller
     {
-        [Route("find-a-business")]
+        [Route("search-funding-opportunities")]
         public IActionResult Index()
         {
             return View();
