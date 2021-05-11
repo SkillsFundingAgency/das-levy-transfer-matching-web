@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.HealthChecks;
 
@@ -10,12 +11,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
 {
     public static class HealthCheckStartupExtensions
     {
-        public static IServiceCollection AddDasHealthChecks(this IServiceCollection services)
+        public static IServiceCollection AddDasHealthChecks(this IServiceCollection services, LevyTransferMatchingWeb config)
         {
             services
                 .AddHealthChecks()
                 .AddCheck<ApiHealthCheck>("Api health check")
-                .AddCheck<EmployerAccountsApiHealthCheck>("Employer Accounts Api health check");
+                .AddCheck<EmployerAccountsApiHealthCheck>("Employer Accounts Api health check")
+                .AddRedis(config.RedisConnectionString, "Redis")
+            ;
 
             return services;
         }
