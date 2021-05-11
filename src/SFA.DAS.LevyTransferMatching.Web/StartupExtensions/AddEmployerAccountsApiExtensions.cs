@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.EmployerAccounts.Api.Client;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Stubs;
+using EmployerAccountsApiClient = SFA.DAS.LevyTransferMatching.Infrastructure.Api.EmployerAccountsApiClient;
 
 namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
 {
@@ -8,7 +8,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
     {
         public static IServiceCollection AddEmployerAccountsApi(this IServiceCollection services)
         {
-            services.AddSingleton<IEmployerAccountsApiClient, StubEmployerAccountsApiClient>();
+            services.AddSingleton<IEmployerAccountsApiClient, EmployerAccountsApiClient>();
             return services;
         }
     }
