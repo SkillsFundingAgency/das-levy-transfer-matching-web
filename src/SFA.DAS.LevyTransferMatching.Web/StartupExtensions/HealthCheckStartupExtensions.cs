@@ -17,7 +17,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
                 .AddHealthChecks()
                 .AddCheck<ApiHealthCheck>("Api health check")
                 .AddCheck<EmployerAccountsApiHealthCheck>("Employer Accounts Api health check")
-                .AddRedis(config.RedisConnectionString, "Redis")
+                .AddRedis(config.RedisConnectionString, "Redis health check")
             ;
 
             return services;
