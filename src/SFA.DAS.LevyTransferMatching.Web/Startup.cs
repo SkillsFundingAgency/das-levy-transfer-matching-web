@@ -74,6 +74,7 @@ namespace SFA.DAS.LevyTransferMatching.Web
             .SetDefaultNavigationSection(NavigationSection.AccountsFinance)
             .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
 
+            services.AddApplicationInsightsTelemetry(Configuration.GetValue<string>("APPINSIGHTS_INSTRUMENTATIONKEY"));
             services.AddEmployerAuthentication(Configuration.GetSection<Infrastructure.Configuration.Authentication>());
             services.AddDasAuthorization();
             services.AddCache(_environment, config);
