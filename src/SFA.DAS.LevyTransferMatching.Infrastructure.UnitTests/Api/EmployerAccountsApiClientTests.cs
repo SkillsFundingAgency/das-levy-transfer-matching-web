@@ -21,7 +21,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.UnitTests.Api
     {
         private EmployerAccountsApiClient _employerAccountsApiClient;
         private Mock<IAccountUsersReadOnlyRepository> _mockAccountUsersReadOnlyRepository;
-        private Guid _userRef = Guid.NewGuid();
+        private readonly Guid _userRef = Guid.NewGuid();
 
         [SetUp]
         public void Setup()
