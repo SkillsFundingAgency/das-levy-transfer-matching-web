@@ -1,0 +1,35 @@
+parameters:
+  ServiceConnection:
+  Environment:
+
+jobs:
+- deployment: DeployWebApp
+  pool:
+    name: DAS - Continuous Deployment Agents
+  environment: ${{ parameters.Environment }}
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        - template: azure-pipelines-templates/deploy/step/arm-deploy.yml@das-platform-building-blocks
+          parameters:
+            ServiceConnection: ${{ parameters.ServiceConnection }}
+            SubscriptionId: $(SubscriptionId)
+            Location: $(ResourceGroupLocation)
+            Environment: ${{ parameters.Environment }}
+            TemplatePath: $(Pipeline.Workspace)/LevyTransferMatchingWeb/azure/template.json
+            ParametersPath: $(Pipeline.Workspace)/LevyTransferMatchingWeb/azure/template.parameters.json
+            TemplateSecrets:
+              LoggingRedisConnectionString: $(LoggingRedisConnectionString)
+              ConfigurationStorageConnectionString: $(ConfigurationStorageConnectionString)
+        - template: azure-pipelines-templates/deploy/step/generate-config.yml@das-platform-building-blocks
+          parameters:
+            ServiceConnection: ${{ parameters.ServiceConnection }}
+            SourcePath: $(Pipeline.Workspace)/das-employer-config/Configuration/das-levy-transfer-matching-web
+            TargetFileName: '*.schema.json'
+            TableName: Configuration
+        - template: azure-pipelines-templates/deploy/step/app-deploy.yml@das-platform-building-blocks
+          parameters:
+            ServiceConnection: ${{ parameters.ServiceConnection }}
+            AppServiceName: $(AppServiceName)
+            DeploymentPackagePath: $(Pipeline.Workspace)/LevyTransferMatchingWeb/SFA.DAS.LevyTransferMatching.Web.zip
