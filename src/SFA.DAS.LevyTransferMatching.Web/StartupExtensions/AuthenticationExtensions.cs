@@ -30,7 +30,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
                     options.Authority = configuration.BaseAddress;
                     options.MetadataAddress = $"{configuration.BaseAddress}/.well-known/openid-configuration";
                     options.UsePkce = configuration.UsePkce;
-                    options.ResponseType = configuration.ResponseType;
+                    options.ResponseType = OpenIdConnectResponseType.Code;
 
                     var scopes = configuration.Scopes.Split(' ');
                     
