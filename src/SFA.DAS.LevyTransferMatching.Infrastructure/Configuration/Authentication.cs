@@ -6,7 +6,7 @@
         public string ClientSecret { get; set; }
         public string BaseAddress { get; set; }
         public string ResponseType { get; set; }
-        public bool SaveTokens { get; set; }
+        public bool UsePkce { get; set; }
         public string Scopes { get; set; }
         public string ChangeEmailUrl { get; set; }
 
@@ -20,6 +20,5 @@
         {
             return BaseAddress.Replace("/identity", "") + string.Format(ChangePasswordUrl, ClientId);
         }
-        public ClaimIdentifierConfiguration ClaimIdentifierConfiguration { get; set; }
     }
 }
