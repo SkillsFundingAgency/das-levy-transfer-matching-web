@@ -24,6 +24,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
 
                 }).AddOpenIdConnect(options =>
                 {
+                    options.UsePkce = false;
                     options.ClientId = configuration.ClientId;
                     options.ClientSecret = configuration.ClientSecret;
                     options.Authority = configuration.BaseAddress;
