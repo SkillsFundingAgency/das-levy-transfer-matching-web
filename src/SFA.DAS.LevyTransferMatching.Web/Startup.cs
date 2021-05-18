@@ -59,6 +59,7 @@ namespace SFA.DAS.LevyTransferMatching.Web
             var config = Configuration.GetSection<LevyTransferMatchingWeb>();
             services.AddSingleton(config);
             services.AddSingleton(Configuration.GetSection<LevyTransferMatchingApi>());
+            services.AddSingleton(Configuration.GetSection<EmployerFinanceWeb>());
 
             services.AddControllersWithViews();
 

@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.Extensions.Configuration;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
 using SFA.DAS.LevyTransferMatching.Web.Helpers;
+using System;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Extensions
 {
@@ -8,11 +11,20 @@ namespace SFA.DAS.LevyTransferMatching.Web.Extensions
     {
         private const string AccountsController = "accounts";
 
+        public static string EmployerFinanceAction(this IUrlHelper helper, string path)
+        {
+            EmployerFinanceWeb employerFinanceWeb = (EmployerFinanceWeb)helper.ActionContext.HttpContext.RequestServices.GetService(typeof(EmployerFinanceWeb));
+
+            var baseUrl = employerFinanceWeb.BaseUrl;
+
+            return AccountAction(helper, baseUrl, path);
+        }
+
         public static string LevyMatchingTransfersAction(this IUrlHelper helper, string path)
         {
-            var request = helper.ActionContext.HttpContext.Request;
+            LevyTransferMatchingWeb levyTransferMatchingWeb = (LevyTransferMatchingWeb)helper.ActionContext.HttpContext.RequestServices.GetService(typeof(LevyTransferMatchingWeb));
 
-            var baseUrl = $"{request.Scheme}://{request.Host}{request.PathBase}";
+            var baseUrl = levyTransferMatchingWeb.BaseUrl;
 
             return AccountAction(helper, baseUrl, path);
         }
