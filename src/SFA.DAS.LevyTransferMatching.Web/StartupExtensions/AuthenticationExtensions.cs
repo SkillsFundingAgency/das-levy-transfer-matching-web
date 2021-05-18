@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
 
 namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
@@ -27,7 +28,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
                     options.ClientId = configuration.ClientId;
                     options.ClientSecret = configuration.ClientSecret;
                     options.Authority = configuration.BaseAddress;
-                    options.ResponseType = configuration.ResponseType;
+                    options.UsePkce = configuration.UsePkce;
+                    options.ResponseType = OpenIdConnectResponseType.Code;
 
                     var scopes = configuration.Scopes.Split(' ');
                     
