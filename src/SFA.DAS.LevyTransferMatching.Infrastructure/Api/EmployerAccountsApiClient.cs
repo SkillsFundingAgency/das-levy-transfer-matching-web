@@ -1,71 +1,54 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using Microsoft.Azure.Documents.Client;
+using SFA.DAS.CosmosDb;
 using SFA.DAS.EmployerAccounts.Api.Client;
-using SFA.DAS.LevyTransferMatching.Domain.EmployerAccounts;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsersReadStore;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Api
 {
-    public class EmployerAccountsApiClient : ApiClientBase, IEmployerAccountsApiClient
+    public class EmployerAccountsApiClient : IEmployerAccountsApiClient
     {
-        private readonly EmployerAccountsApiClientConfiguration _configuration;
+        private readonly IAccountUsersReadOnlyRepository _accountUsersRepository;
 
-        public EmployerAccountsApiClient(EmployerAccountsApiClientConfiguration configuration)
+        public EmployerAccountsApiClient(IAccountUsersReadOnlyRepository repository)
         {
-            _configuration = configuration;
+            _accountUsersRepository = repository;
         }
 
-        public async Task<bool> IsUserInRole(IsUserInRoleRequest roleRequest, CancellationToken cancellationToken)
+        public async Task<bool> IsUserInRole(IsUserInRoleRequest request, CancellationToken cancellationToken)
         {
-            var user = await GetUser(roleRequest.AccountId, roleRequest.UserRef, cancellationToken);
-            if (user == null) return false;
-
-            foreach (var role in user.Roles)
-            {
-                if (roleRequest.Roles.Contains(role))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return await _accountUsersRepository
+                .CreateQuery()
+                .AnyAsync(r =>
+                    r.userRef == request.UserRef &&
+                    r.accountId == request.AccountId &&
+                    r.removed == null &&
+                    r.role != null && request.Roles.Contains(r.role.Value), cancellationToken);
         }
 
-        public async Task<bool> IsUserInAnyRole(IsUserInAnyRoleRequest roleRequest, CancellationToken cancellationToken)
+        public async Task<bool> IsUserInAnyRole(IsUserInAnyRoleRequest request, CancellationToken cancellationToken)
         {
-            var user = await GetUser(roleRequest.AccountId, roleRequest.UserRef, cancellationToken);
-            return user != null && user.Roles.Any();
+            return await _accountUsersRepository
+                .CreateQuery()
+                .AnyAsync(r =>
+                    r.userRef == request.UserRef &&
+                    r.accountId == request.AccountId &&
+                    r.removed == null, cancellationToken);
         }
 
         public async Task Ping(CancellationToken cancellationToken)
         {
-            await Get(new PingRequest(_configuration.ApiBaseUrl));
-        }
+            var options = new FeedOptions { EnableCrossPartitionQuery = true };
+            var value = await _accountUsersRepository
+                .CreateQuery(options)
+                .AnyAsync(z => z.accountId > 0, cancellationToken);
 
-        private async Task<AccountUser> GetUser(long accountId, Guid userRef, CancellationToken cancellationToken)
-
-        {
-            var users = await GetUsers(accountId, cancellationToken);
-            return users.FirstOrDefault(x => x.UserRef == userRef);
-        }
-
-        private async Task<IEnumerable<AccountUser>> GetUsers(long accountId, CancellationToken cancellationToken)
-        {
-            var request = new GetAccountUsersApiRequest(_configuration.ApiBaseUrl, accountId);
-            return await GetAll<AccountUser>(request);
-        }
-
-        protected override async Task<string> GetAccessTokenAsync()
-        {
-            var clientCredential = new ClientCredential(_configuration.ClientId, _configuration.ClientSecret);
-            var context = new AuthenticationContext($"https://login.microsoftonline.com/{_configuration.Tenant}", true);
-
-            var result = await context.AcquireTokenAsync(_configuration.IdentifierUri, clientCredential).ConfigureAwait(false);
-
-            return result.AccessToken;
+            if (!value)
+            {
+                throw new InvalidOperationException("EmployerAccountsApiClient health check failed - db is empty");
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +14,7 @@ using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
 using SFA.DAS.LevyTransferMatching.Web.StartupExtensions;
 using SFA.DAS.Validation.Mvc.Extensions;
+using SFA.DAS.Validation.Mvc.Filters;
 
 namespace SFA.DAS.LevyTransferMatching.Web
 {
@@ -55,30 +57,35 @@ namespace SFA.DAS.LevyTransferMatching.Web
         {
             services.AddConfigurationOptions(Configuration);
             var config = Configuration.GetSection<LevyTransferMatchingWeb>();
-            
+            services.AddSingleton(config);
+            services.AddSingleton(Configuration.GetSection<LevyTransferMatchingApi>());
+
             services.AddControllersWithViews();
 
             services.AddMvc(options =>
             {
                 options.AddAuthorization();
                 options.AddValidation();
+                options.Filters.Add<ValidateModelStateFilter>(int.MaxValue);
                 options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+
             })
             .AddControllersAsServices()
             .SetDefaultNavigationSection(NavigationSection.AccountsFinance)
             .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
 
+            services.AddApplicationInsightsTelemetry(Configuration.GetValue<string>("APPINSIGHTS_INSTRUMENTATIONKEY"));
             services.AddEmployerAuthentication(Configuration.GetSection<Infrastructure.Configuration.Authentication>());
             services.AddDasAuthorization();
             services.AddCache(_environment, config);
             services.AddMemoryCache();
             services.AddCookieTempDataProvider();
             services.AddDasDataProtection(config, _environment);
-            services.AddDasHealthChecks();
+            services.AddDasHealthChecks(config);
             services.AddEncodingService(Configuration);
             services.AddServiceRegistrations();
             services.AddEmployerSharedUI(Configuration);
-            services.AddEmployerAccountsApi();
+            services.AddEmployerAccountsApi(Configuration, _environment);
 
             #if DEBUG
             services.AddControllersWithViews().AddRazorRuntimeCompilation();

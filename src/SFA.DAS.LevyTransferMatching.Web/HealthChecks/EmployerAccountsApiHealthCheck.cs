@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using SFA.DAS.EmployerAccounts.Api.Client;
-using SFA.DAS.LevyTransferMatching.Domain.Interfaces;
 
 namespace SFA.DAS.LevyTransferMatching.Web.HealthChecks
 {
@@ -20,11 +19,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.HealthChecks
         public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context,
             CancellationToken cancellationToken = new CancellationToken())
         {
-            var description = "Ping of Employer Accounts Api [used in Employer Authorization]";
+            var description = "Employer Accounts Cosmos Db Health probe [used in Employer Authorization]";
 
             try
             {
-                await _apiClient.Ping();
+                await _apiClient.Ping(cancellationToken);
             }
             catch (Exception ex)
             {
