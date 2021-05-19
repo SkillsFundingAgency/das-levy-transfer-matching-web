@@ -1,8 +1,10 @@
-﻿@{
+﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.CreateViewModel
+
+@{
     ViewData["Title"] = "Pledges";
 }
 
-<a href="@this.Url.LevyMatchingTransfersAction("pledges")" class="govuk-back-link">Back</a>
+<a href="@Url.Action("index", "pledges", new { Model.EncodedAccountId })" class="govuk-back-link">Back</a>
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">

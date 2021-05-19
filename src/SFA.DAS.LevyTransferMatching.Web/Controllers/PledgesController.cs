@@ -2,7 +2,8 @@
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Authorization.EmployerUserRoles.Options;
 using SFA.DAS.Authorization.Mvc.Attributes;
-using SFA.DAS.LevyTransferMatching.Web.Helpers;
+using SFA.DAS.LevyTransferMatching.Web.Authorization;
+using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
@@ -10,22 +11,30 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
     public class PledgesController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly PledgesOrchestrator _pledgesOrchestrator;
 
-        public PledgesController(ILogger<HomeController> logger)
+        public PledgesController(
+            ILogger<HomeController> logger,
+            PledgesOrchestrator pledgesOrchestrator)
         {
             _logger = logger;
+            _pledgesOrchestrator = pledgesOrchestrator;
         }
 
-        [Route("accounts/{" + ControllerConstants.AccountHashedIdRouteKeyName + "}/pledges")]
+        [Route("accounts/{" + RouteValueKeys.EncodedAccountId + "}/pledges")]
         public IActionResult Index()
         {
-            return View();
+            var viewModel = _pledgesOrchestrator.Index(this.RouteData);
+
+            return View(viewModel);
         }
 
-        [Route("accounts/{" + ControllerConstants.AccountHashedIdRouteKeyName + "}/pledges/create")]
+        [Route("accounts/{" + RouteValueKeys.EncodedAccountId + "}/pledges/create")]
         public IActionResult Create()
         {
-            return View();
+            var viewModel = _pledgesOrchestrator.Create(this.RouteData);
+
+            return View(viewModel);
         }
     }
 }
