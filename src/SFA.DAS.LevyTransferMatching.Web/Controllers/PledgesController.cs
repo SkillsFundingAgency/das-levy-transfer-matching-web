@@ -1,40 +1,45 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Routing;
 using SFA.DAS.Authorization.EmployerUserRoles.Options;
 using SFA.DAS.Authorization.Mvc.Attributes;
 using SFA.DAS.LevyTransferMatching.Web.Authorization;
-using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
+using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
     // [DasAuthorize(EmployerUserRole.OwnerOrTransactor)]
+    [Route("accounts/{EncodedAccountId}/pledges")]
     public class PledgesController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-        private readonly PledgesOrchestrator _pledgesOrchestrator;
-
-        public PledgesController(
-            ILogger<HomeController> logger,
-            PledgesOrchestrator pledgesOrchestrator)
+        public PledgesController()
         {
-            _logger = logger;
-            _pledgesOrchestrator = pledgesOrchestrator;
         }
 
-        [Route("accounts/{" + RouteValueKeys.EncodedAccountId + "}/pledges")]
         public IActionResult Index()
         {
-            var viewModel = _pledgesOrchestrator.Index(this.RouteData);
+            var viewModel = this.CreateViewModel<IndexViewModel>(this.RouteData);
 
             return View(viewModel);
         }
 
-        [Route("accounts/{" + RouteValueKeys.EncodedAccountId + "}/pledges/create")]
+        [Route("create")]
         public IActionResult Create()
         {
-            var viewModel = _pledgesOrchestrator.Create(this.RouteData);
+            var viewModel = this.CreateViewModel<CreateViewModel>(this.RouteData);
 
             return View(viewModel);
+        }
+
+        private TPledgesViewModel CreateViewModel<TPledgesViewModel>(RouteData routeData) where TPledgesViewModel : PledgesViewModel, new()
+        {
+            string encodedAccountId = (string)routeData.Values[RouteValueKeys.EncodedAccountId];
+
+            TPledgesViewModel pledgesViewModel = new TPledgesViewModel()
+            {
+                EncodedAccountId = encodedAccountId,
+            };
+
+            return pledgesViewModel;
         }
     }
 }
