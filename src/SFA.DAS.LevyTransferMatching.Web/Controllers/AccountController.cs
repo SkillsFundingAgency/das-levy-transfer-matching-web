@@ -2,7 +2,7 @@
 using SFA.DAS.Authorization.EmployerUserRoles.Options;
 using SFA.DAS.Authorization.Mvc.Attributes;
 using SFA.DAS.LevyTransferMatching.Web.Authentication;
-using SFA.DAS.LevyTransferMatching.Web.Models;
+using SFA.DAS.LevyTransferMatching.Web.Models.Account;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {

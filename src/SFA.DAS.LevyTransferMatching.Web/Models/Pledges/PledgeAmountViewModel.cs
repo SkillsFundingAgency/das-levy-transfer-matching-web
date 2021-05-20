@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
+﻿namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 {
     public class PledgeAmountViewModel
     {

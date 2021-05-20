@@ -1,10 +1,6 @@
 ﻿using FluentValidation;
-using SFA.DAS.LevyTransferMatching.Web.Models;
-using System;
-using System.Collections.Generic;
+using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Validators.Pledges
 {
