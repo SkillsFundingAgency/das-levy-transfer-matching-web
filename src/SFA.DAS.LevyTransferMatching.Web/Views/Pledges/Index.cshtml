@@ -1,8 +1,10 @@
-﻿@{
+﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.IndexViewModel
+
+@{
     ViewData["Title"] = "Pledges";
 }
 
-<a href="@this.Url.EmployerFinanceAction("transfers")" class="govuk-back-link">Back</a>
+<a href="@Url.FinanceLink($"accounts/{Model.EncodedAccountId}/transfers")" class="govuk-back-link">Back</a>
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
@@ -18,8 +20,8 @@
                 <br />
             </p>
             <div class="govuk-button-group">
-                <a class="govuk-button" data-module="govuk-button" href="@this.Url.LevyMatchingTransfersAction("pledges/create")">Continue</a>
-                <a class="govuk-link" href="@this.Url.EmployerFinanceAction("transfers")">Cancel</a>
+                <a class="govuk-button" data-module="govuk-button" href="@Url.Action("create", "pledges", new { Model.EncodedAccountId })">Continue</a>
+                <a class="govuk-link" href="@Url.FinanceLink($"accounts/{Model.EncodedAccountId}/transfers")">Cancel</a>
             </div>
         </div>
     </div>
