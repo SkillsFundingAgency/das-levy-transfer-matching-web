@@ -32,9 +32,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             return View(viewModel);
         }
 
-        public IActionResult PledgeAmount()
+        public IActionResult PledgeAmount(string encodedAccountId)
         {
-            return View(new PledgeAmountViewModel());
+            var viewModel = new PledgeAmountViewModel()
+            {
+                EncodedAccountId = encodedAccountId
+            };
+
+            return View(viewModel);
         }
 
         [HttpPost]
@@ -45,7 +50,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
                 return View(viewModel);
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Create", new { encodedAccountId = viewModel.EncodedAccountId });
         }
     }
 }
