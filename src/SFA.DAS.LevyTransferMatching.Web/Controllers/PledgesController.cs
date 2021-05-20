@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.Authorization.EmployerUserRoles.Options;
 using SFA.DAS.Authorization.Mvc.Attributes;
 using SFA.DAS.LevyTransferMatching.Web.Helpers;
+using SFA.DAS.LevyTransferMatching.Web.Models;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
@@ -26,6 +27,22 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         public IActionResult Create()
         {
             return View();
+        }
+
+        public IActionResult PledgeAmount()
+        {
+            return View(new PledgeAmountViewModel());
+        }
+
+        [HttpPost]
+        public IActionResult PledgeAmount(PledgeAmountViewModel viewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(viewModel);
+            }
+
+            return RedirectToAction("Index");
         }
     }
 }

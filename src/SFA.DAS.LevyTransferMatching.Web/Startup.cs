@@ -59,7 +59,7 @@ namespace SFA.DAS.LevyTransferMatching.Web
             var config = Configuration.GetSection<LevyTransferMatchingWeb>();
             services.AddSingleton(config);
             services.AddSingleton(Configuration.GetSection<LevyTransferMatchingApi>());
-            services.AddSingleton(Configuration.GetSection<EmployerFinanceWeb>());
+            //services.AddSingleton(Configuration.GetSection<EmployerFinanceWeb>());
 
             services.AddControllersWithViews();
 
@@ -67,9 +67,7 @@ namespace SFA.DAS.LevyTransferMatching.Web
             {
                 options.AddAuthorization();
                 options.AddValidation();
-                options.Filters.Add<ValidateModelStateFilter>(int.MaxValue);
                 options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
-
             })
             .AddControllersAsServices()
             .SetDefaultNavigationSection(NavigationSection.AccountsFinance)

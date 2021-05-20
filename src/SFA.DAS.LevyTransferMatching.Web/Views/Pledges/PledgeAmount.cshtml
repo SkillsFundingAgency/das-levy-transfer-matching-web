@@ -1,0 +1,116 @@
+﻿@model PledgeAmountViewModel
+@{
+    ViewData["Title"] = "Pledges";
+}
+
+<style>
+    .total {
+        width: auto;
+        display: inline-block;
+        float: left;
+        clear: both;
+        background: #1d70b8;
+        padding: 1em 1.5em;
+        margin: 0 0 2em 0;
+    }
+    .total p {
+        color: white;
+        margin: 0;
+        font-weight: bold;
+        font-size: 1rem;
+    }
+    .total p.number {
+        font-size: 36px;
+    }
+    .wrapper {
+        display: inline-block;
+        float: left;
+        clear: both;
+    }
+    .funding-wrapper {
+        position: relative;
+        width: auto;
+        display: inline-block;
+    }
+    .funding-wrapper .value {
+        font-weight: bold;
+        background: #f3f2f1;
+        padding: 0.3em 0.65em;
+        position: absolute;
+        left: 0;
+        top: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+        border: 2px solid #0b0c0c;
+    }
+    .funding-wrapper input {
+        padding-left: 2.25em;
+        float: left;
+    }
+    a.govuk-link-secondary {
+        margin: 0.65em 0 0 1.25em;
+        display: inline-block;
+    }
+</style>
+
+<a href="@Url.Action("Index")" class="govuk-back-link">Back</a>
+
+<partial name="_ValidationSummary" />
+
+<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-m">Find a business to transfer your levy to</span>
+            <h1 class="govuk-heading-xl">Pledge amount and option to hide organisation name</h1>
+        </div>
+    </div>
+
+    <form method="post" id="pledge-funding-form">
+        @Html.AntiForgeryToken()
+        <div class="govuk-form-group" id="pledge-amount-container">
+            <div class="total">
+                <p>In this financial year you can pledge up to:</p>
+                <p class="number">£150,000</p>
+            </div>
+            <div class="wrapper" das-highlight-error-for="PledgeAmount" error-class="govuk-form-group--error">
+                <label class="govuk-label" for="pledge-amount">How much funding would you like to transfer?</label>
+                <div id="event-name-hint" class="govuk-hint">
+                    Minimum pledge amount is £6,000
+                </div>
+                <span class="govuk-error-message">@Html.ValidationMessageFor(x => x.PledgeAmount)</span>
+                <div class="funding-wrapper">
+                    <p class="value">£</p>
+                    <input class="govuk-input govuk-input--width-10" asp-for="PledgeAmount" das-highlight-error-for="PledgeAmount" error-class="govuk-textarea--error" aria-describedby="PledgeAmount-error" />
+                </div>
+            </div>
+        </div>
+
+        <div class="govuk-form-group" das-highlight-error-for="IsNamePublic" error-class="govuk-form-group--error">
+            <fieldset class="govuk-fieldset">
+                <legend class="govuk-fieldset__legend">
+                    Would you like your pledge to show your organisation's name publicly?
+                </legend>
+                <span das-validation-for="IsNamePublic" class="govuk-error-message"></span>
+                <div class="govuk-radios">
+                    <div class="govuk-radios__item">
+                        <input class="govuk-radios__input" id="IsNamePublic" name="IsNamePublic" type="radio" value="true" das-highlight-error-for="IsNamePublic" error-class="govuk-textarea--error" aria-describedby="IsNamePublic-error" />
+                        <label class="govuk-label govuk-radios__label" for="IsNamePublic">
+                            Yes
+                        </label>
+
+                    </div>
+                    <div class="govuk-radios__item">
+                        <input class="govuk-radios__input" id="IsNamePublic-2" name="IsNamePublic" type="radio" value="false">
+                        <label class="govuk-label govuk-radios__label" for="IsNamePublic-2">
+                            No, I'd like our organisation to be anonymous
+                        </label>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <button class="govuk-button pledge-amount-continue" id="pledge-criteria-continue">Continue</button>
+        <a href="@Url.Action("Index")" class="govuk-link govuk-link-secondary govuk-link--no-visited-state">Cancel</a>
+    </form>
+</main>
