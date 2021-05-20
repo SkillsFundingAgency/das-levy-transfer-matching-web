@@ -55,7 +55,7 @@
     }
 </style>
 
-<a href="@Url.Action("Index")" class="govuk-back-link">Back</a>
+<a href="@Url.Action("create", "pledges", new { Model.EncodedAccountId })" class="govuk-back-link">Back</a>
 
 <partial name="_ValidationSummary" />
 
@@ -111,6 +111,6 @@
             </fieldset>
         </div>
         <button class="govuk-button pledge-amount-continue" id="pledge-criteria-continue">Continue</button>
-        <a href="@Url.Action("Index")" class="govuk-link govuk-link-secondary govuk-link--no-visited-state">Cancel</a>
+        <a href="@Url.Action("create", "pledges", new { Model.EncodedAccountId })" class="govuk-link govuk-link-secondary govuk-link--no-visited-state">Cancel</a>
     </form>
 </main>
