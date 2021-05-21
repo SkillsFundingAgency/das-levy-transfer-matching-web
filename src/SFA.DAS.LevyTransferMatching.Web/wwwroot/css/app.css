@@ -1,56 +1,26 @@
-.total {
-    width: auto;
-    display: inline-block;
-    float: left;
-    clear: both;
+.app-highlight {
+    color: #fff;
     background: #1d70b8;
-    padding: 1em 1.5em;
-    margin: 0 0 2em 0;
-}
-
-    .total p {
-        color: white;
-        margin: 0;
-        font-weight: bold;
-        font-size: 1rem;
-    }
-
-        .total p.number {
-            font-size: 36px;
-        }
-
-.wrapper {
-    display: inline-block;
-    float: left;
-    clear: both;
-}
-
-.funding-wrapper {
-    position: relative;
-    width: auto;
+    padding: 15px;
+    margin-bottom: 15px;
     display: inline-block;
 }
 
-    .funding-wrapper .value {
-        font-weight: bold;
-        background: #f3f2f1;
-        padding: 0.3em 0.65em;
-        position: absolute;
-        left: 0;
-        top: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0;
-        border: 2px solid #0b0c0c;
+@media (min-width: 40.0625em) {
+    .app-highlight {
+        padding: 20px;
+        margin-bottom: 20px;
     }
+}
 
-    .funding-wrapper input {
-        padding-left: 2.25em;
-        float: left;
-    }
+.app-highlight__title {
+    font-weight: 700;
+    font-size: 16px;
+    margin: 0;
+}
 
-a.govuk-link-secondary {
-    margin: 0.65em 0 0 1.25em;
-    display: inline-block;
+.app-highlight__figure {
+    font-weight: 700;
+    font-size: 36px;
+    margin: 0 0 -5px;
 }
