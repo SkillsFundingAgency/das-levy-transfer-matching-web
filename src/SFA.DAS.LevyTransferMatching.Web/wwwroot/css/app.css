@@ -1,0 +1,6 @@
+.govuk-button--start {
+    padding: 8px 40px 8px 15px;
+    background-image: url(/assets/images/icon-pointer.png);
+    background-repeat: no-repeat;
+    background-position: 100% 50%;
+}
