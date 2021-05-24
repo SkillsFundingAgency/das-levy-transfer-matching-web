@@ -1,9 +1,14 @@
 ﻿namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 {
-    public class PledgeAmountViewModel
+    public class AmountViewModel : AmountPostModel
+    {
+        
+    }
+
+    public class AmountPostModel
     {
         public string EncodedAccountId { get; set; }
-        public string PledgeAmount { get; set; }
+        public string Amount { get; set; }
         public bool? IsNamePublic { get; set; }
     }
 }

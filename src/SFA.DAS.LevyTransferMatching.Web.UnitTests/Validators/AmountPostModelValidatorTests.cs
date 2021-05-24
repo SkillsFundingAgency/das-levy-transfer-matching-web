@@ -9,14 +9,14 @@ using System.Text;
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators
 {
     [TestFixture]
-    public class PledgeAmountViewModelValidatorTests
+    public class AmountPostModelValidatorTests
     {
-        private PledgeAmountViewModelValidator _pledgeAmountViewModelValidator;
+        private AmountPostModelValidator amountPostModelValidator;
 
         [SetUp]
         public void SetUp()
         {
-            _pledgeAmountViewModelValidator = new PledgeAmountViewModelValidator();
+            amountPostModelValidator = new AmountPostModelValidator();
         }
 
         [TestCase("test")]
@@ -24,51 +24,51 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators
         [TestCase(null)]
         [TestCase("0")]
         [TestCase("5000001")]
-        public void Validator_Returns_Expected_Errors_For_Invalid_PledgeAmount(string pledgeAmount)
+        public void Validator_Returns_Expected_Errors_For_Invalid_Amount(string amount)
         {
             //Arrange
-            PledgeAmountViewModel pledgeAmountViewModel = new PledgeAmountViewModel()
+            AmountViewModel amountViewModel = new AmountViewModel()
             {
-                PledgeAmount = pledgeAmount
+                Amount = amount
             };
 
             //Act
-            var result = _pledgeAmountViewModelValidator.TestValidate(pledgeAmountViewModel);
+            var result = amountPostModelValidator.TestValidate(amountViewModel);
 
             //Assert
-            result.ShouldHaveValidationErrorFor(x => x.PledgeAmount)
+            result.ShouldHaveValidationErrorFor(x => x.Amount)
                 .WithErrorMessage("Enter a number between 1 and 5,000,000");
         }
 
         [TestCase("1")]
         [TestCase("1000000")]
         [TestCase("5000000")]
-        public void Validator_Returns_No_Errors_For_Valid_PledgeAmount(string pledgeAmount)
+        public void Validator_Returns_No_Errors_For_Valid_Amount(string amount)
         {
             //Arrange
-            PledgeAmountViewModel pledgeAmountViewModel = new PledgeAmountViewModel()
+            AmountPostModel amountPostModel = new AmountPostModel()
             {
-                PledgeAmount = pledgeAmount
+                Amount = amount
             };
 
             //Act
-            var result = _pledgeAmountViewModelValidator.TestValidate(pledgeAmountViewModel);
+            var result = amountPostModelValidator.TestValidate(amountPostModel);
 
             //Assert
-            result.ShouldNotHaveValidationErrorFor(x => x.PledgeAmount);
+            result.ShouldNotHaveValidationErrorFor(x => x.Amount);
         }
 
         [TestCase(null)]
         public void Validator_Returns_Expected_Errors_For_Invalid_IsNamePublic(bool? isNamePublic)
         {
             //Arrange
-            PledgeAmountViewModel pledgeAmountViewModel = new PledgeAmountViewModel()
+            AmountPostModel amountPostModel = new AmountPostModel()
             {
                 IsNamePublic = isNamePublic
             };
 
             //Act
-            var result = _pledgeAmountViewModelValidator.TestValidate(pledgeAmountViewModel);
+            var result = amountPostModelValidator.TestValidate(amountPostModel);
 
             //Assert
             result.ShouldHaveValidationErrorFor(x => x.IsNamePublic)
@@ -80,13 +80,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators
         public void Validator_Returns_No_Errors_For_Valid_IsNamePublic(bool? isNamePublic)
         {
             //Arrange
-            PledgeAmountViewModel pledgeAmountViewModel = new PledgeAmountViewModel()
+            AmountPostModel amountPostModel = new AmountPostModel()
             {
                 IsNamePublic = isNamePublic
             };
 
             //Act
-            var result = _pledgeAmountViewModelValidator.TestValidate(pledgeAmountViewModel);
+            var result = amountPostModelValidator.TestValidate(amountPostModel);
 
             //Assert
             result.ShouldNotHaveValidationErrorFor(x => x.IsNamePublic);

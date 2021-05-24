@@ -20,7 +20,7 @@
                 <br />
             </p>
             <div class="govuk-button-group">
-                <a class="govuk-button" data-module="govuk-button" href="@Url.Action("create", "pledges", new { Model.EncodedAccountId })">Continue</a>
+                <a class="govuk-button" data-module="govuk-button" href="@Url.Action("amount", "pledges", new { Model.EncodedAccountId })">Continue</a>
                 <a class="govuk-link" href="@Url.FinanceLink($"accounts/{Model.EncodedAccountId}/transfers")">Cancel</a>
             </div>
         </div>

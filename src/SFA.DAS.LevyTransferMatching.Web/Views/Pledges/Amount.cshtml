@@ -1,9 +1,9 @@
-﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.PledgeAmountViewModel
+﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.AmountViewModel
 @{
     ViewData["Title"] = "Pledges";
 }
 
-<a href="@Url.Action("create", "pledges", new { Model.EncodedAccountId })" class="govuk-back-link">Back</a>
+<a href="@Url.Action("index", "pledges", new { Model.EncodedAccountId })" class="govuk-back-link">Back</a>
 
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
     <partial name="_ValidationSummary" />
@@ -13,21 +13,21 @@
             <h1 class="govuk-heading-xl">Pledge amount and option to hide organisation name</h1>
             <form method="post">
                 @Html.AntiForgeryToken()
-                <div class="app-highlight">
+                @*<div class="app-highlight">
                     <p class="app-highlight__title">In this financial year you can pledge up to:</p>
                     <p class="app-highlight__figure">&pound;150,000</p>
-                </div>
-                <div class="govuk-form-group" das-highlight-error-for="PledgeAmount" error-class="govuk-form-group--error">
+                </div>*@
+                <div class="govuk-form-group" das-highlight-error-for="Amount" error-class="govuk-form-group--error">
                     <label class="govuk-label" for="pledge-amount">
                         How much funding would you like to transfer?
                     </label>
                     <div class="govuk-hint">
                         Minimum pledge amount is &pound;6,000
                     </div>
-                    <span class="govuk-error-message">@Html.ValidationMessageFor(x => x.PledgeAmount)</span>
+                    <span class="govuk-error-message">@Html.ValidationMessageFor(x => x.Amount)</span>
                     <div class="govuk-input__wrapper">
                         <div class="govuk-input__prefix govuk-!-font-weight-bold" aria-hidden="true">&pound;</div>
-                        <input class="govuk-input govuk-input--width-10"  type="text"  asp-for="PledgeAmount" das-highlight-error-for="PledgeAmount" error-class="govuk-textarea--error" />
+                        <input class="govuk-input govuk-input--width-10"  type="text"  asp-for="Amount" das-highlight-error-for="Amount" error-class="govuk-textarea--error" />
                     </div>
                 </div>
                 <div class="govuk-form-group" das-highlight-error-for="IsNamePublic" error-class="govuk-form-group--error">
@@ -54,7 +54,7 @@
                 </div>
                 <div class="govuk-button-group">
                     <button class="govuk-button pledge-amount-continue" id="pledge-criteria-continue">Continue</button>
-                    <a href="@Url.Action("create", "pledges", new { Model.EncodedAccountId })" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    <a href="@Url.Action("index", "pledges", new { Model.EncodedAccountId })" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                 </div>
             </form>
         </div>

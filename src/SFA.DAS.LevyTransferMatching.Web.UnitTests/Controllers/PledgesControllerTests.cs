@@ -52,53 +52,34 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         }
 
         [Test]
-        public void GET_PledgeAmount_Returns_Expected_View_With_Expected_ViewModel()
+        public void GET_Amount_Returns_Expected_View_With_Expected_ViewModel()
         {
             // Arrange
             string encodedAccountId = _fixture.Create<string>();
 
             // Act
-            ViewResult viewResult = _pledgesController.PledgeAmount(encodedAccountId) as ViewResult;
-            PledgeAmountViewModel pledgeAmountViewModel = viewResult?.Model as PledgeAmountViewModel;
+            ViewResult viewResult = _pledgesController.Amount(encodedAccountId) as ViewResult;
+            AmountViewModel amountViewModel = viewResult?.Model as AmountViewModel;
 
             // Assert
             Assert.NotNull(viewResult);
-            Assert.NotNull(pledgeAmountViewModel);
-            Assert.AreEqual(encodedAccountId, pledgeAmountViewModel.EncodedAccountId);
+            Assert.NotNull(amountViewModel);
+            Assert.AreEqual(encodedAccountId, amountViewModel.EncodedAccountId);
         }
 
         [Test]
-        public void POST_PledgeAmount_Returns_Expected_Redirect()
+        public void POST_Amount_Returns_Expected_Redirect()
         {
             // Arrange
-            PledgeAmountViewModel pledgeAmountViewModel = _fixture.Create<PledgeAmountViewModel>();
+            AmountPostModel amountPostModel = _fixture.Create<AmountPostModel>();
 
             // Act
-            RedirectToActionResult actionResult = _pledgesController.PledgeAmount(pledgeAmountViewModel) as RedirectToActionResult;
+            RedirectToActionResult actionResult = _pledgesController.Amount(amountPostModel) as RedirectToActionResult;
 
             // Assert
             Assert.NotNull(actionResult);
-            Assert.AreEqual("Create", actionResult.ActionName);
-            Assert.AreEqual(pledgeAmountViewModel.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
-        }
-
-        [Test]
-        public void POST_PledgeAmount_Returns_Expected_View_With_Expected_ViewModel_When_Model_Invalid()
-        {
-            // Arrange
-            PledgeAmountViewModel pledgeAmountViewModel = _fixture.Create<PledgeAmountViewModel>();
-            _pledgesController.ModelState.AddModelError("TestError", "TestError");
-
-            // Act
-            ViewResult viewResult = _pledgesController.PledgeAmount(pledgeAmountViewModel) as ViewResult;
-            PledgeAmountViewModel resultViewModel = viewResult?.Model as PledgeAmountViewModel;
-
-            // Assert
-            Assert.NotNull(viewResult);
-            Assert.NotNull(resultViewModel);
-            Assert.AreEqual(pledgeAmountViewModel.EncodedAccountId, resultViewModel.EncodedAccountId);
-            Assert.AreEqual(pledgeAmountViewModel.PledgeAmount, resultViewModel.PledgeAmount);
-            Assert.AreEqual(pledgeAmountViewModel.IsNamePublic, resultViewModel.IsNamePublic);
+            Assert.AreEqual("Index", actionResult.ActionName);
+            Assert.AreEqual(amountPostModel.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
         }
     }
 }

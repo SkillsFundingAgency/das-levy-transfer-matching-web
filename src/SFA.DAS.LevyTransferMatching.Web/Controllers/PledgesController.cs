@@ -33,9 +33,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         }
 
         [Route("create/amount")]
-        public IActionResult PledgeAmount(string encodedAccountId)
+        public IActionResult Amount(string encodedAccountId)
         {
-            var viewModel = new PledgeAmountViewModel()
+            var viewModel = new AmountViewModel()
             {
                 EncodedAccountId = encodedAccountId
             };
@@ -45,14 +45,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
         [HttpPost]
         [Route("create/amount")]
-        public IActionResult PledgeAmount(PledgeAmountViewModel viewModel)
+        public IActionResult Amount(AmountPostModel viewModel)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(viewModel);
-            }
-
-            return RedirectToAction("Create", new { encodedAccountId = viewModel.EncodedAccountId });
+            return RedirectToAction("Index", new { encodedAccountId = viewModel.EncodedAccountId });
         }
     }
 }
