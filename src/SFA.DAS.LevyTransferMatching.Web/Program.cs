@@ -20,7 +20,8 @@ namespace SFA.DAS.LevyTransferMatching.Web
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder.UseStartup<Startup>()
+                        .UseNLog();
                 });
     }
 }
