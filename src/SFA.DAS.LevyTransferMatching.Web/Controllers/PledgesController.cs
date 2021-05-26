@@ -19,33 +19,21 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
         public IActionResult Index(string encodedAccountId)
         {
-            var viewModel = new IndexViewModel
-            {
-                EncodedAccountId = encodedAccountId,
-            };
-
+            var viewModel = _orchestrator.GetIndexViewModel(encodedAccountId);
             return View(viewModel);
         }
 
         [Route("create")]
         public IActionResult Create(string encodedAccountId)
         {
-            var viewModel = new CreateViewModel
-            {
-                EncodedAccountId = encodedAccountId,
-            };
-
+            var viewModel = _orchestrator.GetCreateViewModel(encodedAccountId);
             return View(viewModel);
         }
 
         [Route("create/amount")]
         public IActionResult Amount(string encodedAccountId)
         {
-            var viewModel = new AmountViewModel
-            {
-                EncodedAccountId = encodedAccountId
-            };
-
+            var viewModel = _orchestrator.GetAmountViewModel(encodedAccountId);
             return View(viewModel);
         }
 

@@ -13,12 +13,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
     {
         private Fixture _fixture;
         private PledgesController _pledgesController;
+        private Mock<IPledgeOrchestrator> _orchestrator;
 
         [SetUp]
         public void Setup()
         {
             _fixture = new Fixture();
-            _pledgesController = new PledgesController(Mock.Of<IPledgeOrchestrator>());
+
+            _orchestrator = new Mock<IPledgeOrchestrator>();
+            _pledgesController = new PledgesController(_orchestrator.Object);
         }
 
         [Test]
@@ -26,6 +29,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         {
             // Arrange
             string encodedAccountId = _fixture.Create<string>();
+            _orchestrator.Setup(x => x.GetIndexViewModel(encodedAccountId)).Returns(() => new IndexViewModel());
 
             // Act
             ViewResult viewResult = _pledgesController.Index(encodedAccountId) as ViewResult;
@@ -34,7 +38,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             // Assert
             Assert.NotNull(viewResult);
             Assert.NotNull(indexViewModel);
-            Assert.AreEqual(encodedAccountId, indexViewModel.EncodedAccountId);
         }
 
         [Test]
@@ -42,6 +45,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         {
             // Arrange
             string encodedAccountId = _fixture.Create<string>();
+            _orchestrator.Setup(x => x.GetCreateViewModel(encodedAccountId)).Returns(() => new CreateViewModel());
 
             // Act
             ViewResult viewResult = _pledgesController.Create(encodedAccountId) as ViewResult;
@@ -50,7 +54,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             // Assert
             Assert.NotNull(viewResult);
             Assert.NotNull(createViewModel);
-            Assert.AreEqual(encodedAccountId, createViewModel.EncodedAccountId);
         }
 
         [Test]
@@ -58,6 +61,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         {
             // Arrange
             string encodedAccountId = _fixture.Create<string>();
+            _orchestrator.Setup(x => x.GetAmountViewModel(encodedAccountId)).Returns(() => new AmountViewModel());
 
             // Act
             ViewResult viewResult = _pledgesController.Amount(encodedAccountId) as ViewResult;
@@ -66,7 +70,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             // Assert
             Assert.NotNull(viewResult);
             Assert.NotNull(amountViewModel);
-            Assert.AreEqual(encodedAccountId, amountViewModel.EncodedAccountId);
         }
 
         [Test]
