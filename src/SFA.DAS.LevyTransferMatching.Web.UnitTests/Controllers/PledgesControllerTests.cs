@@ -61,11 +61,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         {
             // Arrange
             var request = _fixture.Create<AmountRequest>();
-            _orchestrator.Setup(x => x.GetAmountViewModel(request)).ReturnsAsync(() => new AmountViewRequest());
+            _orchestrator.Setup(x => x.GetAmountViewModel(request)).ReturnsAsync(() => new AmountViewModel());
 
             // Act
             var viewResult = await _pledgesController.Amount(request) as ViewResult;
-            var amountViewModel = viewResult?.Model as AmountViewRequest;
+            var amountViewModel = viewResult?.Model as AmountViewModel;
 
             // Assert
             Assert.NotNull(viewResult);

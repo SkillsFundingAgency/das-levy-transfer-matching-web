@@ -27,13 +27,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators
         public void Validator_Returns_Expected_Errors_For_Invalid_Amount(string amount)
         {
             //Arrange
-            AmountViewRequest amountViewRequest = new AmountViewRequest()
+            AmountViewModel amountViewModel = new AmountViewModel()
             {
                 Amount = amount
             };
 
             //Act
-            var result = amountPostModelValidator.TestValidate(amountViewRequest);
+            var result = amountPostModelValidator.TestValidate(amountViewModel);
 
             //Assert
             result.ShouldHaveValidationErrorFor(x => x.Amount)
