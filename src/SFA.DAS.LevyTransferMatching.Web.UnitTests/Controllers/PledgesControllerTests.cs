@@ -1,4 +1,5 @@
-﻿using AutoFixture;
+﻿using System.Threading.Tasks;
+using AutoFixture;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
@@ -19,7 +20,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         public void Setup()
         {
             _fixture = new Fixture();
-
             _orchestrator = new Mock<IPledgeOrchestrator>();
             _pledgesController = new PledgesController(_orchestrator.Object);
         }
@@ -28,12 +28,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         public void GET_Index_Returns_Expected_View_With_Expected_ViewModel()
         {
             // Arrange
-            string encodedAccountId = _fixture.Create<string>();
+            var encodedAccountId = _fixture.Create<string>();
             _orchestrator.Setup(x => x.GetIndexViewModel(encodedAccountId)).Returns(() => new IndexViewModel());
 
             // Act
-            ViewResult viewResult = _pledgesController.Index(encodedAccountId) as ViewResult;
-            IndexViewModel indexViewModel = viewResult?.Model as IndexViewModel;
+            var viewResult = _pledgesController.Index(encodedAccountId) as ViewResult;
+            var indexViewModel = viewResult?.Model as IndexViewModel;
 
             // Assert
             Assert.NotNull(viewResult);
@@ -41,15 +41,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         }
 
         [Test]
-        public void GET_Create_Returns_Expected_View_With_Expected_ViewModel()
+        public async Task GET_Create_Returns_Expected_View_With_Expected_ViewModel()
         {
             // Arrange
-            string encodedAccountId = _fixture.Create<string>();
-            _orchestrator.Setup(x => x.GetCreateViewModel(encodedAccountId)).Returns(() => new CreateViewModel());
+            var request = _fixture.Create<CreateRequest>();
+            _orchestrator.Setup(x => x.GetCreateViewModel(request)).ReturnsAsync(() => new CreateViewModel());
 
             // Act
-            ViewResult viewResult = _pledgesController.Create(encodedAccountId) as ViewResult;
-            CreateViewModel createViewModel = viewResult?.Model as CreateViewModel;
+            var viewResult = await _pledgesController.Create(request) as ViewResult;
+            var createViewModel = viewResult?.Model as CreateViewModel;
 
             // Assert
             Assert.NotNull(viewResult);
@@ -57,15 +57,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         }
 
         [Test]
-        public void GET_Amount_Returns_Expected_View_With_Expected_ViewModel()
+        public async Task GET_Amount_Returns_Expected_View_With_Expected_ViewModel()
         {
             // Arrange
-            string encodedAccountId = _fixture.Create<string>();
-            _orchestrator.Setup(x => x.GetAmountViewModel(encodedAccountId)).Returns(() => new AmountViewModel());
+            var request = _fixture.Create<AmountRequest>();
+            _orchestrator.Setup(x => x.GetAmountViewModel(request)).ReturnsAsync(() => new AmountViewRequest());
 
             // Act
-            ViewResult viewResult = _pledgesController.Amount(encodedAccountId) as ViewResult;
-            AmountViewModel amountViewModel = viewResult?.Model as AmountViewModel;
+            var viewResult = await _pledgesController.Amount(request) as ViewResult;
+            var amountViewModel = viewResult?.Model as AmountViewRequest;
 
             // Assert
             Assert.NotNull(viewResult);
@@ -73,18 +73,18 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         }
 
         [Test]
-        public void POST_Amount_Returns_Expected_Redirect()
+        public async Task POST_Amount_Returns_Expected_Redirect()
         {
             // Arrange
-            AmountPostModel amountPostModel = _fixture.Create<AmountPostModel>();
+            var request = _fixture.Create<AmountPostRequest>();
 
             // Act
-            RedirectToActionResult actionResult = _pledgesController.Amount(amountPostModel) as RedirectToActionResult;
+            var actionResult = await _pledgesController.Amount(request) as RedirectToActionResult;
 
             // Assert
             Assert.NotNull(actionResult);
-            Assert.AreEqual("Index", actionResult.ActionName);
-            Assert.AreEqual(amountPostModel.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
+            Assert.AreEqual("Create", actionResult.ActionName);
+            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
         }
     }
 }

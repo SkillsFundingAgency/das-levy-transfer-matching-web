@@ -4,7 +4,7 @@ using System.Globalization;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Validators.Pledges
 {
-    public class AmountPostModelValidator : AbstractValidator<AmountPostModel>
+    public class AmountPostModelValidator : AbstractValidator<AmountPostRequest>
     {
         public AmountPostModelValidator()
         {

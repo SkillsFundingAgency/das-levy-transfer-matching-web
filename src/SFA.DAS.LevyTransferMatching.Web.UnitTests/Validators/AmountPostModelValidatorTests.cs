@@ -27,13 +27,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators
         public void Validator_Returns_Expected_Errors_For_Invalid_Amount(string amount)
         {
             //Arrange
-            AmountViewModel amountViewModel = new AmountViewModel()
+            AmountViewRequest amountViewRequest = new AmountViewRequest()
             {
                 Amount = amount
             };
 
             //Act
-            var result = amountPostModelValidator.TestValidate(amountViewModel);
+            var result = amountPostModelValidator.TestValidate(amountViewRequest);
 
             //Assert
             result.ShouldHaveValidationErrorFor(x => x.Amount)
@@ -46,13 +46,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators
         public void Validator_Returns_No_Errors_For_Valid_Amount(string amount)
         {
             //Arrange
-            AmountPostModel amountPostModel = new AmountPostModel()
+            AmountPostRequest amountPostRequest = new AmountPostRequest()
             {
                 Amount = amount
             };
 
             //Act
-            var result = amountPostModelValidator.TestValidate(amountPostModel);
+            var result = amountPostModelValidator.TestValidate(amountPostRequest);
 
             //Assert
             result.ShouldNotHaveValidationErrorFor(x => x.Amount);
@@ -62,13 +62,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators
         public void Validator_Returns_Expected_Errors_For_Invalid_IsNamePublic(bool? isNamePublic)
         {
             //Arrange
-            AmountPostModel amountPostModel = new AmountPostModel()
+            AmountPostRequest amountPostRequest = new AmountPostRequest()
             {
                 IsNamePublic = isNamePublic
             };
 
             //Act
-            var result = amountPostModelValidator.TestValidate(amountPostModel);
+            var result = amountPostModelValidator.TestValidate(amountPostRequest);
 
             //Assert
             result.ShouldHaveValidationErrorFor(x => x.IsNamePublic)
@@ -80,13 +80,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators
         public void Validator_Returns_No_Errors_For_Valid_IsNamePublic(bool? isNamePublic)
         {
             //Arrange
-            AmountPostModel amountPostModel = new AmountPostModel()
+            AmountPostRequest amountPostRequest = new AmountPostRequest()
             {
                 IsNamePublic = isNamePublic
             };
 
             //Act
-            var result = amountPostModelValidator.TestValidate(amountPostModel);
+            var result = amountPostModelValidator.TestValidate(amountPostRequest);
 
             //Assert
             result.ShouldNotHaveValidationErrorFor(x => x.IsNamePublic);

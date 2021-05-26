@@ -1,4 +1,7 @@
-﻿using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
+﻿using System;
+using System.Threading.Tasks;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
+using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
@@ -16,24 +19,58 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             return new IndexViewModel
             {
-                EncodedAccountId = encodedAccountId
+                EncodedAccountId = encodedAccountId,
+                CacheKey = Guid.NewGuid()
             };
         }
 
-        public CreateViewModel GetCreateViewModel(string encodedAccountId)
+        public async Task<CreateViewModel> GetCreateViewModel(CreateRequest request)
         {
+            var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
+
             return new CreateViewModel
             {
-                EncodedAccountId = encodedAccountId
+                EncodedAccountId = request.EncodedAccountId,
+                CacheKey = request.CacheKey,
+                Amount = cacheItem.Amount,
+                IsNamePublic = cacheItem.IsNamePublic
             };
         }
 
-        public AmountViewModel GetAmountViewModel(string encodedAccountId)
+        public async Task<AmountViewRequest> GetAmountViewModel(AmountRequest request)
         {
-            return new AmountViewModel
+            var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
+        
+            return new AmountViewRequest
             {
-                EncodedAccountId = encodedAccountId
+                EncodedAccountId = request.EncodedAccountId,
+                CacheKey = request.CacheKey,
+                Amount = cacheItem.Amount.ToString(),
+                IsNamePublic = cacheItem.IsNamePublic
             };
+        }
+
+        public async Task UpdateCacheItem(AmountPostRequest amountPostRequest)
+        {
+            var cacheItem = await _cacheStorageService.RetrieveFromCache<CreatePledgeCacheItem>(amountPostRequest.CacheKey.ToString());
+
+            cacheItem.Amount = Int32.Parse(amountPostRequest.Amount);
+            cacheItem.IsNamePublic = amountPostRequest.IsNamePublic.Value;
+
+            await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
+        }
+
+        private async Task<CreatePledgeCacheItem> RetrievePledgeCacheItem(Guid key)
+        {
+            var result = await _cacheStorageService.RetrieveFromCache<CreatePledgeCacheItem>(key.ToString());
+
+            if (result == null)
+            {
+                result = new CreatePledgeCacheItem(key);
+                await _cacheStorageService.SaveToCache(key.ToString(), result, 1);
+            }
+
+            return result;
         }
     }
 }

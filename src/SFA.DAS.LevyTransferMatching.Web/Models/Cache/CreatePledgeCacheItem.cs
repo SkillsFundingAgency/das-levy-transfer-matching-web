@@ -2,11 +2,16 @@
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Cache
 {
-    public class CreatePledgeCache
+    public class CreatePledgeCacheItem
     {
-        public CreatePledgeCache()
+        public CreatePledgeCacheItem()
         {
             Key = Guid.NewGuid();
+        }
+
+        public CreatePledgeCacheItem(Guid key)
+        {
+            Key = key;
         }
 
         public Guid Key { get; set; }

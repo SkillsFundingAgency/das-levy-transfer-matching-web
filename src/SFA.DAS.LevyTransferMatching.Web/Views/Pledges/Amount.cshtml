@@ -1,9 +1,9 @@
-﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.AmountViewModel
+﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.AmountViewRequest
 @{
     ViewData["Title"] = "Pledges";
 }
 
-<a href="@Url.Action("index", "pledges", new { Model.EncodedAccountId })" class="govuk-back-link">Back</a>
+<a href="@Url.Action("Create", "Pledges", new { Model.EncodedAccountId, Model.CacheKey })" class="govuk-back-link">Back</a>
 
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
     <partial name="_ValidationSummary" />
@@ -53,7 +53,7 @@
                 </div>
                 <div class="govuk-button-group">
                     <button class="govuk-button pledge-amount-continue" id="pledge-criteria-continue">Continue</button>
-                    <a href="@Url.Action("index", "pledges", new { Model.EncodedAccountId })" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    <a href="@Url.Action("Create", "Pledges", new { Model.EncodedAccountId, Model.CacheKey })" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                 </div>
             </form>
         </div>

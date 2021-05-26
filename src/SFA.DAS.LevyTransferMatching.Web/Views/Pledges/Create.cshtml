@@ -1,4 +1,5 @@
-﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.CreateViewModel
+﻿@using SFA.DAS.LevyTransferMatching.Web.Models.Pledges
+@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.CreateViewModel
 
 @{
     ViewData["Title"] = "Pledges";
@@ -35,22 +36,29 @@
                     <ul class="das-task-list__items">
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="#">
-                                    Check eligibility
+                                <a class="govuk-link" href="@Url.Action("Amount", new AmountRequest{EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey})">
+                                    Amount you want to pledge
                                 </a>
                             </span>
                             <span class="das-task-list__task-tag">
-                                &pound;0
+                                @if (Model.Amount.HasValue)
+                                {
+                                    @:&pound;@($"{Model.Amount.Value:n0}")
+                                }
+                                else
+                                {
+                                    <text>-</text>
+                                }
                             </span>
                         </li>
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="#">
+                                <a class="govuk-link" href="@Url.Action("Amount", new AmountRequest{EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey})">
                                     Show or hide your organisation's name
                                 </a>
                             </span>
                             <span class="das-task-list__task-tag">
-                                Show
+                                @Model.IsNamePublicDisplayValue
                             </span>
                         </li>
                     </ul>
@@ -75,7 +83,7 @@
                                 </a>
                             </span>
                             <span class="das-task-list__task-tag">
-                                Answer
+                                All of England
                             </span>
                         </li>
                         <li class="das-task-list__item">
@@ -85,7 +93,7 @@
                                 </a>
                             </span>
                             <span class="das-task-list__task-tag">
-                                Answer
+                                All sectors and industries
                             </span>
                         </li>
                         <li class="das-task-list__item">
@@ -95,7 +103,7 @@
                                 </a>
                             </span>
                             <span class="das-task-list__task-tag">
-                                Answer
+                                All apprenticeship job roles
                             </span>
                         </li>
                         <li class="das-task-list__item">
@@ -105,17 +113,17 @@
                                 </a>
                             </span>
                             <span class="das-task-list__task-tag">
-                                Answer
+                                All qualification levels
                             </span>
                         </li>
                     </ul>
                 </li>
             </ol>
             <div class="govuk-button-group">
-                <button class="govuk-button" data-module="govuk-button">
+                @*<button class="govuk-button" data-module="govuk-button">
                     Continue
-                </button>
-                <a class="govuk-link" href="#">Cancel pledge</a>
+                </button>*@
+                <a class="govuk-link" href="@Url.Action("index", "pledges", new { Model.EncodedAccountId })">Cancel pledge</a>
             </div>
         </div>
     </div>

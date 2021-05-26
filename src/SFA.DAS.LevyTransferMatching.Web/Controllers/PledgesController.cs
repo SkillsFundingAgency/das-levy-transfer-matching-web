@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Authorization.EmployerUserRoles.Options;
 using SFA.DAS.Authorization.Mvc.Attributes;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
@@ -6,7 +8,7 @@ using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
-    [DasAuthorize(EmployerUserRole.OwnerOrTransactor)]
+    //[DasAuthorize(EmployerUserRole.OwnerOrTransactor)]
     [Route("accounts/{EncodedAccountId}/pledges")]
     public class PledgesController : Controller
     {
@@ -24,24 +26,25 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         }
 
         [Route("create")]
-        public IActionResult Create(string encodedAccountId)
+        public async Task<IActionResult> Create(CreateRequest request)
         {
-            var viewModel = _orchestrator.GetCreateViewModel(encodedAccountId);
+            var viewModel = await _orchestrator.GetCreateViewModel(request);
             return View(viewModel);
         }
 
         [Route("create/amount")]
-        public IActionResult Amount(string encodedAccountId)
+        public async  Task<IActionResult> Amount(AmountRequest request)
         {
-            var viewModel = _orchestrator.GetAmountViewModel(encodedAccountId);
+            var viewModel = await _orchestrator.GetAmountViewModel(request);
             return View(viewModel);
         }
 
         [HttpPost]
         [Route("create/amount")]
-        public IActionResult Amount(AmountPostModel viewModel)
+        public async Task<IActionResult> Amount(AmountPostRequest request)
         {
-            return RedirectToAction("Index", new { encodedAccountId = viewModel.EncodedAccountId });
+            await _orchestrator.UpdateCacheItem(request);
+            return RedirectToAction("Create", new { request.EncodedAccountId, request.CacheKey });
         }
     }
 }
