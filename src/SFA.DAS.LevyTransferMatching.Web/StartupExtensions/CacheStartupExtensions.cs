@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 
 namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
 {
@@ -18,8 +17,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
                 services.AddStackExchangeRedisCache(
                     options => { options.Configuration = config.RedisConnectionString; });
             }
-
-            services.AddTransient<ICacheStorageService, CacheStorageService>();
 
             return services;
         }

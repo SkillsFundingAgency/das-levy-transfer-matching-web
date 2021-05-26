@@ -3,9 +3,11 @@ using SFA.DAS.Authorization.Context;
 using SFA.DAS.LevyTransferMatching.Domain.Interfaces;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Api;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsersReadStore;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CosmosDb;
 using SFA.DAS.LevyTransferMatching.Web.Authentication;
 using SFA.DAS.LevyTransferMatching.Web.Authorization;
+using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 
 namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
 {
@@ -20,6 +22,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
 
             services.AddTransient<IAuthenticationService, AuthenticationService>();
             services.AddTransient<IAuthorizationContextProvider, AuthorizationContextProvider>();
+
+            services.AddTransient<ICacheStorageService, CacheStorageService>();
+            services.AddTransient<IPledgeOrchestrator, PledgeOrchestrator>();
         }
     }
 }

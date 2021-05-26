@@ -1,8 +1,10 @@
 ﻿using AutoFixture;
 using Microsoft.AspNetCore.Mvc;
+using Moq;
 using NUnit.Framework;
 using SFA.DAS.LevyTransferMatching.Web.Controllers;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
+using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
 {
@@ -16,7 +18,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         public void Setup()
         {
             _fixture = new Fixture();
-            _pledgesController = new PledgesController();
+            _pledgesController = new PledgesController(Mock.Of<IPledgeOrchestrator>());
         }
 
         [Test]
