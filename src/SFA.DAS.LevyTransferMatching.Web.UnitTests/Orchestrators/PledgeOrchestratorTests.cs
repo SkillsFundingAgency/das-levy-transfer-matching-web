@@ -110,5 +110,19 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var result = await _orchestrator.GetAmountViewModel(new AmountRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
             Assert.AreEqual(cacheItem.IsNamePublic, result.IsNamePublic);
         }
+
+        [Test]
+        public async Task GetSectorViewModel_EncodedId_Is_Correct()
+        {
+            var result = await _orchestrator.GetSectorViewModel(new SectorRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
+            Assert.AreEqual(_encodedAccountId, result.EncodedAccountId);
+        }
+
+        [Test]
+        public async Task GetSectorViewModel_CacheKey_Is_Correct()
+        {
+            var result = await _orchestrator.GetSectorViewModel(new SectorRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
+            Assert.AreEqual(_cacheKey, result.CacheKey);
+        }
     }
 }

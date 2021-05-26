@@ -50,6 +50,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
+        public async Task<SectorViewModel> GetSectorViewModel(SectorRequest request)
+        {
+            return new SectorViewModel
+            {
+                EncodedAccountId = request.EncodedAccountId,
+                CacheKey = request.CacheKey
+            };
+        }
+
         public async Task UpdateCacheItem(AmountPostRequest amountPostRequest)
         {
             var cacheItem = await _cacheStorageService.RetrieveFromCache<CreatePledgeCacheItem>(amountPostRequest.CacheKey.ToString());
@@ -58,6 +67,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             cacheItem.IsNamePublic = amountPostRequest.IsNamePublic.Value;
 
             await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
+        }
+
+        public Task UpdateCacheItem(SectorPostRequest request)
+        {
+            throw new NotImplementedException();
         }
 
         private async Task<CreatePledgeCacheItem> RetrievePledgeCacheItem(Guid key)

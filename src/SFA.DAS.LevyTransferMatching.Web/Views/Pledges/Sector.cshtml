@@ -1,0 +1,26 @@
+﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.SectorViewModel
+@{
+    ViewData["Title"] = "Pledges";
+}
+
+<a href="@Url.Action("Create", "Pledges", new { Model.EncodedAccountId, Model.CacheKey })" class="govuk-back-link">Back</a>
+
+
+<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
+    <partial name="_ValidationSummary" />
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-m">Find a business to transfer your levy to</span>
+            <h1 class="govuk-heading-xl">Choose the sectors you'd like to fund</h1>
+            <form method="post">
+
+
+                <div class="govuk-button-group">
+                    <button class="govuk-button pledge-amount-continue" id="pledge-criteria-continue">Continue</button>
+                    <a href="@Url.Action("Create", "Pledges", new { Model.EncodedAccountId, Model.CacheKey })" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</main>
