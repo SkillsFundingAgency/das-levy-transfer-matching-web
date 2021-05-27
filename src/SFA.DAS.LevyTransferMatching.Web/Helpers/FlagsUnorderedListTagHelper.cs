@@ -27,7 +27,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
             output.TagName = "";
 
             var content = new StringBuilder();
-            content.Append($"<ul class=\"{Class}\">");
+
+            content.Append(!string.IsNullOrWhiteSpace(Class) ? $"<ul class=\"{Class}\">" : $"<ul>");
 
             var modelType = Nullable.GetUnderlyingType(Property.Metadata.ModelType) ?? Property.Model.GetType();
 
@@ -41,7 +42,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
                 var isChecked = modelValue != null && modelValue.HasFlag(enumValue);
                 if (isChecked)
                 {
-                    content.Append($"<li class=\"{ItemClass}\">{enumValue.GetDisplayName()}");
+                    content.Append($"<li");
+                    if (!string.IsNullOrWhiteSpace(ItemClass))
+                    {
+                        content.Append($" class=\"{ItemClass}\"");
+                    }
+                    content.Append(">");
+                    content.Append($"{enumValue.GetDisplayName()}");
                     content.Append("</li>");
                 }
             }
