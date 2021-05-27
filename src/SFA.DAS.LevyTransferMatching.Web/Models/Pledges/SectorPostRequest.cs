@@ -7,6 +7,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
     {
         public string EncodedAccountId { get; set; }
         public Guid CacheKey { get; set; }
-        public Sector Sectors { get; set; }
+        public Sector? Sectors { get; set; }
     }
 }

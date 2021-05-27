@@ -32,7 +32,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
             var content = new StringBuilder();
             content.Append($"<div class=\"{CssClass}\">");
 
-            var zeroValue = Enum.Parse(Property.Model.GetType(), "0");
+            var modelType = Nullable.GetUnderlyingType(Property.Metadata.ModelType) ?? Property.Model.GetType();
+            var zeroValue = Enum.Parse(modelType, "0");
 
             Enum attemptedValue = null;
 
@@ -41,7 +42,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
                 var modelStateEntry = ViewContext.ModelState[Property.Name];
                 if (!string.IsNullOrWhiteSpace(modelStateEntry.AttemptedValue))
                 {
-                    attemptedValue = Enum.Parse(Property.Model.GetType(), modelStateEntry.AttemptedValue) as Enum;
+                    attemptedValue = Enum.Parse(modelType, modelStateEntry.AttemptedValue) as Enum;
                 }
             }
 
@@ -52,7 +53,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
 
 
             var i = 0;
-            foreach (Enum enumValue in Enum.GetValues(Property.Metadata.ModelType))
+            foreach (Enum enumValue in Enum.GetValues(modelType))
             {
                 if (enumValue.Equals(zeroValue)) continue;
                 i++;

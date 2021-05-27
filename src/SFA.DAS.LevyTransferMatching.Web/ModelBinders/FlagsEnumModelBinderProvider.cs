@@ -13,7 +13,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.ModelBinders
                 throw new ArgumentNullException(nameof(context));
             }
 
-            if (context.Metadata.ModelType.IsEnum && context.Metadata.ModelType.IsDefined(typeof(FlagsAttribute), true))
+            var modelType = Nullable.GetUnderlyingType(context.Metadata.ModelType) ?? context.Metadata.ModelType;
+
+            if (modelType.IsEnum && modelType.IsDefined(typeof(FlagsAttribute), true))
             {
                 return new BinderTypeModelBinder(typeof(FlagsEnumModelBinder));
             }

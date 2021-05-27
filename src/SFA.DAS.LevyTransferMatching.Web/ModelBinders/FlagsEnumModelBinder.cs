@@ -9,7 +9,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.ModelBinders
         public Task BindModelAsync(ModelBindingContext bindingContext)
         {
             var modelName = bindingContext.ModelName;
-            var modelType = bindingContext.ModelType;
+            var modelType = Nullable.GetUnderlyingType(bindingContext.ModelType) ?? bindingContext.ModelType;
 
             if (!modelType.IsEnum || !Attribute.IsDefined(modelType, typeof(FlagsAttribute)))
             {

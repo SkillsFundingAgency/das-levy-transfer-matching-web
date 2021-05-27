@@ -29,11 +29,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
             var content = new StringBuilder();
             content.Append($"<ul class=\"{Class}\">");
 
-            var zeroValue = Enum.Parse(Property.Model.GetType(), "0");
+            var modelType = Nullable.GetUnderlyingType(Property.Metadata.ModelType) ?? Property.Model.GetType();
+
+            var zeroValue = Enum.Parse(modelType, "0");
 
             var modelValue = Property.Model as Enum;
 
-            foreach (Enum enumValue in Enum.GetValues(Property.Metadata.ModelType))
+            foreach (Enum enumValue in Enum.GetValues(modelType))
             {
                 if (enumValue.Equals(zeroValue)) continue;
                 var isChecked = modelValue != null && modelValue.HasFlag(enumValue);
