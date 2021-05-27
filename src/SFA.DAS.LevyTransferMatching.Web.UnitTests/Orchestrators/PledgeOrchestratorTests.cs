@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AutoFixture;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountsService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
@@ -16,6 +17,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private PledgeOrchestrator _orchestrator;
         private Fixture _fixture;
         private Mock<ICacheStorageService> _cache;
+        private Mock<IAccountsService> _accountsService;
         private string _encodedAccountId;
         private Guid _cacheKey;
 
@@ -26,7 +28,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _encodedAccountId = _fixture.Create<string>();
             _cacheKey = Guid.NewGuid();
             _cache = new Mock<ICacheStorageService>();
-            _orchestrator = new PledgeOrchestrator(_cache.Object);
+            _accountsService = new Mock<IAccountsService>();
+
+            _orchestrator = new PledgeOrchestrator(_cache.Object, _accountsService.Object);
         }
 
         [Test]

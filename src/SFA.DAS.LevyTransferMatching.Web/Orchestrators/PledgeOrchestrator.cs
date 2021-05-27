@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountsService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
@@ -9,10 +10,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
     public class PledgeOrchestrator : IPledgeOrchestrator
     {
         private readonly ICacheStorageService _cacheStorageService;
+        private readonly IAccountsService _accountsService;
 
-        public PledgeOrchestrator(ICacheStorageService cacheStorageService)
+        public PledgeOrchestrator(ICacheStorageService cacheStorageService, IAccountsService accountsService)
         {
             _cacheStorageService = cacheStorageService;
+            _accountsService = accountsService;
         }
 
         public IndexViewModel GetIndexViewModel(string encodedAccountId)
@@ -40,12 +43,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         public async Task<AmountViewRequest> GetAmountViewModel(AmountRequest request)
         {
             var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
+            var transferAllowance = await _accountsService.GetTransferAllowance(request.EncodedAccountId);
         
             return new AmountViewRequest
             {
                 EncodedAccountId = request.EncodedAccountId,
                 CacheKey = request.CacheKey,
                 Amount = cacheItem.Amount.ToString(),
+                TransferAllowance = transferAllowance,
                 IsNamePublic = cacheItem.IsNamePublic
             };
         }

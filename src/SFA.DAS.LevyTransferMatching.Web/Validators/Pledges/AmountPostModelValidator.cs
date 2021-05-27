@@ -9,9 +9,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Pledges
         public AmountPostModelValidator()
         {
             Transform(x => x.Amount, StringToNullableInt)
-                .NotNull().WithMessage("Enter a number between 1 and 5,000,000")
-                .GreaterThan(0).WithMessage("Enter a number between 1 and 5,000,000")
-                .LessThanOrEqualTo(5000000).WithMessage("Enter a number between 1 and 5,000,000");
+                .NotNull().WithMessage(m => $"Enter a number between 1 and { m.TransferAllowance }")
+                .GreaterThan(0).WithMessage(m => $"Enter a number between 1 and { m.TransferAllowance }")
+                .LessThanOrEqualTo(m => int.Parse(m.TransferAllowance, NumberStyles.AllowThousands)).WithMessage(m => $"Enter a number between 1 and { m.TransferAllowance }");
 
             RuleFor(x => x.IsNamePublic)
                 .NotNull().WithMessage("Tell us whether you want to remain anonymous");

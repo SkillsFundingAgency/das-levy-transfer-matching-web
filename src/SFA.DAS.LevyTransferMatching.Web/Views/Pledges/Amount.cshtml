@@ -12,17 +12,18 @@
             <span class="govuk-caption-m">Find a business to transfer your levy to</span>
             <h1 class="govuk-heading-xl">Pledge amount and option to hide organisation name</h1>
             <form method="post">
-                @*<div class="app-highlight">
+                <div class="app-highlight">
                     <p class="app-highlight__title">In this financial year you can pledge up to:</p>
-                    <p class="app-highlight__figure">&pound;150,000</p>
-                </div>*@
+                    <p class="app-highlight__figure">&pound;@Model.TransferAllowance</p>
+                    @Html.HiddenFor(x => x.TransferAllowance)
+                </div>
                 <div class="govuk-form-group" das-highlight-error-for="Amount" error-class="govuk-form-group--error">
                     <label class="govuk-label" for="pledge-amount">
                         How much funding would you like to transfer?
                     </label>
-                    <div class="govuk-hint">
-                        Minimum pledge amount is &pound;6,000
-                    </div>
+                    @*<div class="govuk-hint">
+                        Minimum pledge amount is &pound;@Model.TransferAllowance
+                    </div>*@
                     <span class="govuk-error-message">@Html.ValidationMessageFor(x => x.Amount)</span>
                     <div class="govuk-input__wrapper">
                         <div class="govuk-input__prefix govuk-!-font-weight-bold" aria-hidden="true">&pound;</div>
