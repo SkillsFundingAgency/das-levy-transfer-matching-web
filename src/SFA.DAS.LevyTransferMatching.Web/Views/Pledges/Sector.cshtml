@@ -14,10 +14,21 @@
             <h1 class="govuk-heading-xl">Choose the sectors you'd like to fund</h1>
             <form method="post">
 
+                <div class="govuk-form-group" das-highlight-error-for="Sectors" error-class="govuk-form-group--error">
+                    <fieldset class="govuk-fieldset">
+
+                        <span das-validation-for="Sectors" class="govuk-error-message"></span>
+                        <flags-checkbox-list asp-for="Sectors" class="govuk-checkboxes govuk-checkboxes--large"></flags-checkbox-list>
+
+                    </fieldset>
+                </div>
 
                 <div class="govuk-button-group">
-                    <button class="govuk-button pledge-amount-continue" id="pledge-criteria-continue">Continue</button>
-                    <a href="@Url.Action("Create", "Pledges", new { Model.EncodedAccountId, Model.CacheKey })" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    <button id="pledge-criteria-continue" class="govuk-button" data-module="govuk-button">
+                        Continue
+                    </button>
+                    <a href="@Url.Action("Create", "Pledges", new { Model.EncodedAccountId, Model.CacheKey })" class="govuk-link govuk-back-link">Back</a>
+                    
                 </div>
 
             </form>

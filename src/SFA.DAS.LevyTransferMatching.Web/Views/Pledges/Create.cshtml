@@ -1,4 +1,6 @@
-﻿@using SFA.DAS.LevyTransferMatching.Web.Models.Pledges
+﻿@using SFA.DAS.LevyTransferMatching.Web.Extensions
+@using SFA.DAS.LevyTransferMatching.Web.Models.Enums
+@using SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 @model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.CreateViewModel
 
 @{
@@ -93,7 +95,16 @@
                                 </a>
                             </span>
                             <span class="das-task-list__task-tag">
-                                All sectors and industries
+
+                                @if (Model.AreAllSectorsSelected)
+                                {
+                                    <text>All sectors and industries</text>
+                                }
+                                else
+                                {
+                                    <flags-unordered-list asp-for="Sectors" class="govuk-list govuk-list--bullet"></flags-unordered-list>
+                                }
+
                             </span>
                         </li>
                         <li class="das-task-list__item">
