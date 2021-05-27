@@ -18,6 +18,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
         [HtmlAttributeName("asp-for")]
         public ModelExpression Property { get; set; }
 
+        [HtmlAttributeName("show-description")]
+        public bool ShowDescription { get; set; }
+
         [ViewContext]
         [HtmlAttributeNotBound]
         public ViewContext ViewContext { get; set; }
@@ -64,10 +67,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
 
                 content.Append($"<label class=\"{LabelClass}\" for=\"{id}\">{enumValue.GetDisplayName()}</label>");
 
-                var description = enumValue.GetDescription();
-                if (!String.IsNullOrWhiteSpace(description))
+                if (ShowDescription)
                 {
-                    content.Append($"<span class=\"{DescriptionClass}\" for=\"{id}\">{description}</span>");
+                    var description = enumValue.GetDescription();
+                    if (!String.IsNullOrWhiteSpace(description))
+                    {
+                        content.Append($"<span class=\"{DescriptionClass}\" for=\"{id}\">{description}</span>");
+                    }
                 }
 
                 content.Append("</div>");
