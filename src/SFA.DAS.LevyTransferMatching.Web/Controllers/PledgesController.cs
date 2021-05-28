@@ -8,7 +8,7 @@ using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
-    //[DasAuthorize(EmployerUserRole.OwnerOrTransactor)]
+    [DasAuthorize(EmployerUserRole.OwnerOrTransactor)]
     [Route("accounts/{EncodedAccountId}/pledges")]
     public class PledgesController : Controller
     {
