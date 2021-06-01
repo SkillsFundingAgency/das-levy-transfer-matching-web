@@ -14,15 +14,15 @@
             <form method="post">
                 <div class="app-highlight">
                     <p class="app-highlight__title">In this financial year you can pledge up to:</p>
-                    <p class="app-highlight__figure">&pound;@Model.TransferAllowance</p>
-                    @Html.HiddenFor(x => x.TransferAllowance)
+                    <p class="app-highlight__figure">&pound;@Model.RemainingTransferAllowance</p>
+                    @Html.HiddenFor(x => x.RemainingTransferAllowance)
                 </div>
                 <div class="govuk-form-group" das-highlight-error-for="Amount" error-class="govuk-form-group--error">
                     <label class="govuk-label" for="pledge-amount">
                         How much funding would you like to transfer?
                     </label>
                     @*<div class="govuk-hint">
-                        Minimum pledge amount is &pound;@Model.TransferAllowance
+                        Minimum pledge amount is &pound;@Model.RemainingTransferAllowance
                     </div>*@
                     <span class="govuk-error-message">@Html.ValidationMessageFor(x => x.Amount)</span>
                     <div class="govuk-input__wrapper">
