@@ -35,7 +35,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 CacheKey = request.CacheKey,
                 Amount = cacheItem.Amount,
                 IsNamePublic = cacheItem.IsNamePublic,
-                Sectors = cacheItem.Sectors
+                Sectors = cacheItem.Sectors,
+                Levels = cacheItem.Levels,
             };
         }
 

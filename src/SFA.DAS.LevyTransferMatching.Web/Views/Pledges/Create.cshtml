@@ -122,7 +122,16 @@
                                 </a>
                             </span>
                             <span class="das-task-list__task-tag">
-                                All qualification levels
+
+                                @if (Model.AreAllLevelsSelected)
+                                {
+                                    <text>All qualification levels</text>
+                                }
+                                else
+                                {
+                                    <flags-unordered-list asp-for="Levels" class="govuk-list das-!-text-align-right"></flags-unordered-list>
+                                }
+
                             </span>
                         </li>
                     </ul>
