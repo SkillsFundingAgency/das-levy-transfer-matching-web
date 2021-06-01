@@ -1,6 +1,6 @@
 ﻿namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 {
-    public class AmountRequest : PledgesRequest
+    public class LevelRequest : PledgesRequest
     {
     }
 }

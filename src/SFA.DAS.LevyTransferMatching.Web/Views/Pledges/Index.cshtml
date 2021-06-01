@@ -1,4 +1,5 @@
-﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.IndexViewModel
+﻿@using SFA.DAS.LevyTransferMatching.Web.Models.Pledges
+@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.IndexViewModel
 
 @{
     ViewData["Title"] = "Pledges";
@@ -20,7 +21,7 @@
                 <br />
             </p>
             <div class="govuk-button-group">
-                <a class="govuk-button" data-module="govuk-button" href="@Url.Action("Create", "Pledges", new { Model.EncodedAccountId, Model.CacheKey })">Continue</a>
+                <a class="govuk-button" data-module="govuk-button" href="@Url.Action("Create", "Pledges", new CreateRequest { EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey })">Continue</a>
                 <a class="govuk-link" href="@Url.FinanceLink($"accounts/{Model.EncodedAccountId}/transfers")">Cancel</a>
             </div>
         </div>

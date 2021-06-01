@@ -50,6 +50,17 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
+        public async Task<LevelViewModel> GetLevelViewModel(LevelRequest request)
+        {
+            var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
+
+            return new LevelViewModel
+            {
+                EncodedAccountId = request.EncodedAccountId,
+                CacheKey = request.CacheKey,
+            };
+        }
+
         public async Task UpdateCacheItem(AmountPostRequest amountPostRequest)
         {
             var cacheItem = await _cacheStorageService.RetrieveFromCache<CreatePledgeCacheItem>(amountPostRequest.CacheKey.ToString());

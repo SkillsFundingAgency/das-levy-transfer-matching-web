@@ -8,6 +8,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         IndexViewModel GetIndexViewModel(string encodedAccountId);
         Task<CreateViewModel> GetCreateViewModel(CreateRequest request);
         Task<AmountViewModel> GetAmountViewModel(AmountRequest request);
+        Task<LevelViewModel> GetLevelViewModel(LevelRequest request);
         Task UpdateCacheItem(AmountPostRequest amountPostRequest);
     }
 }

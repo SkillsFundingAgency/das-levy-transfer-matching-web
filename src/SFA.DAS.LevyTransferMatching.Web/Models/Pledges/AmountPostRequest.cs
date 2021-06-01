@@ -1,11 +1,7 @@
-﻿using System;
-
-namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
+﻿namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 {
-    public class AmountPostRequest
+    public class AmountPostRequest : PledgesRequest
     {
-        public string EncodedAccountId { get; set; }
-        public Guid CacheKey { get; set; }
         public string Amount { get; set; }
         public bool? IsNamePublic { get; set; }
     }
