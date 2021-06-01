@@ -31,3 +31,23 @@
     background-repeat: no-repeat;
     background-position: 100% 50%;
 }
+
+.app-task-list__group-header-hint {
+    margin: 5px 0;
+}
+
+.app-task-list__group-header-tag {
+    margin-top: -5px;
+    margin-bottom: 15px;
+}
+
+@media (min-width: 40.0625em) {
+    .app-task-list__group-header {
+        display: flex;
+        align-items: center;
+    }
+
+    .app-task-list__group-header-tag {
+        float: right;
+    }
+}

@@ -17,8 +17,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
                 services.AddStackExchangeRedisCache(
                     options => { options.Configuration = config.RedisConnectionString; });
             }
+
             return services;
         }
-
     }
 }
