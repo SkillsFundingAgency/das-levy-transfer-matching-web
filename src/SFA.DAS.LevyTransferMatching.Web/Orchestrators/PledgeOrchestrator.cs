@@ -43,14 +43,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         public async Task<AmountViewRequest> GetAmountViewModel(AmountRequest request)
         {
             var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
-            var transferAllowance = await _accountsService.GetTransferAllowance(request.EncodedAccountId);
+            var transferAllowance = await _accountsService.GetRemainingTransferAllowance(request.EncodedAccountId);
         
             return new AmountViewRequest
             {
                 EncodedAccountId = request.EncodedAccountId,
                 CacheKey = request.CacheKey,
                 Amount = cacheItem.Amount.ToString(),
-                TransferAllowance = transferAllowance,
+                TransferAllowance = transferAllowance.ToString("N0"),
                 IsNamePublic = cacheItem.IsNamePublic
             };
         }

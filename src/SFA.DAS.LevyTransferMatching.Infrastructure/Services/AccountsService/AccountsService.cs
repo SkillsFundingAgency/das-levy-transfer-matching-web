@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
@@ -15,13 +17,15 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountsService
             _client = client;
         }
 
-        public async Task<string> GetTransferAllowance(string encodedAccountId)
+        public async Task<int> GetRemainingTransferAllowance(string encodedAccountId)
         {
-            //var response = await _client.GetAsync("");
-            //response.EnsureSuccessStatusCode();
+            var response = await _client.GetAsync($"accounts/{encodedAccountId}");
+            response.EnsureSuccessStatusCode();
 
-            //return await response.Content.ReadAsStringAsync();
-            return "";
+            var content = await response.Content.ReadAsStringAsync();
+            var accountDto = JsonConvert.DeserializeObject<AccountDto>(content);
+
+            return accountDto.RemainingTransferAllowance;
         }
     }
 }
