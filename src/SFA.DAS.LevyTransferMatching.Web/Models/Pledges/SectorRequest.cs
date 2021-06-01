@@ -1,10 +1,6 @@
-﻿using System;
-
-namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
+﻿namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 {
-    public class SectorRequest
+    public class SectorRequest : PledgesRequest
     {
-        public string EncodedAccountId { get; set; }
-        public Guid CacheKey { get; set; }
     }
 }

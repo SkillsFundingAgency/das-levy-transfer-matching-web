@@ -4,9 +4,10 @@
     ViewData["Title"] = "Pledges";
 }
 
-<a href="@Url.Action("Create", "Pledges", new CreateViewModel { EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey })" class="govuk-back-link">Back</a>
+<a href="@Url.Action("Create", "Pledges", new CreateRequest { EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey })" class="govuk-back-link">Back</a>
 
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
+    <partial name="_ValidationSummary" />
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
@@ -15,46 +16,19 @@
 
             <form method="post" action="pledge-core#criteria-level" id="pledge-level-form">
 
-                <div class="govuk-form-group">
-                    <fieldset class="govuk-fieldset" aria-describedby="pledge-level-hint">
-                        <div class="govuk-checkboxes">
-                            <div class="govuk-checkboxes__item app-checkboxes__select-all">
-                                <input class="govuk-checkboxes__input" id="pledge-level-all" name="_pledge-level" type="checkbox" value="Select all" onClick="toggle(this)">
-                                <label class="govuk-label govuk-checkboxes__label" for="pledge-level-all">All levels</label>
-                            </div>
+                <div class="govuk-form-group" das-highlight-error-for="Levels" error-class="govuk-form-group--error">
+                    <fieldset class="govuk-fieldset" data-checkboxes-select-all="true" data-checkboxes-select-all-label="All levels">
 
-                            <div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" id="pledge-level-two" name="pledge-level" type="checkbox" value="Level 2 - GCSE">
-                                <label class="govuk-label govuk-checkboxes__label" for="pledge-level-two">Level 2 - GCSE</label>
-                            </div>
-                            <div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" id="pledge-level-three" name="pledge-level" type="checkbox" value="Level 3 - A level">
-                                <label class="govuk-label govuk-checkboxes__label" for="pledge-level-three">Level 3 - A level</label>
-                            </div>
-                            <div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" id="pledge-level-four" name="pledge-level" type="checkbox" value="Level 4 - higher national certificate (HNC)">
-                                <label class="govuk-label govuk-checkboxes__label" for="pledge-level-four">Level 4 - higher national certificate (HNC)</label>
-                            </div>
-                            <div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" id="pledge-level-five" name="pledge-level" type="checkbox" value="Level 5 - higher national diploma (HND)">
-                                <label class="govuk-label govuk-checkboxes__label" for="pledge-level-five">Level 5 - higher national diploma (HND)</label>
-                            </div>
-                            <div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" id="pledge-level-six" name="pledge-level" type="checkbox" value="Level 6 - degree">
-                                <label class="govuk-label govuk-checkboxes__label" for="pledge-level-six">Level 6 - degree</label>
-                            </div>
-                            <div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" id="pledge-level-seven" name="pledge-level" type="checkbox" value="Level 7 - master’s degree">
-                                <label class="govuk-label govuk-checkboxes__label" for="pledge-level-seven">Level 7 - master’s degree</label>
-                            </div>
-                        </div>
+                        <span das-validation-for="Levels" class="govuk-error-message"></span>
+                        <flags-checkbox-list asp-for="Levels" show-description="false"></flags-checkbox-list>
+
                     </fieldset>
                 </div>
 
                 <div class="govuk-button-group">
                     <button class="govuk-button pledge-level-continue" data-module="govuk-button" id="pledge-level-continue">Continue</button>
 
-                    <a href="@Url.Action("Create", "Pledges", new CreateViewModel { EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey })" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    <a href="@Url.Action("Create", "Pledges", new CreateRequest { EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey })" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                 </div>
 
             </form>
