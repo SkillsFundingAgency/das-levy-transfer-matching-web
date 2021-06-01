@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
 using SFA.DAS.Authorization.EmployerUserRoles.Options;
 using SFA.DAS.Authorization.Mvc.Attributes;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
@@ -12,7 +11,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
     {
         public IActionResult Index(string encodedAccountId)
         {
-            var viewModel = new IndexViewModel()
+            var viewModel = new IndexViewModel
             {
                 EncodedAccountId = encodedAccountId,
             };
@@ -23,12 +22,30 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Route("create")]
         public IActionResult Create(string encodedAccountId)
         {
-            var viewModel = new CreateViewModel()
+            var viewModel = new CreateViewModel
             {
                 EncodedAccountId = encodedAccountId,
             };
 
             return View(viewModel);
+        }
+
+        [Route("create/amount")]
+        public IActionResult Amount(string encodedAccountId)
+        {
+            var viewModel = new AmountViewModel
+            {
+                EncodedAccountId = encodedAccountId
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [Route("create/amount")]
+        public IActionResult Amount(AmountPostModel viewModel)
+        {
+            return RedirectToAction("Index", new { encodedAccountId = viewModel.EncodedAccountId });
         }
     }
 }

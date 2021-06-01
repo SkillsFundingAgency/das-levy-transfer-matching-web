@@ -67,9 +67,7 @@ namespace SFA.DAS.LevyTransferMatching.Web
             {
                 options.AddAuthorization();
                 options.AddValidation();
-                options.Filters.Add<ValidateModelStateFilter>(int.MaxValue);
                 options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
-
             })
             .AddControllersAsServices()
             .SetDefaultNavigationSection(NavigationSection.AccountsFinance)

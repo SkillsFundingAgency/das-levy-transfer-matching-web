@@ -50,5 +50,36 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             Assert.NotNull(createViewModel);
             Assert.AreEqual(encodedAccountId, createViewModel.EncodedAccountId);
         }
+
+        [Test]
+        public void GET_Amount_Returns_Expected_View_With_Expected_ViewModel()
+        {
+            // Arrange
+            string encodedAccountId = _fixture.Create<string>();
+
+            // Act
+            ViewResult viewResult = _pledgesController.Amount(encodedAccountId) as ViewResult;
+            AmountViewModel amountViewModel = viewResult?.Model as AmountViewModel;
+
+            // Assert
+            Assert.NotNull(viewResult);
+            Assert.NotNull(amountViewModel);
+            Assert.AreEqual(encodedAccountId, amountViewModel.EncodedAccountId);
+        }
+
+        [Test]
+        public void POST_Amount_Returns_Expected_Redirect()
+        {
+            // Arrange
+            AmountPostModel amountPostModel = _fixture.Create<AmountPostModel>();
+
+            // Act
+            RedirectToActionResult actionResult = _pledgesController.Amount(amountPostModel) as RedirectToActionResult;
+
+            // Assert
+            Assert.NotNull(actionResult);
+            Assert.AreEqual("Index", actionResult.ActionName);
+            Assert.AreEqual(amountPostModel.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
+        }
     }
 }

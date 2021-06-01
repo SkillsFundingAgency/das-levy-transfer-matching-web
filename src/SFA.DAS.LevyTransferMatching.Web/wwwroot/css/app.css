@@ -1,3 +1,30 @@
+.app-highlight {
+    color: #fff;
+    background: #1d70b8;
+    padding: 15px;
+    margin-bottom: 15px;
+    display: inline-block;
+}
+
+@media (min-width: 40.0625em) {
+    .app-highlight {
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+}
+
+.app-highlight__title {
+    font-weight: 700;
+    font-size: 16px;
+    margin: 0;
+}
+
+.app-highlight__figure {
+    font-weight: 700;
+    font-size: 36px;
+    margin: 0 0 -5px;
+}
+
 .govuk-button--start {
     padding: 8px 40px 8px 15px;
     background-image: url(/assets/images/icon-pointer.png);
