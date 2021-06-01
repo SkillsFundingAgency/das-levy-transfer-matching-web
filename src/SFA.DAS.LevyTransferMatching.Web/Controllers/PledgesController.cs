@@ -68,5 +68,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             var viewModel = await _orchestrator.GetLevelViewModel(request);
             return View(viewModel);
         }
+
+        [HttpPost]
+        [Route("create/level")]
+        public async Task<IActionResult> Level(LevelPostRequest request)
+        {
+            await _orchestrator.UpdateCacheItem(request);
+            return RedirectToAction("Create", new CreateRequest() { EncodedAccountId = request.EncodedAccountId, CacheKey = request.CacheKey });
+        }
     }
 }

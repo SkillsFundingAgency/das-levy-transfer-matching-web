@@ -83,6 +83,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
         }
 
+        public async Task UpdateCacheItem(LevelPostRequest request)
+        {
+            var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
+
+            cacheItem.Levels = request.Levels;
+
+            await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
+        }
+
         public async Task<LevelViewModel> GetLevelViewModel(LevelRequest request)
         {
             var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
@@ -91,6 +100,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             {
                 EncodedAccountId = request.EncodedAccountId,
                 CacheKey = request.CacheKey,
+                Levels = cacheItem.Levels,
             };
         }
 

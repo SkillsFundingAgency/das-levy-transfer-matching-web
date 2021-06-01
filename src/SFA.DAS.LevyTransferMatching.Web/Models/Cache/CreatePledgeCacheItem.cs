@@ -20,5 +20,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Cache
         public int? Amount { get; set; }
         public bool? IsNamePublic { get; set; }
         public Sector? Sectors { get; set; }
+        public Level? Levels { get; set; }
     }
 }
