@@ -25,13 +25,6 @@
     margin: 0 0 -5px;
 }
 
-.govuk-button--start {
-    padding: 8px 40px 8px 15px;
-    background-image: url(/assets/images/icon-pointer.png);
-    background-repeat: no-repeat;
-    background-position: 100% 50%;
-}
-
 .app-task-list__group-header-hint {
     margin: 5px 0;
 }
@@ -52,9 +45,8 @@
     }
 }
 
-.select-all {
-    border-bottom: 1px solid black;
-    padding-bottom: 20px;
-    margin-bottom: 20px;
-    margin-top: 1em;
+.app-checkboxes__select-all {
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #b1b4b6;
 }

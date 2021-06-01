@@ -1,4 +1,5 @@
 ﻿using System;
+using SFA.DAS.LevyTransferMatching.Web.Models.Enums;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Cache
 {
@@ -18,5 +19,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Cache
 
         public int? Amount { get; set; }
         public bool? IsNamePublic { get; set; }
+        public Sector? Sectors { get; set; }
     }
 }
