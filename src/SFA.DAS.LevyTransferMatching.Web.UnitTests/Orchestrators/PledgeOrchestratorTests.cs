@@ -83,7 +83,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         public async Task GetCreateViewModel_Sectors_Is_Retrieved_From_Cache()
         {
             var cacheItem = _fixture.Build<CreatePledgeCacheItem>()
-                .With(x => x.Sectors, TestHelper.GetRandomFlagsValue<Sector>())
+                .With(x => x.Sectors, Sector.Business)
                 .Create();
 
             _cache.Setup(x => x.RetrieveFromCache<CreatePledgeCacheItem>(_cacheKey.ToString())).ReturnsAsync(cacheItem);
@@ -144,7 +144,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         public async Task GetSectorViewModel_Sectors_Is_Correct()
         {
             var cacheItem = _fixture.Build<CreatePledgeCacheItem>()
-                    .With(x => x.Sectors, TestHelper.GetRandomFlagsValue<Sector>())
+                    .With(x => x.Sectors, Sector.Agriculture)
                     .Create();
 
             _cache.Setup(x => x.RetrieveFromCache<CreatePledgeCacheItem>(_cacheKey.ToString())).ReturnsAsync(cacheItem);
