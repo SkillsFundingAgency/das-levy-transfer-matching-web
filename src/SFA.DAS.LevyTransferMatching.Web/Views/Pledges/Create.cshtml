@@ -146,12 +146,28 @@
                     </ul>
                 </li>
             </ol>
-            <div class="govuk-button-group">
-                @*<button class="govuk-button" data-module="govuk-button">
-                    Continue
-                </button>*@
-                <a class="govuk-link" href="@Url.Action("index", "pledges", new { Model.EncodedAccountId })">Cancel pledge</a>
+            <div class="govuk-grid-column-full">
+                @if (Model.AmountSectionComplete)
+                {
+                    <div class="govuk-grid-row">
+                        <h2 class="govuk-heading-m">Submit your transfers pledge</h2>
+                        <p>I confirm that I want to make the above pledge so I can fund another business's apprenticeship training and assessment with my levy funds.</p>
+                        <form method="post">
+                            @Html.HiddenFor(x => x.Amount)
+                            @Html.HiddenFor(x => x.IsNamePublic)
+                            @Html.HiddenFor(x => x.Sectors)
+                            @Html.HiddenFor(x => x.JobRoles)
+                            @Html.HiddenFor(x => x.Levels)
+                            <button class="govuk-button" data-module="govuk-button">
+                                Submit my pledge
+                            </button>
+                        </form>
+
+                    </div>
+                }
+                <div class="govuk-grid-row">
+                    <a class="govuk-link" href="@Url.Action("index", "pledges", new { Model.EncodedAccountId })">Cancel pledge</a>
+                </div>
             </div>
         </div>
-    </div>
 </main>

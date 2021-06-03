@@ -8,7 +8,7 @@ using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
-    [DasAuthorize(EmployerUserRole.OwnerOrTransactor)]
+    //[DasAuthorize(EmployerUserRole.OwnerOrTransactor)]
     [Route("accounts/{EncodedAccountId}/pledges")]
     public class PledgesController : Controller
     {
@@ -30,6 +30,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         {
             var viewModel = await _orchestrator.GetCreateViewModel(request);
             return View(viewModel);
+        }
+
+        [HttpPost]
+        [Route("create")]
+        public async Task<IActionResult> Create(CreatePostRequest request)
+        {
+            //var viewModel = await _orchestrator.UpdateCacheItem(request);
+            await Task.Delay(1);
+            return RedirectToAction("Create", new { request.EncodedAccountId, request.CacheKey });
         }
 
         [Route("create/amount")]
