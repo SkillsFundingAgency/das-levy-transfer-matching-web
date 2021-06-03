@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 {
-    public class JobRolePostRequest
+    public class JobRolePostRequest : PledgesRequest
     {
-        public string EncodedAccountId { get; set; }
-        public Guid CacheKey { get; set; }
         public JobRole? JobRoles { get; set; }
     }
 }
