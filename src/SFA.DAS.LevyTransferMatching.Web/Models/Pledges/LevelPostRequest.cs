@@ -2,8 +2,8 @@
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 {
-    public class SectorPostRequest : PledgesRequest
+    public class LevelPostRequest : PledgesRequest
     {
-        public Sector? Sectors { get; set; }
+        public Level? Levels { get; set; }
     }
 }

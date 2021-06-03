@@ -148,5 +148,36 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             Assert.AreEqual("Create", actionResult.ActionName);
             Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
         }
+
+        [Test]
+        public async Task GET_Level_Returns_Expected_View_With_Expected_ViewModel()
+        {
+            // Arrange
+            var request = _fixture.Create<LevelRequest>();
+            _orchestrator.Setup(x => x.GetLevelViewModel(request)).ReturnsAsync(() => new LevelViewModel());
+
+            // Act
+            var viewResult = await _pledgesController.Level(request) as ViewResult;
+            var amountViewModel = viewResult?.Model as LevelViewModel;
+
+            // Assert
+            Assert.NotNull(viewResult);
+            Assert.NotNull(amountViewModel);
+        }
+
+        [Test]
+        public async Task POST_Level_Returns_Expected_Redirect()
+        {
+            // Arrange
+            var request = _fixture.Create<LevelViewModel>();
+
+            // Act
+            var actionResult = await _pledgesController.Level(request) as RedirectToActionResult;
+
+            // Assert
+            Assert.NotNull(actionResult);
+            Assert.AreEqual("Create", actionResult.ActionName);
+            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
+        }
     }
 }
