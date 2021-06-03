@@ -5,8 +5,10 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
+using SFA.DAS.LevyTransferMatching.Web.Models.Enums;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
+using SFA.DAS.LevyTransferMatching.Web.UnitTests.Helpers;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 {
@@ -78,6 +80,19 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         }
 
         [Test]
+        public async Task GetCreateViewModel_Sectors_Is_Retrieved_From_Cache()
+        {
+            var cacheItem = _fixture.Build<CreatePledgeCacheItem>()
+                .With(x => x.Sectors, Sector.Business)
+                .Create();
+
+            _cache.Setup(x => x.RetrieveFromCache<CreatePledgeCacheItem>(_cacheKey.ToString())).ReturnsAsync(cacheItem);
+
+            var result = await _orchestrator.GetCreateViewModel(new CreateRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
+            Assert.AreEqual(cacheItem.Sectors, result.Sectors);
+        }
+
+        [Test]
         public async Task GetAmountViewModel_EncodedId_Is_Correct()
         {
             var result = await _orchestrator.GetAmountViewModel(new AmountRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
@@ -109,6 +124,33 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             var result = await _orchestrator.GetAmountViewModel(new AmountRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
             Assert.AreEqual(cacheItem.IsNamePublic, result.IsNamePublic);
+        }
+
+        [Test]
+        public async Task GetSectorViewModel_EncodedId_Is_Correct()
+        {
+            var result = await _orchestrator.GetSectorViewModel(new SectorRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
+            Assert.AreEqual(_encodedAccountId, result.EncodedAccountId);
+        }
+
+        [Test]
+        public async Task GetSectorViewModel_CacheKey_Is_Correct()
+        {
+            var result = await _orchestrator.GetSectorViewModel(new SectorRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
+            Assert.AreEqual(_cacheKey, result.CacheKey);
+        }
+
+        [Test]
+        public async Task GetSectorViewModel_Sectors_Is_Correct()
+        {
+            var cacheItem = _fixture.Build<CreatePledgeCacheItem>()
+                    .With(x => x.Sectors, Sector.Agriculture)
+                    .Create();
+
+            _cache.Setup(x => x.RetrieveFromCache<CreatePledgeCacheItem>(_cacheKey.ToString())).ReturnsAsync(cacheItem);
+
+            var result = await _orchestrator.GetSectorViewModel(new SectorRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
+            Assert.AreEqual(cacheItem.Sectors, result.Sectors);
         }
     }
 }

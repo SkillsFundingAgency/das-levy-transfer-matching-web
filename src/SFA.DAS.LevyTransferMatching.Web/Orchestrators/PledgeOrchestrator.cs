@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
+using SFA.DAS.LevyTransferMatching.Web.Models.Enums;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
@@ -33,7 +34,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 EncodedAccountId = request.EncodedAccountId,
                 CacheKey = request.CacheKey,
                 Amount = cacheItem.Amount,
-                IsNamePublic = cacheItem.IsNamePublic
+                IsNamePublic = cacheItem.IsNamePublic,
+                Sectors = cacheItem.Sectors
             };
         }
 
@@ -50,12 +52,33 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
-        public async Task UpdateCacheItem(AmountPostRequest amountPostRequest)
+        public async Task<SectorViewModel> GetSectorViewModel(SectorRequest request)
         {
-            var cacheItem = await _cacheStorageService.RetrieveFromCache<CreatePledgeCacheItem>(amountPostRequest.CacheKey.ToString());
+            var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
 
-            cacheItem.Amount = Int32.Parse(amountPostRequest.Amount);
-            cacheItem.IsNamePublic = amountPostRequest.IsNamePublic.Value;
+            return new SectorViewModel
+            {
+                EncodedAccountId = request.EncodedAccountId,
+                CacheKey = request.CacheKey,
+                Sectors = cacheItem.Sectors
+            };
+        }
+
+        public async Task UpdateCacheItem(AmountPostRequest request)
+        {
+            var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
+
+            cacheItem.Amount = Int32.Parse(request.Amount);
+            cacheItem.IsNamePublic = request.IsNamePublic.Value;
+
+            await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
+        }
+
+        public async Task UpdateCacheItem(SectorPostRequest request)
+        {
+            var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
+
+            cacheItem.Sectors = request.Sectors;
 
             await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
         }
