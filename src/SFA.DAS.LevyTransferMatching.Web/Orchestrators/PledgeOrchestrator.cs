@@ -36,8 +36,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 Amount = cacheItem.Amount,
                 IsNamePublic = cacheItem.IsNamePublic,
                 Sectors = cacheItem.Sectors,
-                JobRoles = cacheItem.JobRoles
-                Levels = cacheItem.Levels,
+                JobRoles = cacheItem.JobRoles,
+                Levels = cacheItem.Levels
             };
         }
 
