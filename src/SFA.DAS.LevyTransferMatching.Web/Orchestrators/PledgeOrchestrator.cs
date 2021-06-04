@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountsService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgesService;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Enums;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
@@ -12,11 +14,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
     {
         private readonly ICacheStorageService _cacheStorageService;
         private readonly IAccountsService _accountsService;
+        private readonly IPledgesService _pledgesService;
 
-        public PledgeOrchestrator(ICacheStorageService cacheStorageService, IAccountsService accountsService)
+        public PledgeOrchestrator(ICacheStorageService cacheStorageService, IAccountsService accountsService, IPledgesService pledgesService)
         {
             _cacheStorageService = cacheStorageService;
             _accountsService = accountsService;
+            _pledgesService = pledgesService;
         }
 
         public IndexViewModel GetIndexViewModel(string encodedAccountId)
@@ -81,6 +85,20 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 CacheKey = request.CacheKey,
                 JobRoles = cacheItem.JobRoles
             };
+        }
+
+        public async Task SubmitPledge(CreateRequest request)
+        {
+            var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
+
+            var pledgeDto = new PledgeDto
+            {
+                AccountId = request.EncodedAccountId,
+                Amount = cacheItem.Amount,
+                IsNamePublic = cacheItem.IsNamePublic
+            };
+
+            await _pledgesService.PostPledge(pledgeDto);
         }
 
         public async Task UpdateCacheItem(AmountPostRequest request)

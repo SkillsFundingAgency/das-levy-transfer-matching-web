@@ -10,6 +10,7 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountsService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsersReadStore;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CosmosDb;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgesService;
 using SFA.DAS.LevyTransferMatching.Web.Authentication;
 using SFA.DAS.LevyTransferMatching.Web.Authorization;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
@@ -34,6 +35,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
             services.AddTransient<IPledgeOrchestrator, PledgeOrchestrator>();
 
             services.AddClient<IAccountsService>((c, s) => new AccountsService(c));
+            services.AddClient<IPledgesService>((c, s) => new PledgesService(c));
         }
 
         private static IServiceCollection AddClient<T>(

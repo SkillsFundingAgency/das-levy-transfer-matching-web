@@ -15,5 +15,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         Task UpdateCacheItem(JobRolePostRequest request);
         Task UpdateCacheItem(LevelPostRequest request);
         Task<LevelViewModel> GetLevelViewModel(LevelRequest request);
+        Task SubmitPledge(CreateRequest request);
     }
 }
