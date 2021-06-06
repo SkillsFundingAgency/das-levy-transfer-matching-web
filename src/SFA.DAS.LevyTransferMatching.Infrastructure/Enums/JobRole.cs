@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace SFA.DAS.LevyTransferMatching.Web.Models.Enums
+namespace SFA.DAS.LevyTransferMatching.Infrastructure.Enums
 {
     [Flags]
     public enum JobRole

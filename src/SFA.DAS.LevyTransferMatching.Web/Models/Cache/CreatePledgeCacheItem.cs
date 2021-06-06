@@ -1,5 +1,5 @@
 ﻿using System;
-using SFA.DAS.LevyTransferMatching.Web.Models.Enums;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Enums;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Cache
 {

@@ -1,4 +1,4 @@
-﻿using SFA.DAS.LevyTransferMatching.Web.Models.Enums;
+﻿using SFA.DAS.LevyTransferMatching.Infrastructure.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;

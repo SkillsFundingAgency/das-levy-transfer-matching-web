@@ -8,6 +8,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgesService
 {
     public interface IPledgesService
     {
-        public Task PostPledge(PledgeDto pledgeDto);
+        public Task PostPledge(PledgeDto pledgeDto, string encodedAccountId);
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Enums;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;
-using SFA.DAS.LevyTransferMatching.Web.Models.Enums;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 {

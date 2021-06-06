@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Enums;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountsService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgesService;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
-using SFA.DAS.LevyTransferMatching.Web.Models.Enums;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
@@ -91,14 +93,18 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
 
+            ValidateCacheItem(cacheItem);
+
             var pledgeDto = new PledgeDto
             {
-                AccountId = request.EncodedAccountId,
-                Amount = cacheItem.Amount,
-                IsNamePublic = cacheItem.IsNamePublic
+                Amount = (int)cacheItem.Amount,
+                IsNamePublic = (bool)cacheItem.IsNamePublic,
+                Sectors = GetFlagsAsList(cacheItem.Sectors.Value),
+                JobRoles = GetFlagsAsList(cacheItem.JobRoles.Value),
+                Levels = GetFlagsAsList(cacheItem.Levels.Value)
             };
 
-            await _pledgesService.PostPledge(pledgeDto);
+            await _pledgesService.PostPledge(pledgeDto, request.EncodedAccountId);
         }
 
         public async Task UpdateCacheItem(AmountPostRequest request)
@@ -161,6 +167,24 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             }
 
             return result;
+        }
+
+        private List<T> GetFlagsAsList<T>(T sectors)
+        {
+            return sectors.ToString().Split(", ").Select(x => (T)Enum.Parse(typeof(T), x)).ToList();
+        }
+
+        private void ValidateCacheItem(CreatePledgeCacheItem createPledgeCacheItem)
+        {
+            if (!createPledgeCacheItem.Amount.HasValue || !createPledgeCacheItem.IsNamePublic.HasValue)
+                throw new Exception("Cache item must have value");
+
+            if (!createPledgeCacheItem.Sectors.HasValue)
+                createPledgeCacheItem.Sectors = Sector.None;
+            if (!createPledgeCacheItem.JobRoles.HasValue)
+                createPledgeCacheItem.JobRoles = JobRole.None;
+            if (!createPledgeCacheItem.Levels.HasValue)
+                createPledgeCacheItem.Levels = Level.None;
         }
     }
 }
