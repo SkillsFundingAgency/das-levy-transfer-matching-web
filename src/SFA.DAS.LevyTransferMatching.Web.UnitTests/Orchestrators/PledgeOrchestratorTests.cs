@@ -83,13 +83,26 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         public async Task GetCreateViewModel_Sectors_Is_Retrieved_From_Cache()
         {
             var cacheItem = _fixture.Build<CreatePledgeCacheItem>()
-                .With(x => x.Sectors, TestHelper.GetRandomFlagsValue<Sector>())
+                .With(x => x.Sectors, Sector.Business)
                 .Create();
 
             _cache.Setup(x => x.RetrieveFromCache<CreatePledgeCacheItem>(_cacheKey.ToString())).ReturnsAsync(cacheItem);
 
             var result = await _orchestrator.GetCreateViewModel(new CreateRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
             Assert.AreEqual(cacheItem.Sectors, result.Sectors);
+        }
+
+        [Test]
+        public async Task GetCreateViewModel_JobRoles_Is_Retrieved_From_Cache()
+        {
+            var cacheItem = _fixture.Build<CreatePledgeCacheItem>()
+                .With(x => x.JobRoles, TestHelper.GetRandomFlagsValue<JobRole>())
+                .Create();
+
+            _cache.Setup(x => x.RetrieveFromCache<CreatePledgeCacheItem>(_cacheKey.ToString())).ReturnsAsync(cacheItem);
+
+            var result = await _orchestrator.GetCreateViewModel(new CreateRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
+            Assert.AreEqual(cacheItem.JobRoles, result.JobRoles);
         }
 
         [Test]
@@ -144,7 +157,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         public async Task GetSectorViewModel_Sectors_Is_Correct()
         {
             var cacheItem = _fixture.Build<CreatePledgeCacheItem>()
-                    .With(x => x.Sectors, TestHelper.GetRandomFlagsValue<Sector>())
+                    .With(x => x.Sectors, Sector.Agriculture)
                     .Create();
 
             _cache.Setup(x => x.RetrieveFromCache<CreatePledgeCacheItem>(_cacheKey.ToString())).ReturnsAsync(cacheItem);
@@ -178,6 +191,33 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             var result = await _orchestrator.GetLevelViewModel(new LevelRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
             Assert.AreEqual(cacheItem.Levels, result.Levels);
+        }
+
+        [Test]
+        public async Task GetJobRoleViewModel_EncodedId_Is_Correct()
+        {
+            var result = await _orchestrator.GetJobRoleViewModel(new JobRoleRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
+            Assert.AreEqual(_encodedAccountId, result.EncodedAccountId);
+        }
+
+        [Test]
+        public async Task GetJobRoleViewModel_CacheKey_Is_Correct()
+        {
+            var result = await _orchestrator.GetJobRoleViewModel(new JobRoleRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
+            Assert.AreEqual(_cacheKey, result.CacheKey);
+        }
+
+        [Test]
+        public async Task GetJobRoleViewModel_JobRoles_Is_Correct()
+        {
+            var cacheItem = _fixture.Build<CreatePledgeCacheItem>()
+                    .With(x => x.JobRoles, TestHelper.GetRandomFlagsValue<JobRole>())
+                    .Create();
+
+            _cache.Setup(x => x.RetrieveFromCache<CreatePledgeCacheItem>(_cacheKey.ToString())).ReturnsAsync(cacheItem);
+
+            var result = await _orchestrator.GetJobRoleViewModel(new JobRoleRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
+            Assert.AreEqual(cacheItem.JobRoles, result.JobRoles);
         }
     }
 }

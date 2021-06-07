@@ -71,7 +71,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
                 if (ShowDescription)
                 {
                     var description = enumValue.GetDescription();
-                    if (!String.IsNullOrWhiteSpace(description))
+                    if (!string.IsNullOrWhiteSpace(description))
                     {
                         content.Append($"<span class=\"{DescriptionClass}\" for=\"{id}\">{description}</span>");
                     }

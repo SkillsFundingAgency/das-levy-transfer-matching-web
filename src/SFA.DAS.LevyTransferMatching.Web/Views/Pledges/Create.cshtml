@@ -107,12 +107,21 @@
                         </li>
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="#">
+                                <a class="govuk-link" href="@Url.Action("JobRole", new JobRoleRequest{EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey})">
                                     Type of job role
                                 </a>
                             </span>
                             <span class="das-task-list__task-tag">
-                                All apprenticeship job roles
+
+                                @if (Model.AreAllJobRolesSelected)
+                                {
+                                    <text>All apprenticeship job roles</text>
+                                }
+                                else
+                                {
+                                    <flags-unordered-list asp-for="JobRoles" class="govuk-list das-!-text-align-right"></flags-unordered-list>
+                                }
+
                             </span>
                         </li>
                         <li class="das-task-list__item">
