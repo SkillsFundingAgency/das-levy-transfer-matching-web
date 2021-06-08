@@ -86,5 +86,67 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             Assert.AreEqual("Create", actionResult.ActionName);
             Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
         }
+
+        [Test]
+        public async Task GET_Sector_Returns_Expected_View_With_Expected_ViewModel()
+        {
+            // Arrange
+            var request = _fixture.Create<SectorRequest>();
+            _orchestrator.Setup(x => x.GetSectorViewModel(request)).ReturnsAsync(() => new SectorViewModel());
+
+            // Act
+            var viewResult = await _pledgesController.Sector(request) as ViewResult;
+            var amountViewModel = viewResult?.Model as SectorViewModel;
+
+            // Assert
+            Assert.NotNull(viewResult);
+            Assert.NotNull(amountViewModel);
+        }
+
+        [Test]
+        public async Task POST_Sector_Returns_Expected_Redirect()
+        {
+            // Arrange
+            var request = _fixture.Create<SectorPostRequest>();
+
+            // Act
+            var actionResult = await _pledgesController.Sector(request) as RedirectToActionResult;
+
+            // Assert
+            Assert.NotNull(actionResult);
+            Assert.AreEqual("Create", actionResult.ActionName);
+            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
+        }
+
+        [Test]
+        public async Task GET_JobRole_Returns_Expected_View_With_Expected_ViewModel()
+        {
+            // Arrange
+            var request = _fixture.Create<JobRoleRequest>();
+            _orchestrator.Setup(x => x.GetJobRoleViewModel(request)).ReturnsAsync(() => new JobRoleViewModel());
+
+            // Act
+            var viewResult = await _pledgesController.JobRole(request) as ViewResult;
+            var amountViewModel = viewResult?.Model as JobRoleViewModel;
+
+            // Assert
+            Assert.NotNull(viewResult);
+            Assert.NotNull(amountViewModel);
+        }
+
+        [Test]
+        public async Task POST_JobRole_Returns_Expected_Redirect()
+        {
+            // Arrange
+            var request = _fixture.Create<JobRolePostRequest>();
+
+            // Act
+            var actionResult = await _pledgesController.JobRole(request) as RedirectToActionResult;
+
+            // Assert
+            Assert.NotNull(actionResult);
+            Assert.AreEqual("Create", actionResult.ActionName);
+            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
+        }
     }
 }

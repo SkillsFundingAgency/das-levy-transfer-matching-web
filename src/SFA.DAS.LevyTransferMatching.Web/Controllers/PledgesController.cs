@@ -46,5 +46,35 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             await _orchestrator.UpdateCacheItem(request);
             return RedirectToAction("Create", new { request.EncodedAccountId, request.CacheKey });
         }
+
+        [Route("create/sector")]
+        public async Task<IActionResult> Sector(SectorRequest request)
+        {
+            var viewModel = await _orchestrator.GetSectorViewModel(request);
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [Route("create/sector")]
+        public async Task<IActionResult> Sector(SectorPostRequest request)
+        {
+            await _orchestrator.UpdateCacheItem(request);
+            return RedirectToAction("Create", new { request.EncodedAccountId, request.CacheKey });
+        }
+
+        [Route("create/jobrole")]
+        public async Task<IActionResult> JobRole(JobRoleRequest request)
+        {
+            var viewModel = await _orchestrator.GetJobRoleViewModel(request);
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [Route("create/jobrole")]
+        public async Task<IActionResult> JobRole(JobRolePostRequest request)
+        {
+            await _orchestrator.UpdateCacheItem(request);
+            return RedirectToAction("Create", new { request.EncodedAccountId, request.CacheKey });
+        }
     }
 }

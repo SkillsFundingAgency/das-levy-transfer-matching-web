@@ -1,0 +1,49 @@
+﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.JobRoleViewModel
+@{
+    ViewData["Title"] = "Pledges";
+}
+
+<a href="@Url.Action("Create", "Pledges", new { Model.EncodedAccountId, Model.CacheKey })" class="govuk-back-link">Back</a>
+
+
+<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
+    <partial name="_ValidationSummary" />
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-m">Find a business to transfer your levy to</span>
+            <h1 class="govuk-heading-xl">Choose the types of job role you'd like to fund</h1>
+
+            <p>Choose the types of job role you'd like to fund apprentices to train towards.</p>
+            <details class="govuk-details" data-module="govuk-details">
+                <summary class="govuk-details__summary">
+                    <span class="govuk-details__summary-text">
+                        Example
+                    </span>
+                </summary>
+                <div class="govuk-details__text">
+                    For example, a software developer apprentice working in a bank, works within the legal, finance and accounting sector, but their type of job role is digital.
+                </div>
+            </details>
+
+            <form method="post">
+
+                <div class="govuk-form-group" das-highlight-error-for="JobRoles" error-class="govuk-form-group--error">
+                    <fieldset class="govuk-fieldset" data-checkboxes-select-all="true" data-checkboxes-select-all-label="All categories">
+
+                        <span das-validation-for="JobRoles" class="govuk-error-message"></span>
+                        <flags-checkbox-list asp-for="JobRoles" show-description="true"></flags-checkbox-list>
+
+                    </fieldset>
+                </div>
+
+                <div class="govuk-button-group">
+                    <button id="pledge-criteria-continue" class="govuk-button" data-module="govuk-button">
+                        Continue
+                    </button>
+                    <a href="@Url.Action("Create", "Pledges", new { Model.EncodedAccountId, Model.CacheKey })" class="govuk-link govuk-back-link">Back</a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</main>

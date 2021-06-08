@@ -1,4 +1,6 @@
-﻿@using SFA.DAS.LevyTransferMatching.Web.Models.Pledges
+﻿@using SFA.DAS.LevyTransferMatching.Web.Extensions
+@using SFA.DAS.LevyTransferMatching.Web.Models.Enums
+@using SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 @model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.CreateViewModel
 
 @{
@@ -88,22 +90,40 @@
                         </li>
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="#">
+                                <a class="govuk-link" href="@Url.Action("Sector", new SectorRequest{EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey})">
                                     Sector
                                 </a>
                             </span>
                             <span class="das-task-list__task-tag">
-                                All sectors and industries
+
+                                @if (Model.AreAllSectorsSelected)
+                                {
+                                    <text>All sectors and industries</text>
+                                }
+                                else
+                                {
+                                    <flags-unordered-list asp-for="Sectors" class="govuk-list das-!-text-align-right"></flags-unordered-list>
+                                }
+
                             </span>
                         </li>
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="#">
+                                <a class="govuk-link" href="@Url.Action("JobRole", new JobRoleRequest{EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey})">
                                     Type of job role
                                 </a>
                             </span>
                             <span class="das-task-list__task-tag">
-                                All apprenticeship job roles
+
+                                @if (Model.AreAllJobRolesSelected)
+                                {
+                                    <text>All apprenticeship job roles</text>
+                                }
+                                else
+                                {
+                                    <flags-unordered-list asp-for="JobRoles" class="govuk-list das-!-text-align-right"></flags-unordered-list>
+                                }
+
                             </span>
                         </li>
                         <li class="das-task-list__item">
