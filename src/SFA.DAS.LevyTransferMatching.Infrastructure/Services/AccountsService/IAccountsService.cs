@@ -4,6 +4,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountsService
 {
     public interface IAccountsService
     {
-        public Task<int> GetRemainingTransferAllowance(string encodedAccountId);
+        public Task<double> GetRemainingTransferAllowance(string encodedAccountId);
     }
 }

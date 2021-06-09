@@ -17,7 +17,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountsService
             _client = client;
         }
 
-        public async Task<int> GetRemainingTransferAllowance(string encodedAccountId)
+        public async Task<double> GetRemainingTransferAllowance(string encodedAccountId)
         {
             var response = await _client.GetAsync($"accounts/{encodedAccountId}");
             response.EnsureSuccessStatusCode();

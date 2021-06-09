@@ -6,6 +6,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Dto
 {
     public class AccountDto
     {
-        public int RemainingTransferAllowance { get; set; }
+        public double RemainingTransferAllowance { get; set; }
     }
 }
