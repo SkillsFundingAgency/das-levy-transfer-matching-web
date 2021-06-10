@@ -3,6 +3,7 @@ using AutoFixture;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.EmployerUrlHelper;
 using SFA.DAS.LevyTransferMatching.Web.Controllers;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
@@ -21,7 +22,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         {
             _fixture = new Fixture();
             _orchestrator = new Mock<IPledgeOrchestrator>();
-            _pledgesController = new PledgesController(_orchestrator.Object);
+            _pledgesController = new PledgesController(Mock.Of<ILinkGenerator>(),_orchestrator.Object);
         }
 
         [Test]

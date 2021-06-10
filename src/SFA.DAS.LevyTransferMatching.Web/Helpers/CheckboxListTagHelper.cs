@@ -1,13 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Tags;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Helpers
 {
-    public class FlagsCheckboxListTagHelper : TagHelper
+    public class CheckboxListTagHelper : TagHelper
     {
         private const string ItemClass = "govuk-checkboxes__item";
         private const string InputClass = "govuk-checkboxes__input";
@@ -17,6 +21,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
 
         [HtmlAttributeName("asp-for")]
         public ModelExpression Property { get; set; }
+
+        [HtmlAttributeName("source")]
+        public List<Tag> Source { get; set; }
 
         [HtmlAttributeName("show-description")]
         public bool ShowDescription { get; set; }
@@ -32,48 +39,42 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
             var content = new StringBuilder();
             content.Append($"<div class=\"{CssClass}\">");
 
-            var modelType = Nullable.GetUnderlyingType(Property.Metadata.ModelType) ?? Property.Model.GetType();
-            var zeroValue = Enum.Parse(modelType, "0");
-
-            Enum attemptedValue = null;
+            List<string> attemptedValue = null;
 
             if (ViewContext.ModelState.ContainsKey(Property.Name))
             {
-                var modelStateEntry = ViewContext.ModelState[Property.Name];
+                  var modelStateEntry = ViewContext.ModelState[Property.Name];
                 if (!string.IsNullOrWhiteSpace(modelStateEntry.AttemptedValue))
                 {
-                    attemptedValue = Enum.Parse(modelType, modelStateEntry.AttemptedValue) as Enum;
+                    attemptedValue = modelStateEntry.AttemptedValue.Split(",").ToList();
                 }
             }
 
             if (attemptedValue == null)
             {
-                attemptedValue = Property.Model as Enum;
+                attemptedValue = Property.Model as List<string>;
             }
 
-
             var i = 0;
-            foreach (Enum enumValue in Enum.GetValues(modelType))
+            foreach (var tag in Source)
             {
-                if (enumValue.Equals(zeroValue)) continue;
                 i++;
-                var isChecked = attemptedValue != null && attemptedValue.HasFlag(enumValue);
+                var isChecked = attemptedValue != null && attemptedValue.Contains(tag.TagId);
                 var checkedValue = isChecked ? " checked " : "";
 
                 var id = i == 1 ? Property.Name : $"{Property.Name}-{i}";
 
                 content.Append($"<div class=\"{ItemClass}\">");
 
-                content.Append($"<input id=\"{id}\" type = \"checkbox\"{checkedValue}class=\"{InputClass}\" name=\"{Property.Name}\" value=\"{enumValue}\">");
+                content.Append($"<input id=\"{id}\" type = \"checkbox\"{checkedValue}class=\"{InputClass}\" name=\"{Property.Name}\" value=\"{tag.TagId}\">");
 
-                content.Append($"<label class=\"{LabelClass}\" for=\"{id}\">{enumValue.GetDisplayName()}</label>");
+                content.Append($"<label class=\"{LabelClass}\" for=\"{id}\">{tag.Description}</label>");
 
                 if (ShowDescription)
                 {
-                    var description = enumValue.GetDescription();
-                    if (!string.IsNullOrWhiteSpace(description))
+                    if (!string.IsNullOrWhiteSpace(tag.ExtendedDescription))
                     {
-                        content.Append($"<span class=\"{DescriptionClass}\" for=\"{id}\">{description}</span>");
+                        content.Append($"<span class=\"{DescriptionClass}\" for=\"{id}\">{ tag.ExtendedDescription}</span>");
                     }
                 }
 

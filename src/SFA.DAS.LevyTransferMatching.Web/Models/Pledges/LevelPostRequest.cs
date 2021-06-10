@@ -1,9 +1,9 @@
-﻿using SFA.DAS.LevyTransferMatching.Infrastructure.Enums;
+﻿using System.Collections.Generic;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 {
     public class LevelPostRequest : PledgesRequest
     {
-        public Level? Levels { get; set; }
+        public List<string> Levels { get; set; }
     }
 }

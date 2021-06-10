@@ -1,7 +1,4 @@
-﻿using SFA.DAS.LevyTransferMatching.Infrastructure.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Dto
 {
@@ -9,8 +6,8 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Dto
     {
         public int Amount { get; set; }
         public bool IsNamePublic { get; set; }
-        public List<Sector> Sectors { get; set; }
-        public List<JobRole> JobRoles { get; set; }
-        public List<Level> Levels { get; set; }
+        public List<string> Sectors { get; set; }
+        public List<string> JobRoles { get; set; }
+        public List<string> Levels { get; set; }
     }
 }

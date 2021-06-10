@@ -16,6 +16,7 @@ using SFA.DAS.LevyTransferMatching.Web.Authorization;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using System;
 using System.Net.Http;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.TagService;
 
 namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
 {
@@ -36,6 +37,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
 
             services.AddClient<IAccountsService>((c, s) => new AccountsService(c));
             services.AddClient<IPledgesService>((c, s) => new PledgesService(c));
+            services.AddClient<ITagService>((c, s) => new TagService(c));
         }
 
         private static IServiceCollection AddClient<T>(
