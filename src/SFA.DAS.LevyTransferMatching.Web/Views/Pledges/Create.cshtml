@@ -1,6 +1,4 @@
-﻿@using SFA.DAS.LevyTransferMatching.Web.Extensions
-@using SFA.DAS.LevyTransferMatching.Web.Models.Enums
-@using SFA.DAS.LevyTransferMatching.Web.Models.Pledges
+﻿@using SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 @model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.CreateViewModel
 
 @{
@@ -128,12 +126,21 @@
                         </li>
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="#">
+                                <a class="govuk-link" href="@Url.Action("Level", new LevelRequest { EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey })">
                                     Level
                                 </a>
                             </span>
                             <span class="das-task-list__task-tag">
-                                All qualification levels
+
+                                @if (Model.AreAllLevelsSelected)
+                                {
+                                    <text>All qualification levels</text>
+                                }
+                                else
+                                {
+                                    <flags-unordered-list asp-for="Levels" class="govuk-list das-!-text-align-right"></flags-unordered-list>
+                                }
+
                             </span>
                         </li>
                     </ul>
