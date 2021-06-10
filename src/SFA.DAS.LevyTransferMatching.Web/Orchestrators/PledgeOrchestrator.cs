@@ -114,9 +114,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             {
                 Amount = cacheItem.Amount.Value,
                 IsNamePublic = cacheItem.IsNamePublic.Value,
-                Sectors = cacheItem.Sectors,
-                JobRoles = cacheItem.JobRoles,
-                Levels = cacheItem.Levels
+                Sectors = cacheItem.Sectors ?? new List<string>(),
+                JobRoles = cacheItem.JobRoles ?? new List<string>(),
+                Levels = cacheItem.Levels ?? new List<string>()
             };
 
             await _pledgesService.PostPledge(pledgeDto, request.EncodedAccountId);
