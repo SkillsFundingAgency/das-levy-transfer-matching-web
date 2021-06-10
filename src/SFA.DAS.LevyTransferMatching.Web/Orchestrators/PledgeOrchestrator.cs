@@ -39,7 +39,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 Amount = cacheItem.Amount,
                 IsNamePublic = cacheItem.IsNamePublic,
                 Sectors = cacheItem.Sectors,
-                JobRoles = cacheItem.JobRoles
+                JobRoles = cacheItem.JobRoles,
+                Levels = cacheItem.Levels,
             };
         }
 
@@ -99,6 +100,27 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             cacheItem.Sectors = request.Sectors;
 
             await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
+        }
+
+        public async Task UpdateCacheItem(LevelPostRequest request)
+        {
+            var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
+
+            cacheItem.Levels = request.Levels;
+
+            await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
+        }
+
+        public async Task<LevelViewModel> GetLevelViewModel(LevelRequest request)
+        {
+            var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
+
+            return new LevelViewModel
+            {
+                EncodedAccountId = request.EncodedAccountId,
+                CacheKey = request.CacheKey,
+                Levels = cacheItem.Levels,
+            };
         }
 
         public async Task UpdateCacheItem(JobRolePostRequest request)

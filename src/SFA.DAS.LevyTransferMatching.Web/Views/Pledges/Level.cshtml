@@ -1,0 +1,39 @@
+﻿@using SFA.DAS.LevyTransferMatching.Web.Models.Pledges
+@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.LevelViewModel
+@{
+    ViewData["Title"] = "Pledges";
+}
+
+<a href="@Url.Action("Create", "Pledges", new CreateRequest { EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey })" class="govuk-back-link">Back</a>
+
+<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
+    <partial name="_ValidationSummary" />
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <span class="govuk-caption-m">Find a business to transfer your levy to</span>
+            <h1 class="govuk-heading-xl">Choose the levels of apprenticeship training you'd like to fund</h1>
+
+            <form method="post">
+
+                <div class="govuk-form-group" das-highlight-error-for="Levels" error-class="govuk-form-group--error">
+                    <fieldset class="govuk-fieldset" data-checkboxes-select-all="true" data-checkboxes-select-all-label="All levels">
+
+                        <span das-validation-for="Levels" class="govuk-error-message"></span>
+                        <flags-checkbox-list asp-for="Levels" show-description="false"></flags-checkbox-list>
+
+                    </fieldset>
+                </div>
+
+                <div class="govuk-button-group">
+                    <button class="govuk-button pledge-level-continue" data-module="govuk-button" id="pledge-level-continue">Continue</button>
+
+                    <a href="@Url.Action("Create", "Pledges", new CreateRequest { EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey })" class="govuk-link govuk-link--no-visited-state">Back</a>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+</main>
