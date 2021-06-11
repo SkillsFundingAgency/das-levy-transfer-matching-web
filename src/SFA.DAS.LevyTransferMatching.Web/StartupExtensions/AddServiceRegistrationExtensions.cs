@@ -37,7 +37,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
 
             services.AddClient<IAccountsService>((c, s) => new AccountsService(c));
             services.AddClient<IPledgesService>((c, s) => new PledgesService(c));
-            services.AddClient<ITagService>((c, s) => new TagService(c));
+            services.AddClient<ITagService>((c, s) => new TagService(c, s.GetService<ICacheStorageService>()));
         }
 
         private static IServiceCollection AddClient<T>(
