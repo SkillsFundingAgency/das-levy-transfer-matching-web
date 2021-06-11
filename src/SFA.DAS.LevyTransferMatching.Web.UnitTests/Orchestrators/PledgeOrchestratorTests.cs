@@ -265,7 +265,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
         [Test]
         public async Task GetLevelViewModel_LevelOptions_Are_Populated()
-        {
+        { 
             var result = await _orchestrator.GetLevelViewModel(new LevelRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
             Assert.AreEqual(_levels, result.LevelOptions);
         }
