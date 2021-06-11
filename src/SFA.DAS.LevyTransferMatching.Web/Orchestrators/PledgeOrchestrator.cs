@@ -120,6 +120,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
 
             await _pledgesService.PostPledge(pledgeDto, request.EncodedAccountId);
+            await _cacheStorageService.DeleteFromCache(request.CacheKey.ToString());
         }
 
         public async Task UpdateCacheItem(AmountPostRequest request)
