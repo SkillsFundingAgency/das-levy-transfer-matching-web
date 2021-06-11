@@ -146,19 +146,22 @@
                     </ul>
                 </li>
             </ol>
-            <div class="govuk-grid-column-full">
-                @if (Model.AmountSectionComplete)
-                {
+        <div class="govuk-grid-column-full">
+            @if (Model.AmountSectionComplete)
+            {
+                <form method="post">
                     <div class="govuk-grid-row">
                         <h2 class="govuk-heading-m">Submit your transfers pledge</h2>
                         <p>I confirm that I want to make the above pledge so I can fund another business's apprenticeship training and assessment with my levy funds.</p>
-                        <a class="govuk-button" data-module="govuk-button" href="@Url.Action("Submit", "Pledges", new CreateRequest { EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey })">Submit my pledge</a>
+                        <button class="govuk-button pledge-level-continue" data-module="govuk-button" id="pledge-create-submit">Submit my pledge</button>
                     </div>
-                }
-                <div class="govuk-grid-row">
-                    <a class="govuk-link" href="@Url.Action("index", "pledges", new { Model.EncodedAccountId })">Cancel pledge</a>
-                </div>
+                </form>
+            }
+            <div class="govuk-grid-row">
+                <a class="govuk-link" href="@Url.Action("index", "pledges", new { Model.EncodedAccountId })">Cancel pledge</a>
             </div>
+        </div>
+
         </div>
     </div>
 </main>

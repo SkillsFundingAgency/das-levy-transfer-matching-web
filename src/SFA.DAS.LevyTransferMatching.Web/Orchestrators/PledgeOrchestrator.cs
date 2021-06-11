@@ -101,7 +101,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
-        public async Task SubmitPledge(CreateRequest request)
+        public async Task SubmitPledge(CreatePostRequest request)
         {
             var cacheItem = await _cacheStorageService.RetrieveFromCache<CreatePledgeCacheItem>(request.CacheKey.ToString());
 
