@@ -30,7 +30,14 @@
                             </h2>
                         </div>
                         <div class="govuk-grid-column-one-third">
-                            <strong class="govuk-tag govuk-tag--grey app-task-list__group-header-tag">Not started</strong>
+                            @if (Model.AmountSectionComplete)
+                            {
+                                <strong class="govuk-tag app-task-list__group-header-tag">Completed</strong>
+                            }
+                            else
+                            {
+                                <strong class="govuk-tag govuk-tag--grey app-task-list__group-header-tag">Not started</strong>
+                            }
                         </div>
                     </div>
                     <ul class="das-task-list__items">
