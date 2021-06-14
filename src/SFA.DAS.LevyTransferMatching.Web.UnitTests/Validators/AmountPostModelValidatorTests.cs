@@ -23,13 +23,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators
         [TestCase("")]
         [TestCase(null)]
         [TestCase("0")]
-        [TestCase("5000001")]
+        [TestCase("6001")]
         public void Validator_Returns_Expected_Errors_For_Invalid_Amount(string amount)
         {
             //Arrange
             AmountViewModel amountViewModel = new AmountViewModel()
             {
-                Amount = amount
+                Amount = amount,
+                RemainingTransferAllowance = "6,000"
             };
 
             //Act
@@ -37,18 +38,19 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators
 
             //Assert
             result.ShouldHaveValidationErrorFor(x => x.Amount)
-                .WithErrorMessage("Enter a number between 1 and 5,000,000");
+                .WithErrorMessage("Enter a number between 1 and 6,000");
         }
 
         [TestCase("1")]
-        [TestCase("1000000")]
-        [TestCase("5000000")]
+        [TestCase("3,000")]
+        [TestCase("6000")]
         public void Validator_Returns_No_Errors_For_Valid_Amount(string amount)
         {
             //Arrange
             AmountPostRequest amountPostRequest = new AmountPostRequest()
             {
-                Amount = amount
+                Amount = amount,
+                RemainingTransferAllowance = "6,000"
             };
 
             //Act
