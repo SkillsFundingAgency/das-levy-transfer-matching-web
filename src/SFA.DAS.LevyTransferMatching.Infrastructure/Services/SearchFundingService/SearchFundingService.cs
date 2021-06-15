@@ -19,7 +19,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.SearchFundingServ
 
         public async Task<List<OpportunityDto>> GetAllOpportunities()
         {
-            var response = await _client.GetAsync($"accounts/ABC123/pledges");
+            var response = await _client.GetAsync($"pledges");
             response.EnsureSuccessStatusCode();
 
             return JsonConvert.DeserializeObject<List<OpportunityDto>>(await response.Content.ReadAsStringAsync());
