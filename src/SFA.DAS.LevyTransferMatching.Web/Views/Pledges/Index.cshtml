@@ -1,0 +1,29 @@
+﻿@using SFA.DAS.LevyTransferMatching.Web.Models.Pledges
+@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.IndexViewModel
+
+@{
+    ViewData["Title"] = "Pledges";
+}
+
+<a href="@Url.FinanceLink($"accounts/{Model.EncodedAccountId}/transfers")" class="govuk-back-link">Back</a>
+<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">Find a business to transfer your levy to by creating a transfers pledge</h1>
+            <p>To help you find another business to transfer your levy funding to, you can:</p>
+            <ol class="govuk-list govuk-list--number">
+                <li>Set the criteria of how you want to spend your levy</li>
+                <li>Create a public funding pledge that is searchable online</li>
+                <li>Review and approve applications</li>
+                <li>Connect with your chosen business and confirm details of the transfer</li>
+            </ol>
+            <p>
+                <br />
+            </p>
+            <div class="govuk-button-group">
+                <a class="govuk-button" data-module="govuk-button" href="@Url.Action("Create", "Pledges", new CreateRequest { EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey })">Continue</a>
+                <a class="govuk-link" href="@Url.FinanceLink($"accounts/{Model.EncodedAccountId}/transfers")">Cancel</a>
+            </div>
+        </div>
+    </div>
+</main>

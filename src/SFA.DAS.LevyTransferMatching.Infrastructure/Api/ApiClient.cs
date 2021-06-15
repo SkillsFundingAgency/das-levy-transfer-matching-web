@@ -15,7 +15,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Api
         {
             _httpClient = httpClient;
             _config = config;
-            _httpClient.BaseAddress = new Uri(_config.BaseUrl);
+            _httpClient.BaseAddress = new Uri(_config.ApiBaseUrl);
         }
 
         public async Task Ping()
@@ -36,7 +36,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Api
 
         private void AddHeaders()
         {
-            _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _config.Key);
+            _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _config.SubscriptionKey);
             _httpClient.DefaultRequestHeaders.Add("X-Version", "1");
         }
     }

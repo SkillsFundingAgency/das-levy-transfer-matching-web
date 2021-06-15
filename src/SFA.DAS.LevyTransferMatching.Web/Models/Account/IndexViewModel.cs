@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.LevyTransferMatching.Web.Models
+﻿namespace SFA.DAS.LevyTransferMatching.Web.Models.Account
 {
     public class IndexViewModel
     {

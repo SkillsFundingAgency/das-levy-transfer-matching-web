@@ -11,6 +11,7 @@ using Microsoft.Extensions.Hosting;
 using SFA.DAS.Authorization.Mvc.Extensions;
 using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.Employer.Shared.UI;
+using SFA.DAS.EmployerUrlHelper.DependencyResolution;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
 using SFA.DAS.LevyTransferMatching.Web.StartupExtensions;
 using SFA.DAS.Validation.Mvc.Extensions;
@@ -66,9 +67,7 @@ namespace SFA.DAS.LevyTransferMatching.Web
             {
                 options.AddAuthorization();
                 options.AddValidation();
-                options.Filters.Add<ValidateModelStateFilter>(int.MaxValue);
                 options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
-
             })
             .AddControllersAsServices()
             .SetDefaultNavigationSection(NavigationSection.AccountsFinance)
@@ -85,6 +84,7 @@ namespace SFA.DAS.LevyTransferMatching.Web
             services.AddEncodingService(Configuration);
             services.AddServiceRegistrations();
             services.AddEmployerSharedUI(Configuration);
+            services.AddEmployerUrlHelper();
             services.AddEmployerAccountsApi(Configuration, _environment);
 
             #if DEBUG

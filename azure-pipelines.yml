@@ -20,12 +20,12 @@ resources:
   - repository: das-platform-building-blocks
     type: github
     name: SkillsFundingAgency/das-platform-building-blocks
-    ref: refs/tags/0.3.13
+    ref: refs/tags/0.3.16
     endpoint: GitHub (SFA)
   - repository: das-platform-automation
     type: github
     name: SkillsFundingAgency/das-platform-automation
-    ref: refs/tags/4.3.5
+    ref: refs/tags/4.4.0
     endpoint: GitHub (SFA)
   pipelines:
   - pipeline: das-employer-config
@@ -66,7 +66,7 @@ stages:
   jobs:
   - template: pipeline-templates/job/deploy.yml
     parameters:
-      Environment: DEV
+      Environment: TEST
       ServiceConnection: SFA-DAS-DevTest-ARM
 
 - stage: Deploy_TEST2
@@ -79,7 +79,7 @@ stages:
   jobs:
   - template: pipeline-templates/job/deploy.yml
     parameters:
-      Environment: DEV
+      Environment: TEST2
       ServiceConnection: SFA-DAS-DevTest-ARM
 
 - stage: Deploy_PP
@@ -92,5 +92,5 @@ stages:
   jobs:
   - template: pipeline-templates/job/deploy.yml
     parameters:
-      Environment: DEV
+      Environment: PP
       ServiceConnection: SFA-DIG-PreProd-ARM
