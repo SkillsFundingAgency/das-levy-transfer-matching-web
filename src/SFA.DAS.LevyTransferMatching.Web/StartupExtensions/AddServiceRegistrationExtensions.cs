@@ -42,8 +42,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
         {
             serviceCollection.AddTransient(s =>
             {
-                var settings = s.GetService<IOptions<LevyTransferMatchingApi>>().Value;
-                settings.ApiVersion = "1";
+                var settings = s.GetService<LevyTransferMatchingApi>();
 
                 var clientBuilder = new HttpClientBuilder()
                     .WithDefaultHeaders()
