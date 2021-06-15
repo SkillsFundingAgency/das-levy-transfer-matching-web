@@ -12,7 +12,7 @@
                 <h1 class="govuk-heading-xl">
                     Search funding opportunities
                 </h1>
-                <p>Large businesses that want to fund the apprenticeships of other businesses can set funding criteria to sdhow the training they want to support.</p>
+                <p>Large businesses that want to fund the apprenticeships of other businesses can set funding criteria to show the training they want to support.</p>
                 <details class="govuk-details" data-module="govuk-details">
                     <summary class="govuk-details__summary">
                         <span class="govuk-details__summary-text">Examples</span>
@@ -29,14 +29,15 @@
                 <p>You can use the 4 criteria below to see which funding opportunities your business matches.</p>
                 <p>Or you an browse all opportunities available.</p>
                 <p>Some businesses have chosen not to share their organisation's name publicly so these opportunities just show a reference number. If your application is successful, we'll let you know who the employer willing to fund your apprenticeship training is.</p>
-                <h2 class="govuk-heading-l">@Model.Count() opportunities</h2>
-
-                <div class="search-results"
-                @foreach (var opportunity in Model)
-                {
-                    <h2 class="govuk-heading-m">@(string.IsNullOrEmpty(opportunity.EmployerName) ? "Opportunity" : opportunity.EmployerName) (@opportunity.ReferenceNumber)</h2>
-                }
-
+                <h2 class="govuk-heading-m">@Model.Count() opportunities</h2>
+                <table class="govuk-table">
+                    @foreach (var opportunity in Model)
+                    {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">@(string.IsNullOrEmpty(opportunity.EmployerName) ? "Opportunity" : opportunity.EmployerName) (@opportunity.ReferenceNumber)</td>
+                        </tr>
+                    }
+                </table>
             </div>
         </div>
     </div>
