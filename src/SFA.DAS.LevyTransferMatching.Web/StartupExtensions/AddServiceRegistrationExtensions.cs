@@ -17,6 +17,7 @@ using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using System;
 using System.Net.Http;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.TagService;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.SearchFundingService;
 
 namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
 {
@@ -34,10 +35,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
 
             services.AddTransient<ICacheStorageService, CacheStorageService>();
             services.AddTransient<IPledgeOrchestrator, PledgeOrchestrator>();
+            services.AddTransient<ISearchFundingOrchestrator, SearchFundingOrchestrator>();
 
             services.AddClient<IAccountsService>((c, s) => new AccountsService(c));
             services.AddClient<IPledgesService>((c, s) => new PledgesService(c));
             services.AddClient<ITagService>((c, s) => new TagService(c));
+            services.AddClient<ISearchFundingService>((c, s) => new SearchFundingService(c));
         }
 
         private static IServiceCollection AddClient<T>(

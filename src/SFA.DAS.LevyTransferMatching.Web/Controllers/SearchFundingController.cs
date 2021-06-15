@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using SFA.DAS.LevyTransferMatching.Web.Models.SearchFunding;
+using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
@@ -12,17 +13,17 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
     [Route("search-funding")]
     public class SearchFundingController : Controller
     {
-        public IActionResult Index()
-        {
-            Opportunity[] opportunities = new Opportunity[]
-            {
-                new Opportunity() { EmployerName = "Company One", ReferenceNumber = "COMP1" },
-                new Opportunity() { EmployerName = "Company Two", ReferenceNumber = "COMP2" },
-                new Opportunity() { EmployerName = null, ReferenceNumber = "ABC123" },
-                new Opportunity() { EmployerName = "Company Three", ReferenceNumber = "COMP3" }
-            };
+        private readonly ISearchFundingOrchestrator _searchFundingOrchestrator;
 
-            return View(opportunities);
+        public SearchFundingController(ISearchFundingOrchestrator searchFundingOrchestrator)
+        {
+            _searchFundingOrchestrator = searchFundingOrchestrator;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var viewModel = await _searchFundingOrchestrator.GetSearchFundingViewModel();
+            return View(viewModel);
         }
     }
 }
