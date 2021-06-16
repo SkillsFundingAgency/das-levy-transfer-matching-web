@@ -1,12 +1,9 @@
 ﻿using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgesService
+namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
 {
-    public interface IPledgesService
+    public interface IPledgeService
     {
         public Task PostPledge(PledgeDto pledgeDto, string encodedAccountId);
     }
