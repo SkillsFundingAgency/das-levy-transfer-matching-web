@@ -20,8 +20,8 @@ jobs:
 
     - template: azure-pipelines-templates/build/step/app-build.yml@das-platform-building-blocks
       parameters:
-        SonarCloud: true
-        SonarCloudProjectKey: SkillsFundingAgency_das-apprentice-commitments-web
+        SonarCloud: false
+        SonarCloudProjectKey: SkillsFundingAgency_das-levy-transfer-matching-web
 
     - template: azure-pipelines-templates/build/step/dependency-check.yml@das-platform-building-blocks
 
