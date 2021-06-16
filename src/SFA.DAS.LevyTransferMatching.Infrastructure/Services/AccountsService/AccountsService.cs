@@ -17,7 +17,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountsService
             _client = client;
         }
 
-        public async Task<double> GetRemainingTransferAllowance(string encodedAccountId)
+        public async Task<int> GetRemainingTransferAllowance(string encodedAccountId)
         {
             var response = await _client.GetAsync($"accounts/{encodedAccountId}");
             response.EnsureSuccessStatusCode();
@@ -25,7 +25,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountsService
             var content = await response.Content.ReadAsStringAsync();
             var accountDto = JsonConvert.DeserializeObject<AccountDto>(content);
 
-            return accountDto.RemainingTransferAllowance;
+            return Convert.ToInt32(Math.Round(accountDto.RemainingTransferAllowance, MidpointRounding.AwayFromZero));
         }
     }
 }

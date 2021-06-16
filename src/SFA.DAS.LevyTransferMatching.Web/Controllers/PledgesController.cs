@@ -35,6 +35,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             return View(viewModel);
         }
 
+        [HttpPost]
+        [Route("create")]
+        public async Task<IActionResult> Submit(CreatePostRequest request)
+        {
+            await _orchestrator.SubmitPledge(request);
+            return Redirect(_linkGenerator.AccountsLink($"accounts/{request.EncodedAccountId}/transfers"));
+        }
+
         [Route("create/amount")]
         public async  Task<IActionResult> Amount(AmountRequest request)
         {
@@ -94,12 +102,5 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             await _orchestrator.UpdateCacheItem(request);
             return RedirectToAction("Create", new CreateRequest() { EncodedAccountId = request.EncodedAccountId, CacheKey = request.CacheKey });
         }
-
-        [Route("create/submit")]
-        public async Task<IActionResult> Submit(CreateRequest request)
-        {
-            await _orchestrator.SubmitPledge(request);
-            return Redirect(_linkGenerator.AccountsLink($"accounts/{request.EncodedAccountId}/transfers"));
-        }
-    }
+   }
 }

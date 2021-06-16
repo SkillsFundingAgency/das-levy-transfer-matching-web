@@ -1,19 +1,20 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgesService
+namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
 {
-    public class PledgesService : IPledgesService
+    public class PledgeService : IPledgeService
     {
         private readonly HttpClient _client;
 
-        public PledgesService(HttpClient client)
+        public PledgeService(HttpClient client)
         {
             _client = client;
         }

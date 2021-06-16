@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountsService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgesService;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.TagService;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
@@ -16,14 +16,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
     {
         private readonly ICacheStorageService _cacheStorageService;
         private readonly IAccountsService _accountsService;
-        private readonly IPledgesService _pledgesService;
+        private readonly IPledgeService _pledgeService;
         private readonly ITagService _tagService;
 
-        public PledgeOrchestrator(ICacheStorageService cacheStorageService, IAccountsService accountsService, IPledgesService pledgesService, ITagService tagService)
+        public PledgeOrchestrator(ICacheStorageService cacheStorageService, IAccountsService accountsService, IPledgeService pledgeService, ITagService tagService)
         {
             _cacheStorageService = cacheStorageService;
             _accountsService = accountsService;
-            _pledgesService = pledgesService;
+            _pledgeService = pledgeService;
             _tagService = tagService;
         }
 
@@ -38,10 +38,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         public async Task<CreateViewModel> GetCreateViewModel(CreateRequest request)
         {
-            var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
-            var levels = await _tagService.GetLevels();
-            var sectors = await _tagService.GetSectors();
-            var jobRoles = await _tagService.GetJobRoles();
+            var cacheItemTask = RetrievePledgeCacheItem(request.CacheKey);
+            var levelsTask = _tagService.GetLevels();
+            var sectorsTask = _tagService.GetSectors();
+            var jobRolesTask = _tagService.GetJobRoles();
+
+            await Task.WhenAll(cacheItemTask, levelsTask, sectorsTask, jobRolesTask);
+            var cacheItem = cacheItemTask.Result;
 
             return new CreateViewModel
             {
@@ -52,63 +55,67 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 Sectors = cacheItem.Sectors,
                 JobRoles = cacheItem.JobRoles,
                 Levels = cacheItem.Levels,
-                LevelOptions = levels,
-                SectorOptions = sectors,
-                JobRoleOptions = jobRoles
+                LevelOptions = levelsTask.Result,
+                SectorOptions = sectorsTask.Result,
+                JobRoleOptions = jobRolesTask.Result
             };
         }
 
         public async Task<AmountViewModel> GetAmountViewModel(AmountRequest request)
         {
-            var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
-            var remainingTransferAllowance = await _accountsService.GetRemainingTransferAllowance(request.EncodedAccountId);
-        
+            var cacheItemTask = RetrievePledgeCacheItem(request.CacheKey);
+            var remainingTransferAllowanceTask = _accountsService.GetRemainingTransferAllowance(request.EncodedAccountId);
+
+            await Task.WhenAll(cacheItemTask, remainingTransferAllowanceTask);
+            var cacheItem = cacheItemTask.Result;
+
             return new AmountViewModel
             {
                 EncodedAccountId = request.EncodedAccountId,
                 CacheKey = request.CacheKey,
                 Amount = cacheItem.Amount.ToString(),
-                RemainingTransferAllowance = remainingTransferAllowance.ToString("N0"),
+                RemainingTransferAllowance = remainingTransferAllowanceTask.Result.ToString("N0"),
                 IsNamePublic = cacheItem.IsNamePublic
             };
         }
 
         public async Task<SectorViewModel> GetSectorViewModel(SectorRequest request)
         {
-            var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
-            var sectors = await _tagService.GetSectors();
+            var cacheItemTask = RetrievePledgeCacheItem(request.CacheKey);
+            var sectorsTask = _tagService.GetSectors();
+
+            await Task.WhenAll(cacheItemTask, sectorsTask);
 
             return new SectorViewModel
             {
                 EncodedAccountId = request.EncodedAccountId,
                 CacheKey = request.CacheKey,
-                Sectors = cacheItem.Sectors,
-                SectorOptions = sectors
+                Sectors = cacheItemTask.Result.Sectors,
+                SectorOptions = sectorsTask.Result
             };
         }
 
         public async Task<JobRoleViewModel> GetJobRoleViewModel(JobRoleRequest request)
         {
-            var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
-            var jobRoles = await _tagService.GetJobRoles();
+            var cacheItemTask = RetrievePledgeCacheItem(request.CacheKey);
+            var jobRolesTask = _tagService.GetJobRoles();
+
+            await Task.WhenAll(cacheItemTask, jobRolesTask);
 
             return new JobRoleViewModel
             {
                 EncodedAccountId = request.EncodedAccountId,
                 CacheKey = request.CacheKey,
-                JobRoles = cacheItem.JobRoles,
-                JobRoleOptions = jobRoles
+                JobRoles = cacheItemTask.Result.JobRoles,
+                JobRoleOptions = jobRolesTask.Result
             };
         }
 
-        public async Task SubmitPledge(CreateRequest request)
+        public async Task SubmitPledge(CreatePostRequest request)
         {
             var cacheItem = await _cacheStorageService.RetrieveFromCache<CreatePledgeCacheItem>(request.CacheKey.ToString());
 
-            if (cacheItem == null)
-            {
-                throw new InvalidOperationException("Unable to submit pledge due to cache expiry");
-            }
+            ValidateCreatePledgeCacheItem(cacheItem);
 
             var pledgeDto = new PledgeDto
             {
@@ -119,7 +126,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 Levels = cacheItem.Levels ?? new List<string>()
             };
 
-            await _pledgesService.PostPledge(pledgeDto, request.EncodedAccountId);
+            await _pledgeService.PostPledge(pledgeDto, request.EncodedAccountId);
             await _cacheStorageService.DeleteFromCache(request.CacheKey.ToString());
         }
 
@@ -162,15 +169,17 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         public async Task<LevelViewModel> GetLevelViewModel(LevelRequest request)
         {
-            var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
-            var levels = await _tagService.GetLevels();
+            var cacheItemTask = RetrievePledgeCacheItem(request.CacheKey);
+            var levelsTask = _tagService.GetLevels();
+
+            await Task.WhenAll(cacheItemTask, levelsTask);
 
             return new LevelViewModel
             {
                 EncodedAccountId = request.EncodedAccountId,
                 CacheKey = request.CacheKey,
-                Levels = cacheItem.Levels,
-                LevelOptions = levels
+                Levels = cacheItemTask.Result.Levels,
+                LevelOptions = levelsTask.Result
             };
         }
 
@@ -185,6 +194,22 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             }
 
             return result;
+        }
+
+        private void ValidateCreatePledgeCacheItem(CreatePledgeCacheItem cacheItem)
+        {
+            if (cacheItem == null)
+            {
+                throw new InvalidOperationException("Unable to submit pledge due to cache expiry");
+            }
+            if (!cacheItem.Amount.HasValue)
+            {
+                throw new InvalidOperationException("Unable to submit pledge due to null cache value for pledge Amount");
+            }
+            if (!cacheItem.IsNamePublic.HasValue)
+            {
+                throw new InvalidOperationException("Unable to submit pledge due to null cache value for pledge IsNamePublic");
+            }
         }
     }
 }

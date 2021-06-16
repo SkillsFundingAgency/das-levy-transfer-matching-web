@@ -6,7 +6,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountsService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgesService;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.TagService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Tags;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
@@ -22,7 +22,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private Fixture _fixture;
         private Mock<ICacheStorageService> _cache;
         private Mock<IAccountsService> _accountsService;
-        private Mock<IPledgesService> _pledgesService;
+        private Mock<IPledgeService> _pledgeService;
         private Mock<ITagService> _tagService;
         private List<Tag> _sectors;
         private List<Tag> _levels;
@@ -38,7 +38,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _cacheKey = Guid.NewGuid();
             _cache = new Mock<ICacheStorageService>();
             _accountsService = new Mock<IAccountsService>();
-            _pledgesService = new Mock<IPledgesService>();
+            _pledgeService = new Mock<IPledgeService>();
 
             _sectors = _fixture.Create<List<Tag>>();
             _levels = _fixture.Create<List<Tag>>();
@@ -48,7 +48,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _tagService.Setup(x => x.GetSectors()).ReturnsAsync(_sectors);
             _tagService.Setup(x => x.GetLevels()).ReturnsAsync(_levels);
 
-            _orchestrator = new PledgeOrchestrator(_cache.Object, _accountsService.Object, _pledgesService.Object, _tagService.Object);
+            _orchestrator = new PledgeOrchestrator(_cache.Object, _accountsService.Object, _pledgeService.Object, _tagService.Object);
         }
 
         [Test]

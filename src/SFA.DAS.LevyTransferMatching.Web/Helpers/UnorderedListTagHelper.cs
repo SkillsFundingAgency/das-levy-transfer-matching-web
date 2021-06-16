@@ -23,10 +23,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
         [HtmlAttributeName("item-class")]
         public string ItemClass { get; set; }
 
-        //[ViewContext]
-        //[HtmlAttributeNotBound]
-        //public ViewContext ViewContext { get; set; }
-
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             output.TagName = "";
