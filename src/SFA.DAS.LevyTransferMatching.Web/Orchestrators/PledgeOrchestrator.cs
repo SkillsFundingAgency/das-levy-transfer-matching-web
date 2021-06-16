@@ -115,14 +115,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var cacheItem = await _cacheStorageService.RetrieveFromCache<CreatePledgeCacheItem>(request.CacheKey.ToString());
 
-            if (cacheItem == null)
-            {
-                throw new InvalidOperationException("Unable to submit pledge due to cache expiry");
-            }
-            if(!cacheItem.Amount.HasValue || !cacheItem.IsNamePublic.HasValue)
-            {
-                throw new InvalidOperationException("Unable to submit pledge due to null cache value");
-            }
+            ValidateCreatePledgeCacheItem(cacheItem);
 
             var pledgeDto = new PledgeDto
             {
@@ -201,6 +194,22 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             }
 
             return result;
+        }
+
+        private void ValidateCreatePledgeCacheItem(CreatePledgeCacheItem cacheItem)
+        {
+            if (cacheItem == null)
+            {
+                throw new InvalidOperationException("Unable to submit pledge due to cache expiry");
+            }
+            if (!cacheItem.Amount.HasValue)
+            {
+                throw new InvalidOperationException("Unable to submit pledge due to null cache value for pledge Amount");
+            }
+            if (!cacheItem.IsNamePublic.HasValue)
+            {
+                throw new InvalidOperationException("Unable to submit pledge due to null cache value for pledge IsNamePublic");
+            }
         }
     }
 }
