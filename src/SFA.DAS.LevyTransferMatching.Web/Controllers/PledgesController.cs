@@ -1,16 +1,12 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.Authorization.EmployerUserRoles.Options;
-using SFA.DAS.Authorization.Mvc.Attributes;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
-    [DasAuthorize(EmployerUserRole.OwnerOrTransactor)]
-    [Route("accounts/{EncodedAccountId}/pledges")]
-    public class PledgesController : Controller
+    [Route("accounts/{encodedAccountId}/pledges")]
+    public class PledgesController : LoggedInController
     {
         private readonly IPledgeOrchestrator _orchestrator;
 
