@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AutoFixture;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountsService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService;
@@ -27,6 +28,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private List<Tag> _sectors;
         private List<Tag> _levels;
         private List<Tag> _jobRoles;
+        private AccountDto _accountDetail;
         private string _encodedAccountId;
         private Guid _cacheKey;
 
@@ -43,10 +45,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _sectors = _fixture.Create<List<Tag>>();
             _levels = _fixture.Create<List<Tag>>();
             _jobRoles = _fixture.Create<List<Tag>>();
+            _accountDetail = _fixture.Create<AccountDto>();
             _tagService = new Mock<ITagService>();
             _tagService.Setup(x => x.GetJobRoles()).ReturnsAsync(_jobRoles);
             _tagService.Setup(x => x.GetSectors()).ReturnsAsync(_sectors);
             _tagService.Setup(x => x.GetLevels()).ReturnsAsync(_levels);
+            _accountsService.Setup(x => x.GetAccountDetail(_encodedAccountId)).ReturnsAsync(_accountDetail);
 
             _orchestrator = new PledgeOrchestrator(_cache.Object, _accountsService.Object, _pledgeService.Object, _tagService.Object);
         }
