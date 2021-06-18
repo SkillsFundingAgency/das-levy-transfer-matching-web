@@ -38,8 +38,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         {
             var test = await _orchestrator.GetSearchFundingViewModel();
 
-            Assert.AreEqual(test.Opportunities[0].EmployerName, _opportunityDtoList[0].EmployerName);
-            Assert.AreEqual(test.Opportunities[0].ReferenceNumber, _opportunityDtoList[0].ReferenceNumber);
+            Assert.AreEqual(test.Opportunities[0].EmployerName, _opportunityDtoList[0].DasAccountName);
+            Assert.AreEqual(test.Opportunities[0].ReferenceNumber, _opportunityDtoList[0].EncodedPledgeId);
         }
     }
 }

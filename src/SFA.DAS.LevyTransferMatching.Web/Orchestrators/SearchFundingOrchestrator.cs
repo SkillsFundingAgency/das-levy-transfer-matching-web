@@ -19,7 +19,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         public async Task<SearchFundingViewModel> GetSearchFundingViewModel()
         {
             var opportunitiesDto = await _searchFundingService.GetAllOpportunities();
-            List<Opportunity> opportunities = opportunitiesDto.Select(x => new Opportunity { EmployerName = x.EmployerName, ReferenceNumber = x.ReferenceNumber }).ToList();
+            List<Opportunity> opportunities = opportunitiesDto.Select(x => new Opportunity { EmployerName = x.DasAccountName, ReferenceNumber = x.EncodedPledgeId }).ToList();
 
             return new SearchFundingViewModel { Opportunities = opportunities };
         }

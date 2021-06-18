@@ -31,6 +31,7 @@
                     </div>
                 </div>
                 <div class="govuk-form-group" das-highlight-error-for="IsNamePublic" error-class="govuk-form-group--error">
+                    @Html.HiddenFor(x => x.DasAccountName)
                     <fieldset class="govuk-fieldset">
                         <legend class="govuk-fieldset__legend">
                             Would you like your pledge to show your organisation's name publicly?

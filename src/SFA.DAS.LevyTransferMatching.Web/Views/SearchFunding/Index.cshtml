@@ -34,7 +34,7 @@
                     @foreach (var opportunity in Model.Opportunities)
                     {
                         <tr class="govuk-table__row">
-                            <td class="govuk-table__cell">@(string.IsNullOrEmpty(opportunity.EmployerName) ? "Opportunity" : opportunity.EmployerName) (@opportunity.ReferenceNumber)</td>
+                            <td class="govuk-table__cell">@opportunity.EmployerName (@opportunity.ReferenceNumber)</td>
                         </tr>
                     }
                 </table>
