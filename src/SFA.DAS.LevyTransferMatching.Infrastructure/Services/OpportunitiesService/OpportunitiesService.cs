@@ -1,18 +1,16 @@
-﻿using Newtonsoft.Json;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 
-namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.SearchFundingService
+namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService
 {
-    public class SearchFundingService : ISearchFundingService
+    public class OpportunitiesService : IOpportunitiesService
     {
         private readonly HttpClient _client;
 
-        public SearchFundingService(HttpClient client)
+        public OpportunitiesService(HttpClient client)
         {
             _client = client;
         }

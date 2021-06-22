@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.SearchFunding
 {
-    public class SearchFundingViewModel
+    public class IndexViewModel
     {
         public List<Opportunity> Opportunities { get; set; }
     }

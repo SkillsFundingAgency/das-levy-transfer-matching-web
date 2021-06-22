@@ -13,28 +13,28 @@ using System.Threading.Tasks;
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
 {
     [TestFixture]
-    public class SearchFundingControllerTests
+    public class OpportunitiesControllerTests
     {
-        private SearchFundingController _searchFundingController;
-        private Mock<ISearchFundingOrchestrator> _orchestrator;
+        private OpportunitiesController _searchFundingController;
+        private Mock<IOpportunitiesOrchestrator> _orchestrator;
 
         [SetUp]
         public void SetUp()
         {
-            _orchestrator = new Mock<ISearchFundingOrchestrator>();
+            _orchestrator = new Mock<IOpportunitiesOrchestrator>();
 
-            _searchFundingController = new SearchFundingController(_orchestrator.Object);
+            _searchFundingController = new OpportunitiesController(_orchestrator.Object);
         }
 
         [Test]
         public async Task GET_Index_Returns_Expected_View_With_Expected_ViewModel()
         {
             // Arrange
-            _orchestrator.Setup(x => x.GetSearchFundingViewModel()).ReturnsAsync(() => new SearchFundingViewModel());
+            _orchestrator.Setup(x => x.GetIndexViewModel()).ReturnsAsync(() => new IndexViewModel());
 
             // Act
             var viewResult = await _searchFundingController.Index() as ViewResult;
-            var indexViewModel = viewResult?.Model as SearchFundingViewModel;
+            var indexViewModel = viewResult?.Model as IndexViewModel;
 
             // Assert
             Assert.NotNull(viewResult);
