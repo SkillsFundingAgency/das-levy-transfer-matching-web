@@ -1,27 +1,26 @@
-﻿using SFA.DAS.LevyTransferMatching.Infrastructure.Services.SearchFundingService;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.TagService;
+﻿using SFA.DAS.LevyTransferMatching.Infrastructure.Services.TagService;
 using SFA.DAS.LevyTransferMatching.Web.Models.SearchFunding;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
     public class OpportunitiesOrchestrator : IOpportunitiesOrchestrator
     {
-        private readonly ISearchFundingService _searchFundingService;
+        private readonly IOpportunitiesService _opportunitiesService;
         private readonly ITagService _tagService;
 
-        public OpportunitiesOrchestrator(ISearchFundingService searchFundingService, ITagService tagService)
+        public OpportunitiesOrchestrator(IOpportunitiesService opportunitiesService, ITagService tagService)
         {
-            _searchFundingService = searchFundingService;
+            _opportunitiesService = opportunitiesService;
             _tagService = tagService;
         }
 
         public async Task<IndexViewModel> GetIndexViewModel()
         {
-            var opportunitiesDto = _searchFundingService.GetAllOpportunities();
+            var opportunitiesDto = _opportunitiesService.GetAllOpportunities();
             var levelsTask = _tagService.GetLevels();
             var sectorsTask = _tagService.GetSectors();
             var jobRolesTask = _tagService.GetJobRoles();

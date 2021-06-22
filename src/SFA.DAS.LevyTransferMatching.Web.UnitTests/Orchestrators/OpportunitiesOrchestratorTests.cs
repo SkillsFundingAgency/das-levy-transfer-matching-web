@@ -1,16 +1,13 @@
 ﻿using AutoFixture;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.SearchFundingService;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
-using SFA.DAS.LevyTransferMatching.Web.Models.SearchFunding;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.TagService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Tags;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 {
@@ -19,7 +16,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
     {
         private OpportunitiesOrchestrator _orchestrator;
         private Fixture _fixture;
-        private Mock<ISearchFundingService> _searchFundingService;
+        private Mock<IOpportunitiesService> _searchFundingService;
         private Mock<ITagService> _tagService;
 
         private List<Tag> _sectors;
@@ -32,8 +29,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         public void SetUp()
         {
             _fixture = new Fixture();
-            _searchFundingService = new Mock<ISearchFundingService>();
-            _tagService = new Mock<ITagService>();
+            _searchFundingService = new Mock<IOpportunitiesService>();
+			_tagService = new Mock<ITagService>();
 
             _opportunityDtoList = _fixture.Create<List<OpportunityDto>>();
             _sectors = _fixture.Create<List<Tag>>();

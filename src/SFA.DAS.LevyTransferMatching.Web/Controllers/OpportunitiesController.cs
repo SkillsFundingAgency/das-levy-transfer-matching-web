@@ -11,9 +11,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
     {
         private readonly IOpportunitiesOrchestrator _opportunitiesOrchestrator;
 
-        public OpportunitiesController(IOpportunitiesOrchestrator searchFundingOrchestrator)
+        public OpportunitiesController(IOpportunitiesOrchestrator opportunitiesOrchestrator)
         {
-            _opportunitiesOrchestrator = searchFundingOrchestrator;
+            _opportunitiesOrchestrator = opportunitiesOrchestrator;
         }
 
         public async Task<IActionResult> Index()
