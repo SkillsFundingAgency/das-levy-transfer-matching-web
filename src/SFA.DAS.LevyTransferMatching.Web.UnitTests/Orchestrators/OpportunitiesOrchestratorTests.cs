@@ -15,9 +15,9 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Tags;
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 {
     [TestFixture]
-    public class SearchFundingOrchestratorTests
+    public class OpportunitiesOrchestratorTests
     {
-        private SearchFundingOrchestrator _orchestrator;
+        private OpportunitiesOrchestrator _orchestrator;
         private Fixture _fixture;
         private Mock<ISearchFundingService> _searchFundingService;
         private Mock<ITagService> _tagService;
@@ -45,13 +45,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _tagService.Setup(x => x.GetSectors()).ReturnsAsync(_sectors);
             _tagService.Setup(x => x.GetLevels()).ReturnsAsync(_levels);
 
-            _orchestrator = new SearchFundingOrchestrator(_searchFundingService.Object, _tagService.Object);
+            _orchestrator = new OpportunitiesOrchestrator(_searchFundingService.Object, _tagService.Object);
         }
 
         [Test]
         public async Task GetSearchFundingViewModel_Opportunities_Are_Populated()
         {
-            var test = await _orchestrator.GetSearchFundingViewModel();
+            var test = await _orchestrator.GetIndexViewModel();
 
             Assert.AreEqual(test.Opportunities[0].EmployerName, _opportunityDtoList[0].DasAccountName);
             Assert.AreEqual(test.Opportunities[0].ReferenceNumber, _opportunityDtoList[0].EncodedPledgeId);

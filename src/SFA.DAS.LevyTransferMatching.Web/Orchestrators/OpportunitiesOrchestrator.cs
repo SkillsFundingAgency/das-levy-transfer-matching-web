@@ -8,18 +8,18 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
-    public class SearchFundingOrchestrator : ISearchFundingOrchestrator
+    public class OpportunitiesOrchestrator : IOpportunitiesOrchestrator
     {
         private readonly ISearchFundingService _searchFundingService;
         private readonly ITagService _tagService;
 
-        public SearchFundingOrchestrator(ISearchFundingService searchFundingService, ITagService tagService)
+        public OpportunitiesOrchestrator(ISearchFundingService searchFundingService, ITagService tagService)
         {
             _searchFundingService = searchFundingService;
             _tagService = tagService;
         }
 
-        public async Task<SearchFundingViewModel> GetSearchFundingViewModel()
+        public async Task<IndexViewModel> GetIndexViewModel()
         {
             var opportunitiesDto = _searchFundingService.GetAllOpportunities();
             var levelsTask = _tagService.GetLevels();
@@ -46,7 +46,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     Levels = x.Levels
                 }).ToList();
 
-            return new SearchFundingViewModel 
+            return new IndexViewModel 
             { 
                 Opportunities = opportunities
             };
