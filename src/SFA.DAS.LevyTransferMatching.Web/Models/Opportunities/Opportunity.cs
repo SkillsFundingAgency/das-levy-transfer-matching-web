@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.LevyTransferMatching.Web.Models.SearchFunding
+﻿namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
 {
     public class Opportunity
     {

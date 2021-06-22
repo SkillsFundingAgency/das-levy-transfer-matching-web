@@ -1,4 +1,4 @@
-﻿using SFA.DAS.LevyTransferMatching.Web.Models.SearchFunding;
+﻿using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,6 +13,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         public OpportunitiesOrchestrator(IOpportunitiesService opportunitiesService)
         {
             _opportunitiesService = opportunitiesService;
+        }
+
+        public async Task<DetailViewModel> GetDetailViewModel(string encodedId)
+        {
+            // TODO: Get opportunity from the API.
+            await Task.Delay(10);
+
+            return new DetailViewModel();
         }
 
         public async Task<IndexViewModel> GetIndexViewModel()

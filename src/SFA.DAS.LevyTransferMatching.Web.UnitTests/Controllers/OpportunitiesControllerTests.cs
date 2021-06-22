@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.LevyTransferMatching.Web.Controllers;
-using SFA.DAS.LevyTransferMatching.Web.Models.SearchFunding;
+using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using System;
 using System.Collections.Generic;
@@ -15,7 +15,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
     [TestFixture]
     public class OpportunitiesControllerTests
     {
-        private OpportunitiesController _searchFundingController;
+        private OpportunitiesController _opportunitiesController;
         private Mock<IOpportunitiesOrchestrator> _orchestrator;
 
         [SetUp]
@@ -23,7 +23,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         {
             _orchestrator = new Mock<IOpportunitiesOrchestrator>();
 
-            _searchFundingController = new OpportunitiesController(_orchestrator.Object);
+            _opportunitiesController = new OpportunitiesController(_orchestrator.Object);
         }
 
         [Test]
@@ -33,7 +33,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             _orchestrator.Setup(x => x.GetIndexViewModel()).ReturnsAsync(() => new IndexViewModel());
 
             // Act
-            var viewResult = await _searchFundingController.Index() as ViewResult;
+            var viewResult = await _opportunitiesController.Index() as ViewResult;
             var indexViewModel = viewResult?.Model as IndexViewModel;
 
             // Assert
