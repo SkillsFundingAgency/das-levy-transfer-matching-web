@@ -1,5 +1,5 @@
-﻿using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
