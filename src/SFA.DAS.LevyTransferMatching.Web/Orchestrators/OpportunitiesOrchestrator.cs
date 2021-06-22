@@ -1,8 +1,8 @@
-﻿using SFA.DAS.LevyTransferMatching.Web.Models.SearchFunding;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
+using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
