@@ -3,12 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.LevyTransferMatching.Web.Controllers;
-using SFA.DAS.LevyTransferMatching.Web.Models.SearchFunding;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
 {

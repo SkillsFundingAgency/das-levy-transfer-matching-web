@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-
-namespace SFA.DAS.LevyTransferMatching.Web.Models.SearchFunding
+namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
 {
     public class Opportunity
     {
