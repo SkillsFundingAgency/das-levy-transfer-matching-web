@@ -10,21 +10,21 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <span class="govuk-caption-m">Find a business to fund training for your apprentices</span>
-                <h1 class="govuk-heading-xl">Transfer fund details for ####</h1>
+                <h1 class="govuk-heading-xl">Transfer fund details for @Model.Opportunity.DasAccountName (@Model.Opportunity.EncodedPledgeId)</h1>
 
                 <!-- PLEDGE DETAILS - START -->
                 <h2 class="govuk-heading-m">Details of the opportunity</h2>
 
                 <section class="employer-details side-panel  applications-details">
-                    <p class="govuk-heading-s"><span class="pledge-name-answer">####</span> wants to fund apprenticeship training in:</p>
+                    <p class="govuk-heading-s">@Model.Opportunity.DasAccountName (@Model.Opportunity.EncodedPledgeId) wants to fund apprenticeship training in:</p>
                     <p class="details">
-                        Location: <strong class="pledge-location-answer">####</strong><br>
-                        Sector: <strong class="pledge-sector-answer">####</strong><br>
-                        Type of job role: <strong class="pledge-training-answer">####</strong><br>
-                        Level: <strong class="pledge-level-answer">####</strong>
+                        Location: <strong>####</strong><br>
+                        Sector: <strong>@Model.SectorList</strong><br>
+                        Type of job role: <strong>@Model.JobRoleList</strong><br>
+                        Level: <strong>@Model.LevelList</strong>
                     </p>
                     <div class="total">
-                        <p class="govuk-heading-s">Total funding available: up to £<span class="pledge-value-answer value-format">####</span> available in 2021/22</p>
+                        <p class="govuk-heading-s">Total funding available: up to £@Model.Opportunity.Amount available in 2021/22</p>
                     </div>
                 </section>
                 <!-- PLEDGE DETAILS - END -->
@@ -62,7 +62,7 @@
 
                     <button class="govuk-button" data-module="govuk-button" id="apply-application-continue">Continue</button>
 
-                    <a href="javascript:history.back()" class="govuk-link govuk-link-secondary govuk-link--no-visited-state govuk-back-link">Back</a>
+                    <a href="@Url.Action("Index")" class="govuk-link govuk-link-secondary govuk-link--no-visited-state govuk-back-link">Back</a>
 
                 </form>
 

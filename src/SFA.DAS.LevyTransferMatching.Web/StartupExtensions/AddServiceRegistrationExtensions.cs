@@ -18,6 +18,7 @@ using System;
 using System.Net.Http;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.TagService;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 
 namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
 {
@@ -36,6 +37,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
             services.AddTransient<ICacheStorageService, CacheStorageService>();
             services.AddTransient<IPledgeOrchestrator, PledgeOrchestrator>();
             services.AddTransient<IOpportunitiesOrchestrator, OpportunitiesOrchestrator>();
+
+            services.AddSingleton<IDateTimeService, DateTimeService>();
 
             services.AddClient<IAccountsService>((c, s) => new AccountsService(c));
             services.AddClient<IPledgeService>((c, s) => new PledgeService(c));
