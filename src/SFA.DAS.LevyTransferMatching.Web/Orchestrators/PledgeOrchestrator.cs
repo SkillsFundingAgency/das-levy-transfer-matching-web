@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountsService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
@@ -45,6 +46,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 Sectors = cacheItem.Sectors,
                 JobRoles = cacheItem.JobRoles,
                 Levels = cacheItem.Levels,
+                Locations = cacheItem.Locations?.OrderBy(x => x).ToList()
             };
         }
 
