@@ -15,18 +15,22 @@
                 <!-- PLEDGE DETAILS - START -->
                 <h2 class="govuk-heading-m">Details of the opportunity</h2>
 
-                <section class="employer-details side-panel  applications-details">
-                    <p class="govuk-heading-s">@Model.Opportunity.DasAccountName (@Model.Opportunity.EncodedPledgeId) wants to fund apprenticeship training in:</p>
-                    <p class="details">
-                        Location: <strong>####</strong><br>
-                        Sector: <strong>@Model.SectorList</strong><br>
-                        Type of job role: <strong>@Model.JobRoleList</strong><br>
-                        Level: <strong>@Model.LevelList</strong>
-                    </p>
-                    <div class="total">
-                        <p class="govuk-heading-s">Total funding available: up to £@Model.Opportunity.Amount available in 2021/22</p>
+                <div class="das-highlight">
+                    <h2 class="govuk-heading-s">@Model.Opportunity.DasAccountName (@Model.Opportunity.EncodedPledgeId) wants to fund apprenticeship training in:</h2>
+                    <dl class="das-definition-list app-dl-inline govuk-!-font-size-16">
+                        <dt class="app-dl-inline__title">Location</dt>
+                        <dd class="app-dl-inline__definition">####</dd>
+                        <dt class="app-dl-inline__title">Sector</dt>
+                        <dd class="app-dl-inline__definition">@Model.SectorList</dd>
+                        <dt class="app-dl-inline__title">Type of job role</dt>
+                        <dd class="app-dl-inline__definition">@Model.JobRoleList</dd>
+                        <dt class="app-dl-inline__title">Level</dt>
+                        <dd class="app-dl-inline__definition">@Model.LevelList</dd>
+                    </dl>
+                    <div class="app-highlight__footer">
+                        <p class="govuk-heading-s">Total funding available: up to £@Model.Opportunity.Amount available in @Model.YearDescription</p>
                     </div>
-                </section>
+                </div>
                 <!-- PLEDGE DETAILS - END -->
 
                 <form method="post" action="" id="apply-application-form">
