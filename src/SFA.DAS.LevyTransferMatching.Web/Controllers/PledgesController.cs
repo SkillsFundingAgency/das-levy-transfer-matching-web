@@ -96,11 +96,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         public async Task<IActionResult> Location(LocationRequest request)
         {
             ViewBag.HideNav = false;
-            await Task.Delay(1);
-            return View(new LocationViewModel());
 
-            //var viewModel = await _orchestrator.GetLocationViewModel(request);
-            //return View(viewModel);
+            var viewModel = await _orchestrator.GetLocationViewModel(request);
+            return View(viewModel);
         }
 
         [HttpPost]

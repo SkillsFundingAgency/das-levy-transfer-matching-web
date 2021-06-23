@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountsService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
@@ -89,12 +90,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         public async Task<LocationViewModel> GetLocationViewModel(LocationRequest request)
         {
             var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
-            var searchResult = await _locationService.SearchLocation("Stoke");
 
             return new LocationViewModel
             {
                 EncodedAccountId = request.EncodedAccountId,
                 CacheKey = request.CacheKey,
+                Locations = cacheItem.Locations
             };
         }
 
@@ -130,7 +131,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
 
-            //cacheItem.Locations = request.Locations;
+            cacheItem.Locations = request.Locations;
 
             await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
         }

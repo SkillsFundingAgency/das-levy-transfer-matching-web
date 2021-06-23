@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SFA.DAS.Authorization.Context;
 using SFA.DAS.Http;
+using SFA.DAS.Http.Configuration;
 using SFA.DAS.LevyTransferMatching.Domain.Interfaces;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Api;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
@@ -34,19 +35,17 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
             services.AddTransient<ICacheStorageService, CacheStorageService>();
             services.AddTransient<IPledgeOrchestrator, PledgeOrchestrator>();
 
-            services.AddClient<IAccountsService>((c, s) => new AccountsService(c));
-
-            services.AddLocationClient<ILocationService>((c, s) => new LocationService(c));
+            services.AddClient<IAccountsService, LevyTransferMatchingApi>((c, s) => new AccountsService(c));
+            services.AddClient<ILocationService, FindApprenticeshipTrainingApiConfiguration>((c, s) => new LocationService(c));
         }
 
-        private static IServiceCollection AddClient<T>(
+        private static IServiceCollection AddClient<T, TConfig>(
             this IServiceCollection serviceCollection,
-            Func<HttpClient, IServiceProvider, T> instance) where T : class
+            Func<HttpClient, IServiceProvider, T> instance) where T : class where TConfig : IApimClientConfiguration
         {
             serviceCollection.AddTransient(s =>
             {
-                var settings = s.GetService<IOptions<LevyTransferMatchingApi>>().Value;
-                settings.ApiVersion = "1";
+                var settings = s.GetService<TConfig>();
 
                 var clientBuilder = new HttpClientBuilder()
                     .WithDefaultHeaders()
@@ -56,37 +55,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
                 var httpClient = clientBuilder.Build();
 
                 if (!settings.ApiBaseUrl.EndsWith("/"))
-                {
-                    settings.ApiBaseUrl += "/";
-                }
-                httpClient.BaseAddress = new Uri(settings.ApiBaseUrl);
-
-                return instance.Invoke(httpClient, s);
-            });
-
-            return serviceCollection;
-        }
-
-        private static IServiceCollection AddLocationClient<T>(
-            this IServiceCollection serviceCollection,
-            Func<HttpClient, IServiceProvider, T> instance) where T : class
-        {
-            serviceCollection.AddTransient(s =>
-            {
-                var settings = s.GetService<IOptions<FindApprenticeshipTrainingApiConfiguration>>().Value;
-
-                var clientBuilder = new HttpClientBuilder()
-                    .WithDefaultHeaders()
-                    .WithApimAuthorisationHeader(settings)
-                    .WithLogging(s.GetService<ILoggerFactory>());
-
-                var httpClient = clientBuilder.Build();
-
-                if (!settings.ApiBaseUrl.EndsWith("/"))
-                {
-                    settings.ApiBaseUrl += "/";
-                }
-                httpClient.BaseAddress = new Uri(settings.ApiBaseUrl);
+                    httpClient.BaseAddress = new Uri(settings.ApiBaseUrl + "/");
+                else
+                    httpClient.BaseAddress = new Uri(settings.ApiBaseUrl);
 
                 return instance.Invoke(httpClient, s);
             });

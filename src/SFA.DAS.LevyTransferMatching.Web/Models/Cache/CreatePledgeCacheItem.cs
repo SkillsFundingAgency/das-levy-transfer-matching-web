@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using SFA.DAS.LevyTransferMatching.Web.Models.Enums;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Cache
@@ -22,5 +23,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Cache
         public Sector? Sectors { get; set; }
         public Level? Levels { get; set; }
         public JobRole? JobRoles { get; set; }
+        public List<string> Locations { get; set; }
     }
 }
