@@ -10,10 +10,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         Task<AmountViewModel> GetAmountViewModel(AmountRequest request);
         Task<SectorViewModel> GetSectorViewModel(SectorRequest request);
         Task<JobRoleViewModel> GetJobRoleViewModel(JobRoleRequest request);
+        Task<LocationViewModel> GetLocationViewModel(LocationRequest request);
         Task UpdateCacheItem(AmountPostRequest request);
         Task UpdateCacheItem(SectorPostRequest request);
         Task UpdateCacheItem(LevelPostRequest request);
         Task<LevelViewModel> GetLevelViewModel(LevelRequest request);
         Task UpdateCacheItem(JobRolePostRequest request);
+        Task UpdateCacheItem(LocationPostRequest request);
     }
 }

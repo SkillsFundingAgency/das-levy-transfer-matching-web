@@ -5,6 +5,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountsService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.LocationService;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Enums;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
@@ -20,6 +21,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private Fixture _fixture;
         private Mock<ICacheStorageService> _cache;
         private Mock<IAccountsService> _accountsService;
+        private Mock<ILocationService> _locationService;
         private string _encodedAccountId;
         private Guid _cacheKey;
 
@@ -31,8 +33,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _cacheKey = Guid.NewGuid();
             _cache = new Mock<ICacheStorageService>();
             _accountsService = new Mock<IAccountsService>();
+            _locationService = new Mock<ILocationService>();
 
-            _orchestrator = new PledgeOrchestrator(_cache.Object, _accountsService.Object);
+            _orchestrator = new PledgeOrchestrator(_cache.Object, _accountsService.Object, _locationService.Object);
         }
 
         [Test]

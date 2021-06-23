@@ -10,6 +10,7 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountsService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsersReadStore;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CosmosDb;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.LocationService;
 using SFA.DAS.LevyTransferMatching.Web.Authentication;
 using SFA.DAS.LevyTransferMatching.Web.Authorization;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
@@ -34,6 +35,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
             services.AddTransient<IPledgeOrchestrator, PledgeOrchestrator>();
 
             services.AddClient<IAccountsService>((c, s) => new AccountsService(c));
+
+            services.AddLocationClient<ILocationService>((c, s) => new LocationService(c));
         }
 
         private static IServiceCollection AddClient<T>(
@@ -44,6 +47,33 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
             {
                 var settings = s.GetService<IOptions<LevyTransferMatchingApi>>().Value;
                 settings.ApiVersion = "1";
+
+                var clientBuilder = new HttpClientBuilder()
+                    .WithDefaultHeaders()
+                    .WithApimAuthorisationHeader(settings)
+                    .WithLogging(s.GetService<ILoggerFactory>());
+
+                var httpClient = clientBuilder.Build();
+
+                if (!settings.ApiBaseUrl.EndsWith("/"))
+                {
+                    settings.ApiBaseUrl += "/";
+                }
+                httpClient.BaseAddress = new Uri(settings.ApiBaseUrl);
+
+                return instance.Invoke(httpClient, s);
+            });
+
+            return serviceCollection;
+        }
+
+        private static IServiceCollection AddLocationClient<T>(
+            this IServiceCollection serviceCollection,
+            Func<HttpClient, IServiceProvider, T> instance) where T : class
+        {
+            serviceCollection.AddTransient(s =>
+            {
+                var settings = s.GetService<IOptions<FindApprenticeshipTrainingApiConfiguration>>().Value;
 
                 var clientBuilder = new HttpClientBuilder()
                     .WithDefaultHeaders()

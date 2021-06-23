@@ -1,0 +1,45 @@
+﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.LocationViewModel
+@{
+    ViewData["Title"] = "Pledges";
+}
+
+<a href="@Url.Action("Create", "Pledges", new { Model.EncodedAccountId, Model.CacheKey })" class="govuk-back-link">Back</a>
+
+
+<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
+    <partial name="_ValidationSummary" />
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-m">Find a business to transfer your levy to</span>
+            <h1 class="govuk-heading-xl">Add the locations you'd like to fund.</h1>
+
+            <form method="post">
+                <label class="govuk-label">
+                    Start typing to find the city, town, region or local authority you'd like to pledge money to.
+                </label>
+                <div class="govuk-hint">
+                    For example, Manchester, West Midlands, Leeds City Council
+                </div>
+                <input class="govuk-input govuk-input--width-20" />
+
+                <div class="govuk-checkboxes">
+                    <div class="govuk-inset-text">
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" type="checkbox" />
+                            <label class="govuk-label govuk-checkboxes__label">
+                                Or all of England
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="govuk-button-group">
+                    <button id="pledge-criteria-continue" class="govuk-button" data-module="govuk-button">
+                        Continue
+                    </button>
+                    <a href="@Url.Action("Create", "Pledges", new { Model.EncodedAccountId, Model.CacheKey })" class="govuk-link govuk-back-link">Back</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>

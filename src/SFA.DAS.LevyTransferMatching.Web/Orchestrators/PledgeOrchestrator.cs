@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountsService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.LocationService;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Enums;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
@@ -12,11 +13,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
     {
         private readonly ICacheStorageService _cacheStorageService;
         private readonly IAccountsService _accountsService;
+        private readonly ILocationService _locationService;
 
-        public PledgeOrchestrator(ICacheStorageService cacheStorageService, IAccountsService accountsService)
+        public PledgeOrchestrator(ICacheStorageService cacheStorageService, IAccountsService accountsService, ILocationService locationService)
         {
             _cacheStorageService = cacheStorageService;
             _accountsService = accountsService;
+            _locationService = locationService;
         }
 
         public IndexViewModel GetIndexViewModel(string encodedAccountId)
@@ -83,6 +86,18 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
+        public async Task<LocationViewModel> GetLocationViewModel(LocationRequest request)
+        {
+            var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
+            var searchResult = await _locationService.SearchLocation("Stoke");
+
+            return new LocationViewModel
+            {
+                EncodedAccountId = request.EncodedAccountId,
+                CacheKey = request.CacheKey,
+            };
+        }
+
         public async Task UpdateCacheItem(AmountPostRequest request)
         {
             var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
@@ -107,6 +122,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
 
             cacheItem.Levels = request.Levels;
+
+            await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
+        }
+
+        public async Task UpdateCacheItem(LocationPostRequest request)
+        {
+            var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
+
+            //cacheItem.Locations = request.Locations;
 
             await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
         }

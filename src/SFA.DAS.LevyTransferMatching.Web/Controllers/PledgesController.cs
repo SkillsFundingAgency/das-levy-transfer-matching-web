@@ -91,5 +91,26 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             await _orchestrator.UpdateCacheItem(request);
             return RedirectToAction("Create", new CreateRequest() { EncodedAccountId = request.EncodedAccountId, CacheKey = request.CacheKey });
         }
+
+        [Route("create/location")]
+        public async Task<IActionResult> Location(LocationRequest request)
+        {
+            ViewBag.HideNav = false;
+            await Task.Delay(1);
+            return View(new LocationViewModel());
+
+            //var viewModel = await _orchestrator.GetLocationViewModel(request);
+            //return View(viewModel);
+        }
+
+        [HttpPost]
+        [Route("create/location")]
+        public async Task<IActionResult> Location(LocationPostRequest request)
+        {
+            ViewBag.HideNav = false;
+
+            await _orchestrator.UpdateCacheItem(request);
+            return RedirectToAction("Create", new CreateRequest() { EncodedAccountId = request.EncodedAccountId, CacheKey = request.CacheKey });
+        }
     }
 }
