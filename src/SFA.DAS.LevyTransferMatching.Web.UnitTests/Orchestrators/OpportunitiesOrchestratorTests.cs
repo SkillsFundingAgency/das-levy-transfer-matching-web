@@ -77,9 +77,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var result = await _orchestrator.GetDetailViewModel(encodedId);
 
             // Assert
-            Assert.AreEqual(result.JobRoleList, "All");
-            Assert.AreEqual(result.LevelList, "All");
-            Assert.AreEqual(result.SectorList, "All");
+            Assert.AreEqual("All", result.JobRoleList);
+            Assert.AreEqual("All", result.LevelList);
+            Assert.AreEqual("All", result.SectorList);
             Assert.AreEqual(result.YearDescription, $"{_currentDateTime.ToTaxYear("yyyy")}/{_currentDateTime.AddYears(1).ToTaxYear("yy")}");
         }
 

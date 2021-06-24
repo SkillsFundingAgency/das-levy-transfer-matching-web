@@ -40,7 +40,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             var sectorTags = await _tagService.GetSectors();
 
             string sectorList = null;
-            if (sectorTags.Count() == opportunityDto.Sectors.Count())
+            if (sectorTags.Count == opportunityDto.Sectors.Count())
             {
                 sectorList = All;
             }
@@ -56,7 +56,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             var jobRoleTags = await _tagService.GetJobRoles();
 
             string jobRoleList = null;
-            if (jobRoleTags.Count() == opportunityDto.JobRoles.Count())
+            if (jobRoleTags.Count == opportunityDto.JobRoles.Count())
             {
                 jobRoleList = All;
             }
@@ -84,7 +84,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             var levelTags = await _tagService.GetLevels();
 
             string levelList = null;
-            if (levelTags.Count() == opportunityDto.Levels.Count())
+            if (levelTags.Count == opportunityDto.Levels.Count())
             {
                 levelList = All;
             }

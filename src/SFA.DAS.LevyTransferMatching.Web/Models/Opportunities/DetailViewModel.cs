@@ -1,5 +1,4 @@
 ﻿using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
-using System.Collections.Generic;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
 {
