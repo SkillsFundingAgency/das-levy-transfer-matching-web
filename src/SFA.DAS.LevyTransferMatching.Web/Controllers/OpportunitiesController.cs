@@ -4,10 +4,10 @@ using Microsoft.AspNetCore.Authorization;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using System.Data;
+using SFA.DAS.Authorization.Mvc.Attributes;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
-    [AllowAnonymous]
     public class OpportunitiesController : Controller
     {
         private readonly IOpportunitiesOrchestrator _opportunitiesOrchestrator;
@@ -58,8 +58,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             }
         }
         
+        [DasAuthorize]
         [Route("opportunities/{encodedId}/apply")]
-        public async Task<IActionResult> RedirectToApply(string encodedId)
+        public IActionResult RedirectToApply(string encodedId)
         {
             // TODO: To be auth'd at this point, and redirect to
             //       accounts/{encodedAccountId}/opportunities/{encodedId}.
