@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -25,10 +26,20 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
 
         public async Task<OpportunityDto> GetOpportunity(string encodedId)
         {
-            var response = await _client.GetAsync($"pledges/{encodedId}");
-            response.EnsureSuccessStatusCode();
+            OpportunityDto opportunity = null;
 
-            return JsonConvert.DeserializeObject<OpportunityDto>(await response.Content.ReadAsStringAsync());
+            var response = await _client.GetAsync($"pledges/{encodedId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                opportunity = JsonConvert.DeserializeObject<OpportunityDto>(await response.Content.ReadAsStringAsync());
+            }
+            else if (response.StatusCode != HttpStatusCode.NotFound)
+            {
+                response.EnsureSuccessStatusCode();
+            }
+
+            return opportunity;
         }
     }
 }

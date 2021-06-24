@@ -26,7 +26,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         public async Task<IActionResult> Detail(string encodedId)
         {
             var viewModel = await _opportunitiesOrchestrator.GetDetailViewModel(encodedId);
-            return View(viewModel);
+
+            if (viewModel != null)
+            {
+                return View(viewModel);
+            }
+            else
+            {
+                return NotFound();
+            }
         }
     }
 }

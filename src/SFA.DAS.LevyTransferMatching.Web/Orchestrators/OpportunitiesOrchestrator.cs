@@ -30,6 +30,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var opportunityDto = await _opportunitiesService.GetOpportunity(encodedId);
 
+            // If null, an opportunity couldn't be found for the encodedId.
+            if (opportunityDto == null)
+            {
+                return null;
+            }
+
             // Pull back the tags, and use the descriptions to build the lists.
             var sectorTags = await _tagService.GetSectors();
 

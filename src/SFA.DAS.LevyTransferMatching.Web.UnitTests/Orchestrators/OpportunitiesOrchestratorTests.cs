@@ -170,6 +170,23 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         }
 
         [Test]
+        public async Task GetDetailViewModel_Opportunity_Not_Found_Returns_Null()
+        {
+            // Arrange
+            string encodedId = _fixture.Create<string>();
+
+            _opportunitiesService
+                .Setup(x => x.GetOpportunity(It.Is<string>(y => y == encodedId)))
+                .ReturnsAsync((OpportunityDto)null);
+
+            // Act
+            var result = await _orchestrator.GetDetailViewModel(encodedId);
+
+            // Assert
+            Assert.IsNull(result);
+        }
+
+        [Test]
         public void GetDetailViewModel_Levels_Returned_Not_In_Correct_Format_Throws_Data_Exception()
         {
             // Arrange
