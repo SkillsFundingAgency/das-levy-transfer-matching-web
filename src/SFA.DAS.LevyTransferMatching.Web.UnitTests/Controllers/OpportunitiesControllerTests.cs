@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
+using System.Data;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
 {
@@ -76,10 +77,61 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
                 .ReturnsAsync((DetailViewModel)null);
 
             // Act
-            var viewResult = await _opportunitiesController.Detail(encodedId) as NotFoundResult;
+            var notFoundResult = await _opportunitiesController.Detail(encodedId) as NotFoundResult;
 
             // Assert
-            Assert.NotNull(viewResult);
+            Assert.NotNull(notFoundResult);
+        }
+
+        [Test]
+        public void POST_ConfirmOpportunitySelection_No_Confirmation_Throws_DataException()
+        {
+            // Arrange
+            string encodedId = _fixture.Create<string>();
+            DetailPostRequest detailPostRequest = new DetailPostRequest();
+
+            // Assert
+            Assert.Throws<DataException>(() =>
+            {
+                // Act
+                _opportunitiesController.ConfirmOpportunitySelection(encodedId, detailPostRequest);
+            });
+        }
+
+        [Test]
+        public void POST_ConfirmOpportunitySelection_No_Selected_Redirects_To_Index()
+        {
+            // Arrange
+            string encodedId = _fixture.Create<string>();
+            DetailPostRequest detailPostRequest = new DetailPostRequest()
+            {
+                HasConfirmed = false,
+            };
+
+            // Assert
+            var redirectResult = _opportunitiesController.ConfirmOpportunitySelection(encodedId, detailPostRequest) as RedirectToActionResult;
+
+            // Assert
+            Assert.IsNotNull(redirectResult);
+            Assert.AreEqual(redirectResult.ActionName, nameof(OpportunitiesController.Index));
+        }
+
+        [Test]
+        public void POST_ConfirmOpportunitySelection_Yes_Selected_Redirects_To_RedirectToApply()
+        {
+            // Arrange
+            string encodedId = _fixture.Create<string>();
+            DetailPostRequest detailPostRequest = new DetailPostRequest()
+            {
+                HasConfirmed = true,
+            };
+
+            // Assert
+            var redirectResult = _opportunitiesController.ConfirmOpportunitySelection(encodedId, detailPostRequest) as RedirectToActionResult;
+
+            // Assert
+            Assert.IsNotNull(redirectResult);
+            Assert.AreEqual(redirectResult.ActionName, nameof(OpportunitiesController.RedirectToApply));
         }
     }
 }

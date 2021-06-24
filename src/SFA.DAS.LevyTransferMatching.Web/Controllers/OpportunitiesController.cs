@@ -2,11 +2,12 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
+using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
+using System.Data;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
     [AllowAnonymous]
-    [Route("opportunities")]
     public class OpportunitiesController : Controller
     {
         private readonly IOpportunitiesOrchestrator _opportunitiesOrchestrator;
@@ -22,7 +23,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             return View(viewModel);
         }
 
-        [Route("{encodedId}")]
+        [Route("opportunities/{encodedId}")]
         public async Task<IActionResult> Detail(string encodedId)
         {
             var viewModel = await _opportunitiesOrchestrator.GetDetailViewModel(encodedId);
@@ -35,6 +36,34 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             {
                 return NotFound();
             }
+        }
+
+        [HttpPost]
+        [Route("opportunities/{encodedId}")]
+        public IActionResult ConfirmOpportunitySelection(string encodedId, DetailPostRequest detailPostRequest)
+        {
+            if (!detailPostRequest.HasConfirmed.HasValue)
+            {
+                throw new DataException($"{nameof(detailPostRequest.HasConfirmed)} should be validated and have a value.");
+            }
+
+            if (detailPostRequest.HasConfirmed.Value)
+            {
+                return RedirectToAction(nameof(RedirectToApply), new { encodedId });
+            }
+            else
+            {
+                // Go back.
+                return RedirectToAction(nameof(Index));
+            }
+        }
+        
+        [Route("opportunities/{encodedId}/apply")]
+        public async Task<IActionResult> RedirectToApply(string encodedId)
+        {
+            // TODO: To be auth'd at this point, and redirect to
+            //       accounts/{encodedAccountId}/opportunities/{encodedId}.
+            return Ok();
         }
     }
 }

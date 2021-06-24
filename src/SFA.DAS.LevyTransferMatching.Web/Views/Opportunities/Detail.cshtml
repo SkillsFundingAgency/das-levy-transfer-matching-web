@@ -6,6 +6,7 @@
 
 <a href="@Url.Action("index")" class="govuk-back-link">Back</a>
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
+    <partial name="_ValidationSummary" />
     <div class="govuk-width-container form-entry" id="transfers-hub">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
@@ -33,16 +34,17 @@
                 </div>
                 <!-- PLEDGE DETAILS - END -->
 
-                <form method="post" action="" id="apply-application-form">
+                <form method="post" id="apply-application-form">
 
                     <div class="govuk-form-group">
                         <fieldset class="govuk-fieldset">
                             <legend class="govuk-fieldset__legend">
                                 <h1 class="govuk-fieldset__heading govuk-label--s">Would you like to apply for the transfer funds?</h1>
                             </legend>
+                            <span das-validation-for="HasConfirmed" class="govuk-error-message"></span>
                             <div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios">
                                 <div class="govuk-radios__item">
-                                    <input class="govuk-radios__input" id="apply-pledge-funds-yes" name="apply-pledge-funds" type="radio" value="Yes" data-aria-controls="conditional-apply-pledge-funds-yes">
+                                    <input class="govuk-radios__input" id="apply-pledge-funds-yes" asp-for="HasConfirmed" value="true" type="radio" data-aria-controls="conditional-apply-pledge-funds-yes" das-highlight-error-for="HasConfirmed" error-class="govuk-textarea--error">
                                     <label class="govuk-label govuk-radios__label" for="apply-pledge-funds-yes">Yes, apply for transfer funds</label>
                                 </div>
                                 <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-apply-pledge-funds-yes">
@@ -57,7 +59,7 @@
                                     </div>
                                 </div>
                                 <div class="govuk-radios__item">
-                                    <input class="govuk-radios__input" id="apply-pledge-funds-no" name="apply-pledge-funds" type="radio" value="No I want to see apprenticeship training providers">
+                                    <input class="govuk-radios__input" id="apply-pledge-funds-no" asp-for="HasConfirmed" value="false" type="radio" das-highlight-error-for="HasConfirmed" error-class="govuk-textarea--error">
                                     <label class="govuk-label govuk-radios__label" for="apply-pledge-funds-no">No</label>
                                 </div>
                             </div>

@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
 {
-    public class DetailViewModel
+    public class DetailViewModel : DetailPostRequest
     {
         public OpportunityDto Opportunity { get; set; }
-        public string SectorList { get; internal set; }
-        public string JobRoleList { get; internal set; }
-        public string LevelList { get; internal set; }
-        public string YearDescription { get; internal set; }
+        public string SectorList { get; set; }
+        public string JobRoleList { get; set; }
+        public string LevelList { get; set; }
+        public string YearDescription { get; set; }
     }
 }
