@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using System.Data;
+using SFA.DAS.LevyTransferMatching.Web.Authentication;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
 {
@@ -19,15 +20,17 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
     {
         private OpportunitiesController _opportunitiesController;
         private Fixture _fixture;
+        private Mock<IAuthenticationService> _authenticationService;
         private Mock<IOpportunitiesOrchestrator> _orchestrator;
 
         [SetUp]
         public void SetUp()
         {
             _fixture = new Fixture();
+            _authenticationService = new Mock<IAuthenticationService>();
             _orchestrator = new Mock<IOpportunitiesOrchestrator>();
 
-            _opportunitiesController = new OpportunitiesController(_orchestrator.Object);
+            _opportunitiesController = new OpportunitiesController(_authenticationService.Object, _orchestrator.Object);
         }
 
         [Test]

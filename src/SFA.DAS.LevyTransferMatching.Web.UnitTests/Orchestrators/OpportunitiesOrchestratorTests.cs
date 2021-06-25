@@ -13,6 +13,7 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using System;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using System.Data;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 {
@@ -24,7 +25,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private Mock<IDateTimeService> _dateTimeService;
         private Mock<IOpportunitiesService> _opportunitiesService;
         private Mock<ITagService> _tagService;
-
+        private Mock<IUserService> _userService;
         private List<OpportunityDto> _opportunityDtoList;
         private List<Tag> _sectorTags;
         private List<Tag> _jobRoleTags;
@@ -38,11 +39,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _dateTimeService = new Mock<IDateTimeService>();
             _opportunitiesService = new Mock<IOpportunitiesService>();
             _tagService = new Mock<ITagService>();
+            _userService = new Mock<IUserService>();
 
             _opportunityDtoList = _fixture.Create<List<OpportunityDto>>();
             _opportunitiesService.Setup(x => x.GetAllOpportunities()).ReturnsAsync(_opportunityDtoList);
 
-            _orchestrator = new OpportunitiesOrchestrator(_dateTimeService.Object, _opportunitiesService.Object, _tagService.Object);
+            _orchestrator = new OpportunitiesOrchestrator(_dateTimeService.Object, _opportunitiesService.Object, _tagService.Object, _userService.Object);
         }
 
         [Test]

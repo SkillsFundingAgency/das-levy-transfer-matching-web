@@ -1,19 +1,21 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using System.Data;
 using SFA.DAS.Authorization.Mvc.Attributes;
+using SFA.DAS.LevyTransferMatching.Web.Authentication;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
     public class OpportunitiesController : Controller
     {
+        private readonly IAuthenticationService _authenticationService;
         private readonly IOpportunitiesOrchestrator _opportunitiesOrchestrator;
 
-        public OpportunitiesController(IOpportunitiesOrchestrator searchFundingOrchestrator)
+        public OpportunitiesController(IAuthenticationService authenticationService, IOpportunitiesOrchestrator searchFundingOrchestrator)
         {
+            _authenticationService = authenticationService;
             _opportunitiesOrchestrator = searchFundingOrchestrator;
         }
 
@@ -42,6 +44,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Route("opportunities/{encodedId}")]
         public IActionResult ConfirmOpportunitySelection(string encodedId, DetailPostRequest detailPostRequest)
         {
+            // TODO: Move into Orchestrator
             if (!detailPostRequest.HasConfirmed.HasValue)
             {
                 throw new DataException($"{nameof(detailPostRequest.HasConfirmed)} should be validated and have a value.");
@@ -60,11 +63,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         
         [DasAuthorize]
         [Route("opportunities/{encodedId}/apply")]
-        public IActionResult RedirectToApply(string encodedId)
+        public async Task<IActionResult> RedirectToApply(string encodedId)
         {
-            // TODO: To be auth'd at this point, and redirect to
-            //       accounts/{encodedAccountId}/opportunities/{encodedId}.
-            return Ok();
+            var userId = _authenticationService.UserId;
+
+            var encodedAccountId = await _opportunitiesOrchestrator.GetUserEncodedAccountId(userId);
+
+            // TODO: Update to wire up to the actual controller (i.e.
+            //       RedirectToAction) - which doesn't exist currently.
+            return Redirect($"/accounts/{encodedAccountId}/opportunities/{encodedId}/apply");
         }
     }
 }

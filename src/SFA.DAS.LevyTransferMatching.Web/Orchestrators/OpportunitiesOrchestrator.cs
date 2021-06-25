@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.TagService;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 
@@ -18,12 +20,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         private readonly IDateTimeService _dateTimeService;
         private readonly IOpportunitiesService _opportunitiesService;
         private readonly ITagService _tagService;
+        private readonly IUserService _userService;
 
-        public OpportunitiesOrchestrator(IDateTimeService dateTimeService, IOpportunitiesService opportunitiesService, ITagService tagService)
+        public OpportunitiesOrchestrator(IDateTimeService dateTimeService, IOpportunitiesService opportunitiesService, ITagService tagService, IUserService userService)
         {
             _dateTimeService = dateTimeService;
             _opportunitiesService = opportunitiesService;
             _tagService = tagService;
+            _userService = userService;
         }
 
         public async Task<DetailViewModel> GetDetailViewModel(string encodedId)
@@ -116,6 +120,20 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             List<Opportunity> opportunities = opportunitiesDto.Select(x => new Opportunity { EmployerName = x.DasAccountName, ReferenceNumber = x.EncodedPledgeId }).ToList();
 
             return new IndexViewModel { Opportunities = opportunities };
+        }
+
+        public async Task<string> GetUserEncodedAccountId(string userId)
+        {
+            var accounts = await _userService.GetUserAccounts(userId);
+
+            // TODO: Below is temporary -
+            //       Raised as an issue, and eventually to be replaced with
+            //       an accounts selection screen.
+            var firstEncodedAccountId = accounts
+                .Select(x => x.EncodedAccountId)
+                .First();
+
+            return firstEncodedAccountId;
         }
     }
 }
