@@ -196,10 +196,10 @@ ExtraFieldRows.prototype.showRow = function (row) {
 
 var selectAllCheckboxes = document.querySelector('[data-checkboxes-select-all]')
 if (selectAllCheckboxes) {
-  new SelectAllCheckboxes(selectAllCheckboxes);
+  var selectAllFormControl = new SelectAllCheckboxes(selectAllCheckboxes);
 }
 
 var extraFieldRows = document.querySelector('[data-extra-field-rows]')
 if (extraFieldRows) {
-  new ExtraFieldRows(extraFieldRows);
+  var extraLocationFields = new ExtraFieldRows(extraFieldRows);
 }
