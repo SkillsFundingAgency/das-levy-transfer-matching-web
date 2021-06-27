@@ -4,56 +4,50 @@
 }
 
 <a href="@Url.Action("Create", "Pledges", new { Model.EncodedAccountId, Model.CacheKey })" class="govuk-back-link">Back</a>
-
-
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
     <partial name="_ValidationSummary" />
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <span class="govuk-caption-m">Find a business to transfer your levy to</span>
-            <h1 class="govuk-heading-xl">Add the locations you'd like to fund.</h1>
-
-            <form method="post">
+            <h1 class="govuk-heading-xl">Add the locations you'd like to fund</h1>
+            <form method="post" data-extra-field-rows="true" autocomplete="off">
                 <div class="govuk-form-group">
-                    <label class="govuk-label">
+                    <label class="govuk-label" asp-for="Locations[0]">
                         Start typing to find the city, town, region or local authority you'd like to pledge money to.
                     </label>
                     <div class="govuk-hint">
                         For example, Manchester, West Midlands, Leeds City Council
                     </div>
-                    <input class="govuk-input govuk-input--width-20" type="text" asp-for="Locations[0]" />
+                    <input class="govuk-input" type="text" asp-for="Locations[0]" />
                 </div>
-
-                <div>
+                <fieldset class="govuk-fieldset app-extra-fields__fieldset">
                     @for (int i = 1; i < 10; i++)
                     {
-                        <div class="govuk-form-group">
-                            <label class="govuk-label">
+                        <div class="govuk-form-group app-extra-fields__form-group">
+                            <label class="govuk-label" asp-for="Locations[i]">
                                 Additional city, town or local authority
                             </label>
-                            <input class="govuk-input govuk-input--width-20" type="text" asp-for="Locations[i]" />
+                            <input class="govuk-input app-location-autocomplete" type="text" asp-for="Locations[i]" />
                         </div>
                     }
-                </div>
-                
-                <div class="govuk-form-group">
-                    <div class="govuk-checkboxes">
-                        <div class="govuk-inset-text">
+                </fieldset>
+                <div class="govuk-inset-text">
+                    <div class="govuk-form-group">
+                        <div class="govuk-checkboxes">
                             <div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" type="checkbox" asp-for="AllSelected" />
-                                <label class="govuk-label govuk-checkboxes__label">
+                                <input class="govuk-checkboxes__input app-extra-fields__all-locations" type="checkbox" asp-for="AllSelected" />
+                                <label class="govuk-label govuk-checkboxes__label" asp-for="AllSelected">
                                     Or all of England
                                 </label>
                             </div>
                         </div>
                     </div>
-
-                    <div class="govuk-button-group">
-                        <button id="pledge-criteria-continue" class="govuk-button" data-module="govuk-button">
-                            Continue
-                        </button>
-                        <a href="@Url.Action("Create", "Pledges", new { Model.EncodedAccountId, Model.CacheKey })" class="govuk-link govuk-back-link">Back</a>
-                    </div>
+                </div>
+                <div class="govuk-button-group">
+                    <button id="pledge-criteria-continue" class="govuk-button" data-module="govuk-button">
+                        Continue
+                    </button>
+                    <a href="@Url.Action("Create", "Pledges", new { Model.EncodedAccountId, Model.CacheKey })" class="govuk-link govuk-back-link">Back</a>
                 </div>
             </form>
         </div>
