@@ -1,4 +1,5 @@
-﻿using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
+﻿using Newtonsoft.Json;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -16,11 +17,15 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.LocationService
             _client = client;
         }
 
-        public async Task<LocationDto> SearchLocation(string searchTerm)
+        public async Task<LocationDto> GetLocation(string searchTerm)
         {
             var response = await _client.GetAsync($"/Locations?searchTerm={searchTerm}");
+            response.EnsureSuccessStatusCode();
 
-            return new LocationDto();
+            var content = await response.Content.ReadAsStringAsync();
+            var locationDto = JsonConvert.DeserializeObject<LocationDto>(content);
+
+            return locationDto;
         }
     }
 }

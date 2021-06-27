@@ -35,17 +35,17 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
             services.AddTransient<ICacheStorageService, CacheStorageService>();
             services.AddTransient<IPledgeOrchestrator, PledgeOrchestrator>();
 
-            services.AddClient<IAccountsService, LevyTransferMatchingApi>((c, s) => new AccountsService(c));
-            services.AddClient<ILocationService, FindApprenticeshipTrainingApiConfiguration>((c, s) => new LocationService(c));
+            services.AddClient<IAccountsService>((c, s) => new AccountsService(c));
+            services.AddClient<ILocationService>((c, s) => new LocationService(c));
         }
 
-        private static IServiceCollection AddClient<T, TConfig>(
+        private static IServiceCollection AddClient<T>(
             this IServiceCollection serviceCollection,
-            Func<HttpClient, IServiceProvider, T> instance) where T : class where TConfig : IApimClientConfiguration
+            Func<HttpClient, IServiceProvider, T> instance) where T : class
         {
             serviceCollection.AddTransient(s =>
             {
-                var settings = s.GetService<TConfig>();
+                var settings = s.GetService<LevyTransferMatchingApi>();
 
                 var clientBuilder = new HttpClientBuilder()
                     .WithDefaultHeaders()

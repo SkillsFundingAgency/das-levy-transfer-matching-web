@@ -11,6 +11,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         Task<SectorViewModel> GetSectorViewModel(SectorRequest request);
         Task<JobRoleViewModel> GetJobRoleViewModel(JobRoleRequest request);
         Task<LocationViewModel> GetLocationViewModel(LocationRequest request);
+        Task ValidateLocations(LocationPostRequest request);
         Task UpdateCacheItem(AmountPostRequest request);
         Task UpdateCacheItem(SectorPostRequest request);
         Task UpdateCacheItem(LevelPostRequest request);

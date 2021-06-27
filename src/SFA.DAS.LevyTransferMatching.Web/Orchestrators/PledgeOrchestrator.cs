@@ -100,6 +100,19 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 Locations = cacheItem.Locations
             };
         }
+        
+        public async Task ValidateLocations(LocationPostRequest request)
+        {
+            foreach(var location in request.Locations)
+            {
+                if(location != null)
+                {
+                    var verifiedLocationName = await _locationService.GetLocation(location);
+                    //if(verifiedLocationName == null)
+                }
+            }
+
+        }
 
         public async Task UpdateCacheItem(AmountPostRequest request)
         {
