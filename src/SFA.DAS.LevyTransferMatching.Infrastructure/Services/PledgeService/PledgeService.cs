@@ -1,11 +1,8 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService;
-using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
@@ -13,17 +10,25 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
     public class PledgeService : IPledgeService
     {
         private readonly HttpClient _client;
+        private readonly IEncodingService _encodingService;
 
-        public PledgeService(HttpClient client)
+        public PledgeService(HttpClient client, IEncodingService encodingService)
         {
             _client = client;
+            _encodingService = encodingService;
         }
 
-        public async Task PostPledge(PledgeDto pledgeDto, long accountId)
+        public async Task<PledgeDto> PostPledge(PledgeDto pledgeDto, long accountId)
         {
             var json = JsonConvert.SerializeObject(pledgeDto, new StringEnumConverter());
-            var response = await _client.PostAsync($"accounts/{accountId}/pledges", new StringContent(json, Encoding.UTF8, "application/json"));
+            var response = await _client.PostAsync($"accounts/{accountId}/pledges", new StringContent(json, System.Text.Encoding.UTF8, "application/json"));
             response.EnsureSuccessStatusCode();
+
+            var result = JsonConvert.DeserializeObject<PledgeDto>(await response.Content.ReadAsStringAsync());
+
+            pledgeDto.Id = _encodingService.Encode(long.Parse(result.Id), EncodingType.PledgeId);
+
+            return pledgeDto;
         }
     }
 }

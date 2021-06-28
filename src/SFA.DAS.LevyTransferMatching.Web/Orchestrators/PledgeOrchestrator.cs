@@ -65,7 +65,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var cacheItemTask = RetrievePledgeCacheItem(request.CacheKey);
             var remainingTransferAllowanceTask = _accountsService.GetRemainingTransferAllowance(request.EncodedAccountId);
-
+      
             await Task.WhenAll(cacheItemTask, remainingTransferAllowanceTask);
             var cacheItem = cacheItemTask.Result;
 
@@ -111,7 +111,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
-        public async Task SubmitPledge(CreatePostRequest request)
+        public async Task<ConfirmationViewModel> SubmitPledge(CreatePostRequest request)
         {
             var cacheItem = await _cacheStorageService.RetrieveFromCache<CreatePledgeCacheItem>(request.CacheKey.ToString());
 
@@ -126,8 +126,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 Levels = cacheItem.Levels ?? new List<string>()
             };
 
-            await _pledgeService.PostPledge(pledgeDto, request.AccountId);
+            var pledge = await _pledgeService.PostPledge(pledgeDto, request.AccountId);
             await _cacheStorageService.DeleteFromCache(request.CacheKey.ToString());
+
+            return new ConfirmationViewModel
+            { 
+                EncodedAccountId = request.EncodedAccountId,
+                PledgeId = pledge.Id
+            };
         }
 
         public async Task UpdateCacheItem(AmountPostRequest request)

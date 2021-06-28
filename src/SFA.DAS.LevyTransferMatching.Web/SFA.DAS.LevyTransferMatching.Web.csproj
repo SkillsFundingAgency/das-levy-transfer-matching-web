@@ -4,6 +4,10 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="AspNetCore.HealthChecks.Redis" Version="5.0.2" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="10.0.2" />
@@ -21,7 +25,7 @@
     <PackageReference Include="SFA.DAS.Employer.Shared.UI" Version="2.0.17" />
     <PackageReference Include="SFA.DAS.EmployerAccounts.Api.Client" Version="1.6.2978" />
     <PackageReference Include="SFA.DAS.EmployerUrlHelper" Version="3.0.22" />
-    <PackageReference Include="SFA.DAS.Encoding" Version="1.1.69" />
+    <PackageReference Include="SFA.DAS.Encoding" Version="1.1.72" />
     <PackageReference Include="SFA.DAS.Http" Version="3.2.62" />
     <PackageReference Include="SFA.DAS.NLog.Targets.Redis" Version="1.2.1" />
     <PackageReference Include="SFA.DAS.Validation" Version="6.0.15" />

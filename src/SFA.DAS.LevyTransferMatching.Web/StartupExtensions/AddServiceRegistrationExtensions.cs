@@ -17,6 +17,7 @@ using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using System;
 using System.Net.Http;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.TagService;
+using SFA.DAS.Encoding;
 
 namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
 {
@@ -36,7 +37,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
             services.AddTransient<IPledgeOrchestrator, PledgeOrchestrator>();
 
             services.AddClient<IAccountsService>((c, s) => new AccountsService(c));
-            services.AddClient<IPledgeService>((c, s) => new PledgeService(c));
+            services.AddClient<IPledgeService>((c, s) => new PledgeService(c, s.GetRequiredService<IEncodingService>()));
             services.AddClient<ITagService>((c, s) => new TagService(c, s.GetService<ICacheStorageService>()));
         }
 
