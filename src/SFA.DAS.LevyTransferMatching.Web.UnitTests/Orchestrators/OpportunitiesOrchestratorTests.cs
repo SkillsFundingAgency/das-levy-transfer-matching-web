@@ -48,7 +48,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         }
 
         [Test]
-        public async Task GetSearchFundingViewModel_Opportunities_Are_Populated()
+        public async Task GetIndexViewModel_Opportunities_Are_Populated()
         {
             var test = await _orchestrator.GetIndexViewModel();
 

@@ -87,7 +87,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         }
 
         [Test]
-        public void POST_ConfirmOpportunitySelection_No_Selected_Redirects_To_Index()
+        public void POST_Detail_No_Selected_Redirects_To_Index()
         {
             // Arrange
             string encodedPledgeId = _fixture.Create<string>();
@@ -98,15 +98,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             };
 
             // Assert
-            var redirectResult = _opportunitiesController.Detail(opportunitiesPostRequest) as RedirectToActionResult;
+            var redirectToActionResult = _opportunitiesController.Detail(opportunitiesPostRequest) as RedirectToActionResult;
 
             // Assert
-            Assert.IsNotNull(redirectResult);
-            Assert.AreEqual(redirectResult.ActionName, nameof(OpportunitiesController.Index));
+            Assert.IsNotNull(redirectToActionResult);
+            Assert.AreEqual(redirectToActionResult.ActionName, nameof(OpportunitiesController.Index));
         }
 
         [Test]
-        public void POST_ConfirmOpportunitySelection_Yes_Selected_Redirects_To_SelectAccount()
+        public void POST_Detail_Yes_Selected_Redirects_To_SelectAccount()
         {
             // Arrange
             string encodedPledgeId = _fixture.Create<string>();
@@ -117,11 +117,34 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             };
 
             // Assert
-            var redirectResult = _opportunitiesController.Detail(opportunitiesPostRequest) as RedirectToActionResult;
+            var redirectToActionResult = _opportunitiesController.Detail(opportunitiesPostRequest) as RedirectToActionResult;
 
             // Assert
+            Assert.IsNotNull(redirectToActionResult);
+            Assert.AreEqual(redirectToActionResult.ActionName, nameof(OpportunitiesController.SelectAccount));
+        }
+
+        [Test]
+        public async Task GET_SelectAccount_Redirects_To_Authorized_Apply_Path()
+        {
+            string userId = _fixture.Create<string>();
+
+            _authenticationService
+                .Setup(x => x.UserId)
+                .Returns(userId);
+
+            string encodedAccountId = _fixture.Create<string>();
+
+            _orchestrator
+                .Setup(x => x.GetUserEncodedAccountId(It.Is<string>(y => y == userId)))
+                .ReturnsAsync(encodedAccountId);
+
+            string encodedPledgeId = _fixture.Create<string>();
+
+            var redirectResult = await _opportunitiesController.SelectAccount(encodedPledgeId) as RedirectResult;
+
             Assert.IsNotNull(redirectResult);
-            Assert.AreEqual(redirectResult.ActionName, nameof(OpportunitiesController.SelectAccount));
+            Assert.AreEqual(redirectResult.Url, $"/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/apply");
         }
     }
 }
