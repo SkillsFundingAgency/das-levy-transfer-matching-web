@@ -1,15 +1,9 @@
-﻿using SFA.DAS.LevyTransferMatching.Web.Models.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 {
-    public class JobRolePostRequest
+    public class JobRolePostRequest : PledgesRequest
     {
-        public string EncodedAccountId { get; set; }
-        public Guid CacheKey { get; set; }
-        public JobRole? JobRoles { get; set; }
+        public List<string> JobRoles { get; set; }
     }
 }
