@@ -106,7 +106,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         }
 
         [Test]
-        public void POST_ConfirmOpportunitySelection_Yes_Selected_Redirects_To_RedirectToApply()
+        public void POST_ConfirmOpportunitySelection_Yes_Selected_Redirects_To_SelectAccount()
         {
             // Arrange
             string encodedPledgeId = _fixture.Create<string>();
@@ -121,7 +121,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
 
             // Assert
             Assert.IsNotNull(redirectResult);
-            Assert.AreEqual(redirectResult.ActionName, nameof(OpportunitiesController.RedirectToApply));
+            Assert.AreEqual(redirectResult.ActionName, nameof(OpportunitiesController.SelectAccount));
         }
     }
 }

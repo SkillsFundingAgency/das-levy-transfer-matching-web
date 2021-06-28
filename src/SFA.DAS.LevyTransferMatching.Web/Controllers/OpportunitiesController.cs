@@ -46,7 +46,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         {
             if (opportunitiesPostRequest.HasConfirmed.Value)
             {
-                return RedirectToAction(nameof(RedirectToApply), new { opportunitiesPostRequest.EncodedPledgeId });
+                return RedirectToAction(nameof(SelectAccount), new { opportunitiesPostRequest.EncodedPledgeId });
             }
             else
             {
@@ -57,7 +57,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         
         [DasAuthorize]
         [Route("opportunities/{encodedPledgeId}/apply")]
-        public async Task<IActionResult> RedirectToApply(string encodedPledgeId)
+        public async Task<IActionResult> SelectAccount(string encodedPledgeId)
         {
             var userId = _authenticationService.UserId;
 
