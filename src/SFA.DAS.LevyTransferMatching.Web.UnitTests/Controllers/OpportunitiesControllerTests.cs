@@ -52,15 +52,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         public async Task GET_Detail_Opportunity_Exists_Returns_Expected_View_With_Expected_ViewModel()
         {
             // Arrange
-            var encodedId = _fixture.Create<string>();
+            var encodedPledgeId = _fixture.Create<string>();
             var expectedDetailViewModel = _fixture.Create<DetailViewModel>();
 
             _orchestrator
-                .Setup(x => x.GetDetailViewModel(It.Is<string>(y => y == encodedId)))
+                .Setup(x => x.GetDetailViewModel(It.Is<string>(y => y == encodedPledgeId)))
                 .ReturnsAsync(expectedDetailViewModel);
 
             // Act
-            var viewResult = await _opportunitiesController.Detail(encodedId) as ViewResult;
+            var viewResult = await _opportunitiesController.Detail(encodedPledgeId) as ViewResult;
             var actualDetailViewModel = viewResult?.Model as DetailViewModel;
 
             // Assert
@@ -73,46 +73,32 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         public async Task GET_Detail_Opportunity_Doesnt_Exist_Returns_404()
         {
             // Arrange
-            var encodedId = _fixture.Create<string>();
+            var encodedPledgeId = _fixture.Create<string>();
 
             _orchestrator
-                .Setup(x => x.GetDetailViewModel(It.Is<string>(y => y == encodedId)))
+                .Setup(x => x.GetDetailViewModel(It.Is<string>(y => y == encodedPledgeId)))
                 .ReturnsAsync((DetailViewModel)null);
 
             // Act
-            var notFoundResult = await _opportunitiesController.Detail(encodedId) as NotFoundResult;
+            var notFoundResult = await _opportunitiesController.Detail(encodedPledgeId) as NotFoundResult;
 
             // Assert
             Assert.NotNull(notFoundResult);
         }
 
         [Test]
-        public void POST_ConfirmOpportunitySelection_No_Confirmation_Throws_DataException()
-        {
-            // Arrange
-            string encodedId = _fixture.Create<string>();
-            DetailPostRequest detailPostRequest = new DetailPostRequest();
-
-            // Assert
-            Assert.Throws<DataException>(() =>
-            {
-                // Act
-                _opportunitiesController.ConfirmOpportunitySelection(encodedId, detailPostRequest);
-            });
-        }
-
-        [Test]
         public void POST_ConfirmOpportunitySelection_No_Selected_Redirects_To_Index()
         {
             // Arrange
-            string encodedId = _fixture.Create<string>();
-            DetailPostRequest detailPostRequest = new DetailPostRequest()
+            string encodedPledgeId = _fixture.Create<string>();
+            OpportunitiesPostRequest opportunitiesPostRequest = new OpportunitiesPostRequest()
             {
+                EncodedPledgeId = encodedPledgeId,
                 HasConfirmed = false,
             };
 
             // Assert
-            var redirectResult = _opportunitiesController.ConfirmOpportunitySelection(encodedId, detailPostRequest) as RedirectToActionResult;
+            var redirectResult = _opportunitiesController.Detail(opportunitiesPostRequest) as RedirectToActionResult;
 
             // Assert
             Assert.IsNotNull(redirectResult);
@@ -123,14 +109,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         public void POST_ConfirmOpportunitySelection_Yes_Selected_Redirects_To_RedirectToApply()
         {
             // Arrange
-            string encodedId = _fixture.Create<string>();
-            DetailPostRequest detailPostRequest = new DetailPostRequest()
+            string encodedPledgeId = _fixture.Create<string>();
+            OpportunitiesPostRequest opportunitiesPostRequest = new OpportunitiesPostRequest()
             {
+                EncodedPledgeId = encodedPledgeId,
                 HasConfirmed = true,
             };
 
             // Assert
-            var redirectResult = _opportunitiesController.ConfirmOpportunitySelection(encodedId, detailPostRequest) as RedirectToActionResult;
+            var redirectResult = _opportunitiesController.Detail(opportunitiesPostRequest) as RedirectToActionResult;
 
             // Assert
             Assert.IsNotNull(redirectResult);

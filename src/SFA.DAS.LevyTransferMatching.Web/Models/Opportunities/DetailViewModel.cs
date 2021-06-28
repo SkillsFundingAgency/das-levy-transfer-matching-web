@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
 {
-    public class DetailViewModel : DetailPostRequest
+    public class DetailViewModel : OpportunitiesPostRequest
     {
         public OpportunityDto Opportunity { get; set; }
         public string SectorList { get; set; }

@@ -6,27 +6,27 @@ using SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities;
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
 {
     [TestFixture]
-    public class DetailPostRequestValidatorTests
+    public class OpportunitiesPostRequestValidatorTests
     {
-        private DetailPostRequestValidator _detailPostRequestValidator;
+        private OpportunitiesPostRequestValidator _opportunitiesPostRequestValidator;
 
         [SetUp]
         public void Setup()
         {
-            _detailPostRequestValidator = new DetailPostRequestValidator();
+            _opportunitiesPostRequestValidator = new OpportunitiesPostRequestValidator();
         }
 
         [TestCase(null)]
         public void Validator_Returns_Expected_Error_For_Null_HasConfirmed_Value(bool? hasConfirmed)
         {
             // Arrange
-            DetailPostRequest detailPostRequest = new DetailPostRequest()
+            OpportunitiesPostRequest opportunitiesPostRequest = new OpportunitiesPostRequest()
             {
                 HasConfirmed = hasConfirmed,
             };
 
             // Act
-            var result = _detailPostRequestValidator.TestValidate(detailPostRequest);
+            var result = _opportunitiesPostRequestValidator.TestValidate(opportunitiesPostRequest);
 
             // Assert
             result
@@ -39,13 +39,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
         public void Validator_Returns_No_Errors_For_NonNull_Has_Confirmed_Value(bool? hasConfirmed)
         {
             // Arrange
-            DetailPostRequest detailPostRequest = new DetailPostRequest()
+            OpportunitiesPostRequest opportunitiesPostRequest = new OpportunitiesPostRequest()
             {
                 HasConfirmed = hasConfirmed,
             };
 
             // Act
-            var result = _detailPostRequestValidator.TestValidate(detailPostRequest);
+            var result = _opportunitiesPostRequestValidator.TestValidate(opportunitiesPostRequest);
 
             // Assert
             result.ShouldNotHaveValidationErrorFor(x => x.HasConfirmed);

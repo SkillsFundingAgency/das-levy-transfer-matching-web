@@ -3,9 +3,9 @@ using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities
 {
-    public class DetailPostRequestValidator : AbstractValidator<DetailPostRequest>
+    public class OpportunitiesPostRequestValidator : AbstractValidator<OpportunitiesPostRequest>
     {
-        public DetailPostRequestValidator()
+        public OpportunitiesPostRequestValidator()
         {
             RuleFor(x => x.HasConfirmed)
                 .NotNull()

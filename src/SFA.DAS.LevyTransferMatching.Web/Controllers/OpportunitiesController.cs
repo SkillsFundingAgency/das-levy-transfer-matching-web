@@ -42,17 +42,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
         [HttpPost]
         [Route("opportunities/{encodedPledgeId}")]
-        public IActionResult ConfirmOpportunitySelection(string encodedPledgeId, DetailPostRequest detailPostRequest)
+        public IActionResult Detail(OpportunitiesPostRequest opportunitiesPostRequest)
         {
-            // TODO: Move into Orchestrator
-            if (!detailPostRequest.HasConfirmed.HasValue)
+            if (opportunitiesPostRequest.HasConfirmed.Value)
             {
-                throw new DataException($"{nameof(detailPostRequest.HasConfirmed)} should be validated and have a value.");
-            }
-
-            if (detailPostRequest.HasConfirmed.Value)
-            {
-                return RedirectToAction(nameof(RedirectToApply), new { encodedPledgeId });
+                return RedirectToAction(nameof(RedirectToApply), new { opportunitiesPostRequest.EncodedPledgeId });
             }
             else
             {
