@@ -1,7 +1,9 @@
-﻿@using SFA.DAS.LevyTransferMatching.Web.Models.Pledges
+﻿@using SFA.DAS.EmployerUrlHelper.Mvc;
+@using SFA.DAS.LevyTransferMatching.Web.Models.Pledges
+@inject SFA.DAS.EmployerUrlHelper.ILinkGenerator LinkGenerator
 @model ConfirmationViewModel
 @{
-	ViewData["Title"] = "Pledge Approved";
+    ViewData["Title"] = "Pledge Confirmation";
 }
 
 <a href="@Url.Action("index", "pledges" , new { Model.EncodedAccountId })" class="govuk-back-link">Back</a>
@@ -17,7 +19,7 @@
 
                     <h2 class="govuk-heading-m">What happens next</h2>
 
-                    <p>Your pledge is now public and can be <a href="@Url.Action("index", "SearchFunding")">viewed online</a>.</p>
+                    <p>Your pledge is now public and can be <a href="@Url.Action("index", "Opportunities")">viewed online</a>.</p>
 
                     <p>You can share your pledge link with organisations you work with to promote your pledge.</p>
 
@@ -30,8 +32,8 @@
                         <li>accept applications</li>
                         <li>reject applications</li>
                     </ul>
-
-                    <a href="@Url.Action("index", "pledges" , new { Model.EncodedAccountId })" class="govuk-back-link">Back to Transfers</a>
+                    
+                    <a href="@LinkGenerator.AccountsLink($"accounts/{Model.EncodedAccountId}/transfers")" class="govuk-back-link" )">Back to Transfers</a>
                 </div>
             </div>
         </div>
