@@ -25,10 +25,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             return View(viewModel);
         }
 
-        [Route("opportunities/{encodedId}")]
-        public async Task<IActionResult> Detail(string encodedId)
+        [Route("opportunities/{encodedPledgeId}")]
+        public async Task<IActionResult> Detail(string encodedPledgeId)
         {
-            var viewModel = await _opportunitiesOrchestrator.GetDetailViewModel(encodedId);
+            var viewModel = await _opportunitiesOrchestrator.GetDetailViewModel(encodedPledgeId);
 
             if (viewModel != null)
             {
@@ -41,8 +41,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         }
 
         [HttpPost]
-        [Route("opportunities/{encodedId}")]
-        public IActionResult ConfirmOpportunitySelection(string encodedId, DetailPostRequest detailPostRequest)
+        [Route("opportunities/{encodedPledgeId}")]
+        public IActionResult ConfirmOpportunitySelection(string encodedPledgeId, DetailPostRequest detailPostRequest)
         {
             // TODO: Move into Orchestrator
             if (!detailPostRequest.HasConfirmed.HasValue)
@@ -52,7 +52,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
             if (detailPostRequest.HasConfirmed.Value)
             {
-                return RedirectToAction(nameof(RedirectToApply), new { encodedId });
+                return RedirectToAction(nameof(RedirectToApply), new { encodedPledgeId });
             }
             else
             {
@@ -62,8 +62,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         }
         
         [DasAuthorize]
-        [Route("opportunities/{encodedId}/apply")]
-        public async Task<IActionResult> RedirectToApply(string encodedId)
+        [Route("opportunities/{encodedPledgeId}/apply")]
+        public async Task<IActionResult> RedirectToApply(string encodedPledgeId)
         {
             var userId = _authenticationService.UserId;
 
@@ -71,7 +71,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
             // TODO: Update to wire up to the actual controller (i.e.
             //       RedirectToAction) - which doesn't exist currently.
-            return Redirect($"/accounts/{encodedAccountId}/opportunities/{encodedId}/apply");
+            return Redirect($"/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/apply");
         }
     }
 }
