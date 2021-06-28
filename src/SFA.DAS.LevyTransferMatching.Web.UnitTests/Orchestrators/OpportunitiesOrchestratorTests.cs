@@ -4,6 +4,7 @@ using NUnit.Framework;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
 
@@ -15,6 +16,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private OpportunitiesOrchestrator _orchestrator;
         private Fixture _fixture;
         private Mock<IOpportunitiesService> _searchFundingService;
+        private Mock<IEncodingService> _encodingService;
 
         private List<OpportunityDto> _opportunityDtoList;
 
@@ -23,11 +25,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         {
             _fixture = new Fixture();
             _searchFundingService = new Mock<IOpportunitiesService>();
+            _encodingService = new Mock<IEncodingService>();
 
             _opportunityDtoList = _fixture.Create<List<OpportunityDto>>();
             _searchFundingService.Setup(x => x.GetAllOpportunities()).ReturnsAsync(_opportunityDtoList);
+            _encodingService.Setup(x => x.Encode(It.IsAny<long>(), EncodingType.PledgeId)).Returns("test");
 
-            _orchestrator = new OpportunitiesOrchestrator(_searchFundingService.Object);
+            _orchestrator = new OpportunitiesOrchestrator(_searchFundingService.Object, _encodingService.Object);
         }
 
         [Test]
@@ -35,8 +39,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         {
             var test = await _orchestrator.GetIndexViewModel();
 
-            Assert.AreEqual(test.Opportunities[0].EmployerName, _opportunityDtoList[0].DasAccountName);
-            Assert.AreEqual(test.Opportunities[0].ReferenceNumber, _opportunityDtoList[0].EncodedPledgeId);
+            Assert.AreEqual(_opportunityDtoList[0].DasAccountName, test.Opportunities[0].EmployerName);
+            Assert.AreEqual("test", test.Opportunities[0].ReferenceNumber);
         }
     }
 }
