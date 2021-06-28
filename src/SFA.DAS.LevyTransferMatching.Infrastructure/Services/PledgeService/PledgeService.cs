@@ -19,10 +19,10 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
             _client = client;
         }
 
-        public async Task PostPledge(PledgeDto pledgeDto, string encodedAccountId)
+        public async Task PostPledge(PledgeDto pledgeDto, long accountId)
         {
             var json = JsonConvert.SerializeObject(pledgeDto, new StringEnumConverter());
-            var response = await _client.PostAsync($"accounts/{encodedAccountId}/pledges", new StringContent(json, Encoding.UTF8, "application/json"));
+            var response = await _client.PostAsync($"accounts/{accountId}/pledges", new StringContent(json, Encoding.UTF8, "application/json"));
             response.EnsureSuccessStatusCode();
         }
     }
