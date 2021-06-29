@@ -69,7 +69,7 @@ namespace SFA.DAS.LevyTransferMatching.Web
                 options.AddAuthorization();
                 options.AddValidation();
                 options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
-                options.ModelBinderProviders.Insert(0, new FlagsEnumModelBinderProvider());
+                options.ModelBinderProviders.Insert(0, new AutoDecodeModelBinderProvider());
             })
             .AddControllersAsServices()
             .SetDefaultNavigationSection(NavigationSection.AccountsFinance)

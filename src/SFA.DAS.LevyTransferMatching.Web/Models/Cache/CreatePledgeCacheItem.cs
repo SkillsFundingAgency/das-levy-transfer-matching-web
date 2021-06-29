@@ -1,5 +1,5 @@
 ﻿using System;
-using SFA.DAS.LevyTransferMatching.Web.Models.Enums;
+using System.Collections.Generic;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Cache
 {
@@ -8,6 +8,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Cache
         public CreatePledgeCacheItem()
         {
             Key = Guid.NewGuid();
+            Levels = new List<string>();
         }
 
         public CreatePledgeCacheItem(Guid key)
@@ -19,8 +20,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Cache
 
         public int? Amount { get; set; }
         public bool? IsNamePublic { get; set; }
-        public Sector? Sectors { get; set; }
-        public Level? Levels { get; set; }
-        public JobRole? JobRoles { get; set; }
+        public List<string> Sectors { get; set; }
+        public List<string> JobRoles { get; set; }
+        public List<string> Levels { get; set; }
     }
 }
