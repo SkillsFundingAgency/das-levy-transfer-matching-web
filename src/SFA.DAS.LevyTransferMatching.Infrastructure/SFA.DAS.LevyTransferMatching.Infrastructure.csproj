@@ -4,7 +4,6 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <CodeAnalysisRuleSet>..\.sonarlint\skillsfundingagency_das-levy-transfer-matching-webcsharp.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-  </PropertyGroup>
 
   <ItemGroup>
     <AdditionalFiles Include="..\.sonarlint\skillsfundingagency_das-levy-transfer-matching-web\CSharp\SonarLint.xml" Link="SonarLint.xml" />
