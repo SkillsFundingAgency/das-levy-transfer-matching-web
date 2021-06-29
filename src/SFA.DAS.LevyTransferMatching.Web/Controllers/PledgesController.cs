@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Authorization.EmployerUserRoles.Options;
 using SFA.DAS.Authorization.Mvc.Attributes;
-using SFA.DAS.EmployerUrlHelper;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 
@@ -12,12 +11,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
     [Route("accounts/{EncodedAccountId}/pledges")]
     public class PledgesController : Controller
     {
-        private readonly ILinkGenerator _linkGenerator;
         private readonly IPledgeOrchestrator _orchestrator;
 
-        public PledgesController(ILinkGenerator linkGenerator, IPledgeOrchestrator orchestrator)
+        public PledgesController(IPledgeOrchestrator orchestrator)
         {
-            _linkGenerator = linkGenerator;
             _orchestrator = orchestrator;
         }
 

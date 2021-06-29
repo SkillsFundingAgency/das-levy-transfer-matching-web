@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using AutoFixture;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.Encoding;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountsService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService;
@@ -24,11 +26,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private Mock<IAccountsService> _accountsService;
         private Mock<IPledgeService> _pledgeService;
         private Mock<ITagService> _tagService;
+        private Mock<IEncodingService> _encodingService;
         private List<Tag> _sectors;
         private List<Tag> _levels;
         private List<Tag> _jobRoles;
         private string _encodedAccountId;
         private Guid _cacheKey;
+        private readonly long _accountId = 1;
+        private readonly int _pledgeId = 1;
+        private string _encodedPledgeId;
 
         [SetUp]
         public void Setup()
@@ -39,6 +45,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _cache = new Mock<ICacheStorageService>();
             _accountsService = new Mock<IAccountsService>();
             _pledgeService = new Mock<IPledgeService>();
+            _encodingService = new Mock<IEncodingService>();
 
             _sectors = _fixture.Create<List<Tag>>();
             _levels = _fixture.Create<List<Tag>>();
@@ -47,8 +54,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _tagService.Setup(x => x.GetJobRoles()).ReturnsAsync(_jobRoles);
             _tagService.Setup(x => x.GetSectors()).ReturnsAsync(_sectors);
             _tagService.Setup(x => x.GetLevels()).ReturnsAsync(_levels);
+            _encodedPledgeId = _fixture.Create<string>();
 
-            _orchestrator = new PledgeOrchestrator(_cache.Object, _accountsService.Object, _pledgeService.Object, _tagService.Object);
+            _orchestrator = new PledgeOrchestrator(_cache.Object, _accountsService.Object, _pledgeService.Object, _tagService.Object, _encodingService.Object);
         }
 
         [Test]
@@ -281,6 +289,27 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             var result = await _orchestrator.GetLevelViewModel(new LevelRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
             Assert.AreEqual(cacheItem.Levels, result.Levels);
+        }
+
+        [Test]
+        public async Task SubmitPledge_Is_Correct()
+        {
+            var cacheItem = _fixture.Build<CreatePledgeCacheItem>()
+                    .Create();
+
+            _cache.Setup(x => x.RetrieveFromCache<CreatePledgeCacheItem>(_cacheKey.ToString())).ReturnsAsync(cacheItem);
+            _cache.Setup(x => x.DeleteFromCache(_cacheKey.ToString()));
+            _pledgeService.Setup(x => x.PostPledge(It.IsAny<PledgeDto>(), _accountId)).ReturnsAsync(_pledgeId);
+            _encodingService.Setup(x => x.Encode(_pledgeId, EncodingType.PledgeId)).Returns(_encodedPledgeId);
+
+            var result = await _orchestrator.SubmitPledge(new CreatePostRequest { AccountId = _accountId, CacheKey = _cacheKey, EncodedAccountId = _encodedAccountId });
+
+            _cache.Verify(x => x.RetrieveFromCache<CreatePledgeCacheItem>(_cacheKey.ToString()), Times.Once);
+            _cache.Verify(x => x.DeleteFromCache(_cacheKey.ToString()), Times.Once);
+            _pledgeService.Verify(x => x.PostPledge(It.IsAny<PledgeDto>(), _accountId), Times.Once);
+            _encodingService.Verify(x => x.Encode(_pledgeId, EncodingType.PledgeId), Times.Once);
+
+            Assert.AreEqual(_encodedPledgeId, result);
         }
     }
 }

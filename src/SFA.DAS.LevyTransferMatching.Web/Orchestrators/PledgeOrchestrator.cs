@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountsService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
@@ -18,13 +19,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         private readonly IAccountsService _accountsService;
         private readonly IPledgeService _pledgeService;
         private readonly ITagService _tagService;
+        private readonly IEncodingService _encodingService;
 
-        public PledgeOrchestrator(ICacheStorageService cacheStorageService, IAccountsService accountsService, IPledgeService pledgeService, ITagService tagService)
+        public PledgeOrchestrator(ICacheStorageService cacheStorageService, IAccountsService accountsService, IPledgeService pledgeService, ITagService tagService, IEncodingService encodingService)
         {
             _cacheStorageService = cacheStorageService;
             _accountsService = accountsService;
             _pledgeService = pledgeService;
             _tagService = tagService;
+            _encodingService = encodingService;
         }
 
         public IndexViewModel GetIndexViewModel(string encodedAccountId)
@@ -129,7 +132,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             var encodedPledgeId = await _pledgeService.PostPledge(pledgeDto, request.AccountId);
             await _cacheStorageService.DeleteFromCache(request.CacheKey.ToString());
 
-            return encodedPledgeId;
+            return _encodingService.Encode(encodedPledgeId, EncodingType.PledgeId);
         }
 
         public async Task UpdateCacheItem(AmountPostRequest request)
