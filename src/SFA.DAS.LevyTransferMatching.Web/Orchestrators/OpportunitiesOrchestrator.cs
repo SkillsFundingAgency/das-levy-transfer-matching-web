@@ -9,6 +9,8 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.TagService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
+using SFA.DAS.LevyTransferMatching.Web.Models.Shared;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
@@ -43,6 +45,44 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 return null;
             }
 
+            var opportunitySummaryViewModel = await GetOpportunitySummaryViewModel(opportunityDto);
+
+            return new DetailViewModel()
+            {
+                Opportunity = opportunitySummaryViewModel.OpportunityDetail,
+                OpportunitySummaryView = opportunitySummaryViewModel,
+            };
+        }
+
+        public async Task<IndexViewModel> GetIndexViewModel()
+        {
+            var opportunitiesDto = await _opportunitiesService.GetAllOpportunities();
+            var opportunities = opportunitiesDto.Select(x => new Opportunity
+                {
+                    EmployerName = x.DasAccountName,
+                    ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),
+                })
+                .ToList();
+
+            return new IndexViewModel { Opportunities = opportunities };
+        }
+
+        public async Task<string> GetUserEncodedAccountId(string userId)
+        {
+            var accounts = await _userService.GetUserAccounts(userId);
+
+            // TODO: Below is temporary -
+            //       Raised as an issue, and eventually to be replaced with
+            //       an accounts selection screen.
+            var firstEncodedAccountId = accounts
+                .Select(x => x.EncodedAccountId)
+                .First();
+
+            return firstEncodedAccountId;
+        }
+
+        public async Task<OpportunitySummaryViewModel> GetOpportunitySummaryViewModel(OpportunityDto opportunityDto)
+        {
             // Pull back the tags, and use the descriptions to build the lists.
             var sectorTags = await _tagService.GetSectors();
 
@@ -107,46 +147,21 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             var yearDescription = $"{date.ToTaxYear("yyyy")}/{date.AddYears(1).ToTaxYear("yy")}";
 
-            return new DetailViewModel()
+            var opportunityDetail = new OpportunityDetail()
             {
-                OpportunityDetail = new OpportunityDetail()
-                {
-                    Amount = opportunityDto.Amount,
-                    EmployerName = opportunityDto.DasAccountName,
-                    ReferenceNumber = _encodingService.Encode(opportunityDto.Id, EncodingType.PledgeId),
-                },
-                SectorList = sectorList,
+                Amount = opportunityDto.Amount,
+                EmployerName = opportunityDto.DasAccountName,
+                ReferenceNumber = _encodingService.Encode(opportunityDto.Id, EncodingType.PledgeId),
+            };
+
+            return new OpportunitySummaryViewModel()
+            {
+                OpportunityDetail = opportunityDetail,
                 JobRoleList = jobRoleList,
                 LevelList = levelList,
+                SectorList = sectorList,
                 YearDescription = yearDescription,
             };
-        }
-
-        public async Task<IndexViewModel> GetIndexViewModel()
-        {
-            var opportunitiesDto = await _opportunitiesService.GetAllOpportunities();
-            var opportunities = opportunitiesDto.Select(x => new Opportunity
-                {
-                    EmployerName = x.DasAccountName,
-                    ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),
-                })
-                .ToList();
-
-            return new IndexViewModel { Opportunities = opportunities };
-        }
-
-        public async Task<string> GetUserEncodedAccountId(string userId)
-        {
-            var accounts = await _userService.GetUserAccounts(userId);
-
-            // TODO: Below is temporary -
-            //       Raised as an issue, and eventually to be replaced with
-            //       an accounts selection screen.
-            var firstEncodedAccountId = accounts
-                .Select(x => x.EncodedAccountId)
-                .First();
-
-            return firstEncodedAccountId;
         }
     }
 }

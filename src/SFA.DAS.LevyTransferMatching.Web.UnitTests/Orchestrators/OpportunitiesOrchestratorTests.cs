@@ -62,136 +62,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         }
 
         [Test]
-        public async Task GetDetailViewModel_All_Selected_For_Everything_Tax_Year_Calculated_Successfully()
-        {
-            // Arrange
-            string encodedId = _fixture.Create<string>();
-            int id = _fixture.Create<int>();
-
-            this.SetupGetDetailViewModelServices();
-
-            var opportunity = _fixture
-                .Build<OpportunityDto>()
-                .With(x => x.Sectors, _sectorTags.Select(y => y.TagId))
-                .With(x => x.JobRoles, _jobRoleTags.Select(y => y.TagId))
-                .With(x => x.Levels, _levelTags.Select(y => y.TagId))
-                .Create();
-
-            _encodingService
-                .Setup(x => x.Decode(It.Is<string>(y => y == encodedId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
-                .Returns(id);
-
-            _opportunitiesService
-                .Setup(x => x.GetOpportunity(It.Is<int>(y => y == id)))
-                .ReturnsAsync(opportunity);
-
-            // Act
-            var result = await _orchestrator.GetDetailViewModel(encodedId);
-
-            // Assert
-            Assert.AreEqual("All", result.JobRoleList);
-            Assert.AreEqual("All", result.LevelList);
-            Assert.AreEqual("All", result.SectorList);
-            Assert.AreEqual(result.YearDescription, $"{_currentDateTime.ToTaxYear("yyyy")}/{_currentDateTime.AddYears(1).ToTaxYear("yy")}");
-        }
-
-        [Test]
-        public async Task GetDetailViewModel_Some_Selected_For_Everything_Tax_Year_Calculated_Successfully()
-        {
-            // Arrange
-            string encodedId = _fixture.Create<string>();
-            int id = _fixture.Create<int>();
-
-            this.SetupGetDetailViewModelServices();
-
-            var sectors = _sectorTags.Take(4);
-            var jobRoles = _jobRoleTags.Take(5);
-            var levels = _levelTags.Take(6);
-
-            var opportunity = _fixture
-                .Build<OpportunityDto>()
-                .With(x => x.Sectors, sectors.Select(y => y.TagId))
-                .With(x => x.JobRoles, jobRoles.Select(y => y.TagId))
-                .With(x => x.Levels, levels.Select(y => y.TagId))
-                .Create();
-
-            _encodingService
-                .Setup(x => x.Decode(It.Is<string>(y => y == encodedId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
-                .Returns(id);
-
-            _opportunitiesService
-                .Setup(x => x.GetOpportunity(It.Is<int>(y => y == id)))
-                .ReturnsAsync(opportunity);
-
-            // Act
-            var result = await _orchestrator.GetDetailViewModel(encodedId);
-
-            // Assert
-            var jobRoleDescriptions = _jobRoleTags
-                .Where(x => opportunity.JobRoles.Contains(x.TagId))
-                .Select(x => x.Description);
-            Assert.AreEqual(result.JobRoleList, string.Join(", ", jobRoleDescriptions));
-
-            var levelDescriptions = levels.Select(x => x.TagId.Replace("Level", string.Empty));
-            Assert.AreEqual(result.LevelList, string.Join(", ", levelDescriptions));
-
-            var sectorDescriptions = _sectorTags
-                .Where(x => opportunity.Sectors.Contains(x.TagId))
-                .Select(x => x.Description);
-            Assert.AreEqual(result.SectorList, string.Join(", ", sectorDescriptions));
-            
-            Assert.AreEqual(result.YearDescription, $"{_currentDateTime.ToTaxYear("yyyy")}/{_currentDateTime.AddYears(1).ToTaxYear("yy")}");
-        }
-
-        [Test]
-        public async Task GetDetailViewModel_One_Selected_For_Everything_Tax_Year_Calculated_Successfully()
-        {
-            // Arrange
-            string encodedId = _fixture.Create<string>();
-            int id = _fixture.Create<int>();
-
-            this.SetupGetDetailViewModelServices();
-
-            var sectors = _sectorTags.Take(1);
-            var jobRoles = _jobRoleTags.Take(1);
-            var levels = _levelTags.Take(1);
-
-            var opportunity = _fixture
-                .Build<OpportunityDto>()
-                .With(x => x.Sectors, sectors.Select(y => y.TagId))
-                .With(x => x.JobRoles, jobRoles.Select(y => y.TagId))
-                .With(x => x.Levels, levels.Select(y => y.TagId))
-                .Create();
-
-            _encodingService
-                .Setup(x => x.Decode(It.Is<string>(y => y == encodedId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
-                .Returns(id);
-
-            _opportunitiesService
-                .Setup(x => x.GetOpportunity(It.Is<int>(y => y == id)))
-                .ReturnsAsync(opportunity);
-
-            // Act
-            var result = await _orchestrator.GetDetailViewModel(encodedId);
-
-            // Assert
-            var jobRoleDescriptions = _jobRoleTags
-                .Where(x => opportunity.JobRoles.Contains(x.TagId))
-                .Select(x => x.Description);
-            Assert.AreEqual(result.JobRoleList, jobRoleDescriptions.Single());
-
-            var levelDescriptions = levels.Select(x => x.TagId.Replace("Level", string.Empty));
-            Assert.AreEqual(result.LevelList, levelDescriptions.Single());
-
-            var sectorDescriptions = _sectorTags
-                .Where(x => opportunity.Sectors.Contains(x.TagId))
-                .Select(x => x.Description);
-            Assert.AreEqual(result.SectorList, sectorDescriptions.Single());
-
-            Assert.AreEqual(result.YearDescription, $"{_currentDateTime.ToTaxYear("yyyy")}/{_currentDateTime.AddYears(1).ToTaxYear("yy")}");
-        }
-
-        [Test]
         public async Task GetDetailViewModel_Opportunity_Not_Found_Returns_Null()
         {
             // Arrange
@@ -214,13 +84,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         }
 
         [Test]
-        public void GetDetailViewModel_Levels_Returned_Not_In_Correct_Format_Throws_Data_Exception()
+        public async Task GetDetailViewModel_Opportunity_Found_Model_Populated()
         {
             // Arrange
             string encodedId = _fixture.Create<string>();
             int id = _fixture.Create<int>();
 
-            this.SetupGetDetailViewModelServices(correctlySetupLevels: false);
+            this.SetupGetOpportunityViewModelServices();
 
             var sectors = _sectorTags.Take(4);
             var jobRoles = _jobRoleTags.Take(5);
@@ -241,15 +111,136 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                 .Setup(x => x.GetOpportunity(It.Is<int>(y => y == id)))
                 .ReturnsAsync(opportunity);
 
+            // Act
+            var result = await _orchestrator.GetDetailViewModel(encodedId);
+
+            // Assert
+            Assert.AreEqual(result.Opportunity, result.OpportunitySummaryView.OpportunityDetail);
+        }
+
+        [Test]
+        public async Task GetOpportunitySummaryViewModel_All_Selected_For_Everything_Tax_Year_Calculated_Successfully()
+        {
+            // Arrange
+            this.SetupGetOpportunityViewModelServices();
+
+            var opportunity = _fixture
+                .Build<OpportunityDto>()
+                .With(x => x.Sectors, _sectorTags.Select(y => y.TagId))
+                .With(x => x.JobRoles, _jobRoleTags.Select(y => y.TagId))
+                .With(x => x.Levels, _levelTags.Select(y => y.TagId))
+                .Create();
+
+            // Act
+            var result = await _orchestrator.GetOpportunitySummaryViewModel(opportunity);
+
+            // Assert
+            Assert.AreEqual("All", result.JobRoleList);
+            Assert.AreEqual("All", result.LevelList);
+            Assert.AreEqual("All", result.SectorList);
+            Assert.AreEqual(result.YearDescription, $"{_currentDateTime.ToTaxYear("yyyy")}/{_currentDateTime.AddYears(1).ToTaxYear("yy")}");
+        }
+
+        [Test]
+        public async Task GetOpportunitySummaryViewModel_Some_Selected_For_Everything_Tax_Year_Calculated_Successfully()
+        {
+            // Arrange
+            this.SetupGetOpportunityViewModelServices();
+
+            var sectors = _sectorTags.Take(4);
+            var jobRoles = _jobRoleTags.Take(5);
+            var levels = _levelTags.Take(6);
+
+            var opportunity = _fixture
+                .Build<OpportunityDto>()
+                .With(x => x.Sectors, sectors.Select(y => y.TagId))
+                .With(x => x.JobRoles, jobRoles.Select(y => y.TagId))
+                .With(x => x.Levels, levels.Select(y => y.TagId))
+                .Create();
+
+            // Act
+            var result = await _orchestrator.GetOpportunitySummaryViewModel(opportunity);
+
+            // Assert
+            var jobRoleDescriptions = _jobRoleTags
+                .Where(x => opportunity.JobRoles.Contains(x.TagId))
+                .Select(x => x.Description);
+            Assert.AreEqual(result.JobRoleList, string.Join(", ", jobRoleDescriptions));
+
+            var levelDescriptions = levels.Select(x => x.TagId.Replace("Level", string.Empty));
+            Assert.AreEqual(result.LevelList, string.Join(", ", levelDescriptions));
+
+            var sectorDescriptions = _sectorTags
+                .Where(x => opportunity.Sectors.Contains(x.TagId))
+                .Select(x => x.Description);
+            Assert.AreEqual(result.SectorList, string.Join(", ", sectorDescriptions));
+            
+            Assert.AreEqual(result.YearDescription, $"{_currentDateTime.ToTaxYear("yyyy")}/{_currentDateTime.AddYears(1).ToTaxYear("yy")}");
+        }
+
+        [Test]
+        public async Task GetOpportunitySummaryViewModel_One_Selected_For_Everything_Tax_Year_Calculated_Successfully()
+        {
+            // Arrange
+            this.SetupGetOpportunityViewModelServices();
+
+            var sectors = _sectorTags.Take(1);
+            var jobRoles = _jobRoleTags.Take(1);
+            var levels = _levelTags.Take(1);
+
+            var opportunity = _fixture
+                .Build<OpportunityDto>()
+                .With(x => x.Sectors, sectors.Select(y => y.TagId))
+                .With(x => x.JobRoles, jobRoles.Select(y => y.TagId))
+                .With(x => x.Levels, levels.Select(y => y.TagId))
+                .Create();
+
+            // Act
+            var result = await _orchestrator.GetOpportunitySummaryViewModel(opportunity);
+
+            // Assert
+            var jobRoleDescriptions = _jobRoleTags
+                .Where(x => opportunity.JobRoles.Contains(x.TagId))
+                .Select(x => x.Description);
+            Assert.AreEqual(result.JobRoleList, jobRoleDescriptions.Single());
+
+            var levelDescriptions = levels.Select(x => x.TagId.Replace("Level", string.Empty));
+            Assert.AreEqual(result.LevelList, levelDescriptions.Single());
+
+            var sectorDescriptions = _sectorTags
+                .Where(x => opportunity.Sectors.Contains(x.TagId))
+                .Select(x => x.Description);
+            Assert.AreEqual(result.SectorList, sectorDescriptions.Single());
+
+            Assert.AreEqual(result.YearDescription, $"{_currentDateTime.ToTaxYear("yyyy")}/{_currentDateTime.AddYears(1).ToTaxYear("yy")}");
+        }
+
+        [Test]
+        public void GetOpportunitySummaryViewModel_Levels_Returned_Not_In_Correct_Format_Throws_Data_Exception()
+        {
+            // Arrange
+            this.SetupGetOpportunityViewModelServices(correctlySetupLevels: false);
+
+            var sectors = _sectorTags.Take(4);
+            var jobRoles = _jobRoleTags.Take(5);
+            var levels = _levelTags.Take(6);
+
+            var opportunity = _fixture
+                .Build<OpportunityDto>()
+                .With(x => x.Sectors, sectors.Select(y => y.TagId))
+                .With(x => x.JobRoles, jobRoles.Select(y => y.TagId))
+                .With(x => x.Levels, levels.Select(y => y.TagId))
+                .Create();
+
             // Assert
             Assert.ThrowsAsync<DataException>(async () =>
             {
                 // Act
-                await _orchestrator.GetDetailViewModel(encodedId);
+                await _orchestrator.GetOpportunitySummaryViewModel(opportunity);
             });
         }
 
-        private void SetupGetDetailViewModelServices(bool correctlySetupLevels = true)
+        private void SetupGetOpportunityViewModelServices(bool correctlySetupLevels = true)
         {
             _sectorTags = _fixture
                 .CreateMany<Tag>(9)
