@@ -5,6 +5,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
 {
     public interface IPledgeService
     {
-        Task<PledgeDto> PostPledge(PledgeDto pledgeDto, long accountId);
+        Task<string> PostPledge(PledgeDto pledgeDto, long accountId);
     }
 }

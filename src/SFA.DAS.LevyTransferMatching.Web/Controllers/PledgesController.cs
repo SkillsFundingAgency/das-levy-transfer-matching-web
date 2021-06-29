@@ -39,7 +39,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         public async Task<IActionResult> Submit(CreatePostRequest request)
         {
             var pledge = await _orchestrator.SubmitPledge(request);
-            return RedirectToAction("Confirmation", new { EncodedAccountId = request.EncodedAccountId, PledgeId = pledge.PledgeId });
+            return RedirectToAction("Confirmation", new ConfirmationRequest { EncodedAccountId = request.EncodedAccountId, EncodedPledgeId = pledge });
         }
 
         [Route("create/amount")]
@@ -103,10 +103,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         }
 
         [HttpGet]
-        [Route("{pledgeId}/confirmation")]
-        public async Task<IActionResult> Confirmation(string pledgeId, string encodedAccountId)
+        [Route("{EncodedPledgeId}/confirmation")]
+        public async Task<IActionResult> Confirmation(ConfirmationRequest request)
         {
-            return View(new ConfirmationViewModel() { EncodedAccountId = encodedAccountId, PledgeId = pledgeId });
+            return View(new ConfirmationViewModel() { EncodedAccountId = request.EncodedAccountId, EncodedPledgeId = request.EncodedPledgeId });
         }
     }
 }

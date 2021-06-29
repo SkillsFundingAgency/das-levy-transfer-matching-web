@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 {
-    public class ConfirmationViewModel
+    public class ConfirmationRequest
     {
-        public string EncodedAccountId { get; set; }
         public string EncodedPledgeId { get; set; }
+        public string EncodedAccountId { get; set; }
     }
 }

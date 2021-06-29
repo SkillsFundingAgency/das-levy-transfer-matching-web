@@ -14,7 +14,7 @@
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds">
                     <div class="govuk-panel govuk-panel--confirmation pledge-approved">
-                        <h1 class="govuk-panel__title">Your pledge has been created as pledge number @Model.PledgeId</h1>
+                        <h1 class="govuk-panel__title">Your pledge has been created as pledge number @Model.EncodedPledgeId</h1>
                     </div>
 
                     <h2 class="govuk-heading-m">What happens next</h2>
@@ -32,7 +32,7 @@
                         <li>accept applications</li>
                         <li>reject applications</li>
                     </ul>
-                    
+
                     <a href="@LinkGenerator.AccountsLink($"accounts/{Model.EncodedAccountId}/transfers")" class="govuk-back-link" )">Back to Transfers</a>
                 </div>
             </div>
