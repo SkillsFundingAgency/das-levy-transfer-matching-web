@@ -4,6 +4,7 @@ using NUnit.Framework;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.TagService;
@@ -26,6 +27,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private Mock<IOpportunitiesService> _opportunitiesService;
         private Mock<ITagService> _tagService;
         private Mock<IUserService> _userService;
+        private Mock<IEncodingService> _encodingService;
+
         private List<OpportunityDto> _opportunityDtoList;
         private List<Tag> _sectorTags;
         private List<Tag> _jobRoleTags;
@@ -40,11 +43,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _opportunitiesService = new Mock<IOpportunitiesService>();
             _tagService = new Mock<ITagService>();
             _userService = new Mock<IUserService>();
+            _encodingService = new Mock<IEncodingService>();
 
             _opportunityDtoList = _fixture.Create<List<OpportunityDto>>();
             _opportunitiesService.Setup(x => x.GetAllOpportunities()).ReturnsAsync(_opportunityDtoList);
+            _encodingService.Setup(x => x.Encode(It.IsAny<long>(), EncodingType.PledgeId)).Returns("test");
 
-            _orchestrator = new OpportunitiesOrchestrator(_dateTimeService.Object, _opportunitiesService.Object, _tagService.Object, _userService.Object);
+            _orchestrator = new OpportunitiesOrchestrator(_dateTimeService.Object, _opportunitiesService.Object, _tagService.Object, _userService.Object, _encodingService.Object);
         }
 
         [Test]
@@ -52,8 +57,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         {
             var test = await _orchestrator.GetIndexViewModel();
 
-            Assert.AreEqual(test.Opportunities[0].EmployerName, _opportunityDtoList[0].DasAccountName);
-            Assert.AreEqual(test.Opportunities[0].ReferenceNumber, _opportunityDtoList[0].EncodedPledgeId);
+            Assert.AreEqual(_opportunityDtoList[0].DasAccountName, test.Opportunities[0].EmployerName);
+            Assert.AreEqual("test", test.Opportunities[0].ReferenceNumber);
         }
 
         [Test]
@@ -61,6 +66,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         {
             // Arrange
             string encodedId = _fixture.Create<string>();
+            int id = _fixture.Create<int>();
 
             this.SetupGetDetailViewModelServices();
 
@@ -71,8 +77,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                 .With(x => x.Levels, _levelTags.Select(y => y.TagId))
                 .Create();
 
+            _encodingService
+                .Setup(x => x.Decode(It.Is<string>(y => y == encodedId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
+                .Returns(id);
+
             _opportunitiesService
-                .Setup(x => x.GetOpportunity(It.Is<string>(y => y == encodedId)))
+                .Setup(x => x.GetOpportunity(It.Is<int>(y => y == id)))
                 .ReturnsAsync(opportunity);
 
             // Act
@@ -90,6 +100,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         {
             // Arrange
             string encodedId = _fixture.Create<string>();
+            int id = _fixture.Create<int>();
 
             this.SetupGetDetailViewModelServices();
 
@@ -104,8 +115,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                 .With(x => x.Levels, levels.Select(y => y.TagId))
                 .Create();
 
+            _encodingService
+                .Setup(x => x.Decode(It.Is<string>(y => y == encodedId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
+                .Returns(id);
+
             _opportunitiesService
-                .Setup(x => x.GetOpportunity(It.Is<string>(y => y == encodedId)))
+                .Setup(x => x.GetOpportunity(It.Is<int>(y => y == id)))
                 .ReturnsAsync(opportunity);
 
             // Act
@@ -133,6 +148,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         {
             // Arrange
             string encodedId = _fixture.Create<string>();
+            int id = _fixture.Create<int>();
 
             this.SetupGetDetailViewModelServices();
 
@@ -147,8 +163,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                 .With(x => x.Levels, levels.Select(y => y.TagId))
                 .Create();
 
+            _encodingService
+                .Setup(x => x.Decode(It.Is<string>(y => y == encodedId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
+                .Returns(id);
+
             _opportunitiesService
-                .Setup(x => x.GetOpportunity(It.Is<string>(y => y == encodedId)))
+                .Setup(x => x.GetOpportunity(It.Is<int>(y => y == id)))
                 .ReturnsAsync(opportunity);
 
             // Act
@@ -176,9 +196,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         {
             // Arrange
             string encodedId = _fixture.Create<string>();
+            int id = _fixture.Create<int>();
+
+            _encodingService
+                .Setup(x => x.Decode(It.Is<string>(y => y == encodedId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
+                .Returns(id);
 
             _opportunitiesService
-                .Setup(x => x.GetOpportunity(It.Is<string>(y => y == encodedId)))
+                .Setup(x => x.GetOpportunity(It.Is<int>(y => y == id)))
                 .ReturnsAsync((OpportunityDto)null);
 
             // Act
@@ -193,6 +218,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         {
             // Arrange
             string encodedId = _fixture.Create<string>();
+            int id = _fixture.Create<int>();
 
             this.SetupGetDetailViewModelServices(correctlySetupLevels: false);
 
@@ -207,8 +233,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                 .With(x => x.Levels, levels.Select(y => y.TagId))
                 .Create();
 
+            _encodingService
+                .Setup(x => x.Decode(It.Is<string>(y => y == encodedId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
+                .Returns(id);
+
             _opportunitiesService
-                .Setup(x => x.GetOpportunity(It.Is<string>(y => y == encodedId)))
+                .Setup(x => x.GetOpportunity(It.Is<int>(y => y == id)))
                 .ReturnsAsync(opportunity);
 
             // Assert

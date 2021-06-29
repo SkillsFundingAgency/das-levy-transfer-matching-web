@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.LevyTransferMatching.Web.Attributes;
 using SFA.DAS.LevyTransferMatching.Web.Models;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
+    [HideAccountNavigation(true)]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

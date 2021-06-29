@@ -11,13 +11,13 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <span class="govuk-caption-m">Find a business to fund training for your apprentices</span>
-                <h1 class="govuk-heading-xl">Transfer fund details for @Model.Opportunity.DasAccountName (@Model.Opportunity.EncodedPledgeId)</h1>
+                <h1 class="govuk-heading-xl">Transfer fund details for @Model.OpportunityDetail.EmployerName (@Model.OpportunityDetail.ReferenceNumber)</h1>
 
                 <!-- PLEDGE DETAILS - START -->
                 <h2 class="govuk-heading-m">Details of the opportunity</h2>
 
                 <div class="das-highlight">
-                    <h2 class="govuk-heading-s">@Model.Opportunity.DasAccountName (@Model.Opportunity.EncodedPledgeId) wants to fund apprenticeship training in:</h2>
+                    <h2 class="govuk-heading-s">@Model.OpportunityDetail.EmployerName (@Model.OpportunityDetail.ReferenceNumber) wants to fund apprenticeship training in:</h2>
                     <dl class="das-definition-list app-dl-inline govuk-!-font-size-16">
                         <dt class="app-dl-inline__title">Location</dt>
                         <dd class="app-dl-inline__definition">####</dd>
@@ -29,7 +29,7 @@
                         <dd class="app-dl-inline__definition">@Model.LevelList</dd>
                     </dl>
                     <div class="app-highlight__footer">
-                        <p class="govuk-heading-s">Total funding available: up to £@Model.Opportunity.Amount available in @Model.YearDescription</p>
+                        <p class="govuk-heading-s">Total funding available: up to £@Model.OpportunityDetail.Amount available in @Model.YearDescription</p>
                     </div>
                 </div>
                 <!-- PLEDGE DETAILS - END -->

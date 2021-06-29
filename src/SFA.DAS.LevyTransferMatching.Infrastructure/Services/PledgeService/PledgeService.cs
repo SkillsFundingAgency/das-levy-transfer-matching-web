@@ -1,9 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService;
-using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,10 +16,10 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
             _client = client;
         }
 
-        public async Task PostPledge(PledgeDto pledgeDto, string encodedAccountId)
+        public async Task PostPledge(PledgeDto pledgeDto, long accountId)
         {
             var json = JsonConvert.SerializeObject(pledgeDto, new StringEnumConverter());
-            var response = await _client.PostAsync($"accounts/{encodedAccountId}/pledges", new StringContent(json, Encoding.UTF8, "application/json"));
+            var response = await _client.PostAsync($"accounts/{accountId}/pledges", new StringContent(json, Encoding.UTF8, "application/json"));
             response.EnsureSuccessStatusCode();
         }
     }

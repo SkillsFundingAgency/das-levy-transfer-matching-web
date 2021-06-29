@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
+using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.TagService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
@@ -18,20 +18,24 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         private readonly IDateTimeService _dateTimeService;
         private readonly IOpportunitiesService _opportunitiesService;
+        private readonly IEncodingService _encodingService;
         private readonly ITagService _tagService;
         private readonly IUserService _userService;
 
-        public OpportunitiesOrchestrator(IDateTimeService dateTimeService, IOpportunitiesService opportunitiesService, ITagService tagService, IUserService userService)
+        public OpportunitiesOrchestrator(IDateTimeService dateTimeService, IOpportunitiesService opportunitiesService, ITagService tagService, IUserService userService, IEncodingService encodingService)
         {
             _dateTimeService = dateTimeService;
             _opportunitiesService = opportunitiesService;
+            _encodingService = encodingService;
             _tagService = tagService;
             _userService = userService;
         }
 
         public async Task<DetailViewModel> GetDetailViewModel(string encodedId)
         {
-            var opportunityDto = await _opportunitiesService.GetOpportunity(encodedId);
+            int id = (int)_encodingService.Decode(encodedId, EncodingType.PledgeId);
+
+            var opportunityDto = await _opportunitiesService.GetOpportunity(id);
 
             // If null, an opportunity couldn't be found for the encodedId.
             if (opportunityDto == null)
@@ -105,7 +109,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             return new DetailViewModel()
             {
-                Opportunity = opportunityDto,
+                OpportunityDetail = new OpportunityDetail()
+                {
+                    Amount = opportunityDto.Amount,
+                    EmployerName = opportunityDto.DasAccountName,
+                    ReferenceNumber = _encodingService.Encode(opportunityDto.Id, EncodingType.PledgeId),
+                },
                 SectorList = sectorList,
                 JobRoleList = jobRoleList,
                 LevelList = levelList,
@@ -116,7 +125,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         public async Task<IndexViewModel> GetIndexViewModel()
         {
             var opportunitiesDto = await _opportunitiesService.GetAllOpportunities();
-            List<Opportunity> opportunities = opportunitiesDto.Select(x => new Opportunity { EmployerName = x.DasAccountName, ReferenceNumber = x.EncodedPledgeId }).ToList();
+            var opportunities = opportunitiesDto.Select(x => new Opportunity
+                {
+                    EmployerName = x.DasAccountName,
+                    ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),
+                })
+                .ToList();
 
             return new IndexViewModel { Opportunities = opportunities };
         }

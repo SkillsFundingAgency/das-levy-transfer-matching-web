@@ -4,9 +4,11 @@ using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.Authorization.Mvc.Attributes;
 using SFA.DAS.LevyTransferMatching.Web.Authentication;
+using SFA.DAS.LevyTransferMatching.Web.Attributes;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
+    [HideAccountNavigation(true)]
     public class OpportunitiesController : Controller
     {
         private readonly IAuthenticationService _authenticationService;

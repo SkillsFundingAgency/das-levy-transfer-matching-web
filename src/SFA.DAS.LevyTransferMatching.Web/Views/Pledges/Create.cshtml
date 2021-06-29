@@ -1,4 +1,5 @@
-﻿@using SFA.DAS.LevyTransferMatching.Web.Models.Pledges
+﻿@using SFA.DAS.LevyTransferMatching.Web.Extensions
+@using SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 @model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.CreateViewModel
 
 @{
@@ -43,7 +44,7 @@
                     <ul class="das-task-list__items">
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="@Url.Action("Amount", new AmountRequest{EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey})">
+                                <a class="govuk-link" href="@Url.Action("Amount", new AmountRequest{EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey}, true)">
                                     Amount you want to pledge
                                 </a>
                             </span>
@@ -60,7 +61,7 @@
                         </li>
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="@Url.Action("Amount", new AmountRequest{EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey})">
+                                <a class="govuk-link" href="@Url.Action("Amount", new AmountRequest{EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey}, true)">
                                     Show or hide your organisation's name
                                 </a>
                             </span>
@@ -95,7 +96,7 @@
                         </li>
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="@Url.Action("Sector", new SectorRequest{EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey})">
+                                <a class="govuk-link" href="@Url.Action("Sector", new SectorRequest{EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey}, true)">
                                     Sector
                                 </a>
                             </span>
@@ -114,7 +115,7 @@
                         </li>
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="@Url.Action("JobRole", new JobRoleRequest{EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey})">
+                                <a class="govuk-link" href="@Url.Action("JobRole", new JobRoleRequest{EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey}, true)">
                                     Type of job role
                                 </a>
                             </span>
@@ -133,7 +134,7 @@
                         </li>
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="@Url.Action("Level", new LevelRequest { EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey })">
+                                <a class="govuk-link" href="@Url.Action("Level", new LevelRequest { EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey }, true)">
                                     Level
                                 </a>
                             </span>

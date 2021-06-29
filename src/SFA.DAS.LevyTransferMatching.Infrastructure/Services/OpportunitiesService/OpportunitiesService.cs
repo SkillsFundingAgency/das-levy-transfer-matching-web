@@ -24,11 +24,11 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
             return JsonConvert.DeserializeObject<List<OpportunityDto>>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<OpportunityDto> GetOpportunity(string encodedId)
+        public async Task<OpportunityDto> GetOpportunity(int id)
         {
             OpportunityDto opportunity = null;
 
-            var response = await _client.GetAsync($"pledges/{encodedId}");
+            var response = await _client.GetAsync($"pledges/{id}");
 
             if (response.IsSuccessStatusCode)
             {
