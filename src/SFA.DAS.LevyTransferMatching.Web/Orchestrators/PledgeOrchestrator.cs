@@ -129,10 +129,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 Levels = cacheItem.Levels ?? new List<string>()
             };
 
-            var encodedPledgeId = await _pledgeService.PostPledge(pledgeDto, request.AccountId);
+            var pledgeId = await _pledgeService.PostPledge(pledgeDto, request.AccountId);
             await _cacheStorageService.DeleteFromCache(request.CacheKey.ToString());
 
-            return _encodingService.Encode(encodedPledgeId, EncodingType.PledgeId);
+            return _encodingService.Encode(pledgeId, EncodingType.PledgeId);
         }
 
         public async Task UpdateCacheItem(AmountPostRequest request)
