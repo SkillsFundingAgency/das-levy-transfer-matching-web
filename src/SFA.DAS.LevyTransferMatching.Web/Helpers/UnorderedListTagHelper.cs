@@ -1,26 +1,27 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Tags;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Helpers
 {
-    public class FlagsUnorderedListTagHelper : TagHelper
+    public class UnorderedListTagHelper : TagHelper
     {
         [HtmlAttributeName("asp-for")]
         public ModelExpression Property { get; set; }
+
+        [HtmlAttributeName("source")]
+        public List<Tag> Source { get; set; }
 
         [HtmlAttributeName("class")]
         public string Class { get; set; }
 
         [HtmlAttributeName("item-class")]
         public string ItemClass { get; set; }
-
-        [ViewContext]
-        [HtmlAttributeNotBound]
-        public ViewContext ViewContext { get; set; }
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
@@ -30,16 +31,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
 
             content.Append(!string.IsNullOrWhiteSpace(Class) ? $"<ul class=\"{Class}\">" : $"<ul>");
 
-            var modelType = Nullable.GetUnderlyingType(Property.Metadata.ModelType) ?? Property.Model.GetType();
+            var modelValue = Property.Model as List<string>;
 
-            var zeroValue = Enum.Parse(modelType, "0");
-
-            var modelValue = Property.Model as Enum;
-
-            foreach (Enum enumValue in Enum.GetValues(modelType))
+            foreach (var tag in Source)
             {
-                if (enumValue.Equals(zeroValue)) continue;
-                var isChecked = modelValue != null && modelValue.HasFlag(enumValue);
+                var isChecked = modelValue != null && modelValue.Contains(tag.TagId);
                 if (isChecked)
                 {
                     content.Append($"<li");
@@ -48,7 +44,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
                         content.Append($" class=\"{ItemClass}\"");
                     }
                     content.Append(">");
-                    content.Append($"{enumValue.GetDisplayName()}");
+                    content.Append($"{tag.Description}");
                     content.Append("</li>");
                 }
             }
