@@ -67,18 +67,20 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         public async Task<AmountViewModel> GetAmountViewModel(AmountRequest request)
         {
             var cacheItemTask = RetrievePledgeCacheItem(request.CacheKey);
-            var remainingTransferAllowanceTask = _accountsService.GetRemainingTransferAllowance(request.EncodedAccountId);
-      
-            await Task.WhenAll(cacheItemTask, remainingTransferAllowanceTask);
+            var accountDetailTask = _accountsService.GetAccountDetail(request.EncodedAccountId);
+
+            await Task.WhenAll(cacheItemTask, accountDetailTask);
             var cacheItem = cacheItemTask.Result;
+            var accountDetail = accountDetailTask.Result;
 
             return new AmountViewModel
             {
                 EncodedAccountId = request.EncodedAccountId,
                 CacheKey = request.CacheKey,
                 Amount = cacheItem.Amount.ToString(),
-                RemainingTransferAllowance = remainingTransferAllowanceTask.Result.ToString("N0"),
-                IsNamePublic = cacheItem.IsNamePublic
+                RemainingTransferAllowance = accountDetail.RemainingTransferAllowance.ToString("N0"),
+                IsNamePublic = cacheItem.IsNamePublic,
+                DasAccountName = accountDetail.DasAccountName
             };
         }
 
@@ -124,6 +126,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             {
                 Amount = cacheItem.Amount.Value,
                 IsNamePublic = cacheItem.IsNamePublic.Value,
+                DasAccountName = cacheItem.DasAccountName,
                 Sectors = cacheItem.Sectors ?? new List<string>(),
                 JobRoles = cacheItem.JobRoles ?? new List<string>(),
                 Levels = cacheItem.Levels ?? new List<string>()
@@ -141,6 +144,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             cacheItem.Amount = Int32.Parse(request.Amount);
             cacheItem.IsNamePublic = request.IsNamePublic.Value;
+            cacheItem.DasAccountName = request.DasAccountName;
 
             await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
         }

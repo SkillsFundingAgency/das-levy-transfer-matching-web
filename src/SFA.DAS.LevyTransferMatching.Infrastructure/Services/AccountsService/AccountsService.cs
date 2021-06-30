@@ -17,15 +17,16 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountsService
             _client = client;
         }
 
-        public async Task<int> GetRemainingTransferAllowance(string encodedAccountId)
+        public async Task<AccountDto> GetAccountDetail(string encodedAccountId)
         {
             var response = await _client.GetAsync($"accounts/{encodedAccountId}");
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
             var accountDto = JsonConvert.DeserializeObject<AccountDto>(content);
+            accountDto.RemainingTransferAllowance = Convert.ToInt32(Math.Round(accountDto.RemainingTransferAllowance, MidpointRounding.AwayFromZero));
 
-            return Convert.ToInt32(Math.Round(accountDto.RemainingTransferAllowance, MidpointRounding.AwayFromZero));
+            return accountDto;
         }
     }
 }
