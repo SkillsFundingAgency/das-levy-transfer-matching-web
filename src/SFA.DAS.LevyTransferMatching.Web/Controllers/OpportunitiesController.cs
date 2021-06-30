@@ -51,7 +51,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             }
             else
             {
-                // Go back.
                 return RedirectToAction(nameof(Index));
             }
         }
