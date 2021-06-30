@@ -122,12 +122,42 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             return new OpportunitySummaryViewModel()
             {
                 Amount = opportunityDto.Amount,
-                Description = opportunityDto.IsNamePublic ? $"{opportunityDto.DasAccountName} ({encodedPledgeId})" : "A levy-paying business wants to fund apprenticeship training in:",
+                Description = GenerateDescription(opportunityDto, encodedPledgeId),
                 JobRoleList = jobRoleList,
                 LevelList = levelList,
                 SectorList = sectorList,
                 YearDescription = dateTime.ToTaxYearDescription(),
             };
         }
+
+        public async Task<ApplyViewModel> GetApplyViewModel(string encodedPledgeId)
+        {
+            var opportunityDto = await _opportunitiesService.GetOpportunity((int)_encodingService.Decode(encodedPledgeId, EncodingType.PledgeId));
+
+            return new ApplyViewModel
+            {
+                OpportunitySummaryViewModel = new OpportunitySummaryViewModel
+                {
+                    Description = GenerateDescription(opportunityDto, encodedPledgeId),
+                    Amount = opportunityDto.Amount,
+                    JobRoleList = string.Join(',', opportunityDto.JobRoles),
+                    LevelList = string.Join(',', opportunityDto.Levels),
+                    SectorList = string.Join(',', opportunityDto.Sectors),
+                    YearDescription = "2021/22"
+                },
+                JobRole = "-",
+                NumberOfApprentices = "-",
+                StartBy = "-",
+                HaveTrainingProvider = "-",
+                Sectors = "-",
+                Locations = "-",
+                MoreDetail = "-",
+                ContactName = "-",
+                EmailAddress = "-",
+                WebsiteUrl = "-"
+            };
+        }
+
+        private string GenerateDescription(OpportunityDto opportunityDto, string encodedPledgeId) => opportunityDto.IsNamePublic ? $"{opportunityDto.DasAccountName} ({encodedPledgeId})" : "A levy-paying business wants to fund apprenticeship training in:";
     }
 }
