@@ -16,5 +16,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Extensions
 
             return taxYear.ToString(format);
         }
+
+        public static string ToTaxYearDescription(this DateTime dateTime)
+        {
+            return $"{dateTime.ToTaxYear("yyyy")}/{dateTime.AddYears(1).ToTaxYear("yy")}";
+        }
     }
 }

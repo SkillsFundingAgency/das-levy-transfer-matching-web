@@ -144,9 +144,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 levelList = string.Join(", ", levelDescriptions);
             }
 
-            DateTime date = _dateTimeService.UtcNow;
-
-            var yearDescription = $"{date.ToTaxYear("yyyy")}/{date.AddYears(1).ToTaxYear("yy")}";
+            DateTime dateTime = _dateTimeService.UtcNow;
 
             return new OpportunitySummaryViewModel()
             {
@@ -155,7 +153,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 JobRoleList = jobRoleList,
                 LevelList = levelList,
                 SectorList = sectorList,
-                YearDescription = yearDescription,
+                YearDescription = dateTime.ToTaxYearDescription(),
             };
         }
     }
