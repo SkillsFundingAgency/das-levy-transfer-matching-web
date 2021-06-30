@@ -14,7 +14,7 @@
                 <h1 class="govuk-heading-xl">Transfer fund details for @(Model.IsNamePublic ? Model.EmployerName : "opportunity") (@Model.EncodedPledgeId)</h1>
 
                 <h2 class="govuk-heading-m">Details of the opportunity</h2>
-                @await Html.PartialAsync("_OpportunitySummary", Model.OpportunitySummaryView)
+                <partial name="_OpportunitySummary" for="OpportunitySummaryView" />
 
                 <form method="post" id="apply-application-form">
 
