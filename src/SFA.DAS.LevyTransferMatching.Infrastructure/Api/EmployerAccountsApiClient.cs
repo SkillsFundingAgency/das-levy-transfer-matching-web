@@ -24,8 +24,8 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Api
                 .AnyAsync(r =>
                     r.userRef == request.UserRef &&
                     r.accountId == request.AccountId &&
-                    r.removed == null &&
-                    r.role != null && request.Roles.Contains(r.role.Value), cancellationToken);
+                    r.removed == null);
+                    //r.role != null && request.Roles.Contains(r.role.Value), cancellationToken);
         }
 
         public async Task<bool> IsUserInAnyRole(IsUserInAnyRoleRequest request, CancellationToken cancellationToken)

@@ -16,6 +16,7 @@ using SFA.DAS.LevyTransferMatching.Web.Authorization;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using System;
 using System.Net.Http;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.EmployerAccountsService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.TagService;
 
@@ -32,6 +33,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
 
             services.AddTransient<IAuthenticationService, AuthenticationService>();
             services.AddTransient<IAuthorizationContextProvider, AuthorizationContextProvider>();
+
+            services.AddTransient<IEmployerAccountsService, EmployerAccountsService>();
 
             services.AddTransient<ICacheStorageService, CacheStorageService>();
             services.AddTransient<IPledgeOrchestrator, PledgeOrchestrator>();

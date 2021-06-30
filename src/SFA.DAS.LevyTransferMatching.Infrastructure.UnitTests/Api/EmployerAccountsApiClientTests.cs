@@ -31,7 +31,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.UnitTests.Api
             var accountUsers = new List<Services.AccountUsersReadStore.Types.AccountUser>();
             accountUsers.Add(new Services.AccountUsersReadStore.Types.AccountUser
             {
-                accountId = 123, ETag = "", Id = Guid.NewGuid(), role = UserRole.Owner, removed = default , userRef = _userRef
+                //accountId = 123, ETag = "", Id = Guid.NewGuid(), role = UserRole.Owner, removed = default , userRef = _userRef
             });
 
             var documentQuery = new FakeDocumentQuery<Services.AccountUsersReadStore.Types.AccountUser>(accountUsers);
