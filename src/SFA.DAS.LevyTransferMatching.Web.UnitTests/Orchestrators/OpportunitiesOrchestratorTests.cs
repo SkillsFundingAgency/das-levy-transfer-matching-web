@@ -116,32 +116,38 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         }
 
         [Test]
-        public async Task GetOpportunitySummaryViewModel_All_Selected_For_Everything_Tax_Year_Calculated_Successfully()
+        public async Task GetOpportunitySummaryViewModel_All_Selected_For_Everything_Tax_Year_Calculated_Successfully_And_Description_Is_Anonymous()
         {
             // Arrange
+            string encodedPledgeId = _fixture.Create<string>();
+
             this.SetupGetOpportunityViewModelServices();
 
             var opportunity = _fixture
                 .Build<OpportunityDto>()
+                .With(x => x.IsNamePublic, false)
                 .With(x => x.Sectors, _sectorTags.Select(y => y.TagId))
                 .With(x => x.JobRoles, _jobRoleTags.Select(y => y.TagId))
                 .With(x => x.Levels, _levelTags.Select(y => y.TagId))
                 .Create();
 
             // Act
-            var result = await _orchestrator.GetOpportunitySummaryViewModel(opportunity);
+            var result = await _orchestrator.GetOpportunitySummaryViewModel(opportunity, encodedPledgeId);
 
             // Assert
             Assert.AreEqual("All", result.JobRoleList);
             Assert.AreEqual("All", result.LevelList);
             Assert.AreEqual("All", result.SectorList);
             Assert.AreEqual(result.YearDescription, $"{_currentDateTime.ToTaxYear("yyyy")}/{_currentDateTime.AddYears(1).ToTaxYear("yy")}");
+            Assert.IsFalse(result.Description.Contains(encodedPledgeId));
         }
 
         [Test]
-        public async Task GetOpportunitySummaryViewModel_Some_Selected_For_Everything_Tax_Year_Calculated_Successfully()
+        public async Task GetOpportunitySummaryViewModel_Some_Selected_For_Everything_Tax_Year_Calculated_Successfully_And_Description_Contains_EncodedPledgeId()
         {
             // Arrange
+            string encodedPledgeId = _fixture.Create<string>();
+
             this.SetupGetOpportunityViewModelServices();
 
             var sectors = _sectorTags.Take(4);
@@ -150,13 +156,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             var opportunity = _fixture
                 .Build<OpportunityDto>()
+                .With(x => x.IsNamePublic, true)
                 .With(x => x.Sectors, sectors.Select(y => y.TagId))
                 .With(x => x.JobRoles, jobRoles.Select(y => y.TagId))
                 .With(x => x.Levels, levels.Select(y => y.TagId))
                 .Create();
 
             // Act
-            var result = await _orchestrator.GetOpportunitySummaryViewModel(opportunity);
+            var result = await _orchestrator.GetOpportunitySummaryViewModel(opportunity, encodedPledgeId);
 
             // Assert
             var jobRoleDescriptions = _jobRoleTags
@@ -173,12 +180,16 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             Assert.AreEqual(result.SectorList, string.Join(", ", sectorDescriptions));
             
             Assert.AreEqual(result.YearDescription, $"{_currentDateTime.ToTaxYear("yyyy")}/{_currentDateTime.AddYears(1).ToTaxYear("yy")}");
+
+            Assert.IsTrue(result.Description.Contains(encodedPledgeId));
         }
 
         [Test]
         public async Task GetOpportunitySummaryViewModel_One_Selected_For_Everything_Tax_Year_Calculated_Successfully()
         {
             // Arrange
+            string encodedPledgeId = _fixture.Create<string>();
+
             this.SetupGetOpportunityViewModelServices();
 
             var sectors = _sectorTags.Take(1);
@@ -193,7 +204,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                 .Create();
 
             // Act
-            var result = await _orchestrator.GetOpportunitySummaryViewModel(opportunity);
+            var result = await _orchestrator.GetOpportunitySummaryViewModel(opportunity, encodedPledgeId);
 
             // Assert
             var jobRoleDescriptions = _jobRoleTags
@@ -216,6 +227,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         public void GetOpportunitySummaryViewModel_Levels_Returned_Not_In_Correct_Format_Throws_Data_Exception()
         {
             // Arrange
+            string encodedPledgeId = _fixture.Create<string>();
+
             this.SetupGetOpportunityViewModelServices(correctlySetupLevels: false);
 
             var sectors = _sectorTags.Take(4);
@@ -233,7 +246,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             Assert.ThrowsAsync<DataException>(async () =>
             {
                 // Act
-                await _orchestrator.GetOpportunitySummaryViewModel(opportunity);
+                await _orchestrator.GetOpportunitySummaryViewModel(opportunity, encodedPledgeId);
             });
         }
 

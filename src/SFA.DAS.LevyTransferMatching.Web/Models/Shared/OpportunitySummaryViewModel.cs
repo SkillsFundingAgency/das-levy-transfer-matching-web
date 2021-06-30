@@ -4,9 +4,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Shared
 {
     public class OpportunitySummaryViewModel
     {
-        public string EncodedPledgeId { get; set; }
-        public string EmployerName { get; set; }
-        public bool IsNamePublic { get; set; }
+        public string Description { get; set; }
         public int Amount { get; set; }
         public string SectorList { get; set; }
         public string JobRoleList { get; set; }

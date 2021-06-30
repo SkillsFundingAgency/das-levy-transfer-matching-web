@@ -42,13 +42,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 return null;
             }
 
-            var opportunitySummaryViewModel = await GetOpportunitySummaryViewModel(opportunityDto);
+            var encodedPledgeId = _encodingService.Encode(opportunityDto.Id, EncodingType.PledgeId);
+
+            var opportunitySummaryViewModel = await GetOpportunitySummaryViewModel(opportunityDto, encodedPledgeId);
 
             return new DetailViewModel()
             {
-                EmployerName = opportunitySummaryViewModel.EmployerName,
-                EncodedPledgeId = opportunitySummaryViewModel.EncodedPledgeId,
-                IsNamePublic = opportunitySummaryViewModel.IsNamePublic,
+                EmployerName = opportunityDto.DasAccountName,
+                EncodedPledgeId = encodedPledgeId,
+                IsNamePublic = opportunityDto.IsNamePublic,
                 OpportunitySummaryView = opportunitySummaryViewModel,
             };
         }
@@ -80,7 +82,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             return firstEncodedAccountId;
         }
 
-        public async Task<OpportunitySummaryViewModel> GetOpportunitySummaryViewModel(OpportunityDto opportunityDto)
+        public async Task<OpportunitySummaryViewModel> GetOpportunitySummaryViewModel(OpportunityDto opportunityDto, string encodedPledgeId)
         {
             // Pull back the tags, and use the descriptions to build the lists.
             var sectorTags = await _tagService.GetSectors();
@@ -149,9 +151,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             return new OpportunitySummaryViewModel()
             {
                 Amount = opportunityDto.Amount,
-                EmployerName = opportunityDto.DasAccountName,
-                EncodedPledgeId = _encodingService.Encode(opportunityDto.Id, EncodingType.PledgeId),
-                IsNamePublic = opportunityDto.IsNamePublic,
+                Description = opportunityDto.IsNamePublic ? $"{opportunityDto.DasAccountName} ({encodedPledgeId})" : "A levy-paying business wants to fund apprenticeship training in:",
                 JobRoleList = jobRoleList,
                 LevelList = levelList,
                 SectorList = sectorList,
