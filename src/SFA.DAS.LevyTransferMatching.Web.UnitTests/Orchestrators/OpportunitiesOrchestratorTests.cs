@@ -98,6 +98,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             var opportunity = _fixture
                 .Build<OpportunityDto>()
+                .With(x => x.Id, id)
                 .With(x => x.Sectors, sectors.Select(y => y.TagId))
                 .With(x => x.JobRoles, jobRoles.Select(y => y.TagId))
                 .With(x => x.Levels, levels.Select(y => y.TagId))
@@ -107,6 +108,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                 .Setup(x => x.Decode(It.Is<string>(y => y == encodedId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
                 .Returns(id);
 
+            _encodingService
+                .Setup(x => x.Encode(It.Is<long>(y => y == id), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
+                .Returns(encodedId);
+
             _opportunitiesService
                 .Setup(x => x.GetOpportunity(It.Is<int>(y => y == id)))
                 .ReturnsAsync(opportunity);
@@ -115,7 +120,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var result = await _orchestrator.GetDetailViewModel(encodedId);
 
             // Assert
-            Assert.AreEqual(result.Opportunity, result.OpportunitySummaryView.OpportunityDetail);
+            Assert.IsNotNull(result.OpportunitySummaryView);
+            Assert.AreEqual(encodedId, result.EncodedPledgeId);
         }
 
         [Test]

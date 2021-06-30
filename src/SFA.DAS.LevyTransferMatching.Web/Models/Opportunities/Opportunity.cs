@@ -4,6 +4,5 @@
     {
         public string ReferenceNumber { get; set; }
         public string EmployerName { get; set; }
-        public bool IsNamePublic { get; set; }
     }
 }

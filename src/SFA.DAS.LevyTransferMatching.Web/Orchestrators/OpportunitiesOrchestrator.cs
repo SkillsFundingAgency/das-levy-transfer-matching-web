@@ -49,7 +49,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             return new DetailViewModel()
             {
-                Opportunity = opportunitySummaryViewModel.OpportunityDetail,
+                EmployerName = opportunitySummaryViewModel.EmployerName,
+                EncodedPledgeId = opportunitySummaryViewModel.EncodedPledgeId,
+                IsNamePublic = opportunitySummaryViewModel.IsNamePublic,
                 OpportunitySummaryView = opportunitySummaryViewModel,
             };
         }
@@ -61,7 +63,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 {
                     EmployerName = x.DasAccountName,
                     ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),
-                    IsNamePublic = x.IsNamePublic,
                 })
                 .ToList();
 
@@ -148,17 +149,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             var yearDescription = $"{date.ToTaxYear("yyyy")}/{date.AddYears(1).ToTaxYear("yy")}";
 
-            var opportunityDetail = new OpportunityDetail()
+            return new OpportunitySummaryViewModel()
             {
                 Amount = opportunityDto.Amount,
                 EmployerName = opportunityDto.DasAccountName,
-                ReferenceNumber = _encodingService.Encode(opportunityDto.Id, EncodingType.PledgeId),
+                EncodedPledgeId = _encodingService.Encode(opportunityDto.Id, EncodingType.PledgeId),
                 IsNamePublic = opportunityDto.IsNamePublic,
-            };
-
-            return new OpportunitySummaryViewModel()
-            {
-                OpportunityDetail = opportunityDetail,
                 JobRoleList = jobRoleList,
                 LevelList = levelList,
                 SectorList = sectorList,
