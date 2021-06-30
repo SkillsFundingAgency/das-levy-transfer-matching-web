@@ -61,6 +61,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 {
                     EmployerName = x.DasAccountName,
                     ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),
+                    IsNamePublic = x.IsNamePublic,
                 })
                 .ToList();
 
@@ -152,6 +153,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 Amount = opportunityDto.Amount,
                 EmployerName = opportunityDto.DasAccountName,
                 ReferenceNumber = _encodingService.Encode(opportunityDto.Id, EncodingType.PledgeId),
+                IsNamePublic = opportunityDto.IsNamePublic,
             };
 
             return new OpportunitySummaryViewModel()

@@ -11,7 +11,7 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <span class="govuk-caption-m">Find a business to fund training for your apprentices</span>
-                <h1 class="govuk-heading-xl">Transfer fund details for @Model.Opportunity.EmployerName (@Model.Opportunity.ReferenceNumber)</h1>
+                <h1 class="govuk-heading-xl">Transfer fund details for @(Model.Opportunity.IsNamePublic ? Model.Opportunity.EmployerName : "opportunity") (@Model.Opportunity.ReferenceNumber)</h1>
 
                 <!-- PLEDGE DETAILS - START -->
                 <h2 class="govuk-heading-m">Details of the opportunity</h2>
