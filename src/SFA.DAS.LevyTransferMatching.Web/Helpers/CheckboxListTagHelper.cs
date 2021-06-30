@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Tags;
-using SFA.DAS.LevyTransferMatching.Web.Extensions;
+using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Helpers
 {
@@ -23,10 +20,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
         public ModelExpression Property { get; set; }
 
         [HtmlAttributeName("source")]
-        public List<Tag> Source { get; set; }
+        public List<ReferenceDataItem> Source { get; set; }
 
         [HtmlAttributeName("show-description")]
-        public bool ShowDescription { get; set; }
+        public bool ShowHint { get; set; }
 
         [ViewContext]
         [HtmlAttributeNotBound]
@@ -59,22 +56,22 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
             foreach (var tag in Source)
             {
                 i++;
-                var isChecked = attemptedValue != null && attemptedValue.Contains(tag.TagId);
+                var isChecked = attemptedValue != null && attemptedValue.Contains(tag.Id);
                 var checkedValue = isChecked ? " checked " : "";
 
                 var id = i == 1 ? Property.Name : $"{Property.Name}-{i}";
 
                 content.Append($"<div class=\"{ItemClass}\">");
 
-                content.Append($"<input id=\"{id}\" type = \"checkbox\"{checkedValue}class=\"{InputClass}\" name=\"{Property.Name}\" value=\"{tag.TagId}\">");
+                content.Append($"<input id=\"{id}\" type = \"checkbox\"{checkedValue}class=\"{InputClass}\" name=\"{Property.Name}\" value=\"{tag.Id}\">");
 
                 content.Append($"<label class=\"{LabelClass}\" for=\"{id}\">{tag.Description}</label>");
 
-                if (ShowDescription)
+                if (ShowHint)
                 {
-                    if (!string.IsNullOrWhiteSpace(tag.ExtendedDescription))
+                    if (!string.IsNullOrWhiteSpace(tag.Hint))
                     {
-                        content.Append($"<span class=\"{DescriptionClass}\" for=\"{id}\">{ tag.ExtendedDescription}</span>");
+                        content.Append($"<span class=\"{DescriptionClass}\" for=\"{id}\">{ tag.Hint}</span>");
                     }
                 }
 

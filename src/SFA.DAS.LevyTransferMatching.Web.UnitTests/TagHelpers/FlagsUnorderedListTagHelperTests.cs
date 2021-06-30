@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Tags;
+using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 using SFA.DAS.LevyTransferMatching.Web.Helpers;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.TagHelpers
@@ -22,18 +22,18 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.TagHelpers
         private Mock<IModelMetadataProvider> _modelMetadataProvider;
         private Mock<ICompositeMetadataDetailsProvider> _compositeMetadataDetailsProvider;
         private DefaultMetadataDetails _defaultMetadataDetails;
-        private List<Tag> _tagSource;
+        private List<ReferenceDataItem> _tagSource;
 
         [SetUp]
         public void Setup()
         {
             _tagHelper = new UnorderedListTagHelper();
 
-            _tagSource = new List<Tag>
+            _tagSource = new List<ReferenceDataItem>
             {
-                new Tag { TagId = "Option1", Description = "Option one" },
-                new Tag { TagId = "Option2", Description = "Option two" },
-                new Tag { TagId = "Option3", Description = "Option three" }
+                new ReferenceDataItem { TagId = "Option1", Description = "Option one" },
+                new ReferenceDataItem { TagId = "Option2", Description = "Option two" },
+                new ReferenceDataItem { TagId = "Option3", Description = "Option three" }
             };
 
             _tagHelperContext = new TagHelperContext(
