@@ -31,9 +31,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.TagHelpers
 
             _tagSource = new List<ReferenceDataItem>
             {
-                new ReferenceDataItem { TagId = "Option1", Description = "Option one" },
-                new ReferenceDataItem { TagId = "Option2", Description = "Option two" },
-                new ReferenceDataItem { TagId = "Option3", Description = "Option three" }
+                new ReferenceDataItem { Id = "Option1", Description = "Option one" },
+                new ReferenceDataItem { Id = "Option2", Description = "Option two" },
+                new ReferenceDataItem { Id = "Option3", Description = "Option three" }
             };
 
             _tagHelperContext = new TagHelperContext(
