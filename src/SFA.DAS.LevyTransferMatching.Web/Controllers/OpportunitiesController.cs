@@ -61,12 +61,17 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         public async Task<IActionResult> SelectAccount(string encodedPledgeId)
         {
             var userId = _authenticationService.UserId;
-
             var encodedAccountId = await _opportunitiesOrchestrator.GetUserEncodedAccountId(userId);
 
-            // TODO: Update to wire up to the actual controller (i.e.
-            //       RedirectToAction) - which doesn't exist currently.
-            return Redirect($"/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/apply");
+            return RedirectToAction("Apply", new ApplicationRequest { EncodedAccountId = encodedAccountId, EncodedPledgeId = encodedPledgeId });
+        }
+
+        [HideAccountNavigation(false)]
+        [DasAuthorize(EmployerUserRole.OwnerOrTransactor)]
+        [Route("/accounts/{encodedAccountId}/opportunities/{EncodedPledgeId}/apply")]
+        public async Task<IActionResult> Apply(ApplicationRequest request)
+        {
+            return View(await _opportunitiesOrchestrator.GetApplyViewModel(request.EncodedPledgeId));
         }
     }
 }

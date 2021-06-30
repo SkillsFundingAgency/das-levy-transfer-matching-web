@@ -1,0 +1,214 @@
+﻿@using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
+@model SFA.DAS.LevyTransferMatching.Web.Models.Opportunities.ApplyViewModel
+@inject SFA.DAS.EmployerUrlHelper.ILinkGenerator LinkGenerator
+@{
+    ViewData["Title"] = "Opportunities";
+}
+<a href="@LinkGenerator.AccountsLink()" class="govuk-back-link">Back</a>
+<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-m">Find a business to transfer your levy to</span>
+            <h1 class="govuk-heading-xl">Create a transfers application</h1>            
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">            
+            <div class="govuk-warning-text">
+                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                <strong class="govuk-warning-text__text">
+                    <span class="govuk-warning-text__assistive">Warning</span> All your details will be passed to the employer who owns the transfer funding.
+                </strong>
+            </div>
+            <ol class="das-task-list">
+                <li>
+                    <div class="govuk-grid-row app-task-list__group-header">
+                        <div class="govuk-grid-column-two-thirds">
+                            <h2 class="das-task-list__section">
+                                <span class="das-task-list__section-number">1. </span> Apprenticeship training
+                            </h2>
+                        </div>
+                        <div class="govuk-grid-column-one-third">
+                            @if (Model.IsApprenticeshipTrainingSectionComplete)
+                            {
+                                <strong class="govuk-tag app-task-list__group-header-tag">Completed</strong>
+                            }
+                            else
+                            {
+                                <strong class="govuk-tag govuk-tag--grey app-task-list__group-header-tag">Not started</strong>
+                            }
+                        </div>
+                    </div>
+                    <ul class="das-task-list__items">
+                        <li class="das-task-list__item">
+                            <span class="das-task-list__task-name">
+                                <a class="govuk-link" href="#">
+                                    Job role
+                                </a>
+                            </span>
+                            <span class="das-task-list__task-tag">
+                                <text>@Model.JobRole</text>
+                            </span>
+                        </li>
+                        <li class="das-task-list__item">
+                            <span class="das-task-list__task-name">
+                                <a class="govuk-link" href="#">
+                                    Number of apprentices
+                                </a>
+                            </span>
+                            <span class="das-task-list__task-tag">
+                                <text>@Model.NumberOfApprentices</text>
+                            </span>
+                        </li>
+                        <li class="das-task-list__item">
+                            <span class="das-task-list__task-name">
+                                <a class="govuk-link" href="#">
+                                    Start by
+                                </a>
+                            </span>
+                            <span class="das-task-list__task-tag">
+                                <text>@Model.StartBy</text>
+                            </span>
+                        </li>
+                        <li class="das-task-list__item">
+                            <span class="das-task-list__task-name">
+                                <a class="govuk-link" href="#">
+                                    Have you found a training provider?
+                                </a>
+                            </span>
+                            <span class="das-task-list__task-tag">
+                                <text>@Model.HaveTrainingProvider</text>
+                            </span>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <div class="govuk-grid-row app-task-list__group-header">
+                        <div class="govuk-grid-column-three-quarters">
+                            <h2 class="das-task-list__section">
+                                <span class="das-task-list__section-number">2. </span> Your business details
+                            </h2>
+                        </div>
+                        <div class="govuk-grid-column-one-third">
+                            @if (Model.IsBusinessDetailsSectionComplete)
+                            {
+                                <strong class="govuk-tag app-task-list__group-header-tag">Completed</strong>
+                            }
+                            else
+                            {
+                                <strong class="govuk-tag govuk-tag--grey app-task-list__group-header-tag">Not started</strong>
+                            }
+                        </div>
+                    </div>
+                    <ul class="das-task-list__items">
+                        <li class="das-task-list__item">
+                            <span class="das-task-list__task-name">
+                                <a class="govuk-link" href="#">
+                                    Sector
+                                </a>
+                            </span>
+                            <span class="das-task-list__task-tag">
+                                <text>@Model.Sectors</text>
+                            </span>
+                        </li>
+                        <li class="das-task-list__item">
+                            <span class="das-task-list__task-name">
+                                <a class="govuk-link" href="#">
+                                    Location
+                                </a>
+                            </span>
+                            <span class="das-task-list__task-tag">
+                                <text>@Model.Locations</text>
+                            </span>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <div class="govuk-grid-row app-task-list__group-header">
+                        <div class="govuk-grid-column-three-quarters">
+                            <h2 class="das-task-list__section">
+                                <span class="das-task-list__section-number">3. </span> About your apprenticeship
+                            </h2>
+                        </div>
+                        <div class="govuk-grid-column-one-quarter">
+                            <strong class="govuk-tag govuk-tag--grey app-task-list__group-header-tag">Optional</strong>
+                        </div>
+                    </div>
+                    <ul class="das-task-list__items">
+                        <li class="das-task-list__item">
+                            <span class="das-task-list__task-name">
+                                <a class="govuk-link" href="#">
+                                    More detail
+                                </a>
+                            </span>
+                            <span class="das-task-list__task-tag">
+                                <text>@Model.MoreDetail</text>
+                            </span>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <div class="govuk-grid-row app-task-list__group-header">
+                        <div class="govuk-grid-column-three-quarters">
+                            <h2 class="das-task-list__section">
+                                <span class="das-task-list__section-number">4. </span> Contact details
+                            </h2>
+                        </div>
+                        <div class="govuk-grid-column-one-third">
+                            @if (Model.IsContactDetailsSectionComplete)
+                            {
+                                <strong class="govuk-tag app-task-list__group-header-tag">Completed</strong>
+                            }
+                            else
+                            {
+                                <strong class="govuk-tag govuk-tag--grey app-task-list__group-header-tag">Not started</strong>
+                            }
+                        </div>
+                    </div>
+                    <ul class="das-task-list__items">
+                        <li class="das-task-list__item">
+                            <span class="das-task-list__task-name">
+                                <a class="govuk-link" href="#">
+                                    Name
+                                </a>
+                            </span>
+                            <span class="das-task-list__task-tag">
+                                <text>@Model.ContactName</text>
+                            </span>
+                        </li>
+                        <li class="das-task-list__item">
+                            <span class="das-task-list__task-name">
+                                <a class="govuk-link" href="#">
+                                    Email address
+                                </a>
+                            </span>
+                            <span class="das-task-list__task-tag">
+                                <text>@Model.EmailAddress</text>
+                            </span>
+                        </li>
+                        <li class="das-task-list__item">
+                            <span class="das-task-list__task-name">
+                                <a class="govuk-link" href="#">
+                                    Business Website
+                                </a>
+                            </span>
+                            <span class="das-task-list__task-tag">
+                                <text>@Model.WebsiteUrl</text>
+                            </span>
+                        </li>
+                    </ul>
+                </li>
+            </ol>
+            <div class="govuk-grid-column-full">
+                <div class="govuk-grid-row">
+                    <a class="govuk-link" href="@LinkGenerator.AccountsLink()">Cancel application</a>
+                </div>
+            </div>
+        </div>
+        <div class="govuk-grid-column-one-third">
+            <section class="employer-details side-panel">
+                <partial name="/Views/Shared/_OpportunitySummary.cshtml" for="OpportunitySummaryViewModel" />
+            </section>
+        </div>
+    </div>
+</main>
