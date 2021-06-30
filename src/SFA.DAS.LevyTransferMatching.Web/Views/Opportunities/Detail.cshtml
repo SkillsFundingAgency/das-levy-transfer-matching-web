@@ -13,10 +13,8 @@
                 <span class="govuk-caption-m">Find a business to fund training for your apprentices</span>
                 <h1 class="govuk-heading-xl">Transfer fund details for @(Model.IsNamePublic ? Model.EmployerName : "opportunity") (@Model.EncodedPledgeId)</h1>
 
-                <!-- PLEDGE DETAILS - START -->
                 <h2 class="govuk-heading-m">Details of the opportunity</h2>
                 @await Html.PartialAsync("_OpportunitySummary", Model.OpportunitySummaryView)
-                <!-- PLEDGE DETAILS - END -->
 
                 <form method="post" id="apply-application-form">
 
