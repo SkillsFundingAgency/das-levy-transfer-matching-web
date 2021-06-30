@@ -39,7 +39,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             var opportunityDto = await _opportunitiesService.GetOpportunity(id);
 
-            // If null, an opportunity couldn't be found for the encodedId.
             if (opportunityDto == null)
             {
                 return null;
