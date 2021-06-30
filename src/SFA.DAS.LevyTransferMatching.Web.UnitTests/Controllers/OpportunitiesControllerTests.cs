@@ -91,14 +91,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         {
             // Arrange
             string encodedPledgeId = _fixture.Create<string>();
-            OpportunitiesPostRequest opportunitiesPostRequest = new OpportunitiesPostRequest()
+            DetailPostRequest detailPostRequest = new DetailPostRequest()
             {
                 EncodedPledgeId = encodedPledgeId,
                 HasConfirmed = false,
             };
 
             // Assert
-            var redirectToActionResult = _opportunitiesController.Detail(opportunitiesPostRequest) as RedirectToActionResult;
+            var redirectToActionResult = _opportunitiesController.Detail(detailPostRequest) as RedirectToActionResult;
 
             // Assert
             Assert.IsNotNull(redirectToActionResult);
@@ -110,14 +110,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         {
             // Arrange
             string encodedPledgeId = _fixture.Create<string>();
-            OpportunitiesPostRequest opportunitiesPostRequest = new OpportunitiesPostRequest()
+            DetailPostRequest detailPostRequest = new DetailPostRequest()
             {
                 EncodedPledgeId = encodedPledgeId,
                 HasConfirmed = true,
             };
 
             // Assert
-            var redirectToActionResult = _opportunitiesController.Detail(opportunitiesPostRequest) as RedirectToActionResult;
+            var redirectToActionResult = _opportunitiesController.Detail(detailPostRequest) as RedirectToActionResult;
 
             // Assert
             Assert.IsNotNull(redirectToActionResult);

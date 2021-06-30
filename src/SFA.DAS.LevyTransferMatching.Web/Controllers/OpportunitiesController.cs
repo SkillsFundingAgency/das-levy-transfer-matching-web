@@ -43,11 +43,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
         [HttpPost]
         [Route("opportunities/{encodedPledgeId}")]
-        public IActionResult Detail(OpportunitiesPostRequest opportunitiesPostRequest)
+        public IActionResult Detail(DetailPostRequest detailPostRequest)
         {
-            if (opportunitiesPostRequest.HasConfirmed.Value)
+            if (detailPostRequest.HasConfirmed.Value)
             {
-                return RedirectToAction(nameof(SelectAccount), new { opportunitiesPostRequest.EncodedPledgeId });
+                return RedirectToAction(nameof(SelectAccount), new { detailPostRequest.EncodedPledgeId });
             }
             else
             {
