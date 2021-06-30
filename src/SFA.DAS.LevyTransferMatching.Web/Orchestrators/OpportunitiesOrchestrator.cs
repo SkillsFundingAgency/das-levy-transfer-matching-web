@@ -33,11 +33,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             _userService = userService;
         }
 
-        public async Task<DetailViewModel> GetDetailViewModel(string encodedId)
+        public async Task<DetailViewModel> GetDetailViewModel(int pledgeId)
         {
-            int id = (int)_encodingService.Decode(encodedId, EncodingType.PledgeId);
-
-            var opportunityDto = await _opportunitiesService.GetOpportunity(id);
+            var opportunityDto = await _opportunitiesService.GetOpportunity(pledgeId);
 
             if (opportunityDto == null)
             {

@@ -52,15 +52,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         public async Task GET_Detail_Opportunity_Exists_Returns_Expected_View_With_Expected_ViewModel()
         {
             // Arrange
-            var encodedPledgeId = _fixture.Create<string>();
+            var detailRequest = _fixture.Create<DetailRequest>();
             var expectedDetailViewModel = _fixture.Create<DetailViewModel>();
 
             _orchestrator
-                .Setup(x => x.GetDetailViewModel(It.Is<string>(y => y == encodedPledgeId)))
+                .Setup(x => x.GetDetailViewModel(It.Is<int>(y => y == detailRequest.PledgeId)))
                 .ReturnsAsync(expectedDetailViewModel);
 
             // Act
-            var viewResult = await _opportunitiesController.Detail(encodedPledgeId) as ViewResult;
+            var viewResult = await _opportunitiesController.Detail(detailRequest) as ViewResult;
             var actualDetailViewModel = viewResult?.Model as DetailViewModel;
 
             // Assert
@@ -73,14 +73,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         public async Task GET_Detail_Opportunity_Doesnt_Exist_Returns_404()
         {
             // Arrange
-            var encodedPledgeId = _fixture.Create<string>();
+            var detailRequest = _fixture.Create<DetailRequest>();
 
             _orchestrator
-                .Setup(x => x.GetDetailViewModel(It.Is<string>(y => y == encodedPledgeId)))
+                .Setup(x => x.GetDetailViewModel(It.Is<int>(y => y == detailRequest.PledgeId)))
                 .ReturnsAsync((DetailViewModel)null);
 
             // Act
-            var notFoundResult = await _opportunitiesController.Detail(encodedPledgeId) as NotFoundResult;
+            var notFoundResult = await _opportunitiesController.Detail(detailRequest) as NotFoundResult;
 
             // Assert
             Assert.NotNull(notFoundResult);

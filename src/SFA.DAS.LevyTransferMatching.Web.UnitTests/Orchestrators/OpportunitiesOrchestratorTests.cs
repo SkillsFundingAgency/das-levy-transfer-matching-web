@@ -65,19 +65,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         public async Task GetDetailViewModel_Opportunity_Not_Found_Returns_Null()
         {
             // Arrange
-            string encodedId = _fixture.Create<string>();
             int id = _fixture.Create<int>();
-
-            _encodingService
-                .Setup(x => x.Decode(It.Is<string>(y => y == encodedId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
-                .Returns(id);
 
             _opportunitiesService
                 .Setup(x => x.GetOpportunity(It.Is<int>(y => y == id)))
                 .ReturnsAsync((OpportunityDto)null);
 
             // Act
-            var result = await _orchestrator.GetDetailViewModel(encodedId);
+            var result = await _orchestrator.GetDetailViewModel(id);
 
             // Assert
             Assert.IsNull(result);
@@ -105,10 +100,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                 .Create();
 
             _encodingService
-                .Setup(x => x.Decode(It.Is<string>(y => y == encodedId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
-                .Returns(id);
-
-            _encodingService
                 .Setup(x => x.Encode(It.Is<long>(y => y == id), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
                 .Returns(encodedId);
 
@@ -117,7 +108,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                 .ReturnsAsync(opportunity);
 
             // Act
-            var result = await _orchestrator.GetDetailViewModel(encodedId);
+            var result = await _orchestrator.GetDetailViewModel(id);
 
             // Assert
             Assert.IsNotNull(result.OpportunitySummaryView);

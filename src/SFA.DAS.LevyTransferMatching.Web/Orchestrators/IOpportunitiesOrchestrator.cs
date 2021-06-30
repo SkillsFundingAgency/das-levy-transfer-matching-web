@@ -6,7 +6,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
     public interface IOpportunitiesOrchestrator
     {
         Task<IndexViewModel> GetIndexViewModel();
-        Task<DetailViewModel> GetDetailViewModel(string encodedId);
+        Task<DetailViewModel> GetDetailViewModel(int pledgeId);
         Task<string> GetUserEncodedAccountId(string userId);
     }
 }
