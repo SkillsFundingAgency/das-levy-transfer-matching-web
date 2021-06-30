@@ -34,6 +34,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
 
             services.AddTransient<ICacheStorageService, CacheStorageService>();
             services.AddTransient<IPledgeOrchestrator, PledgeOrchestrator>();
+            services.AddTransient<ILocationOrchestrator, LocationOrchestrator>();
 
             services.AddClient<IAccountsService>((c, s) => new AccountsService(c));
             services.AddClient<ILocationService>((c, s) => new LocationService(c));

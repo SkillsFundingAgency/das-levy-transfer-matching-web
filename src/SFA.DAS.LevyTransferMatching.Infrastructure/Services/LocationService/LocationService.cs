@@ -17,15 +17,26 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.LocationService
             _client = client;
         }
 
-        public async Task<LocationDto> GetLocation(string searchTerm)
+        public async Task<LocationsDto> GetLocations(string searchTerm)
         {
             var response = await _client.GetAsync($"/Locations?searchTerm={searchTerm}");
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
-            var locationDto = JsonConvert.DeserializeObject<LocationDto>(content);
+            var locationDto = JsonConvert.DeserializeObject<LocationsDto>(content);
 
             return locationDto;
+        }
+
+        public async Task<LocationInformationDto> GetLocationInformation(string location)
+        {
+            var response = await _client.GetAsync($"/Locations/information?location={location}");
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            var locationInformationDto = JsonConvert.DeserializeObject<LocationInformationDto>(content);
+
+            return locationInformationDto;
         }
     }
 }

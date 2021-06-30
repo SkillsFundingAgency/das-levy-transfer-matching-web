@@ -8,6 +8,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.LocationService
 {
     public interface ILocationService
     {
-        Task<LocationDto> GetLocation(string searchTerm);
+        Task<LocationsDto> GetLocations(string searchTerm);
+        Task<LocationInformationDto> GetLocationInformation(string location);
     }
 }

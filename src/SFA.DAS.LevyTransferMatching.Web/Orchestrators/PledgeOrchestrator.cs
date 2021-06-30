@@ -103,15 +103,22 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         
         public async Task ValidateLocations(LocationPostRequest request)
         {
-            foreach(var location in request.Locations)
+            request.Errors = new Dictionary<int, string>();
+            for (int i = 0; i < request.Locations.Count; i++)
             {
-                if(location != null)
+                if (request.Locations[i] != null)
                 {
-                    var verifiedLocationName = await _locationService.GetLocation(location);
-                    //if(verifiedLocationName == null)
+                    var locationsDto = await _locationService.GetLocationInformation(request.Locations[i]);
+                    if (locationsDto?.Name == null)
+                    {
+                        request.Errors.Add(i, $"No locations could be found for { request.Locations[i] }");
+                    }
+                    else
+                    {
+                        request.Locations[i] = locationsDto.Name;
+                    }
                 }
             }
-
         }
 
         public async Task UpdateCacheItem(AmountPostRequest request)

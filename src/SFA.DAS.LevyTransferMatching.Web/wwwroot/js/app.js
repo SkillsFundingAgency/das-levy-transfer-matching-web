@@ -59,7 +59,7 @@ SelectAllCheckboxes.prototype.toggleCheckboxes = function (e) {
 // Location Autocomplete
 
 var locationInputs = document.querySelectorAll(".app-location-autocomplete");
-var apiUrl = '/locations';
+var apiUrl = '/location';
 
 if (locationInputs.length > 0) {
 

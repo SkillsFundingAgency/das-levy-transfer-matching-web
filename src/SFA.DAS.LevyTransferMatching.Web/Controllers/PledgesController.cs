@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Authorization.EmployerUserRoles.Options;
@@ -108,6 +109,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             ViewBag.HideNav = false;
 
             await _orchestrator.ValidateLocations(request);
+
+            if (request.Errors.Any())
+            {
+                return RedirectToAction("Location", request);
+            }
+
             await _orchestrator.UpdateCacheItem(request);
             return RedirectToAction("Create", new CreateRequest() { EncodedAccountId = request.EncodedAccountId, CacheKey = request.CacheKey });
         }

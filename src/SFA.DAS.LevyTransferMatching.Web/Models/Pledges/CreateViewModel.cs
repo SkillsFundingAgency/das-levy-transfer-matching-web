@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Models.Enums;
 
@@ -18,6 +19,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public bool AreAllSectorsSelected => !Sectors.HasValue || Sectors == Sector.None || Sectors == EnumExtensions.GetMaxValue<Sector>();
         public bool AreAllJobRolesSelected => !JobRoles.HasValue || JobRoles == JobRole.None || JobRoles == EnumExtensions.GetMaxValue<JobRole>();
         public bool AreAllLevelsSelected => !Levels.HasValue || Levels == Level.None || Levels == EnumExtensions.GetMaxValue<Level>();
-        public bool AreAllLocationsSelected => Locations == null || Locations.Count == 0;
+        public bool AreAllLocationsSelected => Locations == null || Locations.Count == 0 || Locations.All(x => x == null);
     }
 }
