@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using SFA.DAS.LevyTransferMatching.Web.Extensions;
-using SFA.DAS.LevyTransferMatching.Web.Models.Enums;
+using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 {
@@ -10,15 +8,21 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
     {
         public int? Amount { get; set; }
         public bool? IsNamePublic { get; set; }
-        public Sector? Sectors { get; set; }
-        public Level? Levels { get; set; }
-        public JobRole? JobRoles { get; set; }
+
+        public List<string> Sectors { get; set; }
+        public List<string> JobRoles { get; set; }
+        public List<string> Levels { get; set; }
+        
+        public List<ReferenceDataItem> LevelOptions { get; set; }
+        public List<ReferenceDataItem> SectorOptions { get; set; }
+        public List<ReferenceDataItem> JobRoleOptions { get; set; }
         public List<string> Locations { get; set; }
 
         public string IsNamePublicDisplayValue => IsNamePublic.HasValue ? IsNamePublic.Value ? "Show" : "Hide" : "-";
-        public bool AreAllSectorsSelected => !Sectors.HasValue || Sectors == Sector.None || Sectors == EnumExtensions.GetMaxValue<Sector>();
-        public bool AreAllJobRolesSelected => !JobRoles.HasValue || JobRoles == JobRole.None || JobRoles == EnumExtensions.GetMaxValue<JobRole>();
-        public bool AreAllLevelsSelected => !Levels.HasValue || Levels == Level.None || Levels == EnumExtensions.GetMaxValue<Level>();
+        public bool AreAllSectorsSelected => Sectors == null || !Sectors.Any() || Sectors.Count == SectorOptions.Count;
+        public bool AreAllJobRolesSelected => JobRoles == null || !JobRoles.Any() || JobRoles.Count == JobRoleOptions.Count;
+        public bool AreAllLevelsSelected => Levels == null || !Levels.Any() || Levels.Count == LevelOptions.Count;
+        public bool AmountSectionComplete => Amount.HasValue && IsNamePublic.HasValue;
         public bool AreAllLocationsSelected => Locations == null || Locations.Count == 0 || Locations.All(x => x == null);
     }
 }

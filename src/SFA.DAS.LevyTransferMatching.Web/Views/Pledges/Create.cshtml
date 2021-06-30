@@ -1,4 +1,5 @@
-﻿@using SFA.DAS.LevyTransferMatching.Web.Models.Pledges
+﻿@using SFA.DAS.LevyTransferMatching.Web.Extensions
+@using SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 @model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.CreateViewModel
 
 @{
@@ -30,13 +31,20 @@
                             </h2>
                         </div>
                         <div class="govuk-grid-column-one-third">
-                            <strong class="govuk-tag govuk-tag--grey app-task-list__group-header-tag">Not started</strong>
+                            @if (Model.AmountSectionComplete)
+                            {
+                                <strong class="govuk-tag app-task-list__group-header-tag">Completed</strong>
+                            }
+                            else
+                            {
+                                <strong class="govuk-tag govuk-tag--grey app-task-list__group-header-tag">Not started</strong>
+                            }
                         </div>
                     </div>
                     <ul class="das-task-list__items">
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="@Url.Action("Amount", new AmountRequest{EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey})">
+                                <a class="govuk-link" href="@Url.Action("Amount", new AmountRequest{EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey}, true)">
                                     Amount you want to pledge
                                 </a>
                             </span>
@@ -53,7 +61,7 @@
                         </li>
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="@Url.Action("Amount", new AmountRequest{EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey})">
+                                <a class="govuk-link" href="@Url.Action("Amount", new AmountRequest{EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey}, true)">
                                     Show or hide your organisation's name
                                 </a>
                             </span>
@@ -100,7 +108,7 @@
                         </li>
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="@Url.Action("Sector", new SectorRequest{EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey})">
+                                <a class="govuk-link" href="@Url.Action("Sector", new SectorRequest{EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey}, true)">
                                     Sector
                                 </a>
                             </span>
@@ -112,14 +120,14 @@
                                 }
                                 else
                                 {
-                                    <flags-unordered-list asp-for="Sectors" class="govuk-list das-!-text-align-right"></flags-unordered-list>
+                                    <unordered-list asp-for="Sectors" source="@Model.SectorOptions" class="govuk-list das-!-text-align-right"></unordered-list>
                                 }
 
                             </span>
                         </li>
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="@Url.Action("JobRole", new JobRoleRequest{EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey})">
+                                <a class="govuk-link" href="@Url.Action("JobRole", new JobRoleRequest{EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey}, true)">
                                     Type of job role
                                 </a>
                             </span>
@@ -131,14 +139,14 @@
                                 }
                                 else
                                 {
-                                    <flags-unordered-list asp-for="JobRoles" class="govuk-list das-!-text-align-right"></flags-unordered-list>
+                                    <unordered-list asp-for="JobRoles" source="@Model.JobRoleOptions" class="govuk-list das-!-text-align-right"></unordered-list>
                                 }
 
                             </span>
                         </li>
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="@Url.Action("Level", new LevelRequest { EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey })">
+                                <a class="govuk-link" href="@Url.Action("Level", new LevelRequest { EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey }, true)">
                                     Level
                                 </a>
                             </span>
@@ -150,7 +158,7 @@
                                 }
                                 else
                                 {
-                                    <flags-unordered-list asp-for="Levels" class="govuk-list das-!-text-align-right"></flags-unordered-list>
+                                    <unordered-list asp-for="Levels" source="@Model.LevelOptions" class="govuk-list das-!-text-align-right"></unordered-list>
                                 }
 
                             </span>
@@ -158,12 +166,22 @@
                     </ul>
                 </li>
             </ol>
-            <div class="govuk-button-group">
-                @*<button class="govuk-button" data-module="govuk-button">
-                    Continue
-                </button>*@
+        <div class="govuk-grid-column-full">
+            @if (Model.AmountSectionComplete)
+            {
+                <form method="post">
+                    <div class="govuk-grid-row">
+                        <h2 class="govuk-heading-m">Submit your transfers pledge</h2>
+                        <p>I confirm that I want to make the above pledge so I can fund another business's apprenticeship training and assessment with my levy funds.</p>
+                        <button class="govuk-button pledge-level-continue" data-module="govuk-button" id="pledge-create-submit">Submit my pledge</button>
+                    </div>
+                </form>
+            }
+            <div class="govuk-grid-row">
                 <a class="govuk-link" href="@Url.Action("index", "pledges", new { Model.EncodedAccountId })">Cancel pledge</a>
             </div>
+        </div>
+
         </div>
     </div>
 </main>

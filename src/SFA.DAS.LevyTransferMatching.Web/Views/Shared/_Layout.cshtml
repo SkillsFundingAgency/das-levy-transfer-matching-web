@@ -4,6 +4,8 @@
     var accountId = ViewContext.RouteData.Values[RouteValueKeys.EncodedAccountId] as string;
     ViewBag.HideHeaderBorder = true;
     var footerModel = new FooterModel { AccountId = accountId, UsePrivacyV2 = true };
+
+    var hideHeader = (bool) ViewData[ViewDataKeys.HideAccountNavigation];
 }
 
 <!DOCTYPE html>
@@ -40,7 +42,7 @@
     @*<partial name="_CookieBanner" />*@
 
 <partial name="_Header" />
-    @if (accountId != null && ViewBag.HideNav != null && !ViewBag.HideNav)
+    @if (accountId != null && !hideHeader)
     {
         <partial name="_Menu" model="@accountId" />
     }

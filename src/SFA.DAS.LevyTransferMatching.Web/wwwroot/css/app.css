@@ -51,6 +51,44 @@
     border-bottom: 1px solid #b1b4b6;
 }
 
+.app-dl-inline {
+    overflow: hidden;
+}
+
+.app-dl-inline__title {
+    clear: both;
+    float: left;
+    margin-right: .3em;
+}
+
+.app-dl-inline__title:after {
+    content: ':';
+}
+
+.app-dl-inline__definition {
+    font-weight: 700;
+    margin: 0;
+    float: left;
+}
+
+.app-highlight__footer {
+    background: #dbd9d6;
+    margin: 0 -15px -15px -15px;
+    padding: 10px 15px;
+}
+
+@media (min-width: 40.0625em) {
+    .app-highlight__footer {
+        margin: 0 -20px -25px -20px;
+        padding: 15px 20px;
+    }
+}
+
+.app-highlight__footer p:last-child {
+    margin: 0
+}
+
+
 .app-extra-fields__fieldset {
     border-left: 5px solid #b1b4b6;
     padding: 0 0 0 20px;

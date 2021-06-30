@@ -14,9 +14,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         Task ValidateLocations(LocationPostRequest request);
         Task UpdateCacheItem(AmountPostRequest request);
         Task UpdateCacheItem(SectorPostRequest request);
+        Task UpdateCacheItem(JobRolePostRequest request);
         Task UpdateCacheItem(LevelPostRequest request);
         Task<LevelViewModel> GetLevelViewModel(LevelRequest request);
-        Task UpdateCacheItem(JobRolePostRequest request);
         Task UpdateCacheItem(LocationPostRequest request);
+        Task SubmitPledge(CreatePostRequest request);
     }
 }
