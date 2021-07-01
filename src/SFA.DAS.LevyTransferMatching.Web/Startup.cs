@@ -1,14 +1,12 @@
 using System;
 using System.IO;
 using FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using SFA.DAS.Authorization.Mvc.Extensions;
 using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.EmployerUrlHelper.DependencyResolution;
@@ -18,7 +16,6 @@ using SFA.DAS.LevyTransferMatching.Web.Authentication;
 using SFA.DAS.LevyTransferMatching.Web.ModelBinders;
 using SFA.DAS.LevyTransferMatching.Web.StartupExtensions;
 using SFA.DAS.Validation.Mvc.Extensions;
-using SFA.DAS.Validation.Mvc.Filters;
 
 namespace SFA.DAS.LevyTransferMatching.Web
 {
@@ -66,18 +63,8 @@ namespace SFA.DAS.LevyTransferMatching.Web
 
             services.AddControllersWithViews();
 
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy(PolicyNames.ManageAccount, policy =>
-                {
-                    policy.Requirements.Add(new ManageAccountRequirement());
-                    //policy.Requirements.Add(new ApplicationStatusRequirement(ApplicationStatus.InProgress, ApplicationStatus.New));
-                });
-            });
-
             services.AddMvc(options =>
             {
-                //options.AddAuthorization();
                 options.AddValidation();
                 options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
                 options.Filters.Add(new HideAccountNavigationAttribute(false));
@@ -89,7 +76,7 @@ namespace SFA.DAS.LevyTransferMatching.Web
 
             services.AddApplicationInsightsTelemetry(Configuration.GetValue<string>("APPINSIGHTS_INSTRUMENTATIONKEY"));
             services.AddEmployerAuthentication(Configuration.GetSection<Infrastructure.Configuration.Authentication>());
-            services.AddDasAuthorization();
+            services.AddAuthorizationPolicies();
             services.AddCache(_environment, config);
             services.AddMemoryCache();
             services.AddCookieTempDataProvider();

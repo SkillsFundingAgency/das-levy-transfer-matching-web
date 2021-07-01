@@ -26,13 +26,19 @@ namespace SFA.DAS.LevyTransferMatching.Web.Authentication
 
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, ManageAccountRequirement requirement)
         {
-            _logger.LogInformation("ManageAccountAuthorizationHandler invoked");
-
             var isAuthorized = await IsEmployerAuthorized(context);
+
+            var userId = context.User.FindFirst(c => c.Type.Equals(ClaimIdentifierConfiguration.Id)).Value;
+            if (string.IsNullOrWhiteSpace(userId)) userId = "unknown";
 
             if (isAuthorized)
             {
+                _logger.LogInformation($"ManageAccountRequirement met for user [{userId}]");
                 context.Succeed(requirement);
+            }
+            else
+            {
+                _logger.LogInformation($"ManageAccountRequirement not met for user [{userId}]");
             }
         }
 

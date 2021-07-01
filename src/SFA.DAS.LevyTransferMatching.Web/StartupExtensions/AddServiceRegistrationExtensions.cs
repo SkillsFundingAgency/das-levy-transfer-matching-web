@@ -1,7 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using SFA.DAS.Authorization.Context;
 using SFA.DAS.Http;
 using SFA.DAS.LevyTransferMatching.Domain.Interfaces;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Api;
@@ -20,7 +18,6 @@ using Microsoft.AspNetCore.Authorization;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.EmployerAccountsService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.TagService;
-using SFA.DAS.Authorization.DependencyResolution.Microsoft;
 
 namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
 {
@@ -32,9 +29,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
 
             services.AddSingleton<IDocumentClientFactory, DocumentClientFactory>();
             services.AddTransient<IAccountUsersReadOnlyRepository, AccountUsersReadOnlyRepository>();
-
-            services.AddTransient<IAuthenticationService, AuthenticationService>();
-            services.AddTransient<IAuthorizationContextProvider, AuthorizationContextProvider>();
 
             services.AddSingleton<IAuthorizationHandler, ManageAccountAuthorizationHandler>();
 
