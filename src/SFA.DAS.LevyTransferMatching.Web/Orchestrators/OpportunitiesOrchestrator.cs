@@ -140,9 +140,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 {
                     Description = GenerateDescription(opportunityDto, encodedPledgeId),
                     Amount = opportunityDto.Amount,
-                    JobRoleList = string.Join(',', opportunityDto.JobRoles),
-                    LevelList = string.Join(',', opportunityDto.Levels),
-                    SectorList = string.Join(',', opportunityDto.Sectors),
+                    JobRoleList = string.Join(", ", opportunityDto.JobRoles),
+                    LevelList = string.Join(", ", opportunityDto.Levels),
+                    SectorList = string.Join(", ", opportunityDto.Sectors),
                     YearDescription = "2021/22"
                 },
                 JobRole = "-",
