@@ -141,10 +141,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
 
             string encodedPledgeId = _fixture.Create<string>();
 
-            var redirectResult = await _opportunitiesController.SelectAccount(encodedPledgeId) as RedirectResult;
+            var redirectToActionResult = await _opportunitiesController.SelectAccount(encodedPledgeId) as RedirectToActionResult;
 
-            Assert.IsNotNull(redirectResult);
-            Assert.AreEqual(redirectResult.Url, $"/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/apply");
+            Assert.IsNotNull(redirectToActionResult);
+            Assert.AreEqual(redirectToActionResult.ActionName, nameof(OpportunitiesController.Apply));
         }
     }
 }
