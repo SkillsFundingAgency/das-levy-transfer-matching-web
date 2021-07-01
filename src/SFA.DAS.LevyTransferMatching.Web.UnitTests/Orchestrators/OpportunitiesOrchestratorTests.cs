@@ -15,6 +15,7 @@ using System;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using System.Data;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 {
@@ -28,6 +29,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private Mock<ITagService> _tagService;
         private Mock<IUserService> _userService;
         private Mock<IEncodingService> _encodingService;
+        private Mock<ICacheStorageService> _cache;
 
         private List<OpportunityDto> _opportunityDtoList;
         private List<Tag> _sectorTags;
@@ -44,12 +46,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _tagService = new Mock<ITagService>();
             _userService = new Mock<IUserService>();
             _encodingService = new Mock<IEncodingService>();
+            _cache = new Mock<ICacheStorageService>();
 
             _opportunityDtoList = _fixture.Create<List<OpportunityDto>>();
             _opportunitiesService.Setup(x => x.GetAllOpportunities()).ReturnsAsync(_opportunityDtoList);
             _encodingService.Setup(x => x.Encode(It.IsAny<long>(), EncodingType.PledgeId)).Returns("test");
 
-            _orchestrator = new OpportunitiesOrchestrator(_dateTimeService.Object, _opportunitiesService.Object, _tagService.Object, _userService.Object, _encodingService.Object);
+            _orchestrator = new OpportunitiesOrchestrator(_dateTimeService.Object, _opportunitiesService.Object, _tagService.Object, _userService.Object, _encodingService.Object, _cache.Object);
         }
 
         [Test]

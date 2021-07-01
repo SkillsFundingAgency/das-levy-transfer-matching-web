@@ -1,0 +1,50 @@
+﻿@using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
+@model SFA.DAS.LevyTransferMatching.Web.Models.Opportunities.MoreDetailsViewModel
+@inject SFA.DAS.EmployerUrlHelper.ILinkGenerator LinkGenerator
+@{
+    ViewData["Title"] = "Opportunities";
+}
+<a href="@LinkGenerator.AccountsLink()" class="govuk-back-link">Back</a>
+<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
+    <div class="govuk-grid-row">
+        <form method="post">
+            <div class="govuk-grid-column-two-thirds">
+                <span class="govuk-caption-m">Find a business to transfer your levy to</span>
+                <h1 class="govuk-heading-xl">Provide more detail about your apprenticeship</h1>
+                <p>This information will help the business offering the funding opportunity to make a decision about accepting your application.</p>
+                <p>Think about:</p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>why you want to employ an apprentice</li>
+                    <li>what the apprentice will help your business to achieve</li>
+                    <li>any long term plans for your apprentice</li>
+                </ul>
+                <div class="govuk-form-group">
+                    <h1 class="govuk-label-wrapper">
+                        <label class="govuk-label govuk-label--l" for="more-detail">
+                            Can you provide more detail?
+                        </label>
+                    </h1>
+                    <div id="more-detail-hint" class="govuk-hint">
+                        Do not include personal or financial information, like your National Insurance number or credit card details.
+                    </div>
+                    @Html.TextAreaFor(m => m.Details, new { @class = "govuk-textarea", @id = "more-detail", @name = "more-detail", @rows = "5", @aria_describedby = "more-detail-hint" })
+                    <div id="opportunity-more-details-info" class="govuk-hint govuk-character-count__message" aria-live="polite">You have 200 words remaining</div>
+                </div>
+            </div>
+            <div class="govuk-grid-column-one-third">
+                <section class="employer-details side-panel">
+                    <partial name="/Views/Shared/_OpportunitySummary.cshtml" for="OpportunitySummaryViewModel" />
+                </section>
+            </div>
+
+            <div class="govuk-grid-column-full">
+                <div class="govuk-button-group">
+                    <button id="opportunity-criteria-continue" class="govuk-button" data-module="govuk-button">
+                        Continue
+                    </button>
+                    <a href="@Url.Action("Apply", new { Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey })" class="govuk-back-link">Back</a>
+                </div>
+            </div>
+        </form>
+    </div>    
+</main>

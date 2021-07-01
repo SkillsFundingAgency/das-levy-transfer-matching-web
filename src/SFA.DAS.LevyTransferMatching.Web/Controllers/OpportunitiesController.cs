@@ -6,6 +6,7 @@ using SFA.DAS.Authorization.Mvc.Attributes;
 using SFA.DAS.LevyTransferMatching.Web.Authentication;
 using SFA.DAS.LevyTransferMatching.Web.Attributes;
 using SFA.DAS.Authorization.EmployerUserRoles.Options;
+using System;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
@@ -56,14 +57,19 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             }
         }
         
-        [DasAuthorize(EmployerUserRole.OwnerOrTransactor)]
+        //[DasAuthorize(EmployerUserRole.OwnerOrTransactor)]
         [Route("opportunities/{encodedPledgeId}/apply")]
         public async Task<IActionResult> SelectAccount(string encodedPledgeId)
         {
             var userId = _authenticationService.UserId;
             var encodedAccountId = await _opportunitiesOrchestrator.GetUserEncodedAccountId(userId);
 
-            return RedirectToAction("Apply", new ApplicationRequest { EncodedAccountId = encodedAccountId, EncodedPledgeId = encodedPledgeId });
+            return RedirectToAction("Apply", new ApplicationRequest 
+            { 
+                CacheKey = Guid.NewGuid(),
+                EncodedAccountId = encodedAccountId,
+                EncodedPledgeId = encodedPledgeId
+            });
         }
 
         [HideAccountNavigation(false)]
@@ -71,7 +77,30 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Route("/accounts/{encodedAccountId}/opportunities/{EncodedPledgeId}/apply")]
         public async Task<IActionResult> Apply(ApplicationRequest request)
         {
-            return View(await _opportunitiesOrchestrator.GetApplyViewModel(request.EncodedPledgeId));
+            return View(await _opportunitiesOrchestrator.GetApplyViewModel(request));
+        }
+
+        [HideAccountNavigation(false)]
+        [DasAuthorize(EmployerUserRole.OwnerOrTransactor)]
+        [Route("/accounts/{encodedAccountId}/opportunities/{EncodedPledgeId}/create/more-details")]
+        public async Task<IActionResult> MoreDetails(MoreDetailsRequest request)
+        {
+            return View(await _opportunitiesOrchestrator.GetMoreDetailsViewModel(request));
+        }
+
+        [HideAccountNavigation(false)]
+        [DasAuthorize(EmployerUserRole.OwnerOrTransactor)]
+        [Route("/accounts/{encodedAccountId}/opportunities/{EncodedPledgeId}/create/more-details")]
+        [HttpPost]
+        public async Task<IActionResult> MoreDetails(MoreDetailsPostRequest request)
+        {
+            await _opportunitiesOrchestrator.UpdateCacheItem(request);
+            return RedirectToAction("Apply", new ApplicationRequest 
+            { 
+                EncodedAccountId = request.EncodedAccountId,
+                EncodedPledgeId = request.EncodedPledgeId,
+                CacheKey = request.CacheKey
+            });
         }
     }
 }
