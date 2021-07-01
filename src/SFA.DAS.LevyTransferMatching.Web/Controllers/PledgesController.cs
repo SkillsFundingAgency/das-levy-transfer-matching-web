@@ -1,15 +1,15 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.Authorization.EmployerUserRoles.Options;
-using SFA.DAS.Authorization.Mvc.Attributes;
 using SFA.DAS.EmployerUrlHelper;
+using SFA.DAS.LevyTransferMatching.Web.Authentication;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
-    [DasAuthorize(EmployerUserRole.OwnerOrTransactor)]
-    [Route("accounts/{EncodedAccountId}/pledges")]
+    [Authorize(Policy = PolicyNames.ManageAccount)]
+    [Route("accounts/{encodedAccountId}/pledges")]
     public class PledgesController : Controller
     {
         private readonly ILinkGenerator _linkGenerator;

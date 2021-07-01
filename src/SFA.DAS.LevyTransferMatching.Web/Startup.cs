@@ -14,6 +14,7 @@ using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.EmployerUrlHelper.DependencyResolution;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
 using SFA.DAS.LevyTransferMatching.Web.Attributes;
+using SFA.DAS.LevyTransferMatching.Web.Authentication;
 using SFA.DAS.LevyTransferMatching.Web.ModelBinders;
 using SFA.DAS.LevyTransferMatching.Web.StartupExtensions;
 using SFA.DAS.Validation.Mvc.Extensions;
@@ -65,9 +66,18 @@ namespace SFA.DAS.LevyTransferMatching.Web
 
             services.AddControllersWithViews();
 
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(PolicyNames.ManageAccount, policy =>
+                {
+                    policy.Requirements.Add(new ManageAccountRequirement());
+                    //policy.Requirements.Add(new ApplicationStatusRequirement(ApplicationStatus.InProgress, ApplicationStatus.New));
+                });
+            });
+
             services.AddMvc(options =>
             {
-                options.AddAuthorization();
+                //options.AddAuthorization();
                 options.AddValidation();
                 options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
                 options.Filters.Add(new HideAccountNavigationAttribute(false));
