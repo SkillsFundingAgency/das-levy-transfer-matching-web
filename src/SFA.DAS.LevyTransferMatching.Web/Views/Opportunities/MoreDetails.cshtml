@@ -27,7 +27,7 @@
                         </h1>
                         <div id="more-detail-hint" class="govuk-hint">
                             Do not include personal or financial information, like your National Insurance number or credit card details.
-                        </div>
+                        </div>                        
                         @Html.TextAreaFor(m => m.Details, new { @class = "govuk-textarea govuk-js-character-count", @id = "more-detail", @name = "more-detail", @rows = "5", @aria_describedby = "more-detail-hint more-detail-info" })
                     </div>
                     <div id="more-detail-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
@@ -40,7 +40,6 @@
                     <partial name="/Views/Shared/_OpportunitySummary.cshtml" for="OpportunitySummaryViewModel" />
                 </section>
             </div>
-
             <div class="govuk-grid-column-full">
                 <div class="govuk-button-group">
                     <button id="opportunity-criteria-continue" class="govuk-button" data-module="govuk-button">
