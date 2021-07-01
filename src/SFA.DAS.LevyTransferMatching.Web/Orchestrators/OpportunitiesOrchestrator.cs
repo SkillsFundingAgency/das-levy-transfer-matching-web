@@ -86,63 +86,36 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             // Pull back the tags, and use the descriptions to build the lists.
             var sectorTags = await _tagService.GetSectors();
-
-            string sectorList = null;
-            if (sectorTags.Count == opportunityDto.Sectors.Count())
-            {
-                sectorList = All;
-            }
-            else
-            {
-                var selectedSectorDescriptions = sectorTags
-                    .Where(x => opportunityDto.Sectors.Contains(x.TagId))
-                    .Select(x => x.Description);
-
-                sectorList = string.Join(", ", selectedSectorDescriptions);
-            }
+            string sectorList = opportunityDto.Sectors.ToTagDescriptionList(sectorTags);
 
             var jobRoleTags = await _tagService.GetJobRoles();
-
-            string jobRoleList = null;
-            if (jobRoleTags.Count == opportunityDto.JobRoles.Count())
-            {
-                jobRoleList = All;
-            }
-            else
-            {
-                var selectedJobRoleDescriptions = jobRoleTags
-                    .Where(x => opportunityDto.JobRoles.Contains(x.TagId))
-                    .Select(x => x.Description);
-
-                jobRoleList = string.Join(", ", selectedJobRoleDescriptions);
-            }
-
-            bool allContainLevel = opportunityDto.Levels.All(x => x.Contains("Level"));
-
-            if (!allContainLevel)
-            {
-                // Note: Levels are different in how they're displayed here.
-                //       It's been requested that only the number is shown here.
-                //       If an additional tag is introduced that doesn't follow the
-                //       "Level2", "Level3", structure, then this will break, and
-                //       something fancier should probably be conisdered.
-                throw new DataException("Unexpected level ID format detected in opportunity levels list. See comment above for more information.");
-            }
+            string jobRoleList = opportunityDto.JobRoles.ToTagDescriptionList(jobRoleTags);
 
             var levelTags = await _tagService.GetLevels();
 
-            string levelList = null;
-            if (levelTags.Count == opportunityDto.Levels.Count())
+            bool allContainLevel = levelTags.All(x => x.TagId.Contains("Level"));
+            if (allContainLevel)
             {
-                levelList = All;
+                levelTags.ForEach(x =>
+                {
+                    // Override the description property with the descriptions
+                    // required in this instance.
+                    x.Description = x.TagId.Replace("Level", string.Empty);
+                });
             }
             else
             {
-                var levelDescriptions = opportunityDto.Levels
-                .Select(x => x.Replace("Level", string.Empty));
-
-                levelList = string.Join(", ", levelDescriptions);
+                // Note: Levels are different in how they're displayed here.
+                //       It's been requested that only the number is shown
+                //       here.
+                //       If an additional tag is introduced that doesn't follow
+                //       the "Level2", "Level3", structure, then this will
+                //       break, and something fancier should probably be
+                //       conisdered.
+                throw new DataException("Unexpected level ID format detected in opportunity levels list. See comment above for more information.");
             }
+
+            string levelList = opportunityDto.Levels.ToTagDescriptionList(levelTags);
 
             DateTime dateTime = _dateTimeService.UtcNow;
 
