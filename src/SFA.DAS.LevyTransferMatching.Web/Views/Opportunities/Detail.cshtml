@@ -5,6 +5,7 @@
 }
 
 <a href="@Url.Action("index")" class="govuk-back-link">Back</a>
+
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
     <partial name="_ValidationSummary" />
     <div class="govuk-width-container form-entry" id="transfers-hub">
@@ -18,7 +19,7 @@
 
                 <form method="post" id="apply-application-form">
 
-                    <div class="govuk-form-group">
+                    <div class="govuk-form-group" das-highlight-error-for="HasConfirmed" error-class="govuk-form-group--error" id="HasConfirmed">
                         <fieldset class="govuk-fieldset">
                             <legend class="govuk-fieldset__legend">
                                 <h1 class="govuk-fieldset__heading govuk-label--s">Would you like to apply for the transfer funds?</h1>
