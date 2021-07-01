@@ -1,7 +1,7 @@
 ﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Opportunities.DetailViewModel
 
 @{
-    ViewData["Title"] = "Manage Apprenticeships";
+    ViewData["Title"] = $"Transfer fund details for {(Model.IsNamePublic ? Model.EmployerName : "opportunity")} ({Model.EncodedPledgeId})";
 }
 
 <a href="@Url.Action("index")" class="govuk-back-link">Back</a>
