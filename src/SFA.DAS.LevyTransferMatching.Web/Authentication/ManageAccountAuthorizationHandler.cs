@@ -28,8 +28,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Authentication
         {
             var isAuthorized = await IsEmployerAuthorized(context);
 
-            var userId = context.User.FindFirst(c => c.Type.Equals(ClaimIdentifierConfiguration.Id)).Value;
-            if (string.IsNullOrWhiteSpace(userId)) userId = "unknown";
+            var userClaim = context.User.FindFirst(c => c.Type.Equals(ClaimIdentifierConfiguration.Id));
+            var userId = string.IsNullOrWhiteSpace(userClaim?.Value) ? "unknown" : userClaim.Value;
 
             if (isAuthorized)
             {

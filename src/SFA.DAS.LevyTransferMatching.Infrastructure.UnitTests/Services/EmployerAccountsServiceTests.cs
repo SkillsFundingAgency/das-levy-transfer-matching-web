@@ -9,17 +9,16 @@ using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.EmployerAccounts.Api.Client;
-using SFA.DAS.EmployerAccounts.Types.Models;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsersReadStore;
-using EmployerAccountsApiClient = SFA.DAS.LevyTransferMatching.Infrastructure.Api.EmployerAccountsApiClient;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.EmployerAccountsService;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.EmployerAccountsService.Types;
 
-namespace SFA.DAS.LevyTransferMatching.Infrastructure.UnitTests.Api
+namespace SFA.DAS.LevyTransferMatching.Infrastructure.UnitTests.Services
 {
     [TestFixture]
-    public class EmployerAccountsApiClientTests
+    public class EmployerAccountsServiceTests
     {
-        private EmployerAccountsApiClient _employerAccountsApiClient;
+        private IEmployerAccountsService _employerAccountsApiClient;
         private Mock<IAccountUsersReadOnlyRepository> _mockAccountUsersReadOnlyRepository;
         private readonly Guid _userRef = Guid.NewGuid();
 
@@ -28,29 +27,26 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.UnitTests.Api
         {
             _mockAccountUsersReadOnlyRepository = new Mock<IAccountUsersReadOnlyRepository>();
 
-            var accountUsers = new List<Services.AccountUsersReadStore.Types.AccountUser>();
-            accountUsers.Add(new Services.AccountUsersReadStore.Types.AccountUser
+            var accountUsers = new List<Infrastructure.Services.AccountUsersReadStore.Types.AccountUser>();
+            accountUsers.Add(new Infrastructure.Services.AccountUsersReadStore.Types.AccountUser
             {
-                //accountId = 123, ETag = "", Id = Guid.NewGuid(), role = UserRole.Owner, removed = default , userRef = _userRef
+                accountId = 123, ETag = "", Id = Guid.NewGuid(), role = UserRole.Owner, removed = default , userRef = _userRef
             });
 
-            var documentQuery = new FakeDocumentQuery<Services.AccountUsersReadStore.Types.AccountUser>(accountUsers);
+            var documentQuery = new FakeDocumentQuery<Infrastructure.Services.AccountUsersReadStore.Types.AccountUser>(accountUsers);
 
             _mockAccountUsersReadOnlyRepository.Setup(m =>
                     m.CreateQuery(It.IsAny<FeedOptions>()))
                 .Returns(documentQuery);
 
-            _employerAccountsApiClient = new EmployerAccountsApiClient(_mockAccountUsersReadOnlyRepository.Object);
+            _employerAccountsApiClient = new EmployerAccountsService(_mockAccountUsersReadOnlyRepository.Object);
         }
 
         [Test]
         public async Task IsUserInRole_Returns_True_If_User_Is_In_Specified_Role()
         {
-            var request = new IsUserInRoleRequest
-                {AccountId = 123, UserRef = _userRef, Roles = new HashSet<UserRole> {UserRole.Owner}};
-
-            var result = await _employerAccountsApiClient.IsUserInRole(request,CancellationToken.None);
-
+            var roles = new HashSet<UserRole> {UserRole.Owner};
+            var result = await _employerAccountsApiClient.IsUserInRole(_userRef, 123, roles, CancellationToken.None);
             Assert.IsTrue(result);
         }
 

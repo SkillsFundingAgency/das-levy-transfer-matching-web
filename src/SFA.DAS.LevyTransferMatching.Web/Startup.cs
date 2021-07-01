@@ -86,7 +86,6 @@ namespace SFA.DAS.LevyTransferMatching.Web
             services.AddServiceRegistrations();
             services.AddEmployerSharedUI(Configuration);
             services.AddEmployerUrlHelper();
-            services.AddEmployerAccountsApi(Configuration, _environment);
 
             #if DEBUG
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
