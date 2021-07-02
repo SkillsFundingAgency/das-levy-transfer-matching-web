@@ -11,7 +11,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Dto
         public IEnumerable<string> Levels { get; set; }
         public IEnumerable<string> Sectors { get; set; }
         public int Amount { get; set; }
-        public DateTime CreatedOn { get; set; }
         public bool IsNamePublic { get; set; }
     }
 }
