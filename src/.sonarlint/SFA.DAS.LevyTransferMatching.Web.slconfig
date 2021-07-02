@@ -1,0 +1,15 @@
+{
+  "ServerUri": "https://sonarcloud.io/",
+  "Organization": {
+    "Key": "educationandskillsfundingagency",
+    "Name": "Education and Skills Funding Agency"
+  },
+  "ProjectKey": "SkillsFundingAgency_das-levy-transfer-matching-web",
+  "ProjectName": "das-levy-transfer-matching-web",
+  "Profiles": {
+    "CSharp": {
+      "ProfileKey": "AWv-4lNgHo1jhXBgxGN0",
+      "ProfileTimestamp": "2021-02-12T11:45:09Z"
+    }
+  }
+}

@@ -3,7 +3,6 @@ using AutoFixture;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.EmployerUrlHelper;
 using SFA.DAS.LevyTransferMatching.Web.Controllers;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
@@ -22,7 +21,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         {
             _fixture = new Fixture();
             _orchestrator = new Mock<IPledgeOrchestrator>();
-            _pledgesController = new PledgesController(Mock.Of<ILinkGenerator>(),_orchestrator.Object);
+            _pledgesController = new PledgesController(_orchestrator.Object);
         }
 
         [Test]
@@ -178,6 +177,21 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             // Assert
             Assert.NotNull(actionResult);
             Assert.AreEqual("Create", actionResult.ActionName);
+            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
+        }
+
+        [Test]
+        public async Task POST_Create_Returns_Expected_Redirect()
+        {
+            // Arrange
+            var request = _fixture.Create<CreatePostRequest>();
+
+            // Act
+            var actionResult = await _pledgesController.Submit(request) as RedirectToActionResult;
+
+            // Assert
+            Assert.NotNull(actionResult);
+            Assert.AreEqual("Confirmation", actionResult.ActionName);
             Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
         }
     }

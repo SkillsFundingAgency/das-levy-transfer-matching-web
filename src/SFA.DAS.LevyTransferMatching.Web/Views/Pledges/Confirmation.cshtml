@@ -1,0 +1,40 @@
+﻿@using SFA.DAS.EmployerUrlHelper.Mvc;
+@using SFA.DAS.LevyTransferMatching.Web.Models.Pledges
+@inject SFA.DAS.EmployerUrlHelper.ILinkGenerator LinkGenerator
+@model ConfirmationViewModel
+@{
+    ViewData["Title"] = "Pledge Confirmation";
+}
+
+<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
+    <div class="govuk-grid-row">
+        <div class="govuk-width-container form-entry" id="transfers-hub">
+
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    <div class="govuk-panel govuk-panel--confirmation pledge-approved">
+                        <h1 class="govuk-panel__title">Your pledge has been created as pledge number @Model.EncodedPledgeId</h1>
+                    </div>
+
+                    <h2 class="govuk-heading-m">What happens next</h2>
+
+                    <p>Your pledge is now public and can be <a href="@Url.Action("index", "Opportunities")">viewed online</a>.</p>
+
+                    <p>You can share your pledge link with organisations you work with to promote your pledge.</p>
+
+                    <p>You'll receive notifications when an employer applies for your funding transfer.</p>
+
+                    <p>You can then:</p>
+
+                    <ul class="govuk-list govuk-list--bullet">
+                        <li>view applications</li>
+                        <li>accept applications</li>
+                        <li>reject applications</li>
+                    </ul>
+
+                    <a href="@LinkGenerator.AccountsLink($"accounts/{Model.EncodedAccountId}/transfers")" class="govuk-back-link" )">Back to Transfers</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
