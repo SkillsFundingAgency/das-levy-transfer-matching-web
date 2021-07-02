@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountsService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
@@ -18,13 +19,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         private readonly IAccountsService _accountsService;
         private readonly IPledgeService _pledgeService;
         private readonly ITagService _tagService;
+        private readonly IEncodingService _encodingService;
 
-        public PledgeOrchestrator(ICacheStorageService cacheStorageService, IAccountsService accountsService, IPledgeService pledgeService, ITagService tagService)
+        public PledgeOrchestrator(ICacheStorageService cacheStorageService, IAccountsService accountsService, IPledgeService pledgeService, ITagService tagService, IEncodingService encodingService)
         {
             _cacheStorageService = cacheStorageService;
             _accountsService = accountsService;
             _pledgeService = pledgeService;
             _tagService = tagService;
+            _encodingService = encodingService;
         }
 
         public IndexViewModel GetIndexViewModel(string encodedAccountId)
@@ -113,7 +116,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
-        public async Task SubmitPledge(CreatePostRequest request)
+        public async Task<string> SubmitPledge(CreatePostRequest request)
         {
             var cacheItem = await _cacheStorageService.RetrieveFromCache<CreatePledgeCacheItem>(request.CacheKey.ToString());
 
@@ -129,8 +132,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 Levels = cacheItem.Levels ?? new List<string>()
             };
 
-            await _pledgeService.PostPledge(pledgeDto, request.AccountId);
+            var pledgeId = await _pledgeService.PostPledge(pledgeDto, request.AccountId);
             await _cacheStorageService.DeleteFromCache(request.CacheKey.ToString());
+
+            return _encodingService.Encode(pledgeId, EncodingType.PledgeId);
         }
 
         public async Task UpdateCacheItem(AmountPostRequest request)

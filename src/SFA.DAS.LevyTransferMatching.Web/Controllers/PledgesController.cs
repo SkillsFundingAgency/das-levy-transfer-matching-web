@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Authorization.EmployerUserRoles.Options;
 using SFA.DAS.Authorization.Mvc.Attributes;
-using SFA.DAS.EmployerUrlHelper;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 
@@ -12,12 +11,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
     [Route("accounts/{EncodedAccountId}/pledges")]
     public class PledgesController : Controller
     {
-        private readonly ILinkGenerator _linkGenerator;
         private readonly IPledgeOrchestrator _orchestrator;
 
-        public PledgesController(ILinkGenerator linkGenerator, IPledgeOrchestrator orchestrator)
+        public PledgesController(IPledgeOrchestrator orchestrator)
         {
-            _linkGenerator = linkGenerator;
             _orchestrator = orchestrator;
         }
 
@@ -40,8 +37,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Route("create")]
         public async Task<IActionResult> Submit(CreatePostRequest request)
         {
-            await _orchestrator.SubmitPledge(request);
-            return Redirect(_linkGenerator.AccountsLink($"accounts/{request.EncodedAccountId}/transfers"));
+            var pledge = await _orchestrator.SubmitPledge(request);
+            return RedirectToAction("Confirmation", new ConfirmationRequest { EncodedAccountId = request.EncodedAccountId, EncodedPledgeId = pledge });
         }
 
         [Route("create/amount")]
@@ -111,5 +108,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             ViewBag.HideNav = false;
             return RedirectToAction("Create", new CreateRequest() { EncodedAccountId = request.EncodedAccountId, CacheKey = request.CacheKey });
         }
-   }
+
+        [HttpGet]
+        [Route("{EncodedPledgeId}/confirmation")]
+        public async Task<IActionResult> Confirmation(ConfirmationRequest request)
+        {
+            return View(new ConfirmationViewModel() { EncodedAccountId = request.EncodedAccountId, EncodedPledgeId = request.EncodedPledgeId });
+        }
+    }
 }
