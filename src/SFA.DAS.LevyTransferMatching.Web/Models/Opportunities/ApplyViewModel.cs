@@ -1,8 +1,4 @@
-﻿using SFA.DAS.LevyTransferMatching.Infrastructure.Tags;
-using SFA.DAS.LevyTransferMatching.Web.Models.Shared;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using SFA.DAS.LevyTransferMatching.Web.Models.Shared;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
 {
