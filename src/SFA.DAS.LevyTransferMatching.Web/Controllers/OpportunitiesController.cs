@@ -30,7 +30,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Route("opportunities/{encodedPledgeId}")]
         public async Task<IActionResult> Detail(DetailRequest detailRequest)
         {
-            var viewModel = await _opportunitiesOrchestrator.GetDetailViewModel((int)detailRequest.PledgeId);
+            var viewModel = await _opportunitiesOrchestrator.GetDetailViewModel(detailRequest.PledgeId);
 
             if (viewModel != null)
             {
