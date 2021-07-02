@@ -1,7 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using SFA.DAS.Authorization.Context;
 using SFA.DAS.Http;
 using SFA.DAS.LevyTransferMatching.Domain.Interfaces;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Api;
@@ -16,6 +14,8 @@ using SFA.DAS.LevyTransferMatching.Web.Authorization;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using System;
 using System.Net.Http;
+using Microsoft.AspNetCore.Authorization;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.EmployerAccountsService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.TagService;
 using SFA.DAS.Encoding;
@@ -31,8 +31,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
             services.AddSingleton<IDocumentClientFactory, DocumentClientFactory>();
             services.AddTransient<IAccountUsersReadOnlyRepository, AccountUsersReadOnlyRepository>();
 
-            services.AddTransient<IAuthenticationService, AuthenticationService>();
-            services.AddTransient<IAuthorizationContextProvider, AuthorizationContextProvider>();
+            services.AddSingleton<IAuthorizationHandler, ManageAccountAuthorizationHandler>();
+
+            services.AddTransient<IEmployerAccountsService, EmployerAccountsService>();
 
             services.AddTransient<ICacheStorageService, CacheStorageService>();
             services.AddTransient<IPledgeOrchestrator, PledgeOrchestrator>();

@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="SFA.DAS.EmployerAccounts.Api.Client" Version="1.6.2978" />
+    <PackageReference Include="SFA.DAS.CosmosDb" Version="1.0.47" />
   </ItemGroup>
 
 </Project>
