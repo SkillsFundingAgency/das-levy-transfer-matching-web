@@ -19,7 +19,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.EmployerAccountsS
             _accountUsersRepository = accountUsersRepository;
         }
 
-        public async Task<bool> IsUserInRole(Guid userRef, long accountId, HashSet<UserRole> roles, CancellationToken cancellationToken)
+        public async Task<bool> IsUserInRole(Guid userRef, long accountId, HashSet<UserRole> roles, CancellationToken cancellationToken = default)
         {
             return await _accountUsersRepository
                 .CreateQuery()
@@ -28,16 +28,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.EmployerAccountsS
                     r.accountId == accountId &&
                     r.removed == null &&
                     r.role != null && roles.Contains(r.role.Value), cancellationToken);
-        }
-
-        public async Task<bool> IsUserInAnyRole(Guid userRef, long accountId, CancellationToken cancellationToken)
-        {
-            return await _accountUsersRepository
-                .CreateQuery()
-                .AnyAsync(r =>
-                    r.userRef == userRef &&
-                    r.accountId == accountId &&
-                    r.removed == null, cancellationToken);
         }
 
         public async Task<IEnumerable<long>> GetUserAccounts(Guid userRef, HashSet<UserRole> roles, CancellationToken cancellationToken = default)
@@ -55,7 +45,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.EmployerAccountsS
             return accountUsers.Select(x => x.accountId);
         }
 
-        public async Task HealthCheck(CancellationToken cancellationToken)
+        public async Task HealthCheck(CancellationToken cancellationToken = default)
         {
             var options = new FeedOptions { EnableCrossPartitionQuery = true };
             var value = await _accountUsersRepository

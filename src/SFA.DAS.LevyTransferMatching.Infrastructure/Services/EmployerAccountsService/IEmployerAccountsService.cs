@@ -9,11 +9,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.EmployerAccountsS
     public interface IEmployerAccountsService
     {
         Task<bool> IsUserInRole(Guid userRef, long accountId, HashSet<UserRole> roles, CancellationToken cancellationToken = default);
-
-        Task<bool> IsUserInAnyRole(Guid userRef, long accountId, CancellationToken cancellationToken = default);
-
         Task<IEnumerable<long>> GetUserAccounts(Guid userRef, HashSet<UserRole> roles, CancellationToken cancellationToken = default);
-
         Task HealthCheck(CancellationToken cancellationToken = default);
     }
 }
