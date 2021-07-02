@@ -56,8 +56,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
                 return RedirectToAction(nameof(Index));
             }
         }
-
-        [DasAuthorize(EmployerUserRole.OwnerOrTransactor)]
+        
+        [DasAuthorize]
         [Route("opportunities/{encodedPledgeId}/apply")]
         public async Task<IActionResult> SelectAccount(string encodedPledgeId)
         {
