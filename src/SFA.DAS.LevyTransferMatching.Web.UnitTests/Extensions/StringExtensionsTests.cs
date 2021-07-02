@@ -1,6 +1,6 @@
 ﻿using AutoFixture;
 using NUnit.Framework;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Tags;
+using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using System;
 using System.Linq;
@@ -18,32 +18,32 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
         }
 
         [Test]
-        public void ToTagDescriptionList_All_Selected()
+        public void ToReferenceDataDescriptionList_All_Selected()
         {
             // Arrange
-            var tags = _fixture.CreateMany<Tag>();
-            var selectedTagIds = tags.Select(x => x.TagId).ToArray();
+            var referenceDataItems = _fixture.CreateMany<ReferenceDataItem>();
+            var selectedReferenceDataItemIds = referenceDataItems.Select(x => x.Id).ToArray();
 
             // Act
-            var result = selectedTagIds.ToTagDescriptionList(tags);
+            var result = selectedReferenceDataItemIds.ToReferenceDataDescriptionList(referenceDataItems);
 
             // Assert
             Assert.AreEqual(result, "All");
         }
 
         [Test]
-        public void ToTagDescriptionList_Some_Selected()
+        public void ToReferenceDataDescriptionList_Some_Selected()
         {
             // Arrange
-            var tags = _fixture.CreateMany<Tag>(6);
-            var selectedTagIds = tags.OrderBy(x => Guid.NewGuid()).Take(3).Select(x => x.TagId).ToArray();
+            var referenceDataItems = _fixture.CreateMany<ReferenceDataItem>(6);
+            var selectedReferenceDataItemIds = referenceDataItems.OrderBy(x => Guid.NewGuid()).Take(3).Select(x => x.Id).ToArray();
 
             // Act
-            var result = selectedTagIds.ToTagDescriptionList(tags);
+            var result = selectedReferenceDataItemIds.ToReferenceDataDescriptionList(referenceDataItems);
 
             // Assert
-            var expectedList = string.Join(", ", tags
-                .Where(x => selectedTagIds.Contains(x.TagId))
+            var expectedList = string.Join(", ", referenceDataItems
+                .Where(x => selectedReferenceDataItemIds.Contains(x.Id))
                 .Select(x => x.Description)
                 .ToArray());
 
@@ -51,17 +51,17 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
         }
 
         [Test]
-        public void ToTagDescriptionList_One_Selected()
+        public void ToReferenceDataDescriptionList_One_Selected()
         {
             // Arrange
-            var tags = _fixture.CreateMany<Tag>();
-            var selectedTagIds = tags.OrderBy(x => Guid.NewGuid()).Take(1).Select(x => x.TagId).ToArray();
+            var referenceDataItems = _fixture.CreateMany<ReferenceDataItem>();
+            var referenceDataItemIds = referenceDataItems.OrderBy(x => Guid.NewGuid()).Take(1).Select(x => x.Id).ToArray();
 
             // Act
-            var result = selectedTagIds.ToTagDescriptionList(tags);
+            var result = referenceDataItemIds.ToReferenceDataDescriptionList(referenceDataItems);
 
             // Assert
-            var expectedTagDesc = tags.Where(x => selectedTagIds.Contains(x.TagId)).Select(x => x.Description).Single();
+            var expectedTagDesc = referenceDataItems.Where(x => referenceDataItemIds.Contains(x.Id)).Select(x => x.Description).Single();
 
             Assert.AreEqual(result, expectedTagDesc);
         }

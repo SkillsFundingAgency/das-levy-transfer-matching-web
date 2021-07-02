@@ -89,22 +89,22 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         public async Task<OpportunitySummaryViewModel> GetOpportunitySummaryViewModel(OpportunityDto opportunityDto, string encodedPledgeId)
         {
             // Pull back the tags, and use the descriptions to build the lists.
-            var sectorTags = await _tagService.GetSectors();
-            string sectorList = opportunityDto.Sectors.ToTagDescriptionList(sectorTags);
+            var sectorReferenceDataItems = await _tagService.GetSectors();
+            string sectorList = opportunityDto.Sectors.ToReferenceDataDescriptionList(sectorReferenceDataItems);
 
-            var jobRoleTags = await _tagService.GetJobRoles();
-            string jobRoleList = opportunityDto.JobRoles.ToTagDescriptionList(jobRoleTags);
+            var jobRoleReferenceDataItems = await _tagService.GetJobRoles();
+            string jobRoleList = opportunityDto.JobRoles.ToReferenceDataDescriptionList(jobRoleReferenceDataItems);
 
-            var levelTags = await _tagService.GetLevels();
+            var levelReferenceDataItems = await _tagService.GetLevels();
 
-            bool allContainLevel = levelTags.All(x => x.TagId.Contains("Level"));
+            bool allContainLevel = levelReferenceDataItems.All(x => x.Id.Contains("Level"));
             if (allContainLevel)
             {
-                levelTags.ForEach(x =>
+                levelReferenceDataItems.ForEach(x =>
                 {
                     // Override the description property with the descriptions
                     // required in this instance.
-                    x.Description = x.TagId.Replace("Level", string.Empty);
+                    x.Description = x.Id.Replace("Level", string.Empty);
                 });
             }
             else
@@ -119,7 +119,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 throw new DataException("Unexpected level ID format detected in opportunity levels list. See comment above for more information.");
             }
 
-            string levelList = opportunityDto.Levels.ToTagDescriptionList(levelTags);
+            string levelList = opportunityDto.Levels.ToReferenceDataDescriptionList(levelReferenceDataItems);
 
             DateTime dateTime = _dateTimeService.UtcNow;
 

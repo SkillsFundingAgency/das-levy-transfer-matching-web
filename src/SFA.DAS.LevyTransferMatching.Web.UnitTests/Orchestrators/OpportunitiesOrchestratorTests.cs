@@ -8,7 +8,6 @@ using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.TagService;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Tags;
 using System.Linq;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using System;
@@ -16,6 +15,7 @@ using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using System.Data;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
+using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 {
@@ -32,9 +32,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private Mock<ICacheStorageService> _cache;
 
         private List<OpportunityDto> _opportunityDtoList;
-        private List<Tag> _sectorTags;
-        private List<Tag> _jobRoleTags;
-        private List<Tag> _levelTags;
+        private List<ReferenceDataItem> _sectorReferenceDataItems;
+        private List<ReferenceDataItem> _jobRoleReferenceDataItems;
+        private List<ReferenceDataItem> _levelReferenceDataItems;
         private DateTime _currentDateTime;
 
         [SetUp]
@@ -90,16 +90,16 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             this.SetupGetOpportunityViewModelServices();
 
-            var sectors = _sectorTags.Take(4);
-            var jobRoles = _jobRoleTags.Take(5);
-            var levels = _levelTags.Take(6);
+            var sectors = _sectorReferenceDataItems.Take(4);
+            var jobRoles = _jobRoleReferenceDataItems.Take(5);
+            var levels = _levelReferenceDataItems.Take(6);
 
             var opportunity = _fixture
                 .Build<OpportunityDto>()
                 .With(x => x.Id, id)
-                .With(x => x.Sectors, sectors.Select(y => y.TagId))
-                .With(x => x.JobRoles, jobRoles.Select(y => y.TagId))
-                .With(x => x.Levels, levels.Select(y => y.TagId))
+                .With(x => x.Sectors, sectors.Select(y => y.Id))
+                .With(x => x.JobRoles, jobRoles.Select(y => y.Id))
+                .With(x => x.Levels, levels.Select(y => y.Id))
                 .Create();
 
             _encodingService
@@ -129,9 +129,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var opportunity = _fixture
                 .Build<OpportunityDto>()
                 .With(x => x.IsNamePublic, false)
-                .With(x => x.Sectors, _sectorTags.Select(y => y.TagId))
-                .With(x => x.JobRoles, _jobRoleTags.Select(y => y.TagId))
-                .With(x => x.Levels, _levelTags.Select(y => y.TagId))
+                .With(x => x.Sectors, _sectorReferenceDataItems.Select(y => y.Id))
+                .With(x => x.JobRoles, _jobRoleReferenceDataItems.Select(y => y.Id))
+                .With(x => x.Levels, _levelReferenceDataItems.Select(y => y.Id))
                 .Create();
 
             // Act
@@ -153,32 +153,32 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             this.SetupGetOpportunityViewModelServices();
 
-            var sectors = _sectorTags.Take(4);
-            var jobRoles = _jobRoleTags.Take(5);
-            var levels = _levelTags.Take(6);
+            var sectors = _sectorReferenceDataItems.Take(4);
+            var jobRoles = _jobRoleReferenceDataItems.Take(5);
+            var levels = _levelReferenceDataItems.Take(6);
 
             var opportunity = _fixture
                 .Build<OpportunityDto>()
                 .With(x => x.IsNamePublic, true)
-                .With(x => x.Sectors, sectors.Select(y => y.TagId))
-                .With(x => x.JobRoles, jobRoles.Select(y => y.TagId))
-                .With(x => x.Levels, levels.Select(y => y.TagId))
+                .With(x => x.Sectors, sectors.Select(y => y.Id))
+                .With(x => x.JobRoles, jobRoles.Select(y => y.Id))
+                .With(x => x.Levels, levels.Select(y => y.Id))
                 .Create();
 
             // Act
             var result = await _orchestrator.GetOpportunitySummaryViewModel(opportunity, encodedPledgeId);
 
             // Assert
-            var jobRoleDescriptions = _jobRoleTags
-                .Where(x => opportunity.JobRoles.Contains(x.TagId))
+            var jobRoleDescriptions = _jobRoleReferenceDataItems
+                .Where(x => opportunity.JobRoles.Contains(x.Id))
                 .Select(x => x.Description);
             Assert.AreEqual(result.JobRoleList, string.Join(", ", jobRoleDescriptions));
 
-            var levelDescriptions = levels.Select(x => x.TagId.Replace("Level", string.Empty));
+            var levelDescriptions = levels.Select(x => x.Id.Replace("Level", string.Empty));
             Assert.AreEqual(result.LevelList, string.Join(", ", levelDescriptions));
 
-            var sectorDescriptions = _sectorTags
-                .Where(x => opportunity.Sectors.Contains(x.TagId))
+            var sectorDescriptions = _sectorReferenceDataItems
+                .Where(x => opportunity.Sectors.Contains(x.Id))
                 .Select(x => x.Description);
             Assert.AreEqual(result.SectorList, string.Join(", ", sectorDescriptions));
             
@@ -195,31 +195,31 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             this.SetupGetOpportunityViewModelServices();
 
-            var sectors = _sectorTags.Take(1);
-            var jobRoles = _jobRoleTags.Take(1);
-            var levels = _levelTags.Take(1);
+            var sectors = _sectorReferenceDataItems.Take(1);
+            var jobRoles = _jobRoleReferenceDataItems.Take(1);
+            var levels = _levelReferenceDataItems.Take(1);
 
             var opportunity = _fixture
                 .Build<OpportunityDto>()
-                .With(x => x.Sectors, sectors.Select(y => y.TagId))
-                .With(x => x.JobRoles, jobRoles.Select(y => y.TagId))
-                .With(x => x.Levels, levels.Select(y => y.TagId))
+                .With(x => x.Sectors, sectors.Select(y => y.Id))
+                .With(x => x.JobRoles, jobRoles.Select(y => y.Id))
+                .With(x => x.Levels, levels.Select(y => y.Id))
                 .Create();
 
             // Act
             var result = await _orchestrator.GetOpportunitySummaryViewModel(opportunity, encodedPledgeId);
 
             // Assert
-            var jobRoleDescriptions = _jobRoleTags
-                .Where(x => opportunity.JobRoles.Contains(x.TagId))
+            var jobRoleDescriptions = _jobRoleReferenceDataItems
+                .Where(x => opportunity.JobRoles.Contains(x.Id))
                 .Select(x => x.Description);
             Assert.AreEqual(result.JobRoleList, jobRoleDescriptions.Single());
 
-            var levelDescriptions = levels.Select(x => x.TagId.Replace("Level", string.Empty));
+            var levelDescriptions = levels.Select(x => x.Id.Replace("Level", string.Empty));
             Assert.AreEqual(result.LevelList, levelDescriptions.Single());
 
-            var sectorDescriptions = _sectorTags
-                .Where(x => opportunity.Sectors.Contains(x.TagId))
+            var sectorDescriptions = _sectorReferenceDataItems
+                .Where(x => opportunity.Sectors.Contains(x.Id))
                 .Select(x => x.Description);
             Assert.AreEqual(result.SectorList, sectorDescriptions.Single());
 
@@ -234,15 +234,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             this.SetupGetOpportunityViewModelServices(correctlySetupLevels: false);
 
-            var sectors = _sectorTags.Take(4);
-            var jobRoles = _jobRoleTags.Take(5);
-            var levels = _levelTags.Take(6);
+            var sectors = _sectorReferenceDataItems.Take(4);
+            var jobRoles = _jobRoleReferenceDataItems.Take(5);
+            var levels = _levelReferenceDataItems.Take(6);
 
             var opportunity = _fixture
                 .Build<OpportunityDto>()
-                .With(x => x.Sectors, sectors.Select(y => y.TagId))
-                .With(x => x.JobRoles, jobRoles.Select(y => y.TagId))
-                .With(x => x.Levels, levels.Select(y => y.TagId))
+                .With(x => x.Sectors, sectors.Select(y => y.Id))
+                .With(x => x.JobRoles, jobRoles.Select(y => y.Id))
+                .With(x => x.Levels, levels.Select(y => y.Id))
                 .Create();
 
             // Assert
@@ -255,43 +255,43 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
         private void SetupGetOpportunityViewModelServices(bool correctlySetupLevels = true)
         {
-            _sectorTags = _fixture
-                .CreateMany<Tag>(9)
+            _sectorReferenceDataItems = _fixture
+                .CreateMany<ReferenceDataItem>(9)
                 .ToList();
             _tagService
                 .Setup(x => x.GetSectors())
-                .ReturnsAsync(_sectorTags);
+                .ReturnsAsync(_sectorReferenceDataItems);
 
-            _jobRoleTags = _fixture
-                .CreateMany<Tag>(8)
+            _jobRoleReferenceDataItems = _fixture
+                .CreateMany<ReferenceDataItem>(8)
                 .ToList();
             _tagService
                 .Setup(x => x.GetJobRoles())
-                .ReturnsAsync(_jobRoleTags);
+                .ReturnsAsync(_jobRoleReferenceDataItems);
 
             if (correctlySetupLevels)
             {
-                _levelTags = _fixture
+                _levelReferenceDataItems = _fixture
                     .CreateMany<int>(7)
                     .Select(y =>
                     {
                         return _fixture
-                            .Build<Tag>()
-                            .With(z => z.TagId, $"Level{y}")
+                            .Build<ReferenceDataItem>()
+                            .With(z => z.Id, $"Level{y}")
                             .Create();
                     })
                     .ToList();
             }
             else
             {
-                _levelTags = _fixture
-                    .CreateMany<Tag>(8)
+                _levelReferenceDataItems = _fixture
+                    .CreateMany<ReferenceDataItem>(8)
                     .ToList();
             }
 
             _tagService
                 .Setup(x => x.GetLevels())
-                .ReturnsAsync(_levelTags);
+                .ReturnsAsync(_levelReferenceDataItems);
 
             _currentDateTime = _fixture.Create<DateTime>();
             _dateTimeService

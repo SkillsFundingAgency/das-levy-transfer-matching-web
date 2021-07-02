@@ -5,11 +5,11 @@ using AutoFixture;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
+using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountsService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.TagService;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Tags;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
@@ -25,9 +25,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private Mock<IAccountsService> _accountsService;
         private Mock<IPledgeService> _pledgeService;
         private Mock<ITagService> _tagService;
-        private List<Tag> _sectors;
-        private List<Tag> _levels;
-        private List<Tag> _jobRoles;
+        private List<ReferenceDataItem> _sectors;
+        private List<ReferenceDataItem> _levels;
+        private List<ReferenceDataItem> _jobRoles;
         private AccountDto _accountDetail;
         private string _encodedAccountId;
         private Guid _cacheKey;
@@ -42,9 +42,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _accountsService = new Mock<IAccountsService>();
             _pledgeService = new Mock<IPledgeService>();
 
-            _sectors = _fixture.Create<List<Tag>>();
-            _levels = _fixture.Create<List<Tag>>();
-            _jobRoles = _fixture.Create<List<Tag>>();
+            _sectors = _fixture.Create<List<ReferenceDataItem>>();
+            _levels = _fixture.Create<List<ReferenceDataItem>>();
+            _jobRoles = _fixture.Create<List<ReferenceDataItem>>();
             _accountDetail = _fixture.Create<AccountDto>();
             _tagService = new Mock<ITagService>();
             _tagService.Setup(x => x.GetJobRoles()).ReturnsAsync(_jobRoles);

@@ -1,6 +1,4 @@
-﻿using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
-
-namespace SFA.DAS.LevyTransferMatching.Web.Models.Shared
+﻿namespace SFA.DAS.LevyTransferMatching.Web.Models.Shared
 {
     public class OpportunitySummaryViewModel
     {

@@ -4,7 +4,7 @@ using System.Text;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Tags;
+using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Helpers
@@ -15,7 +15,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
         public ModelExpression Property { get; set; }
 
         [HtmlAttributeName("source")]
-        public List<Tag> Source { get; set; }
+        public List<ReferenceDataItem> Source { get; set; }
 
         [HtmlAttributeName("class")]
         public string Class { get; set; }
@@ -35,7 +35,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
 
             foreach (var tag in Source)
             {
-                var isChecked = modelValue != null && modelValue.Contains(tag.TagId);
+                var isChecked = modelValue != null && modelValue.Contains(tag.Id);
                 if (isChecked)
                 {
                     content.Append($"<li");

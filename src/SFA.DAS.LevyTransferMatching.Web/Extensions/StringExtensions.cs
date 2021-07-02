@@ -1,4 +1,4 @@
-﻿using SFA.DAS.LevyTransferMatching.Infrastructure.Tags;
+﻿using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,21 +8,21 @@ namespace SFA.DAS.LevyTransferMatching.Web.Extensions
     {
         private const string All = "All";
 
-        public static string ToTagDescriptionList(this IEnumerable<string> selectedTagIds, IEnumerable<Tag> allTags)
+        public static string ToReferenceDataDescriptionList(this IEnumerable<string> selectedReferenceDataItemIds, IEnumerable<ReferenceDataItem> allReferenceDataItems)
         {
             string descriptions = null;
 
-            if (allTags.Count() == selectedTagIds.Count())
+            if (allReferenceDataItems.Count() == selectedReferenceDataItemIds.Count())
             {
                 descriptions = All;
             }
             else
             {
-                var selectedTagDescriptions = allTags
-                    .Where(x => selectedTagIds.Contains(x.TagId))
+                var selectedReferenceDataDescriptions = allReferenceDataItems
+                    .Where(x => selectedReferenceDataItemIds.Contains(x.Id))
                     .Select(x => x.Description);
 
-                descriptions = string.Join(", ", selectedTagDescriptions);
+                descriptions = string.Join(", ", selectedReferenceDataDescriptions);
             }
 
             return descriptions;

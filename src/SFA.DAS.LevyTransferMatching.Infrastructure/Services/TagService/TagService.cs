@@ -2,8 +2,8 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Tags;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.TagService
 {
@@ -20,30 +20,30 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.TagService
             _cacheStorageService = cacheStorageService;
         }
 
-        public async Task<List<Tag>> GetLevels()
+        public async Task<List<ReferenceDataItem>> GetLevels()
         {
-            return await GetFromApiWithCache("tags/levels");
+            return await GetFromApiWithCache("reference/levels");
         }
 
-        public async Task<List<Tag>> GetSectors()
+        public async Task<List<ReferenceDataItem>> GetSectors()
         {
-            return await GetFromApiWithCache("tags/sectors");
+            return await GetFromApiWithCache("reference/sectors");
         }
 
-        public async Task<List<Tag>> GetJobRoles()
+        public async Task<List<ReferenceDataItem>> GetJobRoles()
         {
-            return await GetFromApiWithCache("tags/jobRoles");
+            return await GetFromApiWithCache("reference/jobRoles");
         }
 
-        private async Task<List<Tag>> GetFromApiWithCache(string uri)
+        private async Task<List<ReferenceDataItem>> GetFromApiWithCache(string uri)
         {
-            var result = await _cacheStorageService.RetrieveFromCache<List<Tag>>($"{CacheKeyPrefix}{uri}");
+            var result = await _cacheStorageService.RetrieveFromCache<List<ReferenceDataItem>>($"{CacheKeyPrefix}{uri}");
             if (result != null) return result;
 
             var response = await _client.GetAsync(uri);
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
-            result = JsonConvert.DeserializeObject<List<Tag>>(content);
+            result = JsonConvert.DeserializeObject<List<ReferenceDataItem>>(content);
 
             await _cacheStorageService.SaveToCache($"{CacheKeyPrefix}{uri}", result, CacheExpiryInHours);
             return result;
