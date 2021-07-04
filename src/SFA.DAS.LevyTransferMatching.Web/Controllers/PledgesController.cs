@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Authorization.EmployerUserRoles.Options;
@@ -131,12 +132,20 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
             if (request.Errors.Any())
             {
+                AddLocationErrorsToModelState(request.Errors);
                 return RedirectToAction("Location", request);
             }
 
             await _orchestrator.UpdateCacheItem(request);
-            ViewBag.HideNav = false;
             return RedirectToAction("Create", new CreateRequest() { EncodedAccountId = request.EncodedAccountId, CacheKey = request.CacheKey });
+        }
+
+        private void AddLocationErrorsToModelState(Dictionary<int, string> errors)
+        {
+            foreach(var error in errors)
+            {
+                ModelState.AddModelError($"Locations[{error.Key}]", error.Value);
+            }
         }
    }
 }

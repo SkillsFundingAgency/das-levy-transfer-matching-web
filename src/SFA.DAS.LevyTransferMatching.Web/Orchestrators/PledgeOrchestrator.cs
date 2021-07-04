@@ -10,6 +10,7 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.TagService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.LocationService;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
+using SFA.DAS.LevyTransferMatching.Web.Validators;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
@@ -20,14 +21,16 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         private readonly IPledgeService _pledgeService;
         private readonly ITagService _tagService;
         private readonly ILocationService _locationService;
+        private readonly IValidatorService _validatorService;
 
-        public PledgeOrchestrator(ICacheStorageService cacheStorageService, IAccountsService accountsService, IPledgeService pledgeService, ITagService tagService, ILocationService locationService)
+        public PledgeOrchestrator(ICacheStorageService cacheStorageService, IAccountsService accountsService, IPledgeService pledgeService, ITagService tagService, ILocationService locationService, IValidatorService validatorService)
         {
             _cacheStorageService = cacheStorageService;
             _accountsService = accountsService;
             _pledgeService = pledgeService;
             _tagService = tagService;
             _locationService = locationService;
+            _validatorService = validatorService;
         }
 
         public IndexViewModel GetIndexViewModel(string encodedAccountId)
@@ -130,7 +133,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 DasAccountName = cacheItem.DasAccountName,
                 Sectors = cacheItem.Sectors ?? new List<string>(),
                 JobRoles = cacheItem.JobRoles ?? new List<string>(),
-                Levels = cacheItem.Levels ?? new List<string>()
+                Levels = cacheItem.Levels ?? new List<string>(),
+                Locations = cacheItem.Locations ?? new List<string>()
             };
 
             await _pledgeService.PostPledge(pledgeDto, request.AccountId);
@@ -145,28 +149,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             {
                 EncodedAccountId = request.EncodedAccountId,
                 CacheKey = request.CacheKey,
-                Locations = cacheItem.Locations
+                Locations = cacheItem.Locations?.ToList()
             };
         }
         
         public async Task ValidateLocations(LocationPostRequest request)
         {
-            request.Errors = new Dictionary<int, string>();
-            for (int i = 0; i < request.Locations.Count; i++)
-            {
-                if (request.Locations[i] != null)
-                {
-                    var locationsDto = await _locationService.GetLocationInformation(request.Locations[i]);
-                    if (locationsDto?.Name == null)
-                    {
-                        request.Errors.Add(i, $"No locations could be found for { request.Locations[i] }");
-                    }
-                    else
-                    {
-                        request.Locations[i] = locationsDto.Name;
-                    }
-                }
-            }
+            await _validatorService.ValidateLocations(request);
         }
 
         public async Task UpdateCacheItem(AmountPostRequest request)
@@ -211,7 +200,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
 
-            cacheItem.Locations = request.Locations;
+            cacheItem.Locations = request.Locations.Where(x => x != null).ToList();
 
             await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
         }

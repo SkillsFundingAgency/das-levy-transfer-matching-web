@@ -20,6 +20,7 @@ using System;
 using System.Net.Http;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.TagService;
+using SFA.DAS.LevyTransferMatching.Web.Validators;
 
 namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
 {
@@ -34,6 +35,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
 
             services.AddTransient<IAuthenticationService, AuthenticationService>();
             services.AddTransient<IAuthorizationContextProvider, AuthorizationContextProvider>();
+            services.AddTransient<IValidatorService, ValidatorService>();
 
             services.AddTransient<ICacheStorageService, CacheStorageService>();
             services.AddTransient<IPledgeOrchestrator, PledgeOrchestrator>();
