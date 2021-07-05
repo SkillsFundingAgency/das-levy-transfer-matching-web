@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.LevyTransferMatching.Web.Attributes;
-using SFA.DAS.Authorization.EmployerUserRoles.Options;
 using System;
 using SFA.DAS.LevyTransferMatching.Web.Authentication;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
@@ -77,7 +77,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         }
 
         [HideAccountNavigation(false)]
-        [DasAuthorize(EmployerUserRole.OwnerOrTransactor)]
+        [Authorize(Policy = PolicyNames.ManageAccount)]
         [Route("/accounts/{encodedAccountId}/opportunities/{EncodedPledgeId}/create/more-details")]
         public async Task<IActionResult> MoreDetails(MoreDetailsRequest request)
         {
@@ -85,7 +85,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         }
 
         [HideAccountNavigation(false)]
-        [DasAuthorize(EmployerUserRole.OwnerOrTransactor)]
+        [Authorize(Policy = PolicyNames.ManageAccount)]
         [Route("/accounts/{encodedAccountId}/opportunities/{EncodedPledgeId}/create/more-details")]
         [HttpPost]
         public async Task<IActionResult> MoreDetails(MoreDetailsPostRequest request)
