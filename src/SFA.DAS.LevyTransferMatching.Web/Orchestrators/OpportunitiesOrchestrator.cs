@@ -16,8 +16,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
     public class OpportunitiesOrchestrator : IOpportunitiesOrchestrator
     {
-        private const string All = "All";
-
         private readonly IDateTimeService _dateTimeService;
         private readonly IOpportunitiesService _opportunitiesService;
         private readonly IEncodingService _encodingService;
@@ -68,9 +66,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             return new IndexViewModel { Opportunities = opportunities };
         }
 
-        public async Task<string> GetUserEncodedAccountId(string userId)
+        public async Task<string> GetUserEncodedAccountId()
         {
-            var accounts = await _userService.GetUserAccounts(userId);
+            var accounts = await _userService.GetLoggedInUserAccounts();
 
             // TODO: Below is temporary -
             //       Raised as an issue, and eventually to be replaced with
@@ -92,30 +90,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             string jobRoleList = opportunityDto.JobRoles.ToReferenceDataDescriptionList(jobRoleReferenceDataItems);
 
             var levelReferenceDataItems = await _tagService.GetLevels();
-
-            bool allContainLevel = levelReferenceDataItems.All(x => x.Id.Contains("Level"));
-            if (allContainLevel)
-            {
-                levelReferenceDataItems.ForEach(x =>
-                {
-                    // Override the description property with the descriptions
-                    // required in this instance.
-                    x.Description = x.Id.Replace("Level", string.Empty);
-                });
-            }
-            else
-            {
-                // Note: Levels are different in how they're displayed here.
-                //       It's been requested that only the number is shown
-                //       here.
-                //       If an additional tag is introduced that doesn't follow
-                //       the "Level2", "Level3", structure, then this will
-                //       break, and something fancier should probably be
-                //       conisdered.
-                throw new DataException("Unexpected level ID format detected in opportunity levels list. See comment above for more information.");
-            }
-
-            string levelList = opportunityDto.Levels.ToReferenceDataDescriptionList(levelReferenceDataItems);
+            string levelList = opportunityDto.Levels.ToReferenceDataDescriptionList(levelReferenceDataItems, descriptionSource: x => x.ShortDescription);
 
             DateTime dateTime = _dateTimeService.UtcNow;
 

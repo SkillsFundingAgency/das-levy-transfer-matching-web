@@ -28,7 +28,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
             var result = selectedReferenceDataItemIds.ToReferenceDataDescriptionList(referenceDataItems);
 
             // Assert
-            Assert.AreEqual(result, "All");
+            Assert.AreEqual("All", result);
         }
 
         [Test]

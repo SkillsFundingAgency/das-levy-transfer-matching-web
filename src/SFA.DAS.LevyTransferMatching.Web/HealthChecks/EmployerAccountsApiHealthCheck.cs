@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using SFA.DAS.EmployerAccounts.Api.Client;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.EmployerAccountsService;
 
 namespace SFA.DAS.LevyTransferMatching.Web.HealthChecks
 {
     public class EmployerAccountsApiHealthCheck : IHealthCheck
     {
-        private readonly IEmployerAccountsApiClient _apiClient;
+        private readonly IEmployerAccountsService _service;
 
-        public EmployerAccountsApiHealthCheck(IEmployerAccountsApiClient apiClient)
+        public EmployerAccountsApiHealthCheck(IEmployerAccountsService service)
         {
-            _apiClient = apiClient;
+            _service = service;
         }
 
         public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context,
@@ -23,7 +23,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.HealthChecks
 
             try
             {
-                await _apiClient.Ping(cancellationToken);
+                await _service.HealthCheck(cancellationToken);
             }
             catch (Exception ex)
             {

@@ -20,17 +20,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
     {
         private OpportunitiesController _opportunitiesController;
         private Fixture _fixture;
-        private Mock<IAuthenticationService> _authenticationService;
         private Mock<IOpportunitiesOrchestrator> _orchestrator;
 
         [SetUp]
         public void SetUp()
         {
             _fixture = new Fixture();
-            _authenticationService = new Mock<IAuthenticationService>();
             _orchestrator = new Mock<IOpportunitiesOrchestrator>();
 
-            _opportunitiesController = new OpportunitiesController(_authenticationService.Object, _orchestrator.Object);
+            _opportunitiesController = new OpportunitiesController(_orchestrator.Object);
         }
 
         [Test]
@@ -127,16 +125,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         [Test]
         public async Task GET_SelectAccount_Redirects_To_Authorized_Apply_Path()
         {
-            string userId = _fixture.Create<string>();
-
-            _authenticationService
-                .Setup(x => x.UserId)
-                .Returns(userId);
-
             string encodedAccountId = _fixture.Create<string>();
 
             _orchestrator
-                .Setup(x => x.GetUserEncodedAccountId(It.Is<string>(y => y == userId)))
+                .Setup(x => x.GetUserEncodedAccountId())
                 .ReturnsAsync(encodedAccountId);
 
             string encodedPledgeId = _fixture.Create<string>();
