@@ -2,23 +2,20 @@
 using System.Threading.Tasks;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
-using SFA.DAS.Authorization.Mvc.Attributes;
-using SFA.DAS.LevyTransferMatching.Web.Authentication;
 using SFA.DAS.LevyTransferMatching.Web.Attributes;
 using SFA.DAS.Authorization.EmployerUserRoles.Options;
 using System;
+using SFA.DAS.LevyTransferMatching.Web.Authentication;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
     [HideAccountNavigation(true)]
     public class OpportunitiesController : Controller
     {
-        private readonly IAuthenticationService _authenticationService;
         private readonly IOpportunitiesOrchestrator _opportunitiesOrchestrator;
 
-        public OpportunitiesController(IAuthenticationService authenticationService, IOpportunitiesOrchestrator searchFundingOrchestrator)
+        public OpportunitiesController(IOpportunitiesOrchestrator searchFundingOrchestrator)
         {
-            _authenticationService = authenticationService;
             _opportunitiesOrchestrator = searchFundingOrchestrator;
         }
 
@@ -31,7 +28,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Route("opportunities/{encodedPledgeId}")]
         public async Task<IActionResult> Detail(DetailRequest detailRequest)
         {
-            var viewModel = await _opportunitiesOrchestrator.GetDetailViewModel((int)detailRequest.PledgeId);
+            var viewModel = await _opportunitiesOrchestrator.GetDetailViewModel(detailRequest.PledgeId);
 
             if (viewModel != null)
             {
@@ -57,12 +54,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             }
         }
         
-        [DasAuthorize]
+        [Authorize]
         [Route("opportunities/{encodedPledgeId}/apply")]
         public async Task<IActionResult> SelectAccount(string encodedPledgeId)
         {
-            var userId = _authenticationService.UserId;
-            var encodedAccountId = await _opportunitiesOrchestrator.GetUserEncodedAccountId(userId);
+            var encodedAccountId = await _opportunitiesOrchestrator.GetUserEncodedAccountId();
 
             return RedirectToAction("Apply", new ApplicationRequest 
             { 
@@ -73,7 +69,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         }
 
         [HideAccountNavigation(false)]
-        [DasAuthorize(EmployerUserRole.OwnerOrTransactor)]
+        [Authorize(Policy = PolicyNames.ManageAccount)]
         [Route("/accounts/{encodedAccountId}/opportunities/{EncodedPledgeId}/apply")]
         public async Task<IActionResult> Apply(ApplicationRequest request)
         {
