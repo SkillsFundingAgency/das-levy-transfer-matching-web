@@ -134,7 +134,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 Sectors = cacheItem.Sectors ?? new List<string>(),
                 JobRoles = cacheItem.JobRoles ?? new List<string>(),
                 Levels = cacheItem.Levels ?? new List<string>(),
-                Locations = cacheItem.Locations ?? new List<string>()
+                Locations = cacheItem.Locations?.Where(x => x != null).ToList() ?? new List<string>()
             };
 
             await _pledgeService.PostPledge(pledgeDto, request.AccountId);
@@ -200,7 +200,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
 
-            cacheItem.Locations = request.Locations.Where(x => x != null).ToList();
+            cacheItem.Locations = request.Locations;
 
             await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
         }
