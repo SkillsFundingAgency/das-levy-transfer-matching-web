@@ -142,14 +142,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         {
             return View(new ConfirmationViewModel() { EncodedAccountId = request.EncodedAccountId, EncodedPledgeId = request.EncodedPledgeId });
         }
-    }
 
         private void AddLocationErrorsToModelState(Dictionary<int, string> errors)
         {
-            foreach(var error in errors)
+            foreach (var error in errors)
             {
                 ModelState.AddModelError($"Locations[{error.Key}]", error.Value);
             }
         }
-   }
+    }
 }
