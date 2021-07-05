@@ -3,9 +3,8 @@ using System.Threading.Tasks;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.LevyTransferMatching.Web.Attributes;
-using SFA.DAS.Authorization.EmployerUserRoles.Options;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authentication;
+using SFA.DAS.LevyTransferMatching.Web.Authentication;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
@@ -58,14 +57,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Route("opportunities/{encodedPledgeId}/apply")]
         public async Task<IActionResult> SelectAccount(string encodedPledgeId)
         {
-            var userId = _authenticationService.UserId;
-            var encodedAccountId = await _opportunitiesOrchestrator.GetUserEncodedAccountId(userId);
+            var encodedAccountId = await _opportunitiesOrchestrator.GetUserEncodedAccountId();
 
             return RedirectToAction("Apply", new ApplicationRequest { EncodedAccountId = encodedAccountId, EncodedPledgeId = encodedPledgeId });
         }
 
         [HideAccountNavigation(false)]
-        [DasAuthorize(EmployerUserRole.OwnerOrTransactor)]
+        [Authorize(Policy = PolicyNames.ManageAccount)]
         [Route("/accounts/{encodedAccountId}/opportunities/{EncodedPledgeId}/apply")]
         public async Task<IActionResult> Apply(ApplicationRequest request)
         {
