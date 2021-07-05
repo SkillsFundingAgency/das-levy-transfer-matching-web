@@ -1,6 +1,6 @@
 ﻿using System;
 using SFA.DAS.CosmosDb;
-using SFA.DAS.EmployerAccounts.Types.Models;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.EmployerAccountsService.Types;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsersReadStore.Types
 {

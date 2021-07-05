@@ -66,9 +66,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             return new IndexViewModel { Opportunities = opportunities };
         }
 
-        public async Task<string> GetUserEncodedAccountId(string userId)
+        public async Task<string> GetUserEncodedAccountId()
         {
-            var accounts = await _userService.GetUserAccounts(userId);
+            var accounts = await _userService.GetLoggedInUserAccounts();
 
             // TODO: Below is temporary -
             //       Raised as an issue, and eventually to be replaced with

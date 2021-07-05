@@ -214,7 +214,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                 .Select(x => x.Description);
             Assert.AreEqual(result.JobRoleList, jobRoleDescriptions.Single());
 
-            var levelDescriptions = levels.Select(x => x.Id.Replace("Level", string.Empty));
+            var levelDescriptions = _levelReferenceDataItems
+                .Where(x => opportunity.Levels.Contains(x.Id))
+                .Select(x => x.ShortDescription);
             Assert.AreEqual(result.LevelList, levelDescriptions.Single());
 
             var sectorDescriptions = _sectorReferenceDataItems

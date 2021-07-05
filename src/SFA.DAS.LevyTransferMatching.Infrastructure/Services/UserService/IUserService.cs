@@ -6,6 +6,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService
 {
     public interface IUserService
     {
-        Task<IEnumerable<AccountDto>> GetUserAccounts(string userId);
+        Task<IEnumerable<AccountDto>> GetLoggedInUserAccounts();
     }
 }

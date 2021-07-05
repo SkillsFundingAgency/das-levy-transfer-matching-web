@@ -1,13 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.EmployerAccountsService;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.EmployerAccountsService.Types;
 
 namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
 {
@@ -29,7 +34,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
                     options.ClientSecret = configuration.ClientSecret;
                     options.Authority = configuration.BaseAddress;
                     options.UsePkce = configuration.UsePkce;
-                    options.ResponseType = OpenIdConnectResponseType.Code;
+                    options.ResponseType = configuration.ResponseType;
 
                     var scopes = configuration.Scopes.Split(' ');
                     
@@ -59,7 +64,35 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
                     options.Cookie.SameSite = SameSiteMode.None;
                     options.CookieManager = new ChunkingCookieManager() { ChunkSize = 3000 };
                 });
+
+            services
+                .AddOptions<OpenIdConnectOptions>(OpenIdConnectDefaults.AuthenticationScheme)
+                .Configure<IEmployerAccountsService, ILogger<Startup>>((options, accountsService, logger) =>
+                {
+                    options.Events.OnTokenValidated = async (ctx) => await PopulateAccountsClaim(ctx, accountsService, logger);
+                });
         }
 
+        private static async Task PopulateAccountsClaim(TokenValidatedContext ctx, IEmployerAccountsService accountsService, ILogger<Startup> logger)
+        {
+            var userId = ctx.Principal.Claims
+                .First(c => c.Type.Equals(ClaimIdentifierConfiguration.Id))
+                .Value;
+
+            logger.LogInformation($"Populating Accounts claims for user {userId}");
+
+            if (Guid.TryParse(userId, out Guid userRef))
+            {
+                var roles = new HashSet<UserRole> { UserRole.Owner, UserRole.Transactor };
+                var userAccounts = await accountsService.GetUserAccounts(userRef, roles, CancellationToken.None);
+
+                foreach (var userAccount in userAccounts)
+                {
+                    logger.LogInformation($"Adding claim for account {userAccount} for user {userId}");
+                    var claim = new Claim(ClaimIdentifierConfiguration.Account, userAccount.ToString());
+                    ctx.Principal.Identities.First().AddClaim(claim);
+                }
+            }
+        }
     }
 }

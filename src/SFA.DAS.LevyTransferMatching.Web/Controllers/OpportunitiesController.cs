@@ -2,22 +2,19 @@
 using System.Threading.Tasks;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
-using SFA.DAS.Authorization.Mvc.Attributes;
-using SFA.DAS.LevyTransferMatching.Web.Authentication;
 using SFA.DAS.LevyTransferMatching.Web.Attributes;
-using SFA.DAS.Authorization.EmployerUserRoles.Options;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
     [HideAccountNavigation(true)]
     public class OpportunitiesController : Controller
     {
-        private readonly IAuthenticationService _authenticationService;
         private readonly IOpportunitiesOrchestrator _opportunitiesOrchestrator;
 
-        public OpportunitiesController(IAuthenticationService authenticationService, IOpportunitiesOrchestrator searchFundingOrchestrator)
+        public OpportunitiesController(IOpportunitiesOrchestrator searchFundingOrchestrator)
         {
-            _authenticationService = authenticationService;
             _opportunitiesOrchestrator = searchFundingOrchestrator;
         }
 
@@ -56,13 +53,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             }
         }
         
-        [DasAuthorize(EmployerUserRole.OwnerOrTransactor)]
+        [Authorize]
         [Route("opportunities/{encodedPledgeId}/apply")]
         public async Task<IActionResult> SelectAccount(string encodedPledgeId)
         {
-            var userId = _authenticationService.UserId;
-
-            var encodedAccountId = await _opportunitiesOrchestrator.GetUserEncodedAccountId(userId);
+            var encodedAccountId = await _opportunitiesOrchestrator.GetUserEncodedAccountId();
 
             // TODO: Update to wire up to the actual controller (i.e.
             //       RedirectToAction) - which doesn't exist currently.

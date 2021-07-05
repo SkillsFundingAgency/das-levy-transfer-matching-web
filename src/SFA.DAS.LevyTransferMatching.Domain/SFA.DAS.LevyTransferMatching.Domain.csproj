@@ -2,10 +2,15 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <CodeAnalysisRuleSet>..\.sonarlint\skillsfundingagency_das-levy-transfer-matching-webcsharp.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SFA.DAS.EmployerAccounts.Api.Client" Version="1.6.2978" />
+    <AdditionalFiles Include="..\.sonarlint\skillsfundingagency_das-levy-transfer-matching-web\CSharp\SonarLint.xml" Link="SonarLint.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SFA.DAS.CosmosDb" Version="1.0.47" />
   </ItemGroup>
 
 </Project>
