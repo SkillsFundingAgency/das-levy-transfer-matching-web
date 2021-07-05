@@ -14,11 +14,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators
             _locationService = locationService;
         }
 
-        public Task<List<string>> GetLocationInformation(string location)
-        {
-            throw new System.NotImplementedException();
-        }
-
         public async Task ValidateLocations(LocationPostRequest request)
         {
             request.Errors = new Dictionary<int, string>();

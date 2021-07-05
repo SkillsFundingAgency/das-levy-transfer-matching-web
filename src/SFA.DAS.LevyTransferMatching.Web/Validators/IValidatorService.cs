@@ -7,7 +7,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators
 {
     public interface IValidatorService
     {
-        Task<List<string>> GetLocationInformation(string location);
         Task ValidateLocations(LocationPostRequest request);
     }
 }
