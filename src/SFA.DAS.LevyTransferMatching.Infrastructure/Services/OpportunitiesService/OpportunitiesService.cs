@@ -28,7 +28,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
         {
             OpportunityDto opportunity = null;
 
-            var response = await _client.GetAsync($"pledges/{id}");
+            var response = await _client.GetAsync($"opportunities/{id}");
 
             if (response.IsSuccessStatusCode)
             {
