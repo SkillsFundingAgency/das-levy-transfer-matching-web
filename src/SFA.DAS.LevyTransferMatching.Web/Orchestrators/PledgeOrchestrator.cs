@@ -153,9 +153,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
         
-        public async Task ValidateLocations(LocationPostRequest request)
+        public async Task<Dictionary<int, string>> ValidateLocations(LocationPostRequest request)
         {
-            await _validatorService.ValidateLocations(request);
+            return await _validatorService.ValidateLocations(request);
         }
 
         public async Task UpdateCacheItem(AmountPostRequest request)

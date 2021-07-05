@@ -128,11 +128,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         {
             ViewBag.HideNav = false;
 
-            await _orchestrator.ValidateLocations(request);
-
-            if (request.Errors.Any())
+            Dictionary<int, string> errors = await _orchestrator.ValidateLocations(request);
+            if (errors.Any())
             {
-                AddLocationErrorsToModelState(request.Errors);
+                AddLocationErrorsToModelState(errors);
                 return RedirectToAction("Location", request);
             }
 

@@ -14,9 +14,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators
             _locationService = locationService;
         }
 
-        public async Task ValidateLocations(LocationPostRequest request)
+        public async Task<Dictionary<int,string>> ValidateLocations(LocationPostRequest request)
         {
-            request.Errors = new Dictionary<int, string>();
+            var errors = new Dictionary<int, string>();
             for (int i = 0; i < request.Locations.Count; i++)
             {
                 if (request.Locations[i] != null)
@@ -24,7 +24,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators
                     var locationsDto = await _locationService.GetLocationInformation(request.Locations[i]);
                     if (locationsDto?.Name == null)
                     {
-                        request.Errors.Add(i, $"No locations could be found for { request.Locations[i] }");
+                        errors.Add(i, $"No locations could be found for { request.Locations[i] }");
                     }
                     else
                     {
@@ -32,6 +32,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators
                     }
                 }
             }
+
+            return errors;
         }
     }
 }

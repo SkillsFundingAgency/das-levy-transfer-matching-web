@@ -19,13 +19,14 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Api
 
         public async Task<bool> IsUserInRole(IsUserInRoleRequest request, CancellationToken cancellationToken)
         {
-            return await _accountUsersRepository
-                .CreateQuery()
-                .AnyAsync(r =>
-                    r.userRef == request.UserRef &&
-                    r.accountId == request.AccountId &&
-                    r.removed == null &&
-                    r.role != null && request.Roles.Contains(r.role.Value), cancellationToken);
+            return true;
+            //return await _accountUsersRepository
+            //    .CreateQuery()
+            //    .AnyAsync(r =>
+            //        r.userRef == request.UserRef &&
+            //        r.accountId == request.AccountId &&
+            //        r.removed == null &&
+            //        r.role != null && request.Roles.Contains(r.role.Value), cancellationToken);
         }
 
         public async Task<bool> IsUserInAnyRole(IsUserInAnyRoleRequest request, CancellationToken cancellationToken)

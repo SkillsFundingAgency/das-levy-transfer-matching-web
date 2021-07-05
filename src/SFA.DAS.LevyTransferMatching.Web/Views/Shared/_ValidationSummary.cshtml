@@ -9,17 +9,15 @@
 
                 @{
                     var explorer = ViewData.ModelExplorer;
-                    foreach (var property in explorer.Properties)
+
+                    foreach (var property in ViewData.ModelState)
                     {
-                        var propertyName = property.Metadata.PropertyName;
-                        var state = ViewData.ModelState[propertyName];
-                        var errors = state?.Errors ?? null;
-                        if (errors != null)
+                        if (property.Value.ValidationState == Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Invalid)
                         {
-                            foreach (var error in errors)
+                            foreach (var error in property.Value.Errors)
                             {
                                 <li>
-                                    <a href="#@propertyName">
+                                    <a href="#@property.Key">
                                         <span class="govuk-visually-hidden">Error: </span>@error.ErrorMessage
                                     </a>
                                 </li>
