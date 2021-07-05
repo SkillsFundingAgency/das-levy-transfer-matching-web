@@ -6,6 +6,7 @@ using SFA.DAS.Authorization.Mvc.Attributes;
 using SFA.DAS.LevyTransferMatching.Web.Authentication;
 using SFA.DAS.LevyTransferMatching.Web.Attributes;
 using SFA.DAS.Authorization.EmployerUserRoles.Options;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
@@ -56,7 +57,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             }
         }
         
-        [DasAuthorize]
+        [Authorize]
         [Route("opportunities/{encodedPledgeId}/apply")]
         public async Task<IActionResult> SelectAccount(string encodedPledgeId)
         {
