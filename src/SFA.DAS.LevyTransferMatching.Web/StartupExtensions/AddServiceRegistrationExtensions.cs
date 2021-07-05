@@ -1,7 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using SFA.DAS.Authorization.Context;
 using SFA.DAS.Http;
 using SFA.DAS.Http.Configuration;
 using SFA.DAS.LevyTransferMatching.Domain.Interfaces;
@@ -18,8 +16,11 @@ using SFA.DAS.LevyTransferMatching.Web.Authorization;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using System;
 using System.Net.Http;
+using Microsoft.AspNetCore.Authorization;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.EmployerAccountsService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.TagService;
+using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Web.Validators;
 
 namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
@@ -33,6 +34,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
             services.AddSingleton<IDocumentClientFactory, DocumentClientFactory>();
             services.AddTransient<IAccountUsersReadOnlyRepository, AccountUsersReadOnlyRepository>();
 
+            services.AddSingleton<IAuthorizationHandler, ManageAccountAuthorizationHandler>();
+
+            services.AddTransient<IEmployerAccountsService, EmployerAccountsService>();
             services.AddTransient<IAuthenticationService, AuthenticationService>();
             services.AddTransient<IAuthorizationContextProvider, AuthorizationContextProvider>();
             services.AddTransient<IValidatorService, ValidatorService>();

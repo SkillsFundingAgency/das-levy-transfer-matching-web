@@ -11,7 +11,6 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountsService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.TagService;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.LocationService;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
@@ -27,12 +26,17 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private Mock<IAccountsService> _accountsService;
         private Mock<IPledgeService> _pledgeService;
         private Mock<ITagService> _tagService;
-		private Mock<IEncodingService> _encodingService;
+<<<<<<< HEAD
+        private Mock<IEncodingService> _encodingService;
+        private List<Tag> _sectors;
+        private List<Tag> _levels;
+        private List<Tag> _jobRoles;
+=======
         private List<ReferenceDataItem> _sectors;
         private List<ReferenceDataItem> _levels;
         private List<ReferenceDataItem> _jobRoles;
+>>>>>>> main
         private AccountDto _accountDetail;
-        private Mock<ILocationService> _locationService;
         private string _encodedAccountId;
         private Guid _cacheKey;
         private readonly long _accountId = 1;
@@ -60,9 +64,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _tagService.Setup(x => x.GetLevels()).ReturnsAsync(_levels);
             _encodedPledgeId = _fixture.Create<string>();
             _accountsService.Setup(x => x.GetAccountDetail(_encodedAccountId)).ReturnsAsync(_accountDetail);
-            _locationService = new Mock<ILocationService>();
 
-            _orchestrator = new PledgeOrchestrator(_cache.Object, _accountsService.Object, _pledgeService.Object, _tagService.Object, _encodingService.Object, _locationService.Object);
+            _orchestrator = new PledgeOrchestrator(_cache.Object, _accountsService.Object, _pledgeService.Object, _tagService.Object, _encodingService.Object);
         }
 
         [Test]
