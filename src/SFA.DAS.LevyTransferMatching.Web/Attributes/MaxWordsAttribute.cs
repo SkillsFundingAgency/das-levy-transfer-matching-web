@@ -21,7 +21,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Attributes
                 return true;
             }
 
-            return str.Split(" ").Count() <= _maxWords;
+            return str.Replace("\r\n", " ").Split(" ").Count() <= _maxWords;
         }
     }
 }
