@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
+using System;
+using System.Collections.Generic;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Cache
 {
@@ -17,5 +19,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Cache
         public Guid Key { get; set; }
 
         public string Details { get; set; }
+        public List<ReferenceDataItem> JobRoles { get; internal set; }
+        public int NumberOfApprentices { get; internal set; }
+        public DateTime StartDate { get; internal set; }
+        public bool HasTrainingProvider { get; internal set; }
     }
 }

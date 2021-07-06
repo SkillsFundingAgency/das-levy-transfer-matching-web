@@ -98,5 +98,26 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
                 CacheKey = request.CacheKey
             });
         }
+
+        [Authorize(Policy = PolicyNames.ManageAccount)]
+        [Route("/accounts/{encodedAccountId}opportunities/{encodedPledgeId}/create/application-details")]
+        public IActionResult ApplicationDetails(ApplicationDetailsRequest request)
+        {
+            return View(new ApplicationDetailsViewModel() { EncodedAccountId = request.EncodedAccountId, EncodedPledgeId = request.EncodedPledgeId, CacheKey = request.CacheKey });
+        }
+
+        [Authorize(Policy = PolicyNames.ManageAccount)]
+        [HttpPost]
+        [Route("/accounts/{encodedAccountId}opportunities/{encodedPledgeId}/create/application-details")]
+        public async Task<IActionResult> ApplicationDetails(ApplicationDetailsPostRequest request)
+        {
+            await _opportunitiesOrchestrator.UpdateCacheItem(request);
+            return RedirectToAction("Apply", new ApplicationRequest
+            {
+                EncodedAccountId = request.EncodedAccountId,
+                EncodedPledgeId = request.EncodedPledgeId,
+                CacheKey = request.CacheKey
+            });
+        }
     }
 }

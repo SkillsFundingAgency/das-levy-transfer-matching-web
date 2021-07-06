@@ -183,5 +183,17 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             Assert.AreEqual(redirectToActionResult.RouteValues["CacheKey"], cacheKey);
             _orchestrator.Verify(x => x.UpdateCacheItem(request), Times.Once);
         }
+
+        [Test]
+        public async Task GET_ApplicationDetails_Returns_Expected_ViewModel()
+        {
+            Assert.Fail();
+        }
+
+        [Test]
+        public async Task POST_ApplicationDetails_Redirects_To_Apply()
+        {
+            Assert.Fail();
+        }
     }
 }
