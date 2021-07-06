@@ -38,7 +38,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),
                     Sectors = sectorsTask.Result.Where(y => x.Sectors.Contains(y.Id)).Select(y => y.Description).ToList(),
                     JobRoles = jobRolesTask.Result.Where(y => x.JobRoles.Contains(y.Id)).Select(y => y.Description).ToList(),
-                    Levels = levelsTask.Result.Where(y => x.Levels.Contains(y.Id)).Select(y => y.Description).ToList()
+                    Levels = levelsTask.Result.Where(y => x.Levels.Contains(y.Id)).Select(y => y.ShortDescription).ToList()
                 }).ToList();
 
             return new IndexViewModel 
