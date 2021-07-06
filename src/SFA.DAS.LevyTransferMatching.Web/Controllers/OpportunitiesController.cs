@@ -60,7 +60,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         {
             var encodedAccountId = await _opportunitiesOrchestrator.GetUserEncodedAccountId();
 
-            return RedirectToAction("Apply", new ApplicationRequest 
+            return RedirectToAction("Apply", new 
             { 
                 CacheKey = Guid.NewGuid(),
                 EncodedAccountId = encodedAccountId,
