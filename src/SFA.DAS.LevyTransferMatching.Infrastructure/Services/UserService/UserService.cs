@@ -22,12 +22,12 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService
 
         public string UserId => GetUserClaimAsString(ClaimIdentifierConfiguration.Id);
 
-        public async Task<IEnumerable<AccountDto>> GetLoggedInUserAccounts()
+        public async Task<IEnumerable<UserAccountDto>> GetLoggedInUserAccounts()
         {
             var response = await _httpClient.GetAsync($"users/{UserId}/accounts");
             response.EnsureSuccessStatusCode();
 
-            return JsonConvert.DeserializeObject<IEnumerable<AccountDto>>(await response.Content.ReadAsStringAsync());
+            return JsonConvert.DeserializeObject<IEnumerable<UserAccountDto>>(await response.Content.ReadAsStringAsync());
         }
 
         private bool IsUserAuthenticated()
