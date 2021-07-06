@@ -129,7 +129,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             if (errors.Any())
             {
                 AddLocationErrorsToModelState(errors);
-                return RedirectToAction("Location", request);
+                return RedirectToAction("Location", new { request.EncodedAccountId, request.AccountId, request.CacheKey });
             }
 
             await _orchestrator.UpdateCacheItem(request);
