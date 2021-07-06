@@ -187,13 +187,50 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         [Test]
         public async Task GET_ApplicationDetails_Returns_Expected_ViewModel()
         {
-            Assert.Fail();
+            var request = _fixture.Create<ApplicationDetailsRequest>();
+            var expectedViewModel = _fixture.Create<ApplicationDetailsViewModel>();
+
+            _orchestrator
+                .Setup(x => x.GetApplicationViewModel(request))
+                .ReturnsAsync(expectedViewModel);
+
+            var viewResult = await _opportunitiesController.ApplicationDetails(request) as ViewResult;
+            var actualViewModel = viewResult.Model as ApplicationDetailsViewModel;
+
+            Assert.IsNotNull(viewResult);
+            Assert.IsNotNull(actualViewModel);
+            Assert.AreEqual(expectedViewModel, actualViewModel);
+            _orchestrator.Verify(x => x.GetApplicationViewModel(request), Times.Once);
         }
 
         [Test]
         public async Task POST_ApplicationDetails_Redirects_To_Apply()
         {
-            Assert.Fail();
+            // Arrange
+            var encodedPledgeId = _fixture.Create<string>();
+            var encodedAccountId = _fixture.Create<string>();
+            var cacheKey = _fixture.Create<Guid>();
+
+            var request = new MoreDetailsPostRequest()
+            {
+                EncodedPledgeId = encodedPledgeId,
+                EncodedAccountId = encodedAccountId,
+                Details = _fixture.Create<string>(),
+                CacheKey = cacheKey
+            };
+
+            _orchestrator.Setup(x => x.UpdateCacheItem(request));
+
+            // Assert
+            var redirectToActionResult = (await _opportunitiesController.MoreDetails(request)) as RedirectToActionResult;
+
+            // Assert
+            Assert.IsNotNull(redirectToActionResult);
+            Assert.AreEqual(redirectToActionResult.ActionName, nameof(OpportunitiesController.Apply));
+            Assert.AreEqual(redirectToActionResult.RouteValues["EncodedPledgeId"], encodedPledgeId);
+            Assert.AreEqual(redirectToActionResult.RouteValues["EncodedAccountId"], encodedAccountId);
+            Assert.AreEqual(redirectToActionResult.RouteValues["CacheKey"], cacheKey);
+            _orchestrator.Verify(x => x.UpdateCacheItem(request), Times.Once);
         }
     }
 }

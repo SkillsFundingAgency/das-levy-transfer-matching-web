@@ -101,9 +101,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
         [Authorize(Policy = PolicyNames.ManageAccount)]
         [Route("/accounts/{encodedAccountId}opportunities/{encodedPledgeId}/create/application-details")]
-        public IActionResult ApplicationDetails(ApplicationDetailsRequest request)
+        public async Task<IActionResult> ApplicationDetails(ApplicationDetailsRequest request)
         {
-            return View(new ApplicationDetailsViewModel() { EncodedAccountId = request.EncodedAccountId, EncodedPledgeId = request.EncodedPledgeId, CacheKey = request.CacheKey });
+            return View(await _opportunitiesOrchestrator.GetApplicationViewModel(request));
         }
 
         [Authorize(Policy = PolicyNames.ManageAccount)]
