@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Tags;
+using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 using SFA.DAS.LevyTransferMatching.Web.Helpers;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.TagHelpers
@@ -22,18 +22,18 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.TagHelpers
         private Mock<IModelMetadataProvider> _modelMetadataProvider;
         private Mock<ICompositeMetadataDetailsProvider> _compositeMetadataDetailsProvider;
         private DefaultMetadataDetails _defaultMetadataDetails;
-        private List<Tag> _tagSource;
+        private List<ReferenceDataItem> _tagHelperSource;
 
         [SetUp]
         public void Setup()
         {
             _tagHelper = new UnorderedListTagHelper();
 
-            _tagSource = new List<Tag>
+            _tagHelperSource = new List<ReferenceDataItem>
             {
-                new Tag { TagId = "Option1", Description = "Option one" },
-                new Tag { TagId = "Option2", Description = "Option two" },
-                new Tag { TagId = "Option3", Description = "Option three" }
+                new ReferenceDataItem { Id = "Option1", Description = "Option one" },
+                new ReferenceDataItem { Id = "Option2", Description = "Option two" },
+                new ReferenceDataItem { Id = "Option3", Description = "Option three" }
             };
 
             _tagHelperContext = new TagHelperContext(
@@ -74,7 +74,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.TagHelpers
             var model = new TestClass { TestProperty = propertyValue.Split(",").ToList() };
             var modelExplorer = new ModelExplorer(_modelMetadataProvider.Object, new DefaultModelMetadata(_modelMetadataProvider.Object, _compositeMetadataDetailsProvider.Object, _defaultMetadataDetails), model.TestProperty);
             _tagHelper.Property = new ModelExpression("TestProperty", modelExplorer);
-            _tagHelper.Source = _tagSource;
+            _tagHelper.Source = _tagHelperSource;
 
             _tagHelper.Process(_tagHelperContext, _tagHelperOutput);
 
@@ -87,7 +87,5 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.TagHelpers
         {
             public List<string> TestProperty { get; set; }
         }
-
-
     }
 }
