@@ -68,12 +68,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         public async Task<string> GetUserEncodedAccountId()
         {
-            var accounts = await _userService.GetLoggedInUserAccounts();
+            var userAccounts = await _userService.GetLoggedInUserAccounts();
 
             // TODO: Below is temporary -
             //       Raised as an issue, and eventually to be replaced with
             //       an accounts selection screen.
-            var firstEncodedAccountId = accounts
+            var firstEncodedAccountId = userAccounts
                 .Select(x => x.EncodedAccountId)
                 .First();
 
