@@ -9,6 +9,7 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.TagService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
+using System.Linq;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 {
@@ -52,13 +53,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         [Test]
         public async Task GetSearchFundingViewModel_Opportunities_Are_Populated()
         {
-            var test = await _orchestrator.GetIndexViewModel();
+            var viewModel = await _orchestrator.GetIndexViewModel();
 
-            Assert.AreEqual(test.Opportunities[0].EmployerName, _opportunityDtoList[0].DasAccountName);
-            Assert.AreEqual(test.Opportunities[0].ReferenceNumber, _opportunityDtoList[0].EncodedPledgeId);
-            Assert.AreEqual(test.Opportunities[0].Amount, _opportunityDtoList[0].Amount);
-            Assert.AreEqual(_opportunityDtoList[0].DasAccountName, test.Opportunities[0].EmployerName);
-            Assert.AreEqual("test", test.Opportunities[0].ReferenceNumber);
+            Assert.AreEqual(viewModel.Opportunities[0].EmployerName, _opportunityDtoList[0].DasAccountName);
+            Assert.AreEqual(viewModel.Opportunities[0].Amount, _opportunityDtoList[0].Amount);
+            Assert.AreEqual(viewModel.Opportunities[0].ReferenceNumber, "test");
         }
     }
 }

@@ -30,22 +30,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             await Task.WhenAll(opportunitiesDto, levelsTask, sectorsTask, jobRolesTask);
 
-            foreach(var opportunity in opportunitiesDto.Result)
-            {
-                opportunity.Levels = levelsTask.Result.Where(x => opportunity.Levels.Contains(x.Id)).Select(x => x.Description).ToList();
-                opportunity.Sectors = sectorsTask.Result.Where(x => opportunity.Sectors.Contains(x.Id)).Select(x => x.Description).ToList();
-                opportunity.JobRoles = jobRolesTask.Result.Where(x => opportunity.JobRoles.Contains(x.Id)).Select(x => x.Description).ToList();
-            }
-
             List<Opportunity> opportunities = opportunitiesDto.Result
                 .Select(x => new Opportunity
                 {
                     Amount = x.Amount,
                     EmployerName = x.DasAccountName,
                     ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),
-                    Sectors = x.Sectors,
-                    JobRoles = x.JobRoles,
-                    Levels = x.Levels
+                    Sectors = sectorsTask.Result.Where(y => x.Sectors.Contains(y.Id)).Select(y => y.Description).ToList(),
+                    JobRoles = jobRolesTask.Result.Where(y => x.JobRoles.Contains(y.Id)).Select(y => y.Description).ToList(),
+                    Levels = levelsTask.Result.Where(y => x.Levels.Contains(y.Id)).Select(y => y.Description).ToList()
                 }).ToList();
 
             return new IndexViewModel 
