@@ -4,7 +4,6 @@ using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.LevyTransferMatching.Web.Attributes;
 using Microsoft.AspNetCore.Authorization;
-using SFA.DAS.LevyTransferMatching.Web.Authentication;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {

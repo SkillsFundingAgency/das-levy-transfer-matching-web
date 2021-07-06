@@ -77,7 +77,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 EncodedAccountId = request.EncodedAccountId,
                 CacheKey = request.CacheKey,
                 Amount = cacheItem.Amount.ToString(),
-                RemainingTransferAllowance = accountDetail.RemainingTransferAllowance.Value.ToString("N0"),
+                RemainingTransferAllowance = accountDetail.RemainingTransferAllowance.ToString("N0"),
                 IsNamePublic = cacheItem.IsNamePublic,
                 DasAccountName = accountDetail.DasAccountName
             };
