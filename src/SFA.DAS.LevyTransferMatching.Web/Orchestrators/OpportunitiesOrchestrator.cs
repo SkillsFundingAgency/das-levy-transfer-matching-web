@@ -104,15 +104,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
-        public async Task<ApplyViewModel> GetApplyViewModel(string encodedPledgeId)
+        public async Task<ApplyViewModel> GetApplyViewModel(ApplicationRequest request)
         {
-            var opportunityDto = await _opportunitiesService.GetOpportunity((int)_encodingService.Decode(encodedPledgeId, EncodingType.PledgeId));
+            var opportunityDto = await _opportunitiesService.GetOpportunity(request.PledgeId);
 
             return new ApplyViewModel
             {
                 OpportunitySummaryViewModel = new OpportunitySummaryViewModel
                 {
-                    Description = GenerateDescription(opportunityDto, encodedPledgeId),
+                    Description = GenerateDescription(opportunityDto, request.EncodedPledgeId),
                     Amount = opportunityDto.Amount,
                     JobRoleList = string.Join(", ", opportunityDto.JobRoles),
                     LevelList = string.Join(", ", opportunityDto.Levels),
