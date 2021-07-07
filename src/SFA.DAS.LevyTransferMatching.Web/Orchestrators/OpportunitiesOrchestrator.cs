@@ -178,10 +178,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var cacheItem = await RetrieveCacheItem(request.CacheKey);
 
-            cacheItem.JobRoles = request.JobRoles;
-            cacheItem.NumberOfApprentices = request.NumberOfApprentices;
+            cacheItem.JobRole = request.JobRole;
+            cacheItem.NumberOfApprentices = request.NumberOfApprentices.Value;
             cacheItem.StartDate = request.StartDate;
-            cacheItem.HasTrainingProvider = request.HasTrainingProvider;
+            cacheItem.HasTrainingProvider = request.HasTrainingProvider.Value;
 
             await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
         }
@@ -209,9 +209,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 CacheKey = request.CacheKey,
                 EncodedAccountId = request.EncodedAccountId,
                 EncodedPledgeId = request.EncodedPledgeId,
-                JobRoles = application.JobRoles,
+                JobRole = application.JobRole,
                 NumberOfApprentices = application.NumberOfApprentices,
-                StartDate = application.StartDate,
+                Month = application.StartDate?.Month,
+                Year = application.StartDate?.Year,
                 HasTrainingProvider = application.HasTrainingProvider,
                 OpportunitySummaryViewModel = new OpportunitySummaryViewModel
                 {

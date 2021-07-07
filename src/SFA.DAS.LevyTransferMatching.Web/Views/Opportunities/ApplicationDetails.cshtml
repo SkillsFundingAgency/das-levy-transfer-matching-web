@@ -5,29 +5,8 @@
     ViewData["Title"] = "Apprenticeship Training";
 }
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
-
-
-    <div class="govuk-width-container">
-
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-
-                <!-- ERROR MESSAGE - START -->
-                <div class="govuk-error-summary funding-over" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary" style="display: none;">
-                    <h2 class="govuk-error-summary__title" id="error-summary-title">There is a problem</h2>
-                    <div class="govuk-error-summary__body">
-                        <ul class="govuk-list govuk-error-summary__list">
-                            <li>
-                                <a href="#pledge-application-apprentices">There is not enough funding to support this many apprentices</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <!-- ERROR MESSAGE - END -->
-
-            </div>
-        </div>
-
+    <form method="post">
+        
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
 
@@ -36,47 +15,46 @@
 
             </div>
         </div>
-
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
 
-                <form class="start-search-page" action="1-application-core#pledge-section-one" method="post">
-
-                    <div class="govuk-form-group">
-                        <label class="govuk-label govuk-label--s" for="pledge-application-standard">Job role</label>
-                        <div class="govuk-hint">
-                            Start typing a job role or keywords to find an apprenticeship training course
-                            <br>
-                            You can search and browse courses on <a href="https://findapprenticeshiptraining.apprenticeships.education.gov.uk/" target="_blank">Find apprenticeship training</a>.
-                        </div>
-                        <input class="govuk-input govuk-input--width-20" id="pledge-application-standard" name="pledge-application-standard" type="text" value="" autocomplete="off" style="background-image: url(&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABHklEQVQ4EaVTO26DQBD1ohQWaS2lg9JybZ+AK7hNwx2oIoVf4UPQ0Lj1FdKktevIpel8AKNUkDcWMxpgSaIEaTVv3sx7uztiTdu2s/98DywOw3Dued4Who/M2aIx5lZV1aEsy0+qiwHELyi+Ytl0PQ69SxAxkWIA4RMRTdNsKE59juMcuZd6xIAFeZ6fGCdJ8kY4y7KAuTRNGd7jyEBXsdOPE3a0QGPsniOnnYMO67LgSQN9T41F2QGrQRRFCwyzoIF2qyBuKKbcOgPXdVeY9rMWgNsjf9ccYesJhk3f5dYT1HX9gR0LLQR30TnjkUEcx2uIuS4RnI+aj6sJR0AM8AaumPaM/rRehyWhXqbFAA9kh3/8/NvHxAYGAsZ/il8IalkCLBfNVAAAAABJRU5ErkJggg==&quot;); background-repeat: no-repeat; background-attachment: scroll; background-size: 16px 18px; background-position: 98% 50%; cursor: auto;">
+                <div class="govuk-form-group">
+                    <label class="govuk-label govuk-label--s" for="opportunity-application-standard">Job role</label>
+                    <div class="govuk-hint">
+                        Start typing a job role or keywords to find an apprenticeship training course
+                        <br>
+                        You can search and browse courses on <a href="https://findapprenticeshiptraining.apprenticeships.education.gov.uk/" target="_blank">Find apprenticeship training</a>.
                     </div>
+                    <input id="opportunity-application-jobrole" class="govuk-input govuk-input--width-20" asp-for="JobRole" spellcheck="false" type="text"/>
+                </div>
 
-                    <div class="govuk-form-group" id="how-many-apprentices">
-                        <label class="govuk-label govuk-label--s" for="pledge-application-apprentices">How many apprentices do you want to fund?</label>
+                    <div class="govuk-form-group" das-highlight-error-for="NumberOfApprentices" error-class="govuk-form-group--error" id="how-many-apprentices">
+                        <label class="govuk-label govuk-label--s" for="opportunity-application-apprentices">How many apprentices do you want to fund?</label>
                         <span id="apprentices-error" class="govuk-error-message" style="display: none;">
                             <span class="govuk-visually-hidden">Error:</span> There is not enough funding to support this many apprentices
                         </span>
-                        <input class="govuk-input govuk-input--width-5" id="pledge-application-apprentices" name="pledge-application-apprentices" type="text" value="">
+                        <span das-validation-for="NumberOfApprentices" class="govuk-error-message"></span>
+                        <input id="opportunity-application-apprentices" class="govuk-input govuk-input--width-5" asp-for="NumberOfApprentices" inputmode="numeric" spellcheck="false" pattern="[0-9]*" type="text" aria-describedby = "apprentices-error" />
                     </div>
 
-                    <div class="govuk-form-group">
-                        <fieldset class="govuk-fieldset" role="group" aria-describedby="pledge-application-start-hint">
+                    <div class="govuk-form-group" das-highlight-error-for="StartDate" error-class="govuk-form-group--error" id="start-date">
+                        <fieldset class="govuk-fieldset" role="group" aria-describedby="opportunity-application-start-hint">
                             <legend class="govuk-fieldset__legend">
                                 <h1 class="govuk-fieldset__heading govuk-label--s">When would you like the apprenticeship training to start by?</h1>
                             </legend>
-                            <div id="pledge-application-start-hint" class="govuk-hint">For example, 11 2007</div>
-                            <div class="govuk-date-input" id="pledge-application-start">
+                            <div id="opportunity-application-start-hint" class="govuk-hint">For example, 11 2007</div>
+                            <span das-validation-for="StartDate" class="govuk-error-message"></span>
+                            <div class="govuk-date-input" id="opportunity-application-start">
                                 <div class="govuk-date-input__item">
                                     <div class="govuk-form-group">
-                                        <label class="govuk-label govuk-date-input__label" for="pledge-application-start-month">Month</label>
-                                        <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="pledge-application-start-month" name="pledge-application-start-month" type="text" pattern="[0-9]*" inputmode="numeric" value="">
+                                        <label class="govuk-label govuk-date-input__label" for="opportunity-application-start-month">Month</label>
+                                        <input id="opportunity-application-start-month" class="govuk-input govuk-date-input__input govuk-input--width-2" asp-for="Month" type="number" min="1" max="12" das-highlight-error-for="StartDate" error-class="govuk-textarea--error" />
                                     </div>
                                 </div>
                                 <div class="govuk-date-input__item">
                                     <div class="govuk-form-group">
-                                        <label class="govuk-label govuk-date-input__label" for="pledge-application-start-year">Year</label>
-                                        <input class="govuk-input govuk-date-input__input govuk-input--width-4" id="pledge-application-start-year" name="pledge-application-start-year" type="text" pattern="[0-9]*" inputmode="numeric" value="">
+                                        <label class="govuk-label govuk-date-input__label" for="opportunity-application-start-year">Year</label>
+                                        <input id="opportunity-application-start-year" class="govuk-input govuk-date-input__input govuk-input--width-4" asp-for="Year" type="number" das-highlight-error-for="StartDate" error-class="govuk-textarea--error" />
                                     </div>
                                 </div>
                             </div>
@@ -90,21 +68,22 @@
                         </div>
                     </div>
 
-                    <div class="govuk-form-group">
+                    <div class="govuk-form-group" das-highlight-error-for="HasTrainingProvider" error-class="govuk-form-group--error" id="has-training-provider">
                         <fieldset class="govuk-fieldset">
                             <legend class="govuk-fieldset__legend">
                                 <h1 class="govuk-fieldset__heading govuk-label--s">Have you found a training provider?</h1>
                             </legend>
+                            <span das-validation-for="HasTrainingProvider" class="govuk-error-message"></span>
                             <div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios">
                                 <div class="govuk-radios__item">
-                                    <input class="govuk-radios__input" id="pledge-application-training-provider-yes" name="pledge-application-training-provider" type="radio" value="Yes">
-                                    <label class="govuk-label govuk-radios__label" for="pledge-application-training-provider-yes">Yes</label>
+                                    <input class="govuk-radios__input" id="opportunity-application-training-provider-yes" asp-for="HasTrainingProvider" value="true" type="radio" data-aria-controls="conditional-apply-pledge-funds-yes" das-highlight-error-for="HasTrainingProvider" error-class="govuk-textarea--error">
+                                    <label class="govuk-label govuk-radios__label" for="opportunity-application-training-provider-yes">Yes</label>
                                 </div>
                                 <div class="govuk-radios__item">
-                                    <input class="govuk-radios__input" id="pledge-application-training-provider-no" name="pledge-application-training-provider" type="radio" value="No I want to see apprenticeship training providers" aria-controls="conditional-pledge-application-training-provider-no" aria-expanded="false">
-                                    <label class="govuk-label govuk-radios__label" for="pledge-application-training-provider-no">No, show me apprenticeship training providers</label>
+                                    <input class="govuk-radios__input" id="opportunity-application-training-provider-no" asp-for="HasTrainingProvider" value="false" type="radio" das-highlight-error-for="HasTrainingProvider" error-class="govuk-textarea--error">
+                                    <label class="govuk-label govuk-radios__label" for="opportunity-application-training-provider-no">No, show me apprenticeship training providers</label>
                                 </div>
-                                <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-pledge-application-training-provider-no">
+                                <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-opportunity-application-training-provider-no">
                                     <div class="govuk-form-group">
                                         <p>Search for <a href="https://findapprenticeshiptraining.apprenticeships.education.gov.uk/" target="_blank">apprenticeship training courses and training providers</a>.</p>
                                     </div>
@@ -113,16 +92,14 @@
                         </fieldset>
                     </div>
 
-                    <!-- <div class="govuk-warning-text">
-                         <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                         <strong class="govuk-warning-text__text"><span class="govuk-warning-text__assistive">Warning</span> Your application exceeds the transfer funding set by <span class="pledge-name-answer">####</span>. We will notify them of this.</strong>
-                    </div> -->
-
-                    <button class="govuk-button" data-module="govuk-button" id="application-apprentice-details">Continue</button>
-
-                    <a href="javascript:history.back()" class="govuk-link govuk-link--no-visited-state govuk-link-secondary govuk-back-link" id="">Back</a>
-
-                </form>
+                    <div class="govuk-grid-column-full">
+                        <div class="govuk-button-group">
+                            <button id="opportunity-criteria-continue" class="govuk-button" data-module="govuk-button">
+                                Continue
+                            </button>
+                            <a href="@Url.Action("Apply", new { Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey })" class="govuk-back-link">Back</a>
+                        </div>
+                    </div>
 
             </div>
 
@@ -140,10 +117,6 @@
                     </div>
                 </section>
             </div>
-
         </div>
-
-    </div>
-
-
+    </form>
 </main>

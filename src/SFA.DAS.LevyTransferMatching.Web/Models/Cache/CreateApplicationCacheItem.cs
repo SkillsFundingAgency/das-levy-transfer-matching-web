@@ -19,9 +19,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Cache
         public Guid Key { get; set; }
 
         public string Details { get; set; }
-        public List<ReferenceDataItem> JobRoles { get; internal set; }
-        public int NumberOfApprentices { get; internal set; }
-        public DateTime StartDate { get; internal set; }
-        public bool HasTrainingProvider { get; internal set; }
+        public string JobRole { get; internal set; }
+        public int? NumberOfApprentices { get; internal set; }
+        public DateTime? StartDate { get; internal set; }
+        public bool? HasTrainingProvider { get; internal set; }
     }
 }

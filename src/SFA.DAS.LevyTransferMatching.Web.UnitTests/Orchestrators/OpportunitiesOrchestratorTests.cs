@@ -327,9 +327,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             Assert.AreEqual(cacheKey, result.CacheKey);
             Assert.AreEqual(encodedAccountId, result.EncodedAccountId);
             Assert.AreEqual(encodedPledgeId, result.EncodedPledgeId);
-            Assert.AreEqual(cacheItem.JobRoles, result.JobRoles);
+            Assert.AreEqual(cacheItem.JobRole, result.JobRole);
             Assert.AreEqual(cacheItem.NumberOfApprentices, result.NumberOfApprentices);
-            Assert.AreEqual(cacheItem.StartDate, result.StartDate);
+            Assert.AreEqual(cacheItem.StartDate, new DateTime(result.Year.Value, result.Month.Value, 1));
             Assert.AreEqual(cacheItem.HasTrainingProvider, result.HasTrainingProvider);
             Assert.IsNotNull(result.OpportunitySummaryViewModel);
             Assert.AreEqual(opportunityDto.Amount, result.OpportunitySummaryViewModel.Amount);

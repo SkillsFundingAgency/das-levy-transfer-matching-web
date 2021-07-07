@@ -100,7 +100,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         }
 
         [Authorize(Policy = PolicyNames.ManageAccount)]
-        [Route("/accounts/{encodedAccountId}opportunities/{encodedPledgeId}/create/application-details")]
+        [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/create/application-details")]
         public async Task<IActionResult> ApplicationDetails(ApplicationDetailsRequest request)
         {
             return View(await _opportunitiesOrchestrator.GetApplicationViewModel(request));
@@ -108,7 +108,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
         [Authorize(Policy = PolicyNames.ManageAccount)]
         [HttpPost]
-        [Route("/accounts/{encodedAccountId}opportunities/{encodedPledgeId}/create/application-details")]
+        [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/create/application-details")]
         public async Task<IActionResult> ApplicationDetails(ApplicationDetailsPostRequest request)
         {
             await _opportunitiesOrchestrator.UpdateCacheItem(request);
