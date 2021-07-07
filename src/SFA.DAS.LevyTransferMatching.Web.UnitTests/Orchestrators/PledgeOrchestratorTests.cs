@@ -15,6 +15,7 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.LocationService;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
+using SFA.DAS.LevyTransferMatching.Web.Validators;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 {
@@ -28,6 +29,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private Mock<IPledgeService> _pledgeService;
         private Mock<ITagService> _tagService;
 		private Mock<IEncodingService> _encodingService;
+        private Mock<IValidatorService> _validatorService;
         private List<ReferenceDataItem> _sectors;
         private List<ReferenceDataItem> _levels;
         private List<ReferenceDataItem> _jobRoles;
@@ -49,6 +51,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _accountsService = new Mock<IAccountsService>();
             _pledgeService = new Mock<IPledgeService>();
             _encodingService = new Mock<IEncodingService>();
+            _validatorService = new Mock<IValidatorService>();
 
             _sectors = _fixture.Create<List<ReferenceDataItem>>();
             _levels = _fixture.Create<List<ReferenceDataItem>>();
@@ -62,7 +65,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _accountsService.Setup(x => x.GetAccountDetail(_encodedAccountId)).ReturnsAsync(_accountDetail);
             _locationService = new Mock<ILocationService>();
 
-            _orchestrator = new PledgeOrchestrator(_cache.Object, _accountsService.Object, _pledgeService.Object, _tagService.Object, _encodingService.Object, _locationService.Object);
+            _orchestrator = new PledgeOrchestrator(_cache.Object, _accountsService.Object, _pledgeService.Object, _tagService.Object, _encodingService.Object, _locationService.Object, _validatorService.Object);
         }
 
         [Test]
@@ -295,6 +298,19 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             var result = await _orchestrator.GetLevelViewModel(new LevelRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
             Assert.AreEqual(cacheItem.Levels, result.Levels);
+        }
+
+        [Test]
+        public async Task GetLocationViewModel_Locations_Is_Correct()
+        {
+            var cacheItem = _fixture.Build<CreatePledgeCacheItem>()
+                    .With(x => x.Locations, new List<string> { "Manchester" })
+                    .Create();
+
+            _cache.Setup(x => x.RetrieveFromCache<CreatePledgeCacheItem>(_cacheKey.ToString())).ReturnsAsync(cacheItem);
+
+            var result = await _orchestrator.GetLocationViewModel(new LocationRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
+            Assert.AreEqual(cacheItem.Locations, result.Locations);
         }
 
         [Test]

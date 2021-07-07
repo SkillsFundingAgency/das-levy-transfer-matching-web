@@ -5,9 +5,9 @@ using System.Linq;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Validators.Pledges
 {
-    public class LocationPostModelValidator : AbstractValidator<LocationPostRequest>
+    public class LocationPostRequestValidator : AbstractValidator<LocationPostRequest>
     {
-        public LocationPostModelValidator()
+        public LocationPostRequestValidator()
         {
             RuleForEach(x => x.Locations)
                 .Must((model, location) => IsLocationUnique(model.Locations, location))
