@@ -1,6 +1,7 @@
 ﻿using SFA.DAS.LevyTransferMatching.Infrastructure.Services.LocationService;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Validators
@@ -17,23 +18,46 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators
         public async Task<Dictionary<int,string>> ValidateLocations(LocationPostRequest request)
         {
             var errors = new Dictionary<int, string>();
-            for (int i = 0; i < request.Locations.Count; i++)
+
+            CheckForDuplicates(errors, request.Locations);
+            await CheckLocationsExist(errors, request.Locations);
+
+            return errors;
+        }
+
+        private async Task CheckLocationsExist(Dictionary<int, string> errors, List<string> locations)
+        {
+            for (int i = 0; i < locations.Count; i++)
             {
-                if (request.Locations[i] != null)
+                if (locations[i] != null)
                 {
-                    var locationsDto = await _locationService.GetLocationInformation(request.Locations[i]);
+                    var locationsDto = await _locationService.GetLocationInformation(locations[i]);
                     if (locationsDto?.Name == null)
                     {
-                        errors.Add(i, $"No locations could be found for { request.Locations[i] }");
+                        if (!errors.ContainsKey(i))
+                            errors.Add(i, $"No locations could be found for { locations[i] }");
                     }
                     else
                     {
-                        request.Locations[i] = locationsDto.Name;
+                        locations[i] = locationsDto.Name;
                     }
                 }
             }
+        }
 
-            return errors;
+        private void CheckForDuplicates(Dictionary<int, string> errors, List<string> locations)
+        {
+            for (int i = 0; i < locations.Count; i++)
+            {
+                if (locations[i] != null)
+                {
+                    if (locations.Count(x => x == locations[i]) > 1)
+                    {
+                        if (!errors.ContainsKey(i))
+                            errors.Add(i, $"Duplicates of the same location are not allowed");
+                    }
+                }
+            }
         }
     }
 }
