@@ -126,7 +126,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         public async Task<ApplyViewModel> GetApplyViewModel(ApplicationRequest request)
         {
-            var application = await RetrievePledgeCacheItem(request.CacheKey);
+            var application = await RetrieveCacheItem(request.CacheKey);
             var opportunityDto = await _opportunitiesService.GetOpportunity(request.PledgeId);
 
             return new ApplyViewModel
