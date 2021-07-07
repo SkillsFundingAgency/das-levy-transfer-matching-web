@@ -19,8 +19,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators
         {
             var errors = new Dictionary<int, string>();
 
-            CheckForDuplicates(errors, request.Locations);
             await CheckLocationsExist(errors, request.Locations);
+            CheckForDuplicates(errors, request.Locations);
 
             return errors;
         }
