@@ -54,7 +54,7 @@
                             <div class="govuk-date-input__item">
                                 <div class="govuk-form-group">
                                     <label class="govuk-label govuk-date-input__label" for="opportunity-application-start-year">Year</label>
-                                    <input id="opportunity-application-start-year" class="govuk-input govuk-date-input__input govuk-input--width-4" asp-for="Year" type="number" das-highlight-error-for="StartDate" error-class="govuk-textarea--error" />
+                                    <input id="opportunity-application-start-year" class="govuk-input govuk-date-input__input govuk-input--width-4" asp-for="Year" type="number" min="@Model.MinYear" max="@Model.MaxYear" das-highlight-error-for="StartDate" error-class="govuk-textarea--error" />
                                 </div>
                             </div>
                         </div>

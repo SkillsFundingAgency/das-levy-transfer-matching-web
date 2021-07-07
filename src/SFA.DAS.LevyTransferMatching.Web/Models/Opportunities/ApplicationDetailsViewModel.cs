@@ -15,6 +15,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
         {
             get => Year.HasValue && Month.HasValue ? new DateTime(Year.Value, Month.Value, 1) : new DateTime?();
         }
+        public int MinYear { get; set; }
+        public int MaxYear { get; set; }
         public bool? HasTrainingProvider { get; set; }
     }
 }

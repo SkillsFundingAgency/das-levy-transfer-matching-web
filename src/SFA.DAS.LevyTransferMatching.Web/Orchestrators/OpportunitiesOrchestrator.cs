@@ -230,7 +230,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     LevelList = string.Join(", ", opportunityDto.Levels),
                     SectorList = string.Join(", ", opportunityDto.Sectors),
                     YearDescription = "2021/22"
-                }
+                },
+                MinYear = DateTime.Now.Year,
+                MaxYear = DateTime.Now.FinancialYearEnd().Year
             };
         }
     }
