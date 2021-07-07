@@ -11,7 +11,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
         public int? NumberOfApprentices { get; set; }
         public int? Month { get; set; }
         public int? Year { get; set; }
-        public DateTime? StartDate 
+        public DateTime? StartDate
         {
             get => Year.HasValue && Month.HasValue ? new DateTime(Year.Value, Month.Value, 1) : new DateTime?();
         }

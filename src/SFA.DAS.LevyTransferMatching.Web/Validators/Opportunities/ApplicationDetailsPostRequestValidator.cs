@@ -1,14 +1,16 @@
 ﻿using FluentValidation;
+using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
+using System;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities
 {
     public class ApplicationDetailsPostRequestValidator : AbstractValidator<ApplicationDetailsPostRequest>
     {
         private const int MinApprentices = 1;
-        private const int MaxApprentices = 100; // Temporary max, will be altered by TM-36
-        private const string DateError = "Enter a valid date";
+        private const int MaxApprentices = 100; // Temporary max, will be implemented by TM-36
         private const string NumApprenticesError = "The number of apprentices must be between {0} and {1}";
+        private const string StartDateError = "Start date must be between {0} and {1}";        
 
         public ApplicationDetailsPostRequestValidator()
         {
@@ -24,21 +26,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities
                 .WithMessage(string.Format(NumApprenticesError, MinApprentices, MaxApprentices))
             ;
 
-            RuleFor(request => request.Month)
-                .NotNull()
-                .WithMessage(DateError)
-                .InclusiveBetween(1, 12)
-                .WithMessage(DateError)
-            ;
-
-            RuleFor(request => request.Year)
-                .NotNull()
-                .WithMessage(DateError)
-            ;
-
             RuleFor(request => request.StartDate)
                 .NotNull()
-                .WithMessage(DateError)
+                .WithMessage(string.Format(StartDateError, new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).ToShortDisplayString(), DateTime.Now.FinancialYearEnd().ToShortDisplayString()))
+                .InclusiveBetween(new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1), DateTime.Now.FinancialYearEnd())
+                .WithMessage(string.Format(StartDateError, new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).ToShortDisplayString(), DateTime.Now.FinancialYearEnd().ToShortDisplayString()))
             ;
 
             RuleFor(request => request.HasTrainingProvider)

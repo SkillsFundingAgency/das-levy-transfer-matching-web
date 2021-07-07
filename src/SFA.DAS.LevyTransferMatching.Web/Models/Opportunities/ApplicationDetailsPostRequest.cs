@@ -14,9 +14,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
         {
             get 
             {
-                DateTime x;
-                if (DateTime.TryParse($"{Year}-{Month}-01", out x))
-                    return x;
+                if (DateTime.TryParse($"{Year}-{Month}-01", out DateTime date))
+                {
+                    return date;
+                }
 
                 return null;
             }
