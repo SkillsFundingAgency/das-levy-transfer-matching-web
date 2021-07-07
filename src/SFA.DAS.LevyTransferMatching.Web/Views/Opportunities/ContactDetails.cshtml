@@ -32,10 +32,19 @@
 
                 <div class="application-emails">
                     <div id="pledge-application-emails">
-                        <div class="govuk-form-group first-of-type">
-                            <label class="govuk-label" for="pledge-application-email[url1]">Email address</label>
-                            <input class="govuk-input govuk-input--width-20" id="pledge-application-email[url1]" name="pledge-application-email[url1]" type="email" spellcheck="false" asp-for="EmailAddresses[0]" das-highlight-error-for="EmailAddresses[0]" error-class="govuk-textarea--error">
+                        <div class="govuk-form-group first-of-type" das-highlight-error-for="EmailAddresses[0]" error-class="govuk-form-group--error">
+                            <label class="govuk-label" for="pledge-application-email-0">Email address</label>
+                            <span class="govuk-error-message">@Html.ValidationMessageFor(x => x.EmailAddresses[0])</span>
+                            <input class="govuk-input govuk-input--width-20" id="pledge-application-email-0" name="pledge-application-email-0" type="email" spellcheck="false" asp-for="EmailAddresses[0]" das-highlight-error-for="EmailAddresses[0]" error-class="govuk-textarea--error">
                         </div>
+
+                        @for (int i = 1; i < Model.EmailAddresses.Length; i++)
+                        {
+                            <div class="govuk-form-group additional-email" das-highlight-error-for="EmailAddresses[i]" error-class="govuk-form-group--error">
+                                <label class="govuk-label" for="@($"pledge-application-email-{i}")">Additional email address</label>
+                                <input class="govuk-input govuk-input--width-20" id="@($"pledge-application-email-{i}")" name="@($"pledge-application-email-{i}")" type="email" spellcheck="false" asp-for="EmailAddresses[i]" das-highlight-error-for="EmailAddresses[i]" error-class="govuk-textarea--error">
+                            </div>
+                        }
                     </div>
                 </div>
 
