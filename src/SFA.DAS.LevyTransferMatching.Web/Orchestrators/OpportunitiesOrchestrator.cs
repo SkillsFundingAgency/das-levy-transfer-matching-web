@@ -10,6 +10,7 @@ using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.LevyTransferMatching.Web.Models.Shared;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
+using System.Collections.Generic;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
@@ -134,7 +135,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         public async Task<ContactDetailsViewModel> GetContactDetailsViewModel()
         {
-            return new ContactDetailsViewModel();
+            return new ContactDetailsViewModel()
+            {
+                EmailAddresses = new List<string>(5)
+            };
         }
 
         private string GenerateDescription(OpportunityDto opportunityDto, string encodedPledgeId) => opportunityDto.IsNamePublic ? $"{opportunityDto.DasAccountName} ({encodedPledgeId})" : "A levy-paying business wants to fund apprenticeship training in:";

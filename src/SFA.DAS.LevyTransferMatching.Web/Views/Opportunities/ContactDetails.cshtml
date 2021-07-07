@@ -4,7 +4,7 @@
     ViewData["Title"] = "Add Contact Details";
 }
 
-<a href="@Url.Action("index")" class="govuk-back-link">Back</a>
+<a href="#" class="govuk-back-link">Back</a>
 
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
     <partial name="_ValidationSummary" />
@@ -22,39 +22,33 @@
 
                 <div class="govuk-form-group">
                     <label class="govuk-label" for="pledge-application-firstname">First name</label>
-                    <input class="govuk-input govuk-input--width-20" id="pledge-application-firstname" name="pledge-application-firstname" type="text" value="">
+                    <input class="govuk-input govuk-input--width-20" id="pledge-application-firstname" name="pledge-application-firstname" type="text" asp-for="FirstName" das-highlight-error-for="FirstName" error-class="govuk-textarea--error">
                 </div>
 
                 <div class="govuk-form-group">
                     <label class="govuk-label" for="pledge-application-lastname">Last name</label>
-                    <input class="govuk-input govuk-input--width-20" id="pledge-application-lastname" name="pledge-application-lastname" type="text" value="">
+                    <input class="govuk-input govuk-input--width-20" id="pledge-application-lastname" name="pledge-application-lastname" type="text" asp-for="LastName" das-highlight-error-for="LastName" error-class="govuk-textarea--error">
                 </div>
 
                 <div class="application-emails">
-                    <div id="pledge-application-emails" data-application-email-count="">
-
+                    <div id="pledge-application-emails">
                         <div class="govuk-form-group first-of-type">
                             <label class="govuk-label" for="pledge-application-email[url1]">Email address</label>
-                            <input class="govuk-input govuk-input--width-20" id="pledge-application-email[url1]" name="pledge-application-email[url1]" type="email" spellcheck="false" value="">
+                            <input class="govuk-input govuk-input--width-20" id="pledge-application-email[url1]" name="pledge-application-email[url1]" type="email" spellcheck="false" asp-for="EmailAddresses[0]" das-highlight-error-for="EmailAddresses[0]" error-class="govuk-textarea--error">
                         </div>
-
-
                     </div>
-                    <p class="govuk-body govuk-!-margin-bottom-6">
-                        <a class="govuk-link govuk-link--no-visited-state add-emails" href="#" id="addAnotherApplicationEmail">Add additional contact</a>
-                    </p>
                 </div>
 
                 <div class="govuk-form-group">
                     <label class="govuk-label" for="pledge-application-website">Business website (if you have one)</label>
-                    <input class="govuk-input govuk-input--width-20" id="pledge-application-website" name="pledge-application-website" type="text" value="">
+                    <input class="govuk-input govuk-input--width-20" id="pledge-application-website" name="pledge-application-website" type="text" asp-for="BusinessWebsite" das-highlight-error-for="BusinessWebsite" error-class="govuk-textarea--error">
                 </div>
 
                 <p><br></p>
 
                 <button class="govuk-button" data-module="govuk-button" id="application-contact-details">Continue</button>
 
-                <a href="javascript:history.back()" class="govuk-link govuk-link--no-visited-state govuk-link-secondary govuk-back-link" id="">Back</a>
+                <a href="#" class="govuk-link govuk-link--no-visited-state govuk-link-secondary govuk-back-link" id="">Back</a>
 
             </form>
 
