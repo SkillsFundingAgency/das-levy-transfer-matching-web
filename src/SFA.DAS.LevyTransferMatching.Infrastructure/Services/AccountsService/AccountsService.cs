@@ -24,7 +24,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountsService
 
             var content = await response.Content.ReadAsStringAsync();
             var accountDto = JsonConvert.DeserializeObject<AccountDto>(content);
-            accountDto.RemainingTransferAllowance = Convert.ToInt32(Math.Round(accountDto.RemainingTransferAllowance.Value, MidpointRounding.AwayFromZero));
+            accountDto.RemainingTransferAllowance = Convert.ToInt32(Math.Round(accountDto.RemainingTransferAllowance, MidpointRounding.AwayFromZero));
 
             return accountDto;
         }

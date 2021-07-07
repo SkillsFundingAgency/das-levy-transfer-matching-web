@@ -171,7 +171,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                 .Select(x => x.Description);
             Assert.AreEqual(result.JobRoleList, string.Join(", ", jobRoleDescriptions));
 
-            var levelDescriptions = levels.Select(x => x.Id.Replace("Level", string.Empty));
+            var levelDescriptions = _levelReferenceDataItems
+                .Where(x => opportunity.Levels.Contains(x.Id))
+                .Select(x => x.ShortDescription);
             Assert.AreEqual(result.LevelList, string.Join(", ", levelDescriptions));
 
             var sectorDescriptions = _sectorReferenceDataItems
@@ -212,7 +214,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                 .Select(x => x.Description);
             Assert.AreEqual(result.JobRoleList, jobRoleDescriptions.Single());
 
-            var levelDescriptions = levels.Select(x => x.Id.Replace("Level", string.Empty));
+            var levelDescriptions = _levelReferenceDataItems
+                .Where(x => opportunity.Levels.Contains(x.Id))
+                .Select(x => x.ShortDescription);
             Assert.AreEqual(result.LevelList, levelDescriptions.Single());
 
             var sectorDescriptions = _sectorReferenceDataItems
@@ -223,34 +227,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             Assert.AreEqual(result.YearDescription, $"{_currentDateTime.ToTaxYear("yyyy")}/{_currentDateTime.AddYears(1).ToTaxYear("yy")}");
         }
 
-        [Test]
-        public void GetOpportunitySummaryViewModel_Levels_Returned_Not_In_Correct_Format_Throws_Data_Exception()
-        {
-            // Arrange
-            string encodedPledgeId = _fixture.Create<string>();
-
-            this.SetupGetOpportunityViewModelServices(correctlySetupLevels: false);
-
-            var sectors = _sectorReferenceDataItems.Take(4);
-            var jobRoles = _jobRoleReferenceDataItems.Take(5);
-            var levels = _levelReferenceDataItems.Take(6);
-
-            var opportunity = _fixture
-                .Build<OpportunityDto>()
-                .With(x => x.Sectors, sectors.Select(y => y.Id))
-                .With(x => x.JobRoles, jobRoles.Select(y => y.Id))
-                .With(x => x.Levels, levels.Select(y => y.Id))
-                .Create();
-
-            // Assert
-            Assert.ThrowsAsync<DataException>(async () =>
-            {
-                // Act
-                await _orchestrator.GetOpportunitySummaryViewModel(opportunity, encodedPledgeId);
-            });
-        }
-
-        private void SetupGetOpportunityViewModelServices(bool correctlySetupLevels = true)
+        private void SetupGetOpportunityViewModelServices()
         {
             _sectorReferenceDataItems = _fixture
                 .CreateMany<ReferenceDataItem>(9)
@@ -266,25 +243,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                 .Setup(x => x.GetJobRoles())
                 .ReturnsAsync(_jobRoleReferenceDataItems);
 
-            if (correctlySetupLevels)
-            {
-                _levelReferenceDataItems = _fixture
-                    .CreateMany<int>(7)
-                    .Select(y =>
-                    {
-                        return _fixture
-                            .Build<ReferenceDataItem>()
-                            .With(z => z.Id, $"Level{y}")
-                            .Create();
-                    })
-                    .ToList();
-            }
-            else
-            {
-                _levelReferenceDataItems = _fixture
-                    .CreateMany<ReferenceDataItem>(8)
-                    .ToList();
-            }
+            _levelReferenceDataItems = _fixture
+                .CreateMany<ReferenceDataItem>(7)
+                .ToList();
 
             _tagService
                 .Setup(x => x.GetLevels())

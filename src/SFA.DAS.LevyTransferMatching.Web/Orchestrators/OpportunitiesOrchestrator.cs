@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
@@ -16,8 +15,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
     public class OpportunitiesOrchestrator : IOpportunitiesOrchestrator
     {
-        private const string All = "All";
-
         private readonly IDateTimeService _dateTimeService;
         private readonly IOpportunitiesService _opportunitiesService;
         private readonly IEncodingService _encodingService;
@@ -68,14 +65,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             return new IndexViewModel { Opportunities = opportunities };
         }
 
-        public async Task<string> GetUserEncodedAccountId(string userId)
+        public async Task<string> GetUserEncodedAccountId()
         {
-            var accounts = await _userService.GetUserAccounts(userId);
+            var userAccounts = await _userService.GetLoggedInUserAccounts();
 
             // TODO: Below is temporary -
             //       Raised as an issue, and eventually to be replaced with
             //       an accounts selection screen.
-            var firstEncodedAccountId = accounts
+            var firstEncodedAccountId = userAccounts
                 .Select(x => x.EncodedAccountId)
                 .First();
 
@@ -92,30 +89,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             string jobRoleList = opportunityDto.JobRoles.ToReferenceDataDescriptionList(jobRoleReferenceDataItems);
 
             var levelReferenceDataItems = await _tagService.GetLevels();
-
-            bool allContainLevel = levelReferenceDataItems.All(x => x.Id.Contains("Level"));
-            if (allContainLevel)
-            {
-                levelReferenceDataItems.ForEach(x =>
-                {
-                    // Override the description property with the descriptions
-                    // required in this instance.
-                    x.Description = x.Id.Replace("Level", string.Empty);
-                });
-            }
-            else
-            {
-                // Note: Levels are different in how they're displayed here.
-                //       It's been requested that only the number is shown
-                //       here.
-                //       If an additional tag is introduced that doesn't follow
-                //       the "Level2", "Level3", structure, then this will
-                //       break, and something fancier should probably be
-                //       conisdered.
-                throw new DataException("Unexpected level ID format detected in opportunity levels list. See comment above for more information.");
-            }
-
-            string levelList = opportunityDto.Levels.ToReferenceDataDescriptionList(levelReferenceDataItems);
+            string levelList = opportunityDto.Levels.ToReferenceDataDescriptionList(levelReferenceDataItems, descriptionSource: x => x.ShortDescription);
 
             DateTime dateTime = _dateTimeService.UtcNow;
 
@@ -130,15 +104,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
-        public async Task<ApplyViewModel> GetApplyViewModel(string encodedPledgeId)
+        public async Task<ApplyViewModel> GetApplyViewModel(ApplicationRequest request)
         {
-            var opportunityDto = await _opportunitiesService.GetOpportunity((int)_encodingService.Decode(encodedPledgeId, EncodingType.PledgeId));
+            var opportunityDto = await _opportunitiesService.GetOpportunity(request.PledgeId);
 
             return new ApplyViewModel
             {
                 OpportunitySummaryViewModel = new OpportunitySummaryViewModel
                 {
-                    Description = GenerateDescription(opportunityDto, encodedPledgeId),
+                    Description = GenerateDescription(opportunityDto, request.EncodedPledgeId),
                     Amount = opportunityDto.Amount,
                     JobRoleList = string.Join(", ", opportunityDto.JobRoles),
                     LevelList = string.Join(", ", opportunityDto.Levels),

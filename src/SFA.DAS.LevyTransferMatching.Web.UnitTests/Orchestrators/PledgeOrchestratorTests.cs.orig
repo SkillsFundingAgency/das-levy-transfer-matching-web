@@ -26,10 +26,16 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private Mock<IAccountsService> _accountsService;
         private Mock<IPledgeService> _pledgeService;
         private Mock<ITagService> _tagService;
-		private Mock<IEncodingService> _encodingService;
+<<<<<<< HEAD
+        private Mock<IEncodingService> _encodingService;
+        private List<Tag> _sectors;
+        private List<Tag> _levels;
+        private List<Tag> _jobRoles;
+=======
         private List<ReferenceDataItem> _sectors;
         private List<ReferenceDataItem> _levels;
         private List<ReferenceDataItem> _jobRoles;
+>>>>>>> main
         private AccountDto _accountDetail;
         private string _encodedAccountId;
         private Guid _cacheKey;
