@@ -30,9 +30,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             _encodingService = encodingService;
         }
 
-        public IndexViewModel GetIndexViewModel(string encodedAccountId)
+        public InformViewModel GetInformViewModel(string encodedAccountId)
         {
-            return new IndexViewModel
+            return new InformViewModel
             {
                 EncodedAccountId = encodedAccountId,
                 CacheKey = Guid.NewGuid()

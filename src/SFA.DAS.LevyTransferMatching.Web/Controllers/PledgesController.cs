@@ -18,9 +18,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             _orchestrator = orchestrator;
         }
 
-        public IActionResult Index(string encodedAccountId)
+
+
+        [Route("create/inform")]
+        public IActionResult Inform(string encodedAccountId)
         {
-            var viewModel = _orchestrator.GetIndexViewModel(encodedAccountId);
+            var viewModel = _orchestrator.GetInformViewModel(encodedAccountId);
             ViewBag.HideNav = false;
             return View(viewModel);
         }

@@ -65,14 +65,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         [Test]
         public void GetIndexViewModel_EncodedId_Is_Correct()
         {
-            var result = _orchestrator.GetIndexViewModel(_encodedAccountId);
+            var result = _orchestrator.GetInformViewModel(_encodedAccountId);
             Assert.AreEqual(_encodedAccountId, result.EncodedAccountId);
         }
 
         [Test]
         public void GetIndexViewModel_CacheKey_Has_Value()
         {
-            var result = _orchestrator.GetIndexViewModel(_encodedAccountId);
+            var result = _orchestrator.GetInformViewModel(_encodedAccountId);
             Assert.AreNotEqual(Guid.Empty, result.CacheKey);
         }
 

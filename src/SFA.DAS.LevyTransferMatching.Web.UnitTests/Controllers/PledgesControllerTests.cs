@@ -25,15 +25,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         }
 
         [Test]
-        public void GET_Index_Returns_Expected_View_With_Expected_ViewModel()
+        public void GET_Inform_Returns_Expected_View_With_Expected_ViewModel()
         {
             // Arrange
             var encodedAccountId = _fixture.Create<string>();
-            _orchestrator.Setup(x => x.GetIndexViewModel(encodedAccountId)).Returns(() => new IndexViewModel());
+            _orchestrator.Setup(x => x.GetInformViewModel(encodedAccountId)).Returns(() => new InformViewModel());
 
             // Act
-            var viewResult = _pledgesController.Index(encodedAccountId) as ViewResult;
-            var indexViewModel = viewResult?.Model as IndexViewModel;
+            var viewResult = _pledgesController.Inform(encodedAccountId) as ViewResult;
+            var indexViewModel = viewResult?.Model as InformViewModel;
 
             // Assert
             Assert.NotNull(viewResult);
