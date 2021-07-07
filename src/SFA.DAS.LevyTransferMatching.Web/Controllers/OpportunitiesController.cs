@@ -69,5 +69,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         {
             return View(await _opportunitiesOrchestrator.GetApplyViewModel(request));
         }
+
+        [HideAccountNavigation(false)]
+        [Authorize(Policy = PolicyNames.ManageAccount)]
+        [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/apply/contact-details")]
+        public async Task<IActionResult> ContactDetails()
+        {
+            var viewModel = await _opportunitiesOrchestrator.GetContactDetailsViewModel();
+
+            return View(viewModel);
+        }
     }
 }

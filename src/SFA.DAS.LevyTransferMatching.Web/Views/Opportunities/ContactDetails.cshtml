@@ -1,0 +1,78 @@
+﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Opportunities.ContactDetailsViewModel
+
+@{
+    ViewData["Title"] = "Add Contact Details";
+}
+
+<a href="@Url.Action("index")" class="govuk-back-link">Back</a>
+
+<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
+    <partial name="_ValidationSummary" />
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <span class="govuk-caption-m">Find a business to fund training for your apprentices</span>
+            <h1 class="govuk-heading-xl">Add contact details</h1>
+
+            <p>Add your contact details so they can be shared with <strong class="pledge-name-answer main-title">####</strong>.</p>
+
+            <p>They may contact you with follow-up questions about your application.</p>
+
+            <form method="post" action="1-application-core#pledge-section-four" id="">
+
+                <div class="govuk-form-group">
+                    <label class="govuk-label" for="pledge-application-firstname">First name</label>
+                    <input class="govuk-input govuk-input--width-20" id="pledge-application-firstname" name="pledge-application-firstname" type="text" value="">
+                </div>
+
+                <div class="govuk-form-group">
+                    <label class="govuk-label" for="pledge-application-lastname">Last name</label>
+                    <input class="govuk-input govuk-input--width-20" id="pledge-application-lastname" name="pledge-application-lastname" type="text" value="">
+                </div>
+
+                <div class="application-emails">
+                    <div id="pledge-application-emails" data-application-email-count="">
+
+                        <div class="govuk-form-group first-of-type">
+                            <label class="govuk-label" for="pledge-application-email[url1]">Email address</label>
+                            <input class="govuk-input govuk-input--width-20" id="pledge-application-email[url1]" name="pledge-application-email[url1]" type="email" spellcheck="false" value="">
+                        </div>
+
+
+                    </div>
+                    <p class="govuk-body govuk-!-margin-bottom-6">
+                        <a class="govuk-link govuk-link--no-visited-state add-emails" href="#" id="addAnotherApplicationEmail">Add additional contact</a>
+                    </p>
+                </div>
+
+                <div class="govuk-form-group">
+                    <label class="govuk-label" for="pledge-application-website">Business website (if you have one)</label>
+                    <input class="govuk-input govuk-input--width-20" id="pledge-application-website" name="pledge-application-website" type="text" value="">
+                </div>
+
+                <p><br></p>
+
+                <button class="govuk-button" data-module="govuk-button" id="application-contact-details">Continue</button>
+
+                <a href="javascript:history.back()" class="govuk-link govuk-link--no-visited-state govuk-link-secondary govuk-back-link" id="">Back</a>
+
+            </form>
+
+        </div>
+
+        <div class="govuk-grid-column-one-third">
+            <section class="employer-details side-panel">
+                <p class="govuk-heading-s"><span class="pledge-name-answer">####</span> wants to fund apprenticeship training in:</p>
+                <p class="details">
+                    Location: <strong class="pledge-location-answer">####</strong><br>
+                    Sector: <strong class="pledge-sector-answer">####</strong><br>
+                    Category of training: <strong class="pledge-training-answer">####</strong><br>
+                    Level: <strong class="pledge-level-answer">####</strong>
+                </p>
+                <div class="total">
+                    <p class="govuk-heading-s">Total funding available:<br>up to £<span class="pledge-value-answer value-format">####</span> in 2021/22</p>
+                </div>
+            </section>
+        </div>
+    </div>
+</main>
