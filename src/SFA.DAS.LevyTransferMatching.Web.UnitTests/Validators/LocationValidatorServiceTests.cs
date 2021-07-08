@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators
 {
     [TestFixture]
-    public class ValidatorServiceTests
+    public class LocationValidatorServiceTests
     {
         private ILocationValidatorService validatorService;
         private Mock<ILocationService> locationService;
