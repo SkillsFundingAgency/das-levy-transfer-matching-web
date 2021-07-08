@@ -40,7 +40,7 @@
                     @foreach (var opportunity in Model.Opportunities)
                     {
                         <tr class="govuk-table__row">
-                            <td class="govuk-table__cell">@opportunity.EmployerName (@opportunity.ReferenceNumber)</td>
+                            <td class="govuk-table__cell"><a href="@Url.Action("Detail", new { encodedPledgeId = opportunity.ReferenceNumber })">@opportunity.EmployerName (@opportunity.ReferenceNumber)</a></td>
                         </tr>
                     }
                     </tbody>
