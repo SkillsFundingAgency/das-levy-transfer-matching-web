@@ -11,7 +11,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Pledges
         {
             RuleForEach(x => x.Locations)
                 .Must((model, location) => IsLocationUnique(model.Locations, location))
-                .WithMessage("Each location must be unique");
+                .WithMessage("Duplicates of the same location are not allowed");
         }
 
         private bool IsLocationUnique(List<string> locationsList, string locationName)
