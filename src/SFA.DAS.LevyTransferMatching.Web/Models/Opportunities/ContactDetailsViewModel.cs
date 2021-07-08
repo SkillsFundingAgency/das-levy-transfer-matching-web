@@ -1,12 +1,6 @@
-﻿using System.Collections.Generic;
-
-namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
+﻿namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
 {
-    public class ContactDetailsViewModel
+    public class ContactDetailsViewModel : ContactDetailsPostRequest
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string[] EmailAddresses { get; set; }
-        public string BusinessWebsite { get; set; }
     }
 }
