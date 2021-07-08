@@ -107,18 +107,19 @@ if (locationInputs.length > 0) {
 // Show/Hide Extra Location Fields
 
 function ExtraFieldRows(container) {
-
   this.container = container
   this.firstField = this.container.querySelector('input[type=text]')
   this.fieldset = this.container.querySelector('.app-extra-fields__fieldset')
   this.extraFieldRows = this.fieldset.querySelectorAll('.app-extra-fields__form-group')
   this.allLocations = this.container.querySelector('.app-extra-fields__all-locations')
   this.hiddenClass = 'app-extra-field__form-group--hidden'
+  this.addButtonId = 'app-extra-fields-add-link'
+  this.addButtonText = this.container.dataset.addButtonText || 'Add another'
 
   this.addLink()
-  this.allLocationsCheckboxEvent()
+  this.allCheckboxEvent()
 
-  this.firstField.addEventListener('change', this.clearAllLocationsCheckbox.bind(this))
+  this.firstField.addEventListener('change', this.clearAllCheckbox.bind(this))
 
   for (var f = 0; f < this.extraFieldRows.length; f++) {
     var extraFieldRow = this.extraFieldRows[f]
@@ -132,24 +133,33 @@ function ExtraFieldRows(container) {
 
 ExtraFieldRows.prototype.addLink = function () {
   var addRowLink = document.createElement('a');
-  addRowLink.innerHTML = 'Add another location'
+  addRowLink.innerHTML = this.addButtonText
   addRowLink.className = 'govuk-link govuk-link--no-visited-state app-extra-field__form-group-link--add'
   addRowLink.href = '#'
+  addRowLink.id = this.addButtonId
   addRowLink.addEventListener('click', this.showFirstAvailableRow.bind(this))
   this.fieldset.parentNode.insertBefore(addRowLink, this.fieldset.nextSibling);
 }
 
-ExtraFieldRows.prototype.showFirstAvailableRow = function () {
+ExtraFieldRows.prototype.showFirstAvailableRow = function (e) {
+  var hiddenRowCount = 0
   for (var f = 0; f < this.extraFieldRows.length; f++) {
     var extraFieldRow = this.extraFieldRows[f]
     if (extraFieldRow.classList.contains(this.hiddenClass)) {
-      this.showRow(extraFieldRow)
-      break;
+      if (hiddenRowCount === 0) {
+        var rowToShow = extraFieldRow
+      }
+      hiddenRowCount++
     }
   }
+  if (hiddenRowCount === 1) {
+    document.getElementById(this.addButtonId).classList.add(this.hiddenClass)
+  }
+  e.preventDefault()
+  this.showRow(rowToShow)
 }
 
-ExtraFieldRows.prototype.allLocationsCheckboxEvent = function () {
+ExtraFieldRows.prototype.allCheckboxEvent = function () {
   var that = this
   if (this.allLocations) {
     this.allLocations.addEventListener('click', function () {
@@ -165,7 +175,7 @@ ExtraFieldRows.prototype.allLocationsCheckboxEvent = function () {
   }
 }
 
-ExtraFieldRows.prototype.clearAllLocationsCheckbox = function () {
+ExtraFieldRows.prototype.clearAllCheckbox = function () {
   this.allLocations.checked = false
 }
 
@@ -175,18 +185,28 @@ ExtraFieldRows.prototype.addRemoveLink = function (row) {
   removeLink.innerHTML = 'Remove'
   removeLink.className = 'govuk-link govuk-link--no-visited-state app-extra-field__form-group-link--remove'
   removeLink.href = "#"
-  removeLink.addEventListener('click', function(){ that.hideRow(row); })
+  removeLink.addEventListener('click',
+    function(e) {
+      e.preventDefault()
+      document.getElementById(that.addButtonId).classList.remove(that.hiddenClass)
+      that.hideRow(row);
+  })
   row.append(removeLink)
 }
 
-ExtraFieldRows.prototype.hideRow = function (row) {
+ExtraFieldRows.prototype.hideRow = function (row, e) {
   var textInput = row.querySelector('input[type=text]')
   textInput.value = ''
   row.classList.add(this.hiddenClass)
 }
 
 ExtraFieldRows.prototype.showRow = function (row) {
-  this.clearAllLocationsCheckbox()
+  this.clearAllCheckbox()
+  var errorMessage = row.querySelector('.govuk-error-message')
+  if (errorMessage) {
+    errorMessage.remove()
+  }
+  row.classList.remove('govuk-form-group--error')
   row.classList.remove(this.hiddenClass)
 }
 
