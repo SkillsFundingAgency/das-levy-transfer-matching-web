@@ -22,6 +22,7 @@
                     <input class="govuk-input app-location-autocomplete" type="text" asp-for="Locations[0]" das-highlight-error-for="Locations[0]" error-class="govuk-input--error" />
                 </div>
                 <fieldset class="govuk-fieldset app-extra-fields__fieldset">
+                    <legend class="govuk-visually-hidden">Additional locations</legend>
                     @for (int i = 1; i < 10; i++)
                     {
                         <div class="govuk-form-group app-extra-fields__form-group" das-highlight-error-for="Locations[i]" error-class="govuk-form-group--error">
