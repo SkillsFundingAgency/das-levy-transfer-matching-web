@@ -10,7 +10,7 @@
         <div class="govuk-grid-column-two-thirds">
             <span class="govuk-caption-m">Find a business to transfer your levy to</span>
             <h1 class="govuk-heading-xl">Add the locations you'd like to fund</h1>
-            <form method="post" data-extra-field-rows="true" autocomplete="off">
+            <form method="post" data-extra-field-rows="true" autocomplete="off" data-add-button-text="Add another location">
                 <div class="govuk-form-group" das-highlight-error-for="Locations[0]" error-class="govuk-form-group--error">
                     <label class="govuk-label" asp-for="Locations[0]">
                         Start typing to find the city, town, region or local authority you'd like to pledge money to.
@@ -19,7 +19,7 @@
                         For example, Manchester, West Midlands, Leeds City Council
                     </div>
                     <span class="govuk-error-message">@Html.ValidationMessageFor(x => x.Locations[0])</span>
-                    <input class="govuk-input app-location-autocomplete" type="text" asp-for="Locations[0]" das-highlight-error-for="Locations[0]" error-class="govuk-textarea--error" />
+                    <input class="govuk-input app-location-autocomplete" type="text" asp-for="Locations[0]" das-highlight-error-for="Locations[0]" error-class="govuk-input--error" />
                 </div>
                 <fieldset class="govuk-fieldset app-extra-fields__fieldset">
                     @for (int i = 1; i < 10; i++)
@@ -29,7 +29,7 @@
                                 Additional city, town or local authority
                             </label>
                             <span class="govuk-error-message">@Html.ValidationMessageFor(x => x.Locations[i])</span>
-                            <input class="govuk-input app-location-autocomplete" type="text" asp-for="Locations[i]" das-highlight-error-for="Locations[i]" error-class="govuk-textarea--error" />
+                            <input class="govuk-input app-location-autocomplete" type="text" asp-for="Locations[i]" das-highlight-error-for="Locations[i]" error-class="govuk-input--error" />
                         </div>
                     }
                 </fieldset>
