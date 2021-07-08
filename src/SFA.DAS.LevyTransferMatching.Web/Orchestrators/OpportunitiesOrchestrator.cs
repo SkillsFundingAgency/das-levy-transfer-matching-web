@@ -137,7 +137,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             return new ContactDetailsViewModel()
             {
-                EmailAddresses = Enumerable.Range(0, 5).Select(x => (string)null).ToArray(),
+                AdditionalEmailAddresses = Enumerable.Range(0, 4).Select(x => (string)null).ToArray(),
             };
         }
 

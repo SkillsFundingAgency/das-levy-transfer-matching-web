@@ -1,7 +1,5 @@
 ﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Opportunities.ContactDetailsViewModel
 
-@using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
-
 @{
     ViewData["Title"] = "Add Contact Details";
 }
@@ -23,35 +21,36 @@
             <form method="post">
 
                 <div class="govuk-form-group" das-highlight-error-for="FirstName" error-class="govuk-form-group--error">
-                    <label class="govuk-label" for="pledge-application-firstname">First name</label>
+                    <label class="govuk-label" for="FirstName">First name</label>
                     <span class="govuk-error-message">@Html.ValidationMessageFor(x => x.FirstName)</span>
                     <input class="govuk-input govuk-input--width-20" id="FirstName" name="FirstName" type="text" asp-for="FirstName" das-highlight-error-for="FirstName" error-class="govuk-textarea--error">
                 </div>
 
                 <div class="govuk-form-group" das-highlight-error-for="LastName" error-class="govuk-form-group--error">
-                    <label class="govuk-label" for="pledge-application-lastname">Last name</label>
+                    <label class="govuk-label" for="LastName">Last name</label>
                     <span class="govuk-error-message">@Html.ValidationMessageFor(x => x.LastName)</span>
                     <input class="govuk-input govuk-input--width-20" id="LastName" name="LastName" type="text" asp-for="LastName" das-highlight-error-for="LastName" error-class="govuk-textarea--error">
                 </div>
-                <!--
+
                 <div class="application-emails">
                     <div id="pledge-application-emails">
-                        <div class="govuk-form-group first-of-type" das-highlight-error-for="EmailAddresses[0]" error-class="govuk-form-group--error">
-                            <label class="govuk-label" for="pledge-application-email-0">Email address</label>
-                            <span class="govuk-error-message">@Html.ValidationMessageFor(x => x.EmailAddresses[0])</span>
-                            <input class="govuk-input govuk-input--width-20" id="pledge-application-email-0" name="pledge-application-email-0" type="email" spellcheck="false" asp-for="EmailAddresses[0]" das-highlight-error-for="EmailAddresses[0]" error-class="govuk-textarea--error">
+                        <div class="govuk-form-group first-of-type" das-highlight-error-for="EmailAddress" error-class="govuk-form-group--error">
+                            <label class="govuk-label" for="EmailAddress">Email address</label>
+                            <span class="govuk-error-message">@Html.ValidationMessageFor(x => x.EmailAddress)</span>
+                            <input class="govuk-input govuk-input--width-20" id="EmailAddress" name="EmailAddress" type="email" spellcheck="false" asp-for="EmailAddress" das-highlight-error-for="EmailAddress" error-class="govuk-textarea--error">
                         </div>
 
-                        @for (int i = 1; i < Model.EmailAddresses.Length; i++)
+                        @for (int i = 0; i < Model.AdditionalEmailAddresses.Length; i++)
                         {
-                            <div class="govuk-form-group additional-email" das-highlight-error-for="EmailAddresses[i]" error-class="govuk-form-group--error">
-                                <label class="govuk-label" for="@($"pledge-application-email-{i}")">Additional email address</label>
-                                <input class="govuk-input govuk-input--width-20" id="@($"pledge-application-email-{i}")" name="@($"pledge-application-email-{i}")" type="email" spellcheck="false" asp-for="EmailAddresses[i]" das-highlight-error-for="EmailAddresses[i]" error-class="govuk-textarea--error">
+                            <div class="govuk-form-group additional-email" das-highlight-error-for="AdditionalEmailAddresses[i]" error-class="govuk-form-group--error" id="@($"AdditionalEmailAddresses_{i}_")">
+                                <label class="govuk-label" for="@($"AdditionalEmailAddresses[{i}]")">Additional email address</label>
+                                <span class="govuk-error-message">@Html.ValidationMessageFor(x => x.AdditionalEmailAddresses[i])</span>
+                                <input class="govuk-input govuk-input--width-20" id="@($"AdditionalEmailAddresses[{i}]")" name="@($"AdditionalEmailAddresses[{i}]")" type="email" spellcheck="false" asp-for="AdditionalEmailAddresses[i]" das-highlight-error-for="AdditionalEmailAddresses[i]" error-class="govuk-textarea--error">
                             </div>
                         }
                     </div>
                 </div>
-                -->
+
                 <div class="govuk-form-group">
                     <label class="govuk-label" for="pledge-application-website">Business website (if you have one)</label>
                     <input class="govuk-input govuk-input--width-20" id="pledge-application-website" name="pledge-application-website" type="text" asp-for="BusinessWebsite" das-highlight-error-for="BusinessWebsite" error-class="govuk-textarea--error">
