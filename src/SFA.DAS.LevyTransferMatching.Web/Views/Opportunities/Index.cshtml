@@ -40,7 +40,7 @@
                                         <h2 class="govuk-heading-m das-search-results__heading govuk-!-margin-bottom-0">
                                             <a href="/opportunities/@opportunity.ReferenceNumber" class="das-search-results__link">@opportunity.EmployerName (@opportunity.ReferenceNumber)</a>
                                         </h2>
-                                        <p class="govuk-hint">up to @($"{opportunity.Amount:c0}") available in @Model.TaxYear</p>
+                                        <p class="govuk-hint">up to @opportunity.DisplayAmount available in @Model.TaxYear</p>
                                         <dl class="das-definition-list das-definition-list--inline">
                                             <dt class="das-definition-list__title">Locations</dt>
                                             <dd class="das-definition-list__definition govuk-hint">@opportunity.DisplayLocations</dd>

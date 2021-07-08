@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
 {
@@ -11,6 +12,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
         public List<string> Sectors { get; set; }
         public List<string> JobRoles { get; set; }
         public List<string> Levels { get; set; }
+        public string DisplayAmount => Amount.ToString("C0", new CultureInfo("en-GB"));
         public string DisplayLocations => (Locations != null && Locations.Any()) ? string.Join(", ", Locations) : "All";
         public string DisplaySectors => (Sectors != null && Sectors.Any()) ? string.Join(", ", Sectors) : "All";
         public string DisplayJobRoles => (JobRoles != null && JobRoles.Any()) ? string.Join(", ", JobRoles) : "All";
