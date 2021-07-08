@@ -18,7 +18,7 @@ using Microsoft.AspNetCore.Authorization;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.EmployerAccountsService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.TagService;
-using SFA.DAS.LevyTransferMatching.Web.Validators;
+using SFA.DAS.LevyTransferMatching.Web.Validators.Location;
 
 namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
 {
@@ -34,7 +34,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
             services.AddSingleton<IAuthorizationHandler, ManageAccountAuthorizationHandler>();
 
             services.AddTransient<IEmployerAccountsService, EmployerAccountsService>();
-            services.AddTransient<IValidatorService, ValidatorService>();
+            services.AddTransient<ILocationValidatorService, LocationValidatorService>();
             services.AddTransient<ICacheStorageService, CacheStorageService>();
             services.AddTransient<IPledgeOrchestrator, PledgeOrchestrator>();
             services.AddTransient<IOpportunitiesOrchestrator, OpportunitiesOrchestrator>();

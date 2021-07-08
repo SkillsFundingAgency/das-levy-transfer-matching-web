@@ -4,18 +4,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.LevyTransferMatching.Web.Validators
+namespace SFA.DAS.LevyTransferMatching.Web.Validators.Location
 {
-    public class ValidatorService : IValidatorService
+    public class LocationValidatorService : ILocationValidatorService
     {
         private readonly ILocationService _locationService;
 
-        public ValidatorService(ILocationService locationService)
+        public LocationValidatorService(ILocationService locationService)
         {
             _locationService = locationService;
         }
 
-        public async Task<Dictionary<int,string>> ValidateLocations(LocationPostRequest request)
+        public async Task<Dictionary<int, string>> ValidateLocations(LocationPostRequest request)
         {
             var errors = new Dictionary<int, string>();
 

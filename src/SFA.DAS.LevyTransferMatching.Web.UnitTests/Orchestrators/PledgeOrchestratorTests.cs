@@ -15,7 +15,7 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.LocationService;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
-using SFA.DAS.LevyTransferMatching.Web.Validators;
+using SFA.DAS.LevyTransferMatching.Web.Validators.Location;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 {
@@ -29,7 +29,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private Mock<IPledgeService> _pledgeService;
         private Mock<ITagService> _tagService;
 		private Mock<IEncodingService> _encodingService;
-        private Mock<IValidatorService> _validatorService;
+        private Mock<ILocationValidatorService> _validatorService;
         private List<ReferenceDataItem> _sectors;
         private List<ReferenceDataItem> _levels;
         private List<ReferenceDataItem> _jobRoles;
@@ -51,7 +51,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _accountsService = new Mock<IAccountsService>();
             _pledgeService = new Mock<IPledgeService>();
             _encodingService = new Mock<IEncodingService>();
-            _validatorService = new Mock<IValidatorService>();
+            _validatorService = new Mock<ILocationValidatorService>();
 
             _sectors = _fixture.Create<List<ReferenceDataItem>>();
             _levels = _fixture.Create<List<ReferenceDataItem>>();

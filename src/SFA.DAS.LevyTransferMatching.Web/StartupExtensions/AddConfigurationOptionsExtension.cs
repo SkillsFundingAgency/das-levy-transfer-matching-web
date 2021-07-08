@@ -25,9 +25,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
             
             services.Configure<CosmosDbConfiguration>(configuration.GetSection("CosmosDb"));
             services.AddSingleton(cfg => cfg.GetService<IOptions<CosmosDbConfiguration>>().Value);
-
-            services.Configure<FindApprenticeshipTrainingApiConfiguration>(configuration.GetSection("FindApprenticeshipTrainingApi"));
-            services.AddSingleton(cfg => cfg.GetService<IOptions<FindApprenticeshipTrainingApiConfiguration>>().Value);
         }
     }
 }
