@@ -11,7 +11,7 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.TagService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.LocationService;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
-using SFA.DAS.LevyTransferMatching.Web.Validators;
+using SFA.DAS.LevyTransferMatching.Web.Validators.Location;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
@@ -23,9 +23,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         private readonly ITagService _tagService;
         private readonly IEncodingService _encodingService;
         private readonly ILocationService _locationService;
-        private readonly IValidatorService _validatorService;
+        private readonly ILocationValidatorService _validatorService;
 
-        public PledgeOrchestrator(ICacheStorageService cacheStorageService, IAccountsService accountsService, IPledgeService pledgeService, ITagService tagService, IEncodingService encodingService, ILocationService locationService, IValidatorService validatorService)
+        public PledgeOrchestrator(ICacheStorageService cacheStorageService, IAccountsService accountsService, IPledgeService pledgeService, ITagService tagService, IEncodingService encodingService, ILocationService locationService, ILocationValidatorService validatorService)
         {
             _cacheStorageService = cacheStorageService;
             _accountsService = accountsService;

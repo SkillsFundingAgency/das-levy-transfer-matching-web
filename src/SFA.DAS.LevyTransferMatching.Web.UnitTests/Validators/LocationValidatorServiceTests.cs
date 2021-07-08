@@ -4,6 +4,7 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.LocationService;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Validators;
+using SFA.DAS.LevyTransferMatching.Web.Validators.Location;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,9 +14,9 @@ using System.Threading.Tasks;
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators
 {
     [TestFixture]
-    public class ValidatorServiceTests
+    public class LocationValidatorServiceTests
     {
-        private IValidatorService validatorService;
+        private ILocationValidatorService validatorService;
         private Mock<ILocationService> locationService;
 
         [SetUp]
@@ -43,7 +44,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators
                 locationService.Setup(x => x.GetLocationInformation(location)).Returns(Task.FromResult(new LocationInformationDto { Name = location }));
             };
 
-            validatorService = new ValidatorService(locationService.Object);
+            validatorService = new LocationValidatorService(locationService.Object);
 
             //Act
             var errorsResult = await validatorService.ValidateLocations(locationPostRequest);
@@ -71,7 +72,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators
                 locationService.Setup(x => x.GetLocationInformation(location)).Returns(Task.FromResult(new LocationInformationDto { Name = location }));
             };
 
-            validatorService = new ValidatorService(locationService.Object);
+            validatorService = new LocationValidatorService(locationService.Object);
 
             //Act
             var errorsResult = await validatorService.ValidateLocations(locationPostRequest);
@@ -96,7 +97,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators
             locationService.Setup(x => x.GetLocationInformation("Manchester")).Returns(Task.FromResult(new LocationInformationDto { Name = "Manchester" }));
             locationService.Setup(x => x.GetLocationInformation("IncorrectLocation")).Returns(Task.FromResult(new LocationInformationDto { Name = null }));
 
-            validatorService = new ValidatorService(locationService.Object);
+            validatorService = new LocationValidatorService(locationService.Object);
 
             //Act
             var errorsResult = await validatorService.ValidateLocations(locationPostRequest);

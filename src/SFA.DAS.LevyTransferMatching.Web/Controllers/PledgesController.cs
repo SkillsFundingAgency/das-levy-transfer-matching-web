@@ -113,8 +113,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Route("create/location")]
         public async Task<IActionResult> Location(LocationRequest request)
         {
-            ViewBag.HideNav = false;
-
             var viewModel = await _orchestrator.GetLocationViewModel(request);
             return View(viewModel);
         }
@@ -123,8 +121,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Route("create/location")]
         public async Task<IActionResult> Location(LocationPostRequest request)
         {
-            ViewBag.HideNav = false;
-
             Dictionary<int, string> errors = await _orchestrator.ValidateLocations(request);
             if (errors.Any())
             {
