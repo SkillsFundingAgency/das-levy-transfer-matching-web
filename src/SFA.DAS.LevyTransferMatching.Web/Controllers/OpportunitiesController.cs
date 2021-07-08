@@ -75,7 +75,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/apply/contact-details")]
         public async Task<IActionResult> ContactDetails(ContactDetailsRequest contactDetailsRequest)
         {
-            var viewModel = await _opportunitiesOrchestrator.GetContactDetailsViewModel();
+            var viewModel = await _opportunitiesOrchestrator.GetContactDetailsViewModel(contactDetailsRequest.PledgeId);
 
             return View(viewModel);
         }

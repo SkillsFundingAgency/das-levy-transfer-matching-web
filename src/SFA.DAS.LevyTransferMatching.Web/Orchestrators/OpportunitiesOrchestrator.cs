@@ -133,11 +133,24 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
-        public async Task<ContactDetailsViewModel> GetContactDetailsViewModel()
+        public async Task<ContactDetailsViewModel> GetContactDetailsViewModel(int pledgeId)
         {
+            var opportunityDto = await _opportunitiesService.GetOpportunity(pledgeId);
+
+            if (opportunityDto == null)
+            {
+                return null;
+            }
+
+            var encodedPledgeId = _encodingService.Encode(opportunityDto.Id, EncodingType.PledgeId);
+
+            var opportunitySummaryViewModel = await GetOpportunitySummaryViewModel(opportunityDto, encodedPledgeId);
+
             return new ContactDetailsViewModel()
             {
                 AdditionalEmailAddresses = Enumerable.Range(0, 4).Select(x => (string)null).ToArray(),
+                DasAccountName = opportunityDto.DasAccountName,
+                OpportunitySummaryViewModel = opportunitySummaryViewModel,
             };
         }
 

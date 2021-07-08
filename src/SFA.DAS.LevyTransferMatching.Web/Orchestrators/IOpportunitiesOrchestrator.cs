@@ -9,6 +9,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         Task<DetailViewModel> GetDetailViewModel(int pledgeId);
         Task<string> GetUserEncodedAccountId();
         Task<ApplyViewModel> GetApplyViewModel(ApplicationRequest request);
-        Task<ContactDetailsViewModel> GetContactDetailsViewModel();
+        Task<ContactDetailsViewModel> GetContactDetailsViewModel(int pledgeId);
     }
 }

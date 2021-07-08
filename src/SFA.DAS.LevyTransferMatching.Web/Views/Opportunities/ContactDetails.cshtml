@@ -4,7 +4,7 @@
     ViewData["Title"] = "Add Contact Details";
 }
 
-<a href="@Url.Action("apply", new { encodedAccountId = Model.EncodedAccountId, encodedPledgeId = Model.EncodedPledgeId, cacheKey = Model.CacheKey })" class="govuk-back-link">Back</a>
+<a href="@Url.Action("Apply", "Opportunities", new { encodedAccountId = Model.EncodedAccountId, EncodedPledgeId = Model.EncodedPledgeId, cacheKey = Model.CacheKey })" class="govuk-back-link">Back</a>
 
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
     <partial name="_ValidationSummary" />
@@ -14,7 +14,7 @@
             <span class="govuk-caption-m">Find a business to fund training for your apprentices</span>
             <h1 class="govuk-heading-xl">Add contact details</h1>
 
-            <p>Add your contact details so they can be shared with <strong class="pledge-name-answer main-title">####</strong>.</p>
+            <p>Add your contact details so they can be shared with <strong class="pledge-name-answer main-title">@Model.DasAccountName</strong>.</p>
 
             <p>They may contact you with follow-up questions about your application.</p>
 
@@ -60,25 +60,14 @@
 
                 <button class="govuk-button" data-module="govuk-button" id="application-contact-details">Continue</button>
 
-                <a href="@Url.Action("apply", new { encodedAccountId = Model.EncodedAccountId, encodedPledgeId = Model.EncodedPledgeId, cacheKey = Model.CacheKey })" class="govuk-link govuk-link--no-visited-state govuk-link-secondary govuk-back-link">Back</a>
+                <a href="@Url.Action("Apply", "Opportunities", new { encodedAccountId = Model.EncodedAccountId, EncodedPledgeId = Model.EncodedPledgeId, cacheKey = Model.CacheKey })" class="govuk-link govuk-link--no-visited-state govuk-link-secondary govuk-back-link">Back</a>
 
             </form>
 
         </div>
 
         <div class="govuk-grid-column-one-third">
-            <section class="employer-details side-panel">
-                <p class="govuk-heading-s"><span class="pledge-name-answer">####</span> wants to fund apprenticeship training in:</p>
-                <p class="details">
-                    Location: <strong class="pledge-location-answer">####</strong><br>
-                    Sector: <strong class="pledge-sector-answer">####</strong><br>
-                    Category of training: <strong class="pledge-training-answer">####</strong><br>
-                    Level: <strong class="pledge-level-answer">####</strong>
-                </p>
-                <div class="total">
-                    <p class="govuk-heading-s">Total funding available:<br>up to £<span class="pledge-value-answer value-format">####</span> in 2021/22</p>
-                </div>
-            </section>
+            <partial name="_OpportunitySummary" for="OpportunitySummaryViewModel" />
         </div>
     </div>
 </main>
