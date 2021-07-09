@@ -36,22 +36,30 @@
                             <ol class="das-search-results__list">
                                 @foreach (var opportunity in Model.Opportunities)
                                 {
-                                    <li class="das-search-results__list-item">
-                                        <h2 class="govuk-heading-m das-search-results__heading govuk-!-margin-bottom-0">
-                                            <a href="/opportunities/@opportunity.ReferenceNumber" class="das-search-results__link">@opportunity.EmployerName (@opportunity.ReferenceNumber)</a>
-                                        </h2>
-                                        <p class="govuk-hint">up to @opportunity.DisplayAmount available in @Model.TaxYear</p>
-                                        <dl class="das-definition-list das-definition-list--inline">
-                                            <dt class="das-definition-list__title">Locations</dt>
-                                            <dd class="das-definition-list__definition govuk-hint">@opportunity.DisplayLocations</dd>
-                                            <dt class="das-definition-list__title">Sectors</dt>
-                                            <dd class="das-definition-list__definition govuk-hint">@opportunity.DisplaySectors</dd>
-                                            <dt class="das-definition-list__title">Type of job role</dt>
-                                            <dd class="das-definition-list__definition govuk-hint">@opportunity.DisplayJobRoles</dd>
-                                            <dt class="das-definition-list__title">Levels</dt>
-                                            <dd class="das-definition-list__definition govuk-hint">@opportunity.DisplayLevels</dd>
-                                        </dl>
-                                    </li>
+                                <li class="das-search-results__list-item">
+                                    <h2 class="govuk-heading-m das-search-results__heading govuk-!-margin-bottom-0">
+                                        <a href="/opportunities/@opportunity.ReferenceNumber" class="das-search-results__link">@opportunity.EmployerName (@opportunity.ReferenceNumber)</a>
+                                    </h2>
+                                    <p class="govuk-hint">up to @opportunity.DisplayAmount available in @Model.TaxYear</p>
+                                    <ul class="govuk-list govuk-!-margin-bottom-0">
+                                        <li>
+                                            <strong>Locations: </strong>
+                                            <span class="das-!-color-dark-grey">@opportunity.DisplayLocations</span>
+                                        </li>
+                                        <li>
+                                            <strong>Sectors: </strong>
+                                            <span class="das-!-color-dark-grey">@opportunity.DisplaySectors</span>
+                                        </li>
+                                        <li>
+                                            <strong>Type of role: </strong>
+                                            <span class="das-!-color-dark-grey">@opportunity.DisplayJobRoles</span>
+                                        </li>
+                                        <li>
+                                            <strong>Levels: </strong>
+                                            <span class="das-!-color-dark-grey">@opportunity.DisplayLevels</span>
+                                        </li>
+                                    </ul>
+                                </li>
                                 }
                             </ol>
                         </div>
