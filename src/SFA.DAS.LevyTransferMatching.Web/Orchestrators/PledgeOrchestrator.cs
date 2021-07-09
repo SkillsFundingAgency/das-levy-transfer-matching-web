@@ -42,11 +42,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         public async Task<CreateViewModel> GetCreateViewModel(CreateRequest request)
         {
             var cacheItemTask = RetrievePledgeCacheItem(request.CacheKey);
-            var levelsTask = _tagService.GetLevels();
-            var sectorsTask = _tagService.GetSectors();
-            var jobRolesTask = _tagService.GetJobRoles();
+            var dataTask = _pledgeService.GetCreate(request.AccountId);
+            await Task.WhenAll(cacheItemTask, dataTask);
 
-            await Task.WhenAll(cacheItemTask, levelsTask, sectorsTask, jobRolesTask);
             var cacheItem = cacheItemTask.Result;
 
             return new CreateViewModel
@@ -58,9 +56,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 Sectors = cacheItem.Sectors,
                 JobRoles = cacheItem.JobRoles,
                 Levels = cacheItem.Levels,
-                LevelOptions = levelsTask.Result,
-                SectorOptions = sectorsTask.Result,
-                JobRoleOptions = jobRolesTask.Result
+                LevelOptions = dataTask.Result.Levels.ToList(),
+                SectorOptions = dataTask.Result.Sectors.ToList(),
+                JobRoleOptions = dataTask.Result.JobRoles.ToList()
             };
         }
 
