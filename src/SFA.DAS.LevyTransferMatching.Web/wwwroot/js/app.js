@@ -111,19 +111,21 @@ function ExtraFieldRows(container) {
   this.firstField = this.container.querySelector('input[type=text]')
   this.fieldset = this.container.querySelector('.app-extra-fields__fieldset')
   this.extraFieldRows = this.fieldset.querySelectorAll('.app-extra-fields__form-group')
-  this.allLocations = this.container.querySelector('.app-extra-fields__all-locations')
+  this.allCheckbox = this.container.querySelector('.app-extra-fields__all-checkbox')
   this.hiddenClass = 'app-extra-field__form-group--hidden'
   this.addButtonId = 'app-extra-fields-add-link'
   this.addButtonText = this.container.dataset.addButtonText || 'Add another'
 
   this.addLink()
-  this.allCheckboxEvent()
+  if (this.allCheckbox) {
+    this.allCheckboxEvent()
+  }
 
   this.firstField.addEventListener('change', this.clearAllCheckbox.bind(this))
 
   for (var f = 0; f < this.extraFieldRows.length; f++) {
     var extraFieldRow = this.extraFieldRows[f]
-    var textInput = extraFieldRow.querySelector('input[type=text]')
+    var textInput = extraFieldRow.querySelector('input')
     this.addRemoveLink(extraFieldRow)
     if (textInput.value === '') {
       this.hideRow(extraFieldRow)
@@ -142,6 +144,7 @@ ExtraFieldRows.prototype.addLink = function () {
 }
 
 ExtraFieldRows.prototype.showFirstAvailableRow = function (e) {
+  e.preventDefault();
   var hiddenRowCount = 0
   for (var f = 0; f < this.extraFieldRows.length; f++) {
     var extraFieldRow = this.extraFieldRows[f]
@@ -155,16 +158,15 @@ ExtraFieldRows.prototype.showFirstAvailableRow = function (e) {
   if (hiddenRowCount === 1) {
     document.getElementById(this.addButtonId).classList.add(this.hiddenClass)
   }
-  e.preventDefault()
   this.showRow(rowToShow)
 }
 
 ExtraFieldRows.prototype.allCheckboxEvent = function () {
   var that = this
-  if (this.allLocations) {
-    this.allLocations.addEventListener('click', function () {
+  if (this.allCheckbox) {
+    this.allCheckbox.addEventListener('click', function () {
       if (this.checked) {
-        var firstField = that.container.querySelector('input[type=text]')
+        var firstField = that.container.querySelector('input')
         firstField.value = ""
         for (var f = 0; f < that.extraFieldRows.length; f++) {
           var extraFieldRow = that.extraFieldRows[f]
@@ -176,7 +178,9 @@ ExtraFieldRows.prototype.allCheckboxEvent = function () {
 }
 
 ExtraFieldRows.prototype.clearAllCheckbox = function () {
-  this.allLocations.checked = false
+  if (this.allCheckbox) {
+    this.allCheckbox.checked = false
+  }
 }
 
 ExtraFieldRows.prototype.addRemoveLink = function (row) {
@@ -186,8 +190,8 @@ ExtraFieldRows.prototype.addRemoveLink = function (row) {
   removeLink.className = 'govuk-link govuk-link--no-visited-state app-extra-field__form-group-link--remove'
   removeLink.href = "#"
   removeLink.addEventListener('click',
-    function(e) {
-      e.preventDefault()
+    function(e){
+      e.preventDefault();
       document.getElementById(that.addButtonId).classList.remove(that.hiddenClass)
       that.hideRow(row);
   })
@@ -195,7 +199,7 @@ ExtraFieldRows.prototype.addRemoveLink = function (row) {
 }
 
 ExtraFieldRows.prototype.hideRow = function (row, e) {
-  var textInput = row.querySelector('input[type=text]')
+  var textInput = row.querySelector('input')
   textInput.value = ''
   row.classList.add(this.hiddenClass)
 }
