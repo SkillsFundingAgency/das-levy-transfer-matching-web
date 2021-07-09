@@ -70,7 +70,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             Assert.AreEqual(viewModel.Opportunities[0].EmployerName, _opportunityDtoList[0].DasAccountName);
             Assert.AreEqual(viewModel.Opportunities[0].Amount, _opportunityDtoList[0].Amount);
-            Assert.AreEqual(viewModel.Opportunities[0].ReferenceNumber, "test");
+            Assert.AreEqual("test", viewModel.Opportunities[0].ReferenceNumber);
         }
 
         [Test]
