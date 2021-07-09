@@ -13,7 +13,7 @@
                     var explorer = ViewData.ModelExplorer;
                     foreach (var property in explorer.Properties)
                     {
-                        var errors = (typeof(IEnumerable).IsAssignableFrom(property.ModelType))
+                        var errors = (typeof(IEnumerable).IsAssignableFrom(property.ModelType) && property.ModelType != typeof(string))
                             ? GetErrorsForIEnumerable(property.Metadata)
                             : GetErrors(property.Metadata);
 
