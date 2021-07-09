@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
+﻿namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
 {
     public class ContactDetailsPostRequest : ContactDetailsRequest
     {
