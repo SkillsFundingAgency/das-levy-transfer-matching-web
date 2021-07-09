@@ -315,32 +315,36 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var encodedAccountId = _fixture.Create<string>();
             var encodedPledgeId = _fixture.Create<string>();
             var cacheItem = _fixture.Create<CreateApplicationCacheItem>();
-            var opportunityDto = _fixture.Create<OpportunityDto>();
+            var applicationDetailsDto = _fixture.Create<ApplicationDetailsDto>();
 
             _cache.Setup(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString())).ReturnsAsync(cacheItem);
-            _encodingService.Setup(x => x.Decode(encodedPledgeId, EncodingType.PledgeId)).Returns(1);
-            _opportunitiesService.Setup(x => x.GetOpportunity(1)).ReturnsAsync(opportunityDto);
+            _opportunitiesService.Setup(x => x.GetApplicationDetails(1)).ReturnsAsync(applicationDetailsDto);
 
-            var result = await _orchestrator.GetApplicationViewModel(new ApplicationDetailsRequest { EncodedAccountId = encodedAccountId, CacheKey = cacheKey, EncodedPledgeId = encodedPledgeId });
+            var result = await _orchestrator.GetApplicationViewModel(new ApplicationDetailsRequest { EncodedAccountId = encodedAccountId, CacheKey = cacheKey, EncodedPledgeId = encodedPledgeId, PledgeId = 1 });
 
             Assert.IsNotNull(result);
+            Assert.NotNull(result.SelectStandardViewModel);
+            Assert.NotNull(result.SelectStandardViewModel.Standards);
             Assert.AreEqual(cacheKey, result.CacheKey);
             Assert.AreEqual(encodedAccountId, result.EncodedAccountId);
             Assert.AreEqual(encodedPledgeId, result.EncodedPledgeId);
             Assert.AreEqual(cacheItem.JobRole, result.JobRole);
             Assert.AreEqual(cacheItem.NumberOfApprentices, result.NumberOfApprentices);
-            Assert.AreEqual(cacheItem.StartDate, new DateTime(result.Year.Value, result.Month.Value, 1));
+            Assert.AreEqual(DateTime.Now.Year, result.MinYear);
+            Assert.AreEqual(DateTime.Now.FinancialYearEnd().Year, result.MaxYear);
             Assert.AreEqual(cacheItem.HasTrainingProvider, result.HasTrainingProvider);
             Assert.IsNotNull(result.OpportunitySummaryViewModel);
-            Assert.AreEqual(opportunityDto.Amount, result.OpportunitySummaryViewModel.Amount);
-            Assert.AreEqual(string.Join(", ", opportunityDto.JobRoles), result.OpportunitySummaryViewModel.JobRoleList);
-            Assert.AreEqual(string.Join(", ", opportunityDto.Levels), result.OpportunitySummaryViewModel.LevelList);
-            Assert.AreEqual(string.Join(", ", opportunityDto.Sectors), result.OpportunitySummaryViewModel.SectorList);
+            Assert.AreEqual(applicationDetailsDto.Opportunity.Amount, result.OpportunitySummaryViewModel.Amount);
+            Assert.AreEqual(string.Join(", ", applicationDetailsDto.Opportunity.JobRoles), result.OpportunitySummaryViewModel.JobRoleList);
+            Assert.AreEqual(string.Join(", ", applicationDetailsDto.Opportunity.Levels), result.OpportunitySummaryViewModel.LevelList);
+            Assert.AreEqual(string.Join(", ", applicationDetailsDto.Opportunity.Sectors), result.OpportunitySummaryViewModel.SectorList);
             Assert.AreEqual("2021/22", result.OpportunitySummaryViewModel.YearDescription);
+            Assert.AreEqual(cacheItem.StartDate.Value.Month, result.Month);
+            Assert.AreEqual(cacheItem.StartDate.Value.Year, result.Year);
+            Assert.AreEqual(applicationDetailsDto.Standards.Count(), result.SelectStandardViewModel.Standards.Count());
 
             _cache.Verify(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()), Times.Once);
-            _encodingService.Verify(x => x.Decode(encodedPledgeId, EncodingType.PledgeId), Times.Once);
-            _opportunitiesService.Verify(x => x.GetOpportunity(1), Times.Once);
+            _opportunitiesService.Verify(x => x.GetApplicationDetails(1), Times.Once);
         }
     }
 }

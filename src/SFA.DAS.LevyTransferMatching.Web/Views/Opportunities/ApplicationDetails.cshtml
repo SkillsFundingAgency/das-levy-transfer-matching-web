@@ -26,7 +26,7 @@
                         <span class="govuk-visually-hidden">Error:</span> There is not enough funding to support this many apprentices
                     </span>
                     <span das-validation-for="NumberOfApprentices" class="govuk-error-message"></span>
-                    <input id="opportunity-application-apprentices" class="govuk-input govuk-input--width-5" asp-for="NumberOfApprentices" inputmode="numeric" spellcheck="false" pattern="[0-9]*" type="text" aria-describedby="apprentices-error" />
+                    <input id="opportunity-application-apprentices" class="govuk-input govuk-input--width-5" asp-for="NumberOfApprentices" inputmode="numeric" spellcheck="false" pattern="[0-9]*" type="number" aria-describedby="apprentices-error" />
                 </div>
 
                 <div class="govuk-form-group" das-highlight-error-for="StartDate" error-class="govuk-form-group--error" id="start-date">
@@ -70,7 +70,7 @@
                             </div>
                             <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-opportunity-application-training-provider-no">
                                 <div class="govuk-form-group">
-                                    <p>Search for <a href="https://findapprenticeshiptraining.apprenticeships.education.gov.uk/" target="_blank">apprenticeship training courses and training providers</a>.</p>
+                                    <p>Search for <a href="https://findapprenticeshiptraining.apprenticeships.education.gov.uk/" target="_blank" rel="noopener">apprenticeship training courses and training providers</a>.</p>
                                 </div>
                             </div>
                         </div>
