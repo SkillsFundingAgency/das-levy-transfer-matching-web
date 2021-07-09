@@ -10,25 +10,29 @@ using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.LevyTransferMatching.Web.Models.Shared;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
+using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using System.Collections.Generic;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
     public class OpportunitiesOrchestrator : IOpportunitiesOrchestrator
     {
+        private readonly ICacheStorageService _cacheStorageService;
         private readonly IDateTimeService _dateTimeService;
         private readonly IOpportunitiesService _opportunitiesService;
         private readonly IEncodingService _encodingService;
         private readonly ITagService _tagService;
         private readonly IUserService _userService;
 
-        public OpportunitiesOrchestrator(IDateTimeService dateTimeService, IOpportunitiesService opportunitiesService, ITagService tagService, IUserService userService, IEncodingService encodingService)
+        public OpportunitiesOrchestrator(IDateTimeService dateTimeService, IOpportunitiesService opportunitiesService, ITagService tagService, IUserService userService, IEncodingService encodingService, ICacheStorageService cacheStorageService)
         {
             _dateTimeService = dateTimeService;
             _opportunitiesService = opportunitiesService;
             _encodingService = encodingService;
             _tagService = tagService;
             _userService = userService;
+            _cacheStorageService = cacheStorageService;
         }
 
         public async Task<DetailViewModel> GetDetailViewModel(int pledgeId)
@@ -107,10 +111,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         public async Task<ApplyViewModel> GetApplyViewModel(ApplicationRequest request)
         {
+            var application = await RetrieveCacheItem(request.CacheKey);
             var opportunityDto = await _opportunitiesService.GetOpportunity(request.PledgeId);
 
             return new ApplyViewModel
             {
+                CacheKey = application.Key,
+                EncodedPledgeId = request.EncodedPledgeId,
+                EncodedAccountId = request.EncodedAccountId,
                 OpportunitySummaryViewModel = new OpportunitySummaryViewModel
                 {
                     Description = GenerateDescription(opportunityDto, request.EncodedPledgeId),
@@ -133,9 +141,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
-        public async Task<ContactDetailsViewModel> GetContactDetailsViewModel(int pledgeId)
+        public async Task<ContactDetailsViewModel> GetContactDetailsViewModel(ContactDetailsRequest contactDetailsRequest)
         {
-            var opportunityDto = await _opportunitiesService.GetOpportunity(pledgeId);
+            var opportunityDto = await _opportunitiesService.GetOpportunity(contactDetailsRequest.PledgeId);
 
             if (opportunityDto == null)
             {
@@ -146,14 +154,52 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             var opportunitySummaryViewModel = await GetOpportunitySummaryViewModel(opportunityDto, encodedPledgeId);
 
+            var cacheItem = await this.RetrieveCacheItem(contactDetailsRequest.CacheKey);
+
+            IEnumerable<string> additionalEmailAddresses = cacheItem.AdditionalEmailAddresses;
+            if (additionalEmailAddresses == null)
+            {
+                additionalEmailAddresses = Enumerable.Range(0, 4).Select(x => (string)null);
+            }
+
             return new ContactDetailsViewModel()
             {
-                AdditionalEmailAddresses = Enumerable.Range(0, 4).Select(x => (string)null).ToArray(),
+                FirstName = cacheItem.FirstName,
+                LastName = cacheItem.LastName,
+                EmailAddress = cacheItem.EmailAddress,
+                AdditionalEmailAddresses = additionalEmailAddresses.ToArray(),
+                BusinessWebsite = cacheItem.BusinessWebsite,
                 DasAccountName = opportunityDto.DasAccountName,
                 OpportunitySummaryViewModel = opportunitySummaryViewModel,
             };
         }
 
+        public async Task UpdateCacheItem(ContactDetailsPostRequest contactDetailsPostRequest)
+        {
+            var cacheItem = await RetrieveCacheItem(contactDetailsPostRequest.CacheKey);
+
+            cacheItem.FirstName = contactDetailsPostRequest.FirstName;
+            cacheItem.LastName = contactDetailsPostRequest.LastName;
+            cacheItem.EmailAddress = contactDetailsPostRequest.EmailAddress;
+            cacheItem.AdditionalEmailAddresses = contactDetailsPostRequest.AdditionalEmailAddresses.ToList();
+            cacheItem.BusinessWebsite = contactDetailsPostRequest.BusinessWebsite;
+
+            await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
+        }
+
         private string GenerateDescription(OpportunityDto opportunityDto, string encodedPledgeId) => opportunityDto.IsNamePublic ? $"{opportunityDto.DasAccountName} ({encodedPledgeId})" : "A levy-paying business wants to fund apprenticeship training in:";
+
+        private async Task<CreateApplicationCacheItem> RetrieveCacheItem(Guid key)
+        {
+            var result = await _cacheStorageService.RetrieveFromCache<CreateApplicationCacheItem>(key.ToString());
+
+            if (result == null)
+            {
+                result = new CreateApplicationCacheItem(key);
+                await _cacheStorageService.SaveToCache(key.ToString(), result, 1);
+            }
+
+            return result;
+        }
     }
 }

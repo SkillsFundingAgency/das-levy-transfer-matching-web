@@ -2,9 +2,8 @@
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
 {
-    public class ApplicationRequest
+    public class ApplicationRequest : ApplyRequest
     {
-        public string EncodedAccountId { get; set; }
         public string EncodedPledgeId { get; set; }
         [AutoDecode(nameof(EncodedPledgeId), Encoding.EncodingType.PledgeId)]
         public int PledgeId { get; set; }

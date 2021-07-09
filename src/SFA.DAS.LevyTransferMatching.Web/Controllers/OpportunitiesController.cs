@@ -75,7 +75,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/apply/contact-details")]
         public async Task<IActionResult> ContactDetails(ContactDetailsRequest contactDetailsRequest)
         {
-            var viewModel = await _opportunitiesOrchestrator.GetContactDetailsViewModel(contactDetailsRequest.PledgeId);
+            var viewModel = await _opportunitiesOrchestrator.GetContactDetailsViewModel(contactDetailsRequest);
 
             return View(viewModel);
         }
@@ -86,7 +86,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/apply/contact-details")]
         public async Task<IActionResult> ContactDetails(ContactDetailsPostRequest contactDetailsPostRequest)
         {
-            return new OkResult();
+            await _opportunitiesOrchestrator.UpdateCacheItem(contactDetailsPostRequest);
+
+            return RedirectToAction(nameof(Apply), new { contactDetailsPostRequest.EncodedAccountId, contactDetailsPostRequest.EncodedPledgeId, contactDetailsPostRequest.CacheKey });
         }
     }
 }
