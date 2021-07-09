@@ -211,18 +211,24 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var encodedAccountId = _fixture.Create<string>();
             var cacheKey = _fixture.Create<Guid>();
 
-            var request = new MoreDetailsPostRequest()
+            var request = new ApplicationDetailsPostRequest()
             {
                 EncodedPledgeId = encodedPledgeId,
                 EncodedAccountId = encodedAccountId,
-                Details = _fixture.Create<string>(),
-                CacheKey = cacheKey
+                CacheKey = cacheKey,
+                HasTrainingProvider = true,
+                Month = DateTime.Now.Month,
+                Year = DateTime.Now.Year,
+                NumberOfApprentices = 1,
+                PledgeId = 1,
+                SelectedStandardId = "ST_001",
+                SelectedStandardTitle = "Test Standard Title"
             };
 
             _orchestrator.Setup(x => x.UpdateCacheItem(request));
 
             // Assert
-            var redirectToActionResult = (await _opportunitiesController.MoreDetails(request)) as RedirectToActionResult;
+            var redirectToActionResult = (await _opportunitiesController.ApplicationDetails(request)) as RedirectToActionResult;
 
             // Assert
             Assert.IsNotNull(redirectToActionResult);

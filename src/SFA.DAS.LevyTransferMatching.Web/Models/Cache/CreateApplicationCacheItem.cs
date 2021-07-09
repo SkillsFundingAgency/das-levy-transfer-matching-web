@@ -1,6 +1,4 @@
-﻿using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
-using System;
-using System.Collections.Generic;
+﻿using System;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Cache
 {
