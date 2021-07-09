@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.TagService;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
 using System.Linq;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using System;
@@ -29,6 +29,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private Mock<IUserService> _userService;
         private Mock<IEncodingService> _encodingService;
 
+        private List<ReferenceDataItem> _sectors;
+        private List<ReferenceDataItem> _levels;
+        private List<ReferenceDataItem> _jobRoles;
+
         private List<OpportunityDto> _opportunityDtoList;
         private List<ReferenceDataItem> _sectorReferenceDataItems;
         private List<ReferenceDataItem> _jobRoleReferenceDataItems;
@@ -46,7 +50,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _encodingService = new Mock<IEncodingService>();
 
             _opportunityDtoList = _fixture.Create<List<OpportunityDto>>();
+            _sectors = _fixture.Create<List<ReferenceDataItem>>();
+            _levels = _fixture.Create<List<ReferenceDataItem>>();
+            _jobRoles = _fixture.Create<List<ReferenceDataItem>>();
+            
             _opportunitiesService.Setup(x => x.GetAllOpportunities()).ReturnsAsync(_opportunityDtoList);
+            _tagService.Setup(x => x.GetJobRoles()).ReturnsAsync(_jobRoles);
+            _tagService.Setup(x => x.GetSectors()).ReturnsAsync(_sectors);
+            _tagService.Setup(x => x.GetLevels()).ReturnsAsync(_levels);
             _encodingService.Setup(x => x.Encode(It.IsAny<long>(), EncodingType.PledgeId)).Returns("test");
 
             _orchestrator = new OpportunitiesOrchestrator(_dateTimeService.Object, _opportunitiesService.Object, _tagService.Object, _userService.Object, _encodingService.Object);
@@ -55,10 +66,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         [Test]
         public async Task GetIndexViewModel_Opportunities_Are_Populated()
         {
-            var test = await _orchestrator.GetIndexViewModel();
+            var viewModel = await _orchestrator.GetIndexViewModel();
 
-            Assert.AreEqual(_opportunityDtoList[0].DasAccountName, test.Opportunities[0].EmployerName);
-            Assert.AreEqual("test", test.Opportunities[0].ReferenceNumber);
+            Assert.AreEqual(viewModel.Opportunities[0].EmployerName, _opportunityDtoList[0].DasAccountName);
+            Assert.AreEqual(viewModel.Opportunities[0].Amount, _opportunityDtoList[0].Amount);
+            Assert.AreEqual(viewModel.Opportunities[0].ReferenceNumber, "test");
         }
 
         [Test]
