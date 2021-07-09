@@ -9,5 +9,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
         Task<List<OpportunityDto>> GetAllOpportunities();
 
         Task<OpportunityDto> GetOpportunity(int id);
+        Task<ApplicationDetailsDto> GetApplicationDetails(int id);
     }
 }

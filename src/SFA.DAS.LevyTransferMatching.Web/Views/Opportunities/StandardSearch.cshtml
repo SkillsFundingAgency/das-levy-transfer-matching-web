@@ -1,0 +1,25 @@
+﻿@using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
+@model SelectStandardViewModel
+
+<div class="govuk-form-group" das-highlight-error-for="SelectedStandardId" error-class="govuk-form-group--error" id="job-role">
+    <label class="govuk-label govuk-label--s" for="opportunity-application-standard">Job role</label>
+    <div class="govuk-hint">
+        Start typing a job role or keywords to find an apprenticeship training course
+        <br>
+        You can search and browse courses on <a href="https://findapprenticeshiptraining.apprenticeships.education.gov.uk/" target="_blank">Find apprenticeship training</a>.
+    </div>
+    @if (ViewData.ModelState.ContainsKey("SelectedStandardId") && ViewData.ModelState["SelectedStandardId"].Errors.Any())
+    {
+        <span id="Course" class="govuk-error-message">
+            @ViewData.ModelState["SelectedStandardId"].Errors.First().ErrorMessage
+        </span>
+    }
+    <select id="SelectedStandardId" name="SelectedStandardId" class="govuk-select" aria-describedby="choose-apprenticeship-hint">
+        <option value=""></option>
+        @foreach (var standard in Model.Standards)
+        {
+            <option value="@standard.Id" selected="@standard.Selected">@standard.Title</option>
+        }
+    </select>
+    <input type="hidden" name="SelectedStandardTitle" id="SelectedStandardTitle" />
+</div>

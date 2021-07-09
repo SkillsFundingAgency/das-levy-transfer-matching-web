@@ -14,10 +14,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities
 
         public ApplicationDetailsPostRequestValidator()
         {
-            RuleFor(request => request.JobRole)
-                .NotEmpty()
+            RuleFor(request => request.SelectedStandardId)
+                .NotNull()
                 .WithMessage("Enter a valid job role")
-            ;
+            ; 
 
             RuleFor(request => request.NumberOfApprentices)
                 .NotNull()

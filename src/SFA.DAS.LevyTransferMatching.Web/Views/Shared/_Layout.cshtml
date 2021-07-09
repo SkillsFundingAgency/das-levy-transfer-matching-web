@@ -41,7 +41,7 @@
 
     @*<partial name="_CookieBanner" />*@
 
-<partial name="_Header" />
+    <partial name="_Header" />
     @if (accountId != null && !hideHeader)
     {
         <partial name="_Menu" model="@accountId" />
@@ -62,11 +62,12 @@
         @RenderBody()
     </div>
 
-    <partial name="_Footer" model="@footerModel" />   
+    <partial name="_Footer" model="@footerModel" />
 
     <script src="libs/govuk-frontend/all.js"></script>
     <script src="libs/jquery/jquery.min.js"></script>
     <script src="js/das-all.js"></script>
+    <script src="libs/accessible-autocomplete/accessible-autocomplete.min.js"></script>
     <script src="js/app.min.js"></script>
     <script src="/js/app.js" no-cdn></script>
     <script>

@@ -13,6 +13,7 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using System.Collections.Generic;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
+using System.Collections.Generic;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
@@ -186,7 +187,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var cacheItem = await RetrieveCacheItem(request.CacheKey);
 
-            cacheItem.JobRole = request.JobRole;
+            cacheItem.JobRole = request.SelectedStandardTitle;
+            cacheItem.StandardId = request.SelectedStandardId;
             cacheItem.NumberOfApprentices = request.NumberOfApprentices.Value;
             cacheItem.StartDate = request.StartDate;
             cacheItem.HasTrainingProvider = request.HasTrainingProvider.Value;
@@ -210,7 +212,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         public async Task<ApplicationDetailsViewModel> GetApplicationViewModel(ApplicationDetailsRequest request)
         {
             var application = await RetrieveCacheItem(request.CacheKey);
-            var opportunityDto = await _opportunitiesService.GetOpportunity((int)_encodingService.Decode(request.EncodedPledgeId, EncodingType.PledgeId));
+            var applicationDetails = await _opportunitiesService.GetApplicationDetails(request.PledgeId);
 
             return new ApplicationDetailsViewModel()
             {
@@ -224,15 +226,26 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 HasTrainingProvider = application.HasTrainingProvider,
                 OpportunitySummaryViewModel = new OpportunitySummaryViewModel
                 {
-                    Description = GenerateDescription(opportunityDto, request.EncodedPledgeId),
-                    Amount = opportunityDto.Amount,
-                    JobRoleList = string.Join(", ", opportunityDto.JobRoles),
-                    LevelList = string.Join(", ", opportunityDto.Levels),
-                    SectorList = string.Join(", ", opportunityDto.Sectors),
+                    Description = GenerateDescription(applicationDetails.Opportunity, request.EncodedPledgeId),
+                    Amount = applicationDetails.Opportunity.Amount,
+                    JobRoleList = string.Join(", ", applicationDetails.Opportunity.JobRoles),
+                    LevelList = string.Join(", ", applicationDetails.Opportunity.Levels),
+                    SectorList = string.Join(", ", applicationDetails.Opportunity.Sectors),
                     YearDescription = "2021/22"
                 },
                 MinYear = DateTime.Now.Year,
-                MaxYear = DateTime.Now.FinancialYearEnd().Year
+                MaxYear = DateTime.Now.FinancialYearEnd().Year,
+                SelectStandardViewModel = new SelectStandardViewModel
+                {
+                    Standards = applicationDetails.Standards.Select(app => new StandardsListItemViewModel
+                    {
+                        Id = app.StandardUId,
+                        LarsCode = app.LarsCode,
+                        Level = app.Level,
+                        Title = app.Title,
+                        Selected = !string.IsNullOrEmpty(application.StandardId) && (app.StandardUId == application.StandardId) ? "selected": null
+                    })
+                }
             };
         }
     }

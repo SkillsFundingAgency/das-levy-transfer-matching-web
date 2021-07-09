@@ -18,5 +18,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
         public int MinYear { get; set; }
         public int MaxYear { get; set; }
         public bool? HasTrainingProvider { get; set; }
+        public SelectStandardViewModel SelectStandardViewModel { get; set; }
     }
 }

@@ -8,7 +8,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
         public string EncodedPledgeId { get; set; }
         [AutoDecode("EncodedPledgeId", Encoding.EncodingType.PledgeId)]
         public int PledgeId { get; set; }
-        public string JobRole { get; set; }
         public int? NumberOfApprentices { get; set; }
         public DateTime? StartDate
         {
@@ -25,5 +24,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
         public int? Month { get; set; }
         public int? Year { get; set; }
         public bool? HasTrainingProvider { get; set; }
+        public string SelectedStandardId { get; set; }
+        public string SelectedStandardTitle { get; set; }
     }
 }
