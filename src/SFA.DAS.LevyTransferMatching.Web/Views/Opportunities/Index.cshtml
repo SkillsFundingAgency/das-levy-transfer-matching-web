@@ -29,22 +29,42 @@
                 <p>You can use the 4 criteria below to see which funding opportunities your business matches.</p>
                 <p>Or you can browse all opportunities available.</p>
                 <p>Some businesses have chosen not to share their organisation's name publicly so these opportunities just show a reference number. If your application is successful, we'll let you know who the employer willing to fund your apprenticeship training is.</p>
-                <table class="govuk-table">
-                    <caption class="govuk-table__caption govuk-table__caption--m">@Model.Opportunities.Count() opportunities</caption>
-                    <thead class="govuk-table__head">
-                        <tr class="govuk-table__row">
-                            <th scope="col" class="govuk-table__header">Employer</th>
-                        </tr>
-                    </thead>
-                    <tbody class="govuk-table__body">
-                    @foreach (var opportunity in Model.Opportunities)
-                    {
-                        <tr class="govuk-table__row">
-                            <td class="govuk-table__cell">@opportunity.EmployerName (@opportunity.ReferenceNumber)</td>
-                        </tr>
-                    }
-                    </tbody>
-                </table>
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-two-thirds">
+                        <h2 class="govuk-heading-m">@Model.Opportunities.Count() opportunities</h2>
+                        <div class="das-search-results">
+                            <ol class="das-search-results__list">
+                                @foreach (var opportunity in Model.Opportunities)
+                                {
+                                <li class="das-search-results__list-item">
+                                    <h2 class="govuk-heading-m das-search-results__heading govuk-!-margin-bottom-0">
+                                        <a href="/opportunities/@opportunity.ReferenceNumber" class="das-search-results__link">@opportunity.EmployerName (@opportunity.ReferenceNumber)</a>
+                                    </h2>
+                                    <p class="govuk-hint">up to @opportunity.DisplayAmount available in @Model.TaxYear</p>
+                                    <ul class="govuk-list govuk-!-margin-bottom-0">
+                                        <li>
+                                            <strong>Locations: </strong>
+                                            <span class="das-!-color-dark-grey">@opportunity.DisplayLocations</span>
+                                        </li>
+                                        <li>
+                                            <strong>Sectors: </strong>
+                                            <span class="das-!-color-dark-grey">@opportunity.DisplaySectors</span>
+                                        </li>
+                                        <li>
+                                            <strong>Type of role: </strong>
+                                            <span class="das-!-color-dark-grey">@opportunity.DisplayJobRoles</span>
+                                        </li>
+                                        <li>
+                                            <strong>Levels: </strong>
+                                            <span class="das-!-color-dark-grey">@opportunity.DisplayLevels</span>
+                                        </li>
+                                    </ul>
+                                </li>
+                                }
+                            </ol>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
