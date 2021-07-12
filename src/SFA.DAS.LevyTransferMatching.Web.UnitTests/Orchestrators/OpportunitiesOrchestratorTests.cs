@@ -277,6 +277,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         [Test]
         public async Task GetMoreDetailsViewModel_Is_Correct()
         {
+            SetupGetOpportunityViewModelServices();
+
             var cacheKey = _fixture.Create<Guid>();
             var encodedAccountId = _fixture.Create<string>();
             var encodedPledgeId = _fixture.Create<string>();
@@ -296,10 +298,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             Assert.AreEqual(cacheItem.Details, result.Details);
             Assert.IsNotNull(result.OpportunitySummaryViewModel);
             Assert.AreEqual(opportunityDto.Amount, result.OpportunitySummaryViewModel.Amount);
-            Assert.AreEqual(string.Join(", ", opportunityDto.JobRoles), result.OpportunitySummaryViewModel.JobRoleList);
-            Assert.AreEqual(string.Join(", ", opportunityDto.Levels), result.OpportunitySummaryViewModel.LevelList);
-            Assert.AreEqual(string.Join(", ", opportunityDto.Sectors), result.OpportunitySummaryViewModel.SectorList);
-            Assert.AreEqual("2021/22", result.OpportunitySummaryViewModel.YearDescription);
+            Assert.AreEqual(string.Join(", ", opportunityDto.JobRoles.ToReferenceDataDescriptionList(_jobRoleReferenceDataItems)), result.OpportunitySummaryViewModel.JobRoleList);
+            Assert.AreEqual(string.Join(", ", opportunityDto.Levels.ToReferenceDataDescriptionList(_levelReferenceDataItems, (x) => x.ShortDescription)), result.OpportunitySummaryViewModel.LevelList);
+            Assert.AreEqual(string.Join(", ", opportunityDto.Sectors.ToReferenceDataDescriptionList(_sectorReferenceDataItems)), result.OpportunitySummaryViewModel.SectorList);
+            Assert.AreEqual(_currentDateTime.ToTaxYearDescription(), result.OpportunitySummaryViewModel.YearDescription);
 
             _cache.Verify(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()), Times.Once);
             _encodingService.Verify(x => x.Decode(encodedPledgeId, EncodingType.PledgeId), Times.Once);
