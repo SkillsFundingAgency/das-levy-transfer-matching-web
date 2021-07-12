@@ -13,8 +13,6 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using System.Collections.Generic;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
-using System.Collections.Generic;
-using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
@@ -136,15 +134,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 CacheKey = application.Key,
                 EncodedPledgeId = request.EncodedPledgeId,
                 EncodedAccountId = request.EncodedAccountId,
-                OpportunitySummaryViewModel = new OpportunitySummaryViewModel
-                {
-                    Description = GenerateDescription(opportunityDto, request.EncodedPledgeId),
-                    Amount = opportunityDto.Amount,
-                    JobRoleList = string.Join(", ", opportunityDto.JobRoles),
-                    LevelList = string.Join(", ", opportunityDto.Levels),
-                    SectorList = string.Join(", ", opportunityDto.Sectors),
-                    YearDescription = "2021/22"
-                },
+                OpportunitySummaryViewModel = await GetOpportunitySummaryViewModel(opportunityDto, request.EncodedPledgeId),
                 JobRole = application.JobRole ?? "-",
                 NumberOfApprentices = application.NumberOfApprentices.HasValue ? application.NumberOfApprentices.Value.ToString() : "-",
                 StartBy = application.StartDate.HasValue ? application.StartDate.Value.ToShortDisplayString() : "-",
@@ -233,15 +223,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 Month = application.StartDate?.Month,
                 Year = application.StartDate?.Year,
                 HasTrainingProvider = application.HasTrainingProvider,
-                OpportunitySummaryViewModel = new OpportunitySummaryViewModel
-                {
-                    Description = GenerateDescription(applicationDetails.Opportunity, request.EncodedPledgeId),
-                    Amount = applicationDetails.Opportunity.Amount,
-                    JobRoleList = applicationDetails.Opportunity.JobRoles.ToReferenceDataDescriptionList(jobRoleReferenceDataItemsTask.Result),
-                    LevelList = applicationDetails.Opportunity.Levels.ToReferenceDataDescriptionList(levelReferenceDataItemsTask.Result, (dataItem) => dataItem.ShortDescription),
-                    SectorList = applicationDetails.Opportunity.Sectors.ToReferenceDataDescriptionList(sectorReferenceDataItemsTask.Result),
-                    YearDescription = "2021/22"
-                },
+                OpportunitySummaryViewModel = await GetOpportunitySummaryViewModel(applicationDetails.Opportunity, request.EncodedPledgeId),
                 MinYear = DateTime.Now.Year,
                 MaxYear = DateTime.Now.FinancialYearEnd().Year,
                 SelectStandardViewModel = new SelectStandardViewModel
