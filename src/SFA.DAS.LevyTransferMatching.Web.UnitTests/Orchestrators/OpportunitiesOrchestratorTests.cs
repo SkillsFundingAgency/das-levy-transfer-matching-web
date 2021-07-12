@@ -311,6 +311,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         [Test]
         public async Task GetApplicationViewModel_Is_Correct()
         {
+            SetupGetOpportunityViewModelServices();
+
             var cacheKey = _fixture.Create<Guid>();
             var encodedAccountId = _fixture.Create<string>();
             var encodedPledgeId = _fixture.Create<string>();
@@ -335,9 +337,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             Assert.AreEqual(cacheItem.HasTrainingProvider, result.HasTrainingProvider);
             Assert.IsNotNull(result.OpportunitySummaryViewModel);
             Assert.AreEqual(applicationDetailsDto.Opportunity.Amount, result.OpportunitySummaryViewModel.Amount);
-            Assert.AreEqual(string.Join(", ", applicationDetailsDto.Opportunity.JobRoles), result.OpportunitySummaryViewModel.JobRoleList);
-            Assert.AreEqual(string.Join(", ", applicationDetailsDto.Opportunity.Levels), result.OpportunitySummaryViewModel.LevelList);
-            Assert.AreEqual(string.Join(", ", applicationDetailsDto.Opportunity.Sectors), result.OpportunitySummaryViewModel.SectorList);
+            Assert.AreEqual(string.Join(", ", applicationDetailsDto.Opportunity.JobRoles.ToReferenceDataDescriptionList(_jobRoleReferenceDataItems)), result.OpportunitySummaryViewModel.JobRoleList);
+            Assert.AreEqual(string.Join(", ", applicationDetailsDto.Opportunity.Levels.ToReferenceDataDescriptionList(_levelReferenceDataItems)), result.OpportunitySummaryViewModel.LevelList);
+            Assert.AreEqual(string.Join(", ", applicationDetailsDto.Opportunity.Sectors.ToReferenceDataDescriptionList(_sectorReferenceDataItems)), result.OpportunitySummaryViewModel.SectorList);
             Assert.AreEqual("2021/22", result.OpportunitySummaryViewModel.YearDescription);
             Assert.AreEqual(cacheItem.StartDate.Value.Month, result.Month);
             Assert.AreEqual(cacheItem.StartDate.Value.Year, result.Year);

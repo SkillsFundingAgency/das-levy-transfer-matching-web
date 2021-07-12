@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using System.Collections.Generic;
+using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
@@ -211,8 +212,16 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         public async Task<ApplicationDetailsViewModel> GetApplicationViewModel(ApplicationDetailsRequest request)
         {
-            var application = await RetrieveCacheItem(request.CacheKey);
-            var applicationDetails = await _opportunitiesService.GetApplicationDetails(request.PledgeId);
+            var applicationDetailsTask = _opportunitiesService.GetApplicationDetails(request.PledgeId);
+            var applicationTask = RetrieveCacheItem(request.CacheKey);
+            var sectorReferenceDataItemsTask = _tagService.GetSectors();
+            var jobRoleReferenceDataItemsTask = _tagService.GetJobRoles();
+            var levelReferenceDataItemsTask = _tagService.GetLevels();
+
+            await Task.WhenAll(applicationDetailsTask, applicationTask, sectorReferenceDataItemsTask, jobRoleReferenceDataItemsTask, levelReferenceDataItemsTask);
+
+            var application = applicationTask.Result;
+            var applicationDetails = applicationDetailsTask.Result;
 
             return new ApplicationDetailsViewModel()
             {
@@ -228,9 +237,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 {
                     Description = GenerateDescription(applicationDetails.Opportunity, request.EncodedPledgeId),
                     Amount = applicationDetails.Opportunity.Amount,
-                    JobRoleList = string.Join(", ", applicationDetails.Opportunity.JobRoles),
-                    LevelList = string.Join(", ", applicationDetails.Opportunity.Levels),
-                    SectorList = string.Join(", ", applicationDetails.Opportunity.Sectors),
+                    JobRoleList = applicationDetails.Opportunity.JobRoles.ToReferenceDataDescriptionList(jobRoleReferenceDataItemsTask.Result),
+                    LevelList = applicationDetails.Opportunity.Levels.ToReferenceDataDescriptionList(levelReferenceDataItemsTask.Result, (dataItem) => dataItem.ShortDescription),
+                    SectorList = applicationDetails.Opportunity.Sectors.ToReferenceDataDescriptionList(sectorReferenceDataItemsTask.Result),
                     YearDescription = "2021/22"
                 },
                 MinYear = DateTime.Now.Year,
