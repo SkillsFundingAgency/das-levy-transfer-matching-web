@@ -3,10 +3,10 @@
 @model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.CreateViewModel
 
 @{
-    ViewData["Title"] = "Pledges";
+    ViewData["Title"] = "Create a transfers pledge";
 }
 
-<a href="@Url.Action("index", "pledges", new { Model.EncodedAccountId })" class="govuk-back-link">Back</a>
+<a href="@Url.Action("Inform", "pledges", new { Model.EncodedAccountId })" class="govuk-back-link">Back</a>
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
@@ -178,7 +178,7 @@
                 </form>
             }
             <div class="govuk-grid-row">
-                <a class="govuk-link" href="@Url.Action("index", "pledges", new { Model.EncodedAccountId })">Cancel pledge</a>
+                <a class="govuk-link" href="@Url.Action("Inform", "pledges", new { Model.EncodedAccountId })">Cancel pledge</a>
             </div>
         </div>
 

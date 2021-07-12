@@ -11,16 +11,16 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
     [HideAccountNavigation(true)]
     public class OpportunitiesController : Controller
     {
-        private readonly IOpportunitiesOrchestrator _searchFundingOrchestrator;
+        private readonly IOpportunitiesOrchestrator _opportunitiesOrchestrator;
 
-        public OpportunitiesController(IOpportunitiesOrchestrator searchFundingOrchestrator)
+        public OpportunitiesController(IOpportunitiesOrchestrator opportunitiesOrchestrator)
         {
-            _searchFundingOrchestrator = searchFundingOrchestrator;
+            _opportunitiesOrchestrator = opportunitiesOrchestrator;
         }
 
         public async Task<IActionResult> Index()
         {
-            var viewModel = await _searchFundingOrchestrator.GetIndexViewModel();
+            var viewModel = await _opportunitiesOrchestrator.GetIndexViewModel();
             return View(viewModel);
         }
     }

@@ -4,6 +4,7 @@ using Newtonsoft.Json.Linq;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using System.Net.Http;
 using System.Threading.Tasks;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
 {
@@ -25,6 +26,13 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
             var id = (string)JObject.Parse(await response.Content.ReadAsStringAsync())["id"];
 
             return long.Parse(id);
+        }
+
+        public async Task<GetCreateResponse> GetCreate(long accountId)
+        {
+            var response = await _client.GetAsync($"accounts/{accountId}/pledges/create");
+            response.EnsureSuccessStatusCode();
+            return JsonConvert.DeserializeObject<GetCreateResponse>(await response.Content.ReadAsStringAsync());
         }
     }
 }
