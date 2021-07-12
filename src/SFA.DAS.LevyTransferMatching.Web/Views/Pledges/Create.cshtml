@@ -3,10 +3,10 @@
 @model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.CreateViewModel
 
 @{
-    ViewData["Title"] = "Pledges";
+    ViewData["Title"] = "Create a transfers pledge";
 }
 
-<a href="@Url.Action("index", "pledges", new { Model.EncodedAccountId })" class="govuk-back-link">Back</a>
+<a href="@Url.Action("Inform", "pledges", new { Model.EncodedAccountId })" class="govuk-back-link">Back</a>
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
@@ -86,12 +86,24 @@
                     <ul class="das-task-list__items">
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="#">
+                                <a class="govuk-link" href="@Url.Action("Location", new LocationRequest{EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey})">
                                     Location
                                 </a>
                             </span>
                             <span class="das-task-list__task-tag">
-                                All of England
+                                @if (Model.AreAllLocationsSelected)
+                                {
+                                    <text>England</text>
+                                }
+                                else
+                                {
+                                    <ul class="govuk-list das-!-text-align-right">
+                                        @foreach (var location in Model.Locations)
+                                        {
+                                            <li>@location</li>
+                                        }
+                                    </ul>
+                                }
                             </span>
                         </li>
                         <li class="das-task-list__item">
@@ -166,7 +178,7 @@
                 </form>
             }
             <div class="govuk-grid-row">
-                <a class="govuk-link" href="@Url.Action("index", "pledges", new { Model.EncodedAccountId })">Cancel pledge</a>
+                <a class="govuk-link" href="@Url.Action("Inform", "pledges", new { Model.EncodedAccountId })">Cancel pledge</a>
             </div>
         </div>
 

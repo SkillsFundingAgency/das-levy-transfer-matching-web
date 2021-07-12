@@ -24,5 +24,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Cache
         public List<string> Sectors { get; set; }
         public List<string> JobRoles { get; set; }
         public List<string> Levels { get; set; }
+        public List<string> Locations { get; set; }
     }
 }

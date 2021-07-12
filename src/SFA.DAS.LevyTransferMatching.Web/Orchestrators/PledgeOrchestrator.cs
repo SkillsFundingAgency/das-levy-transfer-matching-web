@@ -7,8 +7,10 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountsService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.TagService;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.LocationService;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
+using SFA.DAS.LevyTransferMatching.Web.Validators.Location;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
@@ -19,19 +21,23 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         private readonly IPledgeService _pledgeService;
         private readonly ITagService _tagService;
         private readonly IEncodingService _encodingService;
+        private readonly ILocationService _locationService;
+        private readonly ILocationValidatorService _validatorService;
 
-        public PledgeOrchestrator(ICacheStorageService cacheStorageService, IAccountsService accountsService, IPledgeService pledgeService, ITagService tagService, IEncodingService encodingService)
+        public PledgeOrchestrator(ICacheStorageService cacheStorageService, IAccountsService accountsService, IPledgeService pledgeService, ITagService tagService, IEncodingService encodingService, ILocationService locationService, ILocationValidatorService validatorService)
         {
             _cacheStorageService = cacheStorageService;
             _accountsService = accountsService;
             _pledgeService = pledgeService;
             _tagService = tagService;
             _encodingService = encodingService;
+            _locationService = locationService;
+            _validatorService = validatorService;
         }
 
-        public IndexViewModel GetIndexViewModel(string encodedAccountId)
+        public InformViewModel GetInformViewModel(string encodedAccountId)
         {
-            return new IndexViewModel
+            return new InformViewModel
             {
                 EncodedAccountId = encodedAccountId,
                 CacheKey = Guid.NewGuid()
@@ -41,11 +47,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         public async Task<CreateViewModel> GetCreateViewModel(CreateRequest request)
         {
             var cacheItemTask = RetrievePledgeCacheItem(request.CacheKey);
-            var levelsTask = _tagService.GetLevels();
-            var sectorsTask = _tagService.GetSectors();
-            var jobRolesTask = _tagService.GetJobRoles();
+            var dataTask = _pledgeService.GetCreate(request.AccountId);
+            await Task.WhenAll(cacheItemTask, dataTask);
 
-            await Task.WhenAll(cacheItemTask, levelsTask, sectorsTask, jobRolesTask);
             var cacheItem = cacheItemTask.Result;
 
             return new CreateViewModel
@@ -57,9 +61,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 Sectors = cacheItem.Sectors,
                 JobRoles = cacheItem.JobRoles,
                 Levels = cacheItem.Levels,
-                LevelOptions = levelsTask.Result,
-                SectorOptions = sectorsTask.Result,
-                JobRoleOptions = jobRolesTask.Result
+                LevelOptions = dataTask.Result.Levels.ToList(),
+                SectorOptions = dataTask.Result.Sectors.ToList(),
+                JobRoleOptions = dataTask.Result.JobRoles.ToList(),
+                Locations = cacheItem.Locations?.OrderBy(x => x).ToList()
             };
         }
 
@@ -128,13 +133,31 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 DasAccountName = cacheItem.DasAccountName,
                 Sectors = cacheItem.Sectors ?? new List<string>(),
                 JobRoles = cacheItem.JobRoles ?? new List<string>(),
-                Levels = cacheItem.Levels ?? new List<string>()
+                Levels = cacheItem.Levels ?? new List<string>(),
+                Locations = cacheItem.Locations?.Where(x => x != null).ToList() ?? new List<string>()
             };
 
             var pledgeId = await _pledgeService.PostPledge(pledgeDto, request.AccountId);
             await _cacheStorageService.DeleteFromCache(request.CacheKey.ToString());
 
             return _encodingService.Encode(pledgeId, EncodingType.PledgeId);
+        }
+
+        public async Task<LocationViewModel> GetLocationViewModel(LocationRequest request)
+        {
+            var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
+
+            return new LocationViewModel
+            {
+                EncodedAccountId = request.EncodedAccountId,
+                CacheKey = request.CacheKey,
+                Locations = cacheItem.Locations?.ToList()
+            };
+        }
+        
+        public async Task<Dictionary<int, string>> ValidateLocations(LocationPostRequest request)
+        {
+            return await _validatorService.ValidateLocations(request);
         }
 
         public async Task UpdateCacheItem(AmountPostRequest request)
@@ -171,6 +194,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
 
             cacheItem.Levels = request.Levels;
+
+            await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
+        }
+
+        public async Task UpdateCacheItem(LocationPostRequest request)
+        {
+            var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
+
+            cacheItem.Locations = request.Locations;
 
             await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
         }
