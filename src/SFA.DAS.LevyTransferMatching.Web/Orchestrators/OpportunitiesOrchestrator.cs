@@ -10,6 +10,7 @@ using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.LevyTransferMatching.Web.Models.Shared;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
+using System.Collections.Generic;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 
@@ -20,14 +21,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         private readonly ICacheStorageService _cacheStorageService;
         private readonly IDateTimeService _dateTimeService;
         private readonly IOpportunitiesService _opportunitiesService;
-        private readonly IEncodingService _encodingService;
         private readonly ITagService _tagService;
+        private readonly IEncodingService _encodingService;
         private readonly IUserService _userService;
 
         public OpportunitiesOrchestrator(IDateTimeService dateTimeService, IOpportunitiesService opportunitiesService, ITagService tagService, IUserService userService, IEncodingService encodingService, ICacheStorageService cacheStorageService)
         {
             _dateTimeService = dateTimeService;
             _opportunitiesService = opportunitiesService;
+            _tagService = tagService;
             _encodingService = encodingService;
             _tagService = tagService;
             _userService = userService;
@@ -58,15 +60,29 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         public async Task<IndexViewModel> GetIndexViewModel()
         {
-            var opportunitiesDto = await _opportunitiesService.GetAllOpportunities();
-            var opportunities = opportunitiesDto.Select(x => new Opportunity
+            var opportunitiesDto = _opportunitiesService.GetAllOpportunities();
+            var levelsTask = _tagService.GetLevels();
+            var sectorsTask = _tagService.GetSectors();
+            var jobRolesTask = _tagService.GetJobRoles();
+
+            await Task.WhenAll(opportunitiesDto, levelsTask, sectorsTask, jobRolesTask);
+
+            List<Opportunity> opportunities = opportunitiesDto.Result
+                .Select(x => new Opportunity
                 {
+                    Amount = x.Amount,
                     EmployerName = x.DasAccountName,
                     ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),
-                })
-                .ToList();
+                    Sectors = sectorsTask.Result.Where(y => x.Sectors.Contains(y.Id)).Select(y => y.Description).ToList(),
+                    JobRoles = jobRolesTask.Result.Where(y => x.JobRoles.Contains(y.Id)).Select(y => y.Description).ToList(),
+                    Levels = levelsTask.Result.Where(y => x.Levels.Contains(y.Id)).Select(y => y.ShortDescription).ToList(),
+                    Locations = x.Locations
+                }).ToList();
 
-            return new IndexViewModel { Opportunities = opportunities };
+            return new IndexViewModel 
+            { 
+                Opportunities = opportunities
+            };
         }
 
         public async Task<string> GetUserEncodedAccountId()
