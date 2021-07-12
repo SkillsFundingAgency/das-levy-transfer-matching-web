@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.LevyTransferMatching.Web.Attributes;
+using System;
+using SFA.DAS.LevyTransferMatching.Web.Authentication;
 using Microsoft.AspNetCore.Authorization;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
@@ -58,9 +60,64 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         {
             var encodedAccountId = await _opportunitiesOrchestrator.GetUserEncodedAccountId();
 
-            // TODO: Update to wire up to the actual controller (i.e.
-            //       RedirectToAction) - which doesn't exist currently.
-            return Redirect($"/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/apply");
+            return RedirectToAction("Apply", new 
+            { 
+                CacheKey = Guid.NewGuid(),
+                EncodedAccountId = encodedAccountId,
+                EncodedPledgeId = encodedPledgeId
+            });
+        }
+
+        [HideAccountNavigation(false)]
+        [Authorize(Policy = PolicyNames.ManageAccount)]
+        [Route("/accounts/{encodedAccountId}/opportunities/{EncodedPledgeId}/apply")]
+        public async Task<IActionResult> Apply(ApplicationRequest request)
+        {
+            return View(await _opportunitiesOrchestrator.GetApplyViewModel(request));
+        }
+
+        [HideAccountNavigation(false)]
+        [Authorize(Policy = PolicyNames.ManageAccount)]
+        [Route("/accounts/{encodedAccountId}/opportunities/{EncodedPledgeId}/create/more-details")]
+        public async Task<IActionResult> MoreDetails(MoreDetailsRequest request)
+        {
+            return View(await _opportunitiesOrchestrator.GetMoreDetailsViewModel(request));
+        }
+
+        [HideAccountNavigation(false)]
+        [Authorize(Policy = PolicyNames.ManageAccount)]
+        [Route("/accounts/{encodedAccountId}/opportunities/{EncodedPledgeId}/create/more-details")]
+        [HttpPost]
+        public async Task<IActionResult> MoreDetails(MoreDetailsPostRequest request)
+        {
+            await _opportunitiesOrchestrator.UpdateCacheItem(request);
+            return RedirectToAction("Apply", new ApplicationRequest 
+            { 
+                EncodedAccountId = request.EncodedAccountId,
+                EncodedPledgeId = request.EncodedPledgeId,
+                CacheKey = request.CacheKey
+            });
+        }
+
+        [Authorize(Policy = PolicyNames.ManageAccount)]
+        [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/create/application-details")]
+        public async Task<IActionResult> ApplicationDetails(ApplicationDetailsRequest request)
+        {
+            return View(await _opportunitiesOrchestrator.GetApplicationViewModel(request));
+        }
+
+        [Authorize(Policy = PolicyNames.ManageAccount)]
+        [HttpPost]
+        [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/create/application-details")]
+        public async Task<IActionResult> ApplicationDetails(ApplicationDetailsPostRequest request)
+        {
+            await _opportunitiesOrchestrator.UpdateCacheItem(request);
+            return RedirectToAction("Apply", new ApplicationRequest
+            {
+                EncodedAccountId = request.EncodedAccountId,
+                EncodedPledgeId = request.EncodedPledgeId,
+                CacheKey = request.CacheKey
+            });
         }
     }
 }

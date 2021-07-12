@@ -1,0 +1,95 @@
+﻿@using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
+@model SFA.DAS.LevyTransferMatching.Web.Models.Opportunities.ApplicationDetailsViewModel
+@inject SFA.DAS.EmployerUrlHelper.ILinkGenerator LinkGenerator
+@{
+    ViewData["Title"] = "Apprenticeship Training";
+}
+<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
+    <form method="post" class="validate-auto-complete">
+        
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+
+                <span class="govuk-caption-m">Search and apply for pledges in England</span>
+                <h1 class="govuk-heading-xl">Apprenticeship training</h1>
+
+            </div>
+        </div>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                
+                <partial name="StandardSearch" for="SelectStandardViewModel" />
+
+                <div class="govuk-form-group" das-highlight-error-for="NumberOfApprentices" error-class="govuk-form-group--error" id="how-many-apprentices">
+                    <label class="govuk-label govuk-label--s" for="opportunity-application-apprentices">How many apprentices do you want to fund?</label>
+                    <span id="apprentices-error" class="govuk-error-message" style="display: none;">
+                        <span class="govuk-visually-hidden">Error:</span> There is not enough funding to support this many apprentices
+                    </span>
+                    <span das-validation-for="NumberOfApprentices" class="govuk-error-message"></span>
+                    <input id="opportunity-application-apprentices" class="govuk-input govuk-input--width-5" asp-for="NumberOfApprentices" inputmode="numeric" spellcheck="false" pattern="[0-9]*" type="number" aria-describedby="apprentices-error" />
+                </div>
+
+                <div class="govuk-form-group" das-highlight-error-for="StartDate" error-class="govuk-form-group--error" id="start-date">
+                    <fieldset class="govuk-fieldset" role="group" aria-describedby="opportunity-application-start-hint">
+                        <legend class="govuk-fieldset__legend">
+                            <h1 class="govuk-fieldset__heading govuk-label--s">When would you like the apprenticeship training to start by?</h1>
+                        </legend>
+                        <div id="opportunity-application-start-hint" class="govuk-hint">For example, 11 2007</div>
+                        <span das-validation-for="StartDate" class="govuk-error-message"></span>
+                        <div class="govuk-date-input" id="opportunity-application-start">
+                            <div class="govuk-date-input__item">
+                                <div class="govuk-form-group">
+                                    <label class="govuk-label govuk-date-input__label" for="opportunity-application-start-month">Month</label>
+                                    <input id="opportunity-application-start-month" class="govuk-input govuk-date-input__input govuk-input--width-2" asp-for="Month" type="number" min="1" max="12" das-highlight-error-for="StartDate" error-class="govuk-textarea--error" />
+                                </div>
+                            </div>
+                            <div class="govuk-date-input__item">
+                                <div class="govuk-form-group">
+                                    <label class="govuk-label govuk-date-input__label" for="opportunity-application-start-year">Year</label>
+                                    <input id="opportunity-application-start-year" class="govuk-input govuk-date-input__input govuk-input--width-4" asp-for="Year" type="number" min="@Model.MinYear" max="@Model.MaxYear" das-highlight-error-for="StartDate" error-class="govuk-textarea--error" />
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <div class="govuk-form-group" das-highlight-error-for="HasTrainingProvider" error-class="govuk-form-group--error" id="has-training-provider">
+                    <fieldset class="govuk-fieldset">
+                        <legend class="govuk-fieldset__legend">
+                            <h1 class="govuk-fieldset__heading govuk-label--s">Have you found a training provider?</h1>
+                        </legend>
+                        <span das-validation-for="HasTrainingProvider" class="govuk-error-message"></span>
+                        <div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios">
+                            <div class="govuk-radios__item">
+                                <input class="govuk-radios__input" id="opportunity-application-training-provider-yes" asp-for="HasTrainingProvider" value="true" type="radio" das-highlight-error-for="HasTrainingProvider" error-class="govuk-textarea--error">
+                                <label class="govuk-label govuk-radios__label" for="opportunity-application-training-provider-yes">Yes</label>
+                            </div>
+                            <div class="govuk-radios__item">
+                                <input class="govuk-radios__input" id="opportunity-application-training-provider-no" asp-for="HasTrainingProvider" value="false" type="radio" das-highlight-error-for="HasTrainingProvider" error-class="govuk-textarea--error" data-aria-controls="conditional-opportunity-application-training-provider-no">
+                                <label class="govuk-label govuk-radios__label" for="opportunity-application-training-provider-no">No, show me apprenticeship training providers</label>
+                            </div>
+                            <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-opportunity-application-training-provider-no">
+                                <div class="govuk-form-group">
+                                    <p>Search for <a href="https://findapprenticeshiptraining.apprenticeships.education.gov.uk/" target="_blank" rel="noopener">apprenticeship training courses and training providers</a>.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+            <div class="govuk-grid-column-one-third">
+                <section class="employer-details side-panel">
+                    <partial name="/Views/Shared/_OpportunitySummary.cshtml" for="OpportunitySummaryViewModel" />
+                </section>
+            </div>
+            <div class="govuk-grid-column-full">
+                <div class="govuk-button-group">
+                    <button id="opportunity-criteria-continue" class="govuk-button" data-module="govuk-button">
+                        Continue
+                    </button>
+                    <a href="@Url.Action("Apply", new { Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey })" class="govuk-back-link">Back</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</main>

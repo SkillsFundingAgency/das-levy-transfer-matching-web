@@ -11,18 +11,21 @@ using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.LevyTransferMatching.Web.Models.Shared;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using System.Collections.Generic;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
+using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
     public class OpportunitiesOrchestrator : IOpportunitiesOrchestrator
     {
+        private readonly ICacheStorageService _cacheStorageService;
         private readonly IDateTimeService _dateTimeService;
         private readonly IOpportunitiesService _opportunitiesService;
         private readonly ITagService _tagService;
         private readonly IEncodingService _encodingService;
         private readonly IUserService _userService;
 
-        public OpportunitiesOrchestrator(IDateTimeService dateTimeService, IOpportunitiesService opportunitiesService, ITagService tagService, IUserService userService, IEncodingService encodingService)
+        public OpportunitiesOrchestrator(IDateTimeService dateTimeService, IOpportunitiesService opportunitiesService, ITagService tagService, IUserService userService, IEncodingService encodingService, ICacheStorageService cacheStorageService)
         {
             _dateTimeService = dateTimeService;
             _opportunitiesService = opportunitiesService;
@@ -30,6 +33,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             _encodingService = encodingService;
             _tagService = tagService;
             _userService = userService;
+            _cacheStorageService = cacheStorageService;
         }
 
         public async Task<DetailViewModel> GetDetailViewModel(int pledgeId)
@@ -112,11 +116,127 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             return new OpportunitySummaryViewModel()
             {
                 Amount = opportunityDto.Amount,
-                Description = opportunityDto.IsNamePublic ? $"{opportunityDto.DasAccountName} ({encodedPledgeId})" : "A levy-paying business wants to fund apprenticeship training in:",
+                Description = GenerateDescription(opportunityDto, encodedPledgeId),
                 JobRoleList = jobRoleList,
                 LevelList = levelList,
                 SectorList = sectorList,
                 YearDescription = dateTime.ToTaxYearDescription(),
+            };
+        }
+
+        public async Task<ApplyViewModel> GetApplyViewModel(ApplicationRequest request)
+        {
+            var application = await RetrieveCacheItem(request.CacheKey);
+            var opportunityDto = await _opportunitiesService.GetOpportunity(request.PledgeId);
+
+            return new ApplyViewModel
+            {
+                CacheKey = application.Key,
+                EncodedPledgeId = request.EncodedPledgeId,
+                EncodedAccountId = request.EncodedAccountId,
+                OpportunitySummaryViewModel = await GetOpportunitySummaryViewModel(opportunityDto, request.EncodedPledgeId),
+                JobRole = application.JobRole ?? "-",
+                NumberOfApprentices = application.NumberOfApprentices.HasValue ? application.NumberOfApprentices.Value.ToString() : "-",
+                StartBy = application.StartDate.HasValue ? application.StartDate.Value.ToShortDisplayString() : "-",
+                HaveTrainingProvider = application.HasTrainingProvider.HasValue ? "Yes" : "-",
+                Sectors = "-",
+                Locations = "-",
+                MoreDetail = application.Details ?? "-",
+                ContactName = "-",
+                EmailAddress = "-",
+                WebsiteUrl = "-"
+            };
+        }
+
+        private string GenerateDescription(OpportunityDto opportunityDto, string encodedPledgeId) => opportunityDto.IsNamePublic ? $"{opportunityDto.DasAccountName} ({encodedPledgeId})" : "A levy-paying business wants to fund apprenticeship training in:";
+
+        public async Task<MoreDetailsViewModel> GetMoreDetailsViewModel(MoreDetailsRequest request)
+        {
+            var application = await RetrieveCacheItem(request.CacheKey);
+            var opportunityDto = await _opportunitiesService.GetOpportunity((int)_encodingService.Decode(request.EncodedPledgeId, EncodingType.PledgeId));
+
+            return new MoreDetailsViewModel()
+            {
+                CacheKey = request.CacheKey,
+                EncodedAccountId = request.EncodedAccountId,
+                EncodedPledgeId = request.EncodedPledgeId,
+                Details = application.Details,
+                OpportunitySummaryViewModel = await GetOpportunitySummaryViewModel(opportunityDto, request.EncodedPledgeId),
+            };
+        }
+
+        public async Task UpdateCacheItem(MoreDetailsPostRequest request)
+        {
+            var cacheItem = await RetrieveCacheItem(request.CacheKey);
+
+            cacheItem.Details = request.Details;
+
+            await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
+        }
+
+        public async Task UpdateCacheItem(ApplicationDetailsPostRequest request)
+        {
+            var cacheItem = await RetrieveCacheItem(request.CacheKey);
+
+            cacheItem.JobRole = request.SelectedStandardTitle;
+            cacheItem.StandardId = request.SelectedStandardId;
+            cacheItem.NumberOfApprentices = request.NumberOfApprentices.Value;
+            cacheItem.StartDate = request.StartDate;
+            cacheItem.HasTrainingProvider = request.HasTrainingProvider.Value;
+
+            await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
+        }
+
+        private async Task<CreateApplicationCacheItem> RetrieveCacheItem(Guid key)
+        {
+            var result = await _cacheStorageService.RetrieveFromCache<CreateApplicationCacheItem>(key.ToString());
+
+            if (result == null)
+            {
+                result = new CreateApplicationCacheItem(key);
+                await _cacheStorageService.SaveToCache(key.ToString(), result, 1);
+            }
+
+            return result;
+        }
+
+        public async Task<ApplicationDetailsViewModel> GetApplicationViewModel(ApplicationDetailsRequest request)
+        {
+            var applicationDetailsTask = _opportunitiesService.GetApplicationDetails(request.PledgeId);
+            var applicationTask = RetrieveCacheItem(request.CacheKey);
+            var sectorReferenceDataItemsTask = _tagService.GetSectors();
+            var jobRoleReferenceDataItemsTask = _tagService.GetJobRoles();
+            var levelReferenceDataItemsTask = _tagService.GetLevels();
+
+            await Task.WhenAll(applicationDetailsTask, applicationTask, sectorReferenceDataItemsTask, jobRoleReferenceDataItemsTask, levelReferenceDataItemsTask);
+
+            var application = applicationTask.Result;
+            var applicationDetails = applicationDetailsTask.Result;
+
+            return new ApplicationDetailsViewModel()
+            {
+                CacheKey = request.CacheKey,
+                EncodedAccountId = request.EncodedAccountId,
+                EncodedPledgeId = request.EncodedPledgeId,
+                JobRole = application.JobRole,
+                NumberOfApprentices = application.NumberOfApprentices,
+                Month = application.StartDate?.Month,
+                Year = application.StartDate?.Year,
+                HasTrainingProvider = application.HasTrainingProvider,
+                OpportunitySummaryViewModel = await GetOpportunitySummaryViewModel(applicationDetails.Opportunity, request.EncodedPledgeId),
+                MinYear = DateTime.Now.Year,
+                MaxYear = DateTime.Now.FinancialYearEnd().Year,
+                SelectStandardViewModel = new SelectStandardViewModel
+                {
+                    Standards = applicationDetails.Standards.Select(app => new StandardsListItemViewModel
+                    {
+                        Id = app.StandardUId,
+                        LarsCode = app.LarsCode,
+                        Level = app.Level,
+                        Title = app.Title,
+                        Selected = !string.IsNullOrEmpty(application.StandardId) && (app.StandardUId == application.StandardId) ? "selected": null
+                    })
+                }
             };
         }
     }

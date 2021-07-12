@@ -5,12 +5,8 @@ using NUnit.Framework;
 using SFA.DAS.LevyTransferMatching.Web.Controllers;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
-using System.Data;
 using SFA.DAS.LevyTransferMatching.Web.Authentication;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
@@ -133,10 +129,114 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
 
             string encodedPledgeId = _fixture.Create<string>();
 
-            var redirectResult = await _opportunitiesController.SelectAccount(encodedPledgeId) as RedirectResult;
+            var redirectToActionResult = await _opportunitiesController.SelectAccount(encodedPledgeId) as RedirectToActionResult;
 
-            Assert.IsNotNull(redirectResult);
-            Assert.AreEqual(redirectResult.Url, $"/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/apply");
+            Assert.IsNotNull(redirectToActionResult);
+            Assert.AreEqual(redirectToActionResult.ActionName, nameof(OpportunitiesController.Apply));
+        }
+
+        [Test]
+        public async Task GET_MoreDetails_Returns_Expected_View()
+        {
+            var request = _fixture.Create<MoreDetailsRequest>();
+            var expectedViewModel = _fixture.Create<MoreDetailsViewModel>();
+
+            _orchestrator
+                .Setup(x => x.GetMoreDetailsViewModel(request))
+                .ReturnsAsync(expectedViewModel);
+
+            var viewResult = await _opportunitiesController.MoreDetails(request) as ViewResult;
+            var actualViewModel = viewResult.Model as MoreDetailsViewModel;
+
+            Assert.IsNotNull(viewResult);
+            Assert.IsNotNull(actualViewModel);            
+            Assert.AreEqual(expectedViewModel, actualViewModel);
+            _orchestrator.Verify(x => x.GetMoreDetailsViewModel(request), Times.Once);
+        }
+
+        [Test]
+        public async Task POST_MoreDetails_Redirects_To_Apply()
+        {
+            // Arrange
+            var encodedPledgeId = _fixture.Create<string>();
+            var encodedAccountId = _fixture.Create<string>();
+            var cacheKey = _fixture.Create<Guid>();
+
+            var request = new MoreDetailsPostRequest()
+            {
+                EncodedPledgeId = encodedPledgeId,
+                EncodedAccountId = encodedAccountId,
+                Details = _fixture.Create<string>(),
+                CacheKey = cacheKey
+            };
+
+            _orchestrator.Setup(x => x.UpdateCacheItem(request));
+
+            // Assert
+            var redirectToActionResult = (await _opportunitiesController.MoreDetails(request)) as RedirectToActionResult;
+
+            // Assert
+            Assert.IsNotNull(redirectToActionResult);
+            Assert.AreEqual(redirectToActionResult.ActionName, nameof(OpportunitiesController.Apply));
+            Assert.AreEqual(redirectToActionResult.RouteValues["EncodedPledgeId"], encodedPledgeId);
+            Assert.AreEqual(redirectToActionResult.RouteValues["EncodedAccountId"], encodedAccountId);
+            Assert.AreEqual(redirectToActionResult.RouteValues["CacheKey"], cacheKey);
+            _orchestrator.Verify(x => x.UpdateCacheItem(request), Times.Once);
+        }
+
+        [Test]
+        public async Task GET_ApplicationDetails_Returns_Expected_ViewModel()
+        {
+            var request = _fixture.Create<ApplicationDetailsRequest>();
+            var expectedViewModel = _fixture.Create<ApplicationDetailsViewModel>();
+
+            _orchestrator
+                .Setup(x => x.GetApplicationViewModel(request))
+                .ReturnsAsync(expectedViewModel);
+
+            var viewResult = await _opportunitiesController.ApplicationDetails(request) as ViewResult;
+            var actualViewModel = viewResult.Model as ApplicationDetailsViewModel;
+
+            Assert.IsNotNull(viewResult);
+            Assert.IsNotNull(actualViewModel);
+            Assert.AreEqual(expectedViewModel, actualViewModel);
+            _orchestrator.Verify(x => x.GetApplicationViewModel(request), Times.Once);
+        }
+
+        [Test]
+        public async Task POST_ApplicationDetails_Redirects_To_Apply()
+        {
+            // Arrange
+            var encodedPledgeId = _fixture.Create<string>();
+            var encodedAccountId = _fixture.Create<string>();
+            var cacheKey = _fixture.Create<Guid>();
+
+            var request = new ApplicationDetailsPostRequest()
+            {
+                EncodedPledgeId = encodedPledgeId,
+                EncodedAccountId = encodedAccountId,
+                CacheKey = cacheKey,
+                HasTrainingProvider = true,
+                Month = DateTime.Now.Month,
+                Year = DateTime.Now.Year,
+                NumberOfApprentices = 1,
+                PledgeId = 1,
+                SelectedStandardId = "ST_001",
+                SelectedStandardTitle = "Test Standard Title"
+            };
+
+            _orchestrator.Setup(x => x.UpdateCacheItem(request));
+
+            // Assert
+            var redirectToActionResult = (await _opportunitiesController.ApplicationDetails(request)) as RedirectToActionResult;
+
+            // Assert
+            Assert.IsNotNull(redirectToActionResult);
+            Assert.AreEqual(redirectToActionResult.ActionName, nameof(OpportunitiesController.Apply));
+            Assert.AreEqual(redirectToActionResult.RouteValues["EncodedPledgeId"], encodedPledgeId);
+            Assert.AreEqual(redirectToActionResult.RouteValues["EncodedAccountId"], encodedAccountId);
+            Assert.AreEqual(redirectToActionResult.RouteValues["CacheKey"], cacheKey);
+            _orchestrator.Verify(x => x.UpdateCacheItem(request), Times.Once);
         }
     }
 }
