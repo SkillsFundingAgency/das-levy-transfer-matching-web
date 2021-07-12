@@ -134,15 +134,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 CacheKey = application.Key,
                 EncodedPledgeId = request.EncodedPledgeId,
                 EncodedAccountId = request.EncodedAccountId,
-                OpportunitySummaryViewModel = new OpportunitySummaryViewModel
-                {
-                    Description = GenerateDescription(opportunityDto, request.EncodedPledgeId),
-                    Amount = opportunityDto.Amount,
-                    JobRoleList = string.Join(", ", opportunityDto.JobRoles),
-                    LevelList = string.Join(", ", opportunityDto.Levels),
-                    SectorList = string.Join(", ", opportunityDto.Sectors),
-                    YearDescription = "2021/22"
-                },
+                OpportunitySummaryViewModel = await GetOpportunitySummaryViewModel(opportunityDto, request.EncodedPledgeId),
                 JobRole = "-",
                 NumberOfApprentices = "-",
                 StartBy = "-",
@@ -169,15 +161,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 EncodedAccountId = request.EncodedAccountId,
                 EncodedPledgeId = request.EncodedPledgeId,
                 Details = application.Details,
-                OpportunitySummaryViewModel = new OpportunitySummaryViewModel
-                {
-                    Description = GenerateDescription(opportunityDto, request.EncodedPledgeId),
-                    Amount = opportunityDto.Amount,
-                    JobRoleList = string.Join(", ", opportunityDto.JobRoles),
-                    LevelList = string.Join(", ", opportunityDto.Levels),
-                    SectorList = string.Join(", ", opportunityDto.Sectors),
-                    YearDescription = "2021/22"
-                }
+                OpportunitySummaryViewModel = await GetOpportunitySummaryViewModel(opportunityDto, request.EncodedPledgeId),
             };
         }
 
