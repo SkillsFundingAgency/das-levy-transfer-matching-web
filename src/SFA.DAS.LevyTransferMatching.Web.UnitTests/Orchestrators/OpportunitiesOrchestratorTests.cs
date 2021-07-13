@@ -15,6 +15,9 @@ using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using System.Data;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
+using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
+using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 {
@@ -23,16 +26,19 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
     {
         private OpportunitiesOrchestrator _orchestrator;
         private Fixture _fixture;
+
         private Mock<IDateTimeService> _dateTimeService;
         private Mock<IOpportunitiesService> _opportunitiesService;
         private Mock<ITagService> _tagService;
         private Mock<IUserService> _userService;
         private Mock<IEncodingService> _encodingService;
+        private Mock<ICacheStorageService> _cacheStorageService;
 
         private List<OpportunityDto> _opportunityDtoList;
         private List<ReferenceDataItem> _sectorReferenceDataItems;
         private List<ReferenceDataItem> _jobRoleReferenceDataItems;
         private List<ReferenceDataItem> _levelReferenceDataItems;
+
         private DateTime _currentDateTime;
 
         [SetUp]
@@ -44,12 +50,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _tagService = new Mock<ITagService>();
             _userService = new Mock<IUserService>();
             _encodingService = new Mock<IEncodingService>();
+            _cacheStorageService = new Mock<ICacheStorageService>();
 
             _opportunityDtoList = _fixture.Create<List<OpportunityDto>>();
             _opportunitiesService.Setup(x => x.GetAllOpportunities()).ReturnsAsync(_opportunityDtoList);
             _encodingService.Setup(x => x.Encode(It.IsAny<long>(), EncodingType.PledgeId)).Returns("test");
 
-            _orchestrator = new OpportunitiesOrchestrator(_dateTimeService.Object, _opportunitiesService.Object, _tagService.Object, _userService.Object, _encodingService.Object);
+            _orchestrator = new OpportunitiesOrchestrator(_dateTimeService.Object, _opportunitiesService.Object, _tagService.Object, _userService.Object, _encodingService.Object, _cacheStorageService.Object);
         }
 
         [Test]
@@ -225,6 +232,103 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             Assert.AreEqual(result.SectorList, sectorDescriptions.Single());
 
             Assert.AreEqual(result.YearDescription, $"{_currentDateTime.ToTaxYear("yyyy")}/{_currentDateTime.AddYears(1).ToTaxYear("yy")}");
+        }
+
+        [Test]
+        public async Task GetContactDetailsViewModel_No_Opportunity_Found_Returns_Null()
+        {
+            // Arrange
+            ContactDetailsRequest contactDetailsRequest = _fixture.Create<ContactDetailsRequest>();
+
+            _opportunitiesService
+                .Setup(x => x.GetOpportunity(It.Is<int>(y => y == contactDetailsRequest.PledgeId)))
+                .ReturnsAsync((OpportunityDto)null);
+
+            // Act
+            ContactDetailsViewModel contactDetailsViewModel = await _orchestrator.GetContactDetailsViewModel(contactDetailsRequest);
+
+            // Assert
+            Assert.IsNull(contactDetailsViewModel);
+        }
+
+        [Test]
+        public async Task GetContactDetailsViewModel_Not_In_Cache_AdditionalEmailAddresses_Populated_Correctly()
+        {
+            // Arrange
+            ContactDetailsRequest contactDetailsRequest = _fixture.Create<ContactDetailsRequest>();
+
+            this.SetupGetOpportunityViewModelServices();
+
+            var sectors = _sectorReferenceDataItems.Take(4);
+            var jobRoles = _jobRoleReferenceDataItems.Take(5);
+            var levels = _levelReferenceDataItems.Take(6);
+
+            var opportunityDto = _fixture
+                .Build<OpportunityDto>()
+                .With(x => x.IsNamePublic, true)
+                .With(x => x.Sectors, sectors.Select(y => y.Id))
+                .With(x => x.JobRoles, jobRoles.Select(y => y.Id))
+                .With(x => x.Levels, levels.Select(y => y.Id))
+                .Create();
+
+            _opportunitiesService
+                .Setup(x => x.GetOpportunity(It.Is<int>(y => y == contactDetailsRequest.PledgeId)))
+                .ReturnsAsync(opportunityDto);
+
+            string encodedPledgeId = _fixture.Create<string>();
+            _encodingService
+                .Setup(x => x.Encode(It.Is<int>(y => y == opportunityDto.Id), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
+                .Returns(encodedPledgeId);
+
+            string[] expectedAdditionalEmailAddresses = new string[] { null, null, null, null, };
+
+            // Act
+            ContactDetailsViewModel contactDetailsViewModel = await _orchestrator.GetContactDetailsViewModel(contactDetailsRequest);
+
+            // Assert
+            CollectionAssert.AreEqual(expectedAdditionalEmailAddresses, contactDetailsViewModel.AdditionalEmailAddresses);
+        }
+
+        [Test]
+        public async Task GetContactDetailsViewModel_Already_In_Cache_Result_Populated_Correctly()
+        {
+            // Arrange
+            ContactDetailsRequest contactDetailsRequest = _fixture.Create<ContactDetailsRequest>();
+
+            this.SetupGetOpportunityViewModelServices();
+
+            var sectors = _sectorReferenceDataItems.Take(4);
+            var jobRoles = _jobRoleReferenceDataItems.Take(5);
+            var levels = _levelReferenceDataItems.Take(6);
+
+            var opportunityDto = _fixture
+                .Build<OpportunityDto>()
+                .With(x => x.IsNamePublic, true)
+                .With(x => x.Sectors, sectors.Select(y => y.Id))
+                .With(x => x.JobRoles, jobRoles.Select(y => y.Id))
+                .With(x => x.Levels, levels.Select(y => y.Id))
+                .Create();
+
+            _opportunitiesService
+                .Setup(x => x.GetOpportunity(It.Is<int>(y => y == contactDetailsRequest.PledgeId)))
+                .ReturnsAsync(opportunityDto);
+
+            string encodedPledgeId = _fixture.Create<string>();
+            _encodingService
+                .Setup(x => x.Encode(It.Is<int>(y => y == opportunityDto.Id), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
+                .Returns(encodedPledgeId);
+
+            CreateApplicationCacheItem createApplicationCacheItem = _fixture.Create<CreateApplicationCacheItem>();
+
+            _cacheStorageService
+                .Setup(x => x.RetrieveFromCache<CreateApplicationCacheItem>(It.Is<string>(y => y == contactDetailsRequest.CacheKey.ToString())))
+                .ReturnsAsync(createApplicationCacheItem);
+
+            // Act
+            ContactDetailsViewModel contactDetailsViewModel = await _orchestrator.GetContactDetailsViewModel(contactDetailsRequest);
+
+            // Assert
+            CollectionAssert.AreEqual(createApplicationCacheItem.AdditionalEmailAddresses, contactDetailsViewModel.AdditionalEmailAddresses);
         }
 
         private void SetupGetOpportunityViewModelServices()
