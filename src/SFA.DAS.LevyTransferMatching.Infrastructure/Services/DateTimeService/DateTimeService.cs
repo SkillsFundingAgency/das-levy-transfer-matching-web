@@ -16,9 +16,9 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService
         {
             get
             {
-                if (_levyTransferMatchingWeb.UtcNowOverride.HasValue)
+                if (!string.IsNullOrWhiteSpace(_levyTransferMatchingWeb.UtcNowOverride))
                 {
-                    return _levyTransferMatchingWeb.UtcNowOverride.Value;
+                    return DateTime.Parse(_levyTransferMatchingWeb.UtcNowOverride);
                 }
                 else
                 {
