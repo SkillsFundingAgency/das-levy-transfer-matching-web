@@ -65,7 +65,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
 
             Assert.AreEqual(result, expectedTagDesc);
         }
-
+        
         [Test]
         public void ToReferenceDataDescriptionList_None_Selected()
         {
@@ -78,6 +78,32 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
 
             // Assert
             Assert.AreEqual("All", result);
+        }
+
+        [Test]
+        public void IsComplete_Returns_True_When_Text_Is_Entered()
+        {
+            Assert.IsTrue("complete".IsComplete());
+        }
+
+        [Test]
+        public void IsComplete_Returns_False_When_Text_Is_NotCompletedString()
+        {
+            Assert.IsFalse("-".IsComplete());
+        }
+
+        [Test]
+        public void IsComplete_Returns_False_When_Text_Is_Null()
+        {
+            string str = null;
+
+            Assert.IsFalse(str.IsComplete());
+        }
+
+        [Test]
+        public void IsComplete_Returns_False_When_Text_Is_Empty()
+        {
+            Assert.IsFalse(string.Empty.IsComplete());
         }
     }
 }

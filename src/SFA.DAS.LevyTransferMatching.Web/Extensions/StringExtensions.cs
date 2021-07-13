@@ -8,6 +8,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Extensions
     public static class StringExtensions
     {
         private const string All = "All";
+        private const string NotEntered = "-";
 
         public static string ToReferenceDataDescriptionList(this IEnumerable<string> selectedReferenceDataItemIds, IEnumerable<ReferenceDataItem> allReferenceDataItems, Func<ReferenceDataItem, string> descriptionSource = null)
         {
@@ -27,6 +28,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Extensions
             }
 
             return descriptions;
+        }
+
+        public static bool IsComplete(this string str)
+        {
+            return !string.IsNullOrEmpty(str) && str != NotEntered;
         }
     }
 }
