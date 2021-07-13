@@ -131,6 +131,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             return new ApplyViewModel
             {
+                EncodedAccountId = request.EncodedAccountId,
+                EncodedPledgeId = request.EncodedPledgeId,
                 OpportunitySummaryViewModel = await GetOpportunitySummaryViewModel(opportunityDto, request.EncodedPledgeId),
                 JobRole = "-",
                 NumberOfApprentices = "-",
@@ -168,6 +170,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             return new ContactDetailsViewModel()
             {
+                EncodedAccountId = contactDetailsRequest.EncodedAccountId,
+                EncodedPledgeId = contactDetailsRequest.EncodedPledgeId,
                 FirstName = cacheItem.FirstName,
                 LastName = cacheItem.LastName,
                 EmailAddress = cacheItem.EmailAddress,
