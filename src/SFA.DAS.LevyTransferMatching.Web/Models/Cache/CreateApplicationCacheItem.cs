@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Cache
 {
@@ -22,5 +23,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Cache
         public int? NumberOfApprentices { get; set; }
         public DateTime? StartDate { get; set; }
         public bool? HasTrainingProvider { get; set; }
+        public List<string> Sectors { get; set; }
+        public string Location { get; set; }
     }
 }

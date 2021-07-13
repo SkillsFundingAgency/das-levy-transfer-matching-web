@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService
 {
@@ -58,6 +59,13 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
             }
 
             return applicationDetailsResponse;
+        }
+
+        public async Task<GetSectorResponse> GetSector(long accountId, int pledgeId)
+        {
+            var response = await _client.GetAsync($"/accounts/{accountId}/opportunities/{pledgeId}/create/sector");
+            response.EnsureSuccessStatusCode();
+            return JsonConvert.DeserializeObject<GetSectorResponse>(await response.Content.ReadAsStringAsync());
         }
     }
 }

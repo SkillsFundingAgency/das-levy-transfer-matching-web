@@ -103,22 +103,29 @@
                     <ul class="das-task-list__items">
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="#">
+                                <a class="govuk-link" href="@Url.Action("Sector", new { EncodedAccountId = Model.EncodedAccountId, EncodedPledgeId = Model.EncodedPledgeId, CacheKey = Model.CacheKey })">
                                     Sector
                                 </a>
                             </span>
                             <span class="das-task-list__task-tag">
-                                <text>@Model.Sectors</text>
+                                @if (Model.Sectors != null)
+                                {
+                                    <unordered-list asp-for="Sectors" source="@Model.SectorOptions" class="govuk-list das-!-text-align-right"></unordered-list>
+                                }
+                                else
+                                {
+                                    <text>-</text>
+                                }
                             </span>
                         </li>
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="#">
+                                <a class="govuk-link" href="@Url.Action("Sector", new { EncodedAccountId = Model.EncodedAccountId, EncodedPledgeId = Model.EncodedPledgeId, CacheKey = Model.CacheKey })">
                                     Location
                                 </a>
                             </span>
                             <span class="das-task-list__task-tag">
-                                <text>@Model.Locations</text>
+                                <text>@Model.Location</text>
                             </span>
                         </li>
                     </ul>
