@@ -41,5 +41,26 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
             response.EnsureSuccessStatusCode();
             return JsonConvert.DeserializeObject<GetAmountResponse>(await response.Content.ReadAsStringAsync());
         }
+
+        public async Task<GetSectorResponse> GetSector(long accountId)
+        {
+            var response = await _client.GetAsync($"accounts/{accountId}/pledges/create/sector");
+            response.EnsureSuccessStatusCode();
+            return JsonConvert.DeserializeObject<GetSectorResponse>(await response.Content.ReadAsStringAsync());
+        }
+
+        public async Task<GetJobRoleResponse> GetJobRole(long accountId)
+        {
+            var response = await _client.GetAsync($"accounts/{accountId}/pledges/create/job-role");
+            response.EnsureSuccessStatusCode();
+            return JsonConvert.DeserializeObject<GetJobRoleResponse>(await response.Content.ReadAsStringAsync());
+        }
+
+        public async Task<GetLevelResponse> GetLevel(long accountId)
+        {
+            var response = await _client.GetAsync($"accounts/{accountId}/pledges/create/level");
+            response.EnsureSuccessStatusCode();
+            return JsonConvert.DeserializeObject<GetLevelResponse>(await response.Content.ReadAsStringAsync());
+        }
     }
 }
