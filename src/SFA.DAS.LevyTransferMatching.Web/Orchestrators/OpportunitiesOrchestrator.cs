@@ -138,7 +138,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 JobRole = application.JobRole ?? "-",
                 NumberOfApprentices = application.NumberOfApprentices.HasValue ? application.NumberOfApprentices.Value.ToString() : "-",
                 StartBy = application.StartDate.HasValue ? application.StartDate.Value.ToShortDisplayString() : "-",
-                HaveTrainingProvider = application.HasTrainingProvider.HasValue ? "Yes" : "-",
+                HaveTrainingProvider = application.HasTrainingProvider.ToApplyViewString(),
                 Sectors = "-",
                 Locations = "-",
                 MoreDetail = application.Details ?? "-",
