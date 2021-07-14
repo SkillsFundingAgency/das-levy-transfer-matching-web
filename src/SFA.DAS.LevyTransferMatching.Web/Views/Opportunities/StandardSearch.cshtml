@@ -1,4 +1,5 @@
 ﻿@using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
+@using SFA.DAS.LevyTransferMatching.Web.Helpers
 @model SelectStandardViewModel
 
 <div class="govuk-form-group" das-highlight-error-for="SelectedStandardId" error-class="govuk-form-group--error" id="job-role">
@@ -14,12 +15,7 @@
             @ViewData.ModelState["SelectedStandardId"].Errors.First().ErrorMessage
         </span>
     }
-    <select id="SelectedStandardId" name="SelectedStandardId" class="govuk-select" aria-describedby="choose-apprenticeship-hint">
-        <option value=""></option>
-        @foreach (var standard in Model.Standards)
-        {
-            <option value="@standard.Id" selected="@standard.Selected">@standard.Title</option>
-        }
-    </select>
-    <input type="hidden" name="SelectedStandardTitle" id="SelectedStandardTitle" />
+    
+    <type-ahead class="govuk-select" asp-for="SelectedStandardId" source="@Model.Standards"></type-ahead>
+    <input type="hidden" name="SelectedStandardTitle" id="SelectedStandardTitle" asp-for="SelectedStandardTitle" />
 </div>
