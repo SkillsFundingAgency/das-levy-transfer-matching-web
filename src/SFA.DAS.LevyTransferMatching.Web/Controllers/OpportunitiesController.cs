@@ -111,13 +111,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/create/application-details")]
         public async Task<IActionResult> ApplicationDetails(ApplicationDetailsPostRequest request)
         {
-            await _opportunitiesOrchestrator.UpdateCacheItem(request);
-            return RedirectToAction("Apply", new ApplicationRequest
-            {
-                EncodedAccountId = request.EncodedAccountId,
-                EncodedPledgeId = request.EncodedPledgeId,
-                CacheKey = request.CacheKey
-            });
+            return RedirectToAction("Apply", await _opportunitiesOrchestrator.PostApplicationViewModel(request));
         }
     }
 }

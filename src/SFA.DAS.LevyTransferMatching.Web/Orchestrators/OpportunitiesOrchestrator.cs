@@ -239,5 +239,22 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 }
             };
         }
+
+        public async Task<ApplicationRequest> PostApplicationViewModel(ApplicationDetailsPostRequest request)
+        {
+            var applicationDetails = await _opportunitiesService.GetApplicationDetails(request.PledgeId);
+
+            request.SelectedStandardTitle = applicationDetails.Standards
+                .FirstOrDefault(standard => standard.StandardUId == request.SelectedStandardId)?.Title;
+
+            await UpdateCacheItem(request);
+
+            return new ApplicationRequest
+            {
+                EncodedAccountId = request.EncodedAccountId,
+                EncodedPledgeId = request.EncodedPledgeId,
+                CacheKey = request.CacheKey
+            };
+        }
     }
 }

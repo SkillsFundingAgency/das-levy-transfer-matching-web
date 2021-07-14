@@ -91,14 +91,11 @@ if (selectEl) {
 
             $('.autocomplete__input').each(function () {
                 var that = $(this);
-                var titleField = $('#SelectedStandardTitle');
                 if (that.val().length === 0) {
                     var fieldId = that.attr('id'),
                         selectField = $('#' + fieldId + '-select');
                     selectField[0].selectedIndex = 0;
-                    titleField[0].value = '';
                 }
-                titleField[0].value = that.val();
             });
 
         });
