@@ -24,14 +24,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private PledgeOrchestrator _orchestrator;
         private Fixture _fixture;
         private Mock<ICacheStorageService> _cache;
-        private Mock<IAccountsService> _accountsService;
         private Mock<IPledgeService> _pledgeService;
         private Mock<ITagService> _tagService;
 		private Mock<IEncodingService> _encodingService;
         private List<ReferenceDataItem> _sectors;
         private List<ReferenceDataItem> _levels;
         private List<ReferenceDataItem> _jobRoles;
-        private AccountDto _accountDetail;
+        private GetAmountResponse _amountResponse;
         private string _encodedAccountId;
         private Guid _cacheKey;
         private readonly long _accountId = 1;
@@ -45,20 +44,18 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _encodedAccountId = _fixture.Create<string>();
             _cacheKey = Guid.NewGuid();
             _cache = new Mock<ICacheStorageService>();
-            _accountsService = new Mock<IAccountsService>();
             _pledgeService = new Mock<IPledgeService>();
             _encodingService = new Mock<IEncodingService>();
 
             _sectors = _fixture.Create<List<ReferenceDataItem>>();
             _levels = _fixture.Create<List<ReferenceDataItem>>();
             _jobRoles = _fixture.Create<List<ReferenceDataItem>>();
-            _accountDetail = _fixture.Create<AccountDto>();
+            _amountResponse = _fixture.Create<GetAmountResponse>();
             _tagService = new Mock<ITagService>();
             _tagService.Setup(x => x.GetJobRoles()).ReturnsAsync(_jobRoles);
             _tagService.Setup(x => x.GetSectors()).ReturnsAsync(_sectors);
             _tagService.Setup(x => x.GetLevels()).ReturnsAsync(_levels);
             _encodedPledgeId = _fixture.Create<string>();
-            _accountsService.Setup(x => x.GetAccountDetail(_encodedAccountId)).ReturnsAsync(_accountDetail);
 
             _pledgeService.Setup(x => x.GetCreate(_accountId)).ReturnsAsync(() => new GetCreateResponse
             {
@@ -67,7 +64,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                 Levels = _levels
             });
 
-            _orchestrator = new PledgeOrchestrator(_cache.Object, _accountsService.Object, _pledgeService.Object, _tagService.Object, _encodingService.Object);
+            _pledgeService.Setup(x => x.GetAmount(_encodedAccountId)).ReturnsAsync(_amountResponse);
+            
+            _orchestrator = new PledgeOrchestrator(_cache.Object, Mock.Of<IAccountsService>(), _pledgeService.Object, _tagService.Object, _encodingService.Object);
         }
 
         [Test]
@@ -138,7 +137,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var result = await _orchestrator.GetCreateViewModel(new CreateRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
             Assert.AreEqual(cacheItem.IsNamePublic, result.IsNamePublic);
         }
-
 
         [Test]
         public async Task GetCreateViewModel_Sectors_Is_Retrieved_From_Cache()

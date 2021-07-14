@@ -65,20 +65,20 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         public async Task<AmountViewModel> GetAmountViewModel(AmountRequest request)
         {
             var cacheItemTask = RetrievePledgeCacheItem(request.CacheKey);
-            var accountDetailTask = _accountsService.GetAccountDetail(request.EncodedAccountId);
+            var accountDataTask = _pledgeService.GetAmount(request.EncodedAccountId);
 
-            await Task.WhenAll(cacheItemTask, accountDetailTask);
+            await Task.WhenAll(cacheItemTask, accountDataTask);
             var cacheItem = cacheItemTask.Result;
-            var accountDetail = accountDetailTask.Result;
+            var accountData = accountDataTask.Result;
 
             return new AmountViewModel
             {
                 EncodedAccountId = request.EncodedAccountId,
                 CacheKey = request.CacheKey,
                 Amount = cacheItem.Amount.ToString(),
-                RemainingTransferAllowance = accountDetail.RemainingTransferAllowance.ToString("N0"),
+                RemainingTransferAllowance = accountData.RemainingTransferAllowance.ToString("N0"),
                 IsNamePublic = cacheItem.IsNamePublic,
-                DasAccountName = accountDetail.DasAccountName
+                DasAccountName = accountData.DasAccountName
             };
         }
 
