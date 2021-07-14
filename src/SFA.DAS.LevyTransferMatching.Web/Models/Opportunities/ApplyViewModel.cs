@@ -1,4 +1,5 @@
 ﻿using SFA.DAS.LevyTransferMatching.Web.Models.Shared;
+using System.Collections.Generic;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
 {
@@ -14,7 +15,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
 
         public string MoreDetail { get; set; }
         public string ContactName { get; set; }
-        public string EmailAddress { get; set; }
+        public IEnumerable<string> EmailAddresses { get; set; }
         public string WebsiteUrl { get; set; }
 
         public OpportunitySummaryViewModel OpportunitySummaryViewModel { get; set; }

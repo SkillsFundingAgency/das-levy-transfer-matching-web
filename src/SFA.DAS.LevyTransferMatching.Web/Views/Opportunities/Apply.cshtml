@@ -183,7 +183,19 @@
                                 </a>
                             </span>
                             <span class="das-task-list__task-tag">
-                                <text>@Model.EmailAddress</text>
+                                @if (Model.EmailAddresses.Count() > 0)
+                                {
+                                    <ul class="govuk-list das-!-text-align-right">
+                                        @foreach (var emailAddress in Model.EmailAddresses)
+                                        {
+                                            <li>@emailAddress</li>
+                                        }
+                                    </ul>
+                                }
+                                else
+                                {
+                                    <text>-</text>
+                                }
                             </span>
                         </li>
                         <li class="das-task-list__item">

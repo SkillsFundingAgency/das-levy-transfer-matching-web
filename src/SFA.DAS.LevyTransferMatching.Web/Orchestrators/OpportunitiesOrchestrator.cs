@@ -129,6 +129,25 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             var application = await RetrieveCacheItem(request.CacheKey);
             var opportunityDto = await _opportunitiesService.GetOpportunity(request.PledgeId);
 
+            var emailAddresses = new List<string>();
+
+            var emailAddress = application.EmailAddress;
+
+            if (!string.IsNullOrEmpty(emailAddress))
+            {
+                emailAddresses.Add(emailAddress);
+            }
+
+            if (application.AdditionalEmailAddresses != null)
+            {
+                var additionalEmailAddresses = application.AdditionalEmailAddresses
+                    .Where(x => !string.IsNullOrEmpty(x));
+
+                emailAddresses.AddRange(additionalEmailAddresses);
+            }
+
+            var contactName = $"{application.FirstName} {application.LastName}";
+
             return new ApplyViewModel
             {
                 EncodedAccountId = request.EncodedAccountId,
@@ -141,9 +160,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 Sectors = "-",
                 Locations = "-",
                 MoreDetail = "-",
-                ContactName = "-",
-                EmailAddress = "-",
-                WebsiteUrl = "-"
+                ContactName = string.IsNullOrWhiteSpace(contactName) ? "-" : contactName,
+                EmailAddresses = emailAddresses,
+                WebsiteUrl = string.IsNullOrEmpty(application.BusinessWebsite) ? "-" : application.BusinessWebsite,
             };
         }
 
