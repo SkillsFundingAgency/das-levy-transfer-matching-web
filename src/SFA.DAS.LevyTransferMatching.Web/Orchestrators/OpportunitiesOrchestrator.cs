@@ -112,7 +112,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             return new OpportunitySummaryViewModel()
             {
                 Amount = opportunityDto.Amount,
-                Description = opportunityDto.IsNamePublic ? $"{opportunityDto.DasAccountName} ({encodedPledgeId})" : "A levy-paying business wants to fund apprenticeship training in:",
+                Description = opportunityDto.IsNamePublic ? $"{opportunityDto.DasAccountName} ({encodedPledgeId})" : "A levy-paying business",
                 JobRoleList = jobRoleList,
                 LevelList = levelList,
                 SectorList = sectorList,
