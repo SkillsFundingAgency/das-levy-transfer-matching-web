@@ -13,7 +13,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Extensions
         {
             string descriptions = null;
 
-            if (allReferenceDataItems.Count() == selectedReferenceDataItemIds.Count())
+            if (allReferenceDataItems.Count() == selectedReferenceDataItemIds.Count() || selectedReferenceDataItemIds.Count() <= 0)
             {
                 descriptions = All;
             }

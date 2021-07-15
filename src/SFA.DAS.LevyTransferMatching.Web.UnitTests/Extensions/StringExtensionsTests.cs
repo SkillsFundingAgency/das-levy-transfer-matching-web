@@ -65,5 +65,19 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
 
             Assert.AreEqual(result, expectedTagDesc);
         }
+
+        [Test]
+        public void ToReferenceDataDescriptionList_None_Selected()
+        {
+            // Arrange
+            var referenceDataItems = _fixture.CreateMany<ReferenceDataItem>();
+            var referenceDataItemIds = Array.Empty<string>();
+
+            // Act
+            var result = referenceDataItemIds.ToReferenceDataDescriptionList(referenceDataItems);
+
+            // Assert
+            Assert.AreEqual("All", result);
+        }
     }
 }
