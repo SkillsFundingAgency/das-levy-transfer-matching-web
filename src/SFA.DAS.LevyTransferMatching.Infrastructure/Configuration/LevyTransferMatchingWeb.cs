@@ -6,6 +6,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Configuration
     {
         public string RedisConnectionString { get; set; }
         public string DataProtectionKeysDatabase { get; set; }
-        public DateTime? UtcNowOverride { get; set; }
+        public string UtcNowOverride { get; set; }
     }
 }
