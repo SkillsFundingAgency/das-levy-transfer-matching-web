@@ -18,6 +18,7 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Models;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 {
@@ -269,30 +270,22 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             // Arrange
             ContactDetailsRequest contactDetailsRequest = _fixture.Create<ContactDetailsRequest>();
 
-            this.SetupGetOpportunityViewModelServices();
+            _currentDateTime = _fixture.Create<DateTime>();
+            _dateTimeService
+                .Setup(x => x.UtcNow)
+                .Returns(_currentDateTime);
 
-            var sectors = _sectorReferenceDataItems.Take(4);
-            var jobRoles = _jobRoleReferenceDataItems.Take(5);
-            var levels = _levelReferenceDataItems.Take(6);
-
-            var opportunityDto = _fixture
-                .Build<OpportunityDto>()
-                .With(x => x.IsNamePublic, true)
-                .With(x => x.Sectors, sectors.Select(y => y.Id))
-                .With(x => x.JobRoles, jobRoles.Select(y => y.Id))
-                .With(x => x.Levels, levels.Select(y => y.Id))
-                .Create();
+            GetContactDetailsResult getContactDetailsResult = _fixture.Create<GetContactDetailsResult>();
 
             _opportunitiesService
-                .Setup(x => x.GetOpportunity(It.Is<int>(y => y == contactDetailsRequest.PledgeId)))
-                .ReturnsAsync(opportunityDto);
-
-            string encodedPledgeId = _fixture.Create<string>();
-            _encodingService
-                .Setup(x => x.Encode(It.Is<int>(y => y == opportunityDto.Id), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
-                .Returns(encodedPledgeId);
+                .Setup(x => x.GetContactDetails(It.Is<long>(y => y == contactDetailsRequest.AccountId), It.Is<int>(y => y == contactDetailsRequest.PledgeId)))
+                .ReturnsAsync(getContactDetailsResult);
 
             string[] expectedAdditionalEmailAddresses = new string[] { null, null, null, null, };
+
+            _cacheStorageService
+                .Setup(x => x.RetrieveFromCache<CreateApplicationCacheItem>(It.Is<string>(y => y == contactDetailsRequest.CacheKey.ToString())))
+                .ReturnsAsync((CreateApplicationCacheItem)null);
 
             // Act
             ContactDetailsViewModel contactDetailsViewModel = await _orchestrator.GetContactDetailsViewModel(contactDetailsRequest);
@@ -307,28 +300,16 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             // Arrange
             ContactDetailsRequest contactDetailsRequest = _fixture.Create<ContactDetailsRequest>();
 
-            this.SetupGetOpportunityViewModelServices();
+            _currentDateTime = _fixture.Create<DateTime>();
+            _dateTimeService
+                .Setup(x => x.UtcNow)
+                .Returns(_currentDateTime);
 
-            var sectors = _sectorReferenceDataItems.Take(4);
-            var jobRoles = _jobRoleReferenceDataItems.Take(5);
-            var levels = _levelReferenceDataItems.Take(6);
-
-            var opportunityDto = _fixture
-                .Build<OpportunityDto>()
-                .With(x => x.IsNamePublic, true)
-                .With(x => x.Sectors, sectors.Select(y => y.Id))
-                .With(x => x.JobRoles, jobRoles.Select(y => y.Id))
-                .With(x => x.Levels, levels.Select(y => y.Id))
-                .Create();
+            GetContactDetailsResult getContactDetailsResult = _fixture.Create<GetContactDetailsResult>();
 
             _opportunitiesService
-                .Setup(x => x.GetOpportunity(It.Is<int>(y => y == contactDetailsRequest.PledgeId)))
-                .ReturnsAsync(opportunityDto);
-
-            string encodedPledgeId = _fixture.Create<string>();
-            _encodingService
-                .Setup(x => x.Encode(It.Is<int>(y => y == opportunityDto.Id), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
-                .Returns(encodedPledgeId);
+                .Setup(x => x.GetContactDetails(It.Is<long>(y => y == contactDetailsRequest.AccountId), It.Is<int>(y => y == contactDetailsRequest.PledgeId)))
+                .ReturnsAsync(getContactDetailsResult);
 
             CreateApplicationCacheItem createApplicationCacheItem = _fixture.Create<CreateApplicationCacheItem>();
 

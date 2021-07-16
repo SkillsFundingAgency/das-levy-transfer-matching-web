@@ -99,6 +99,37 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             return firstEncodedAccountId;
         }
 
+        public OpportunitySummaryViewModel GetOpportunitySummaryViewModel(
+            int allSectorsCount,
+            IEnumerable<string> opportunitySectorDescriptions,
+            int allJobRolesCount,
+            IEnumerable<string> opportunityJobRoleDescriptions,
+            int allLevelsCount,
+            IEnumerable<string> opportunityLevelDescriptions,
+            int amount,
+            bool opportunityIsNamePublic,
+            string opportunityDasAccountName,
+            string encodedPledgeId)
+        {
+            // Pull back the tags, and use the descriptions to build the lists.
+            string sectorList = opportunitySectorDescriptions.ToReferenceDataDescriptionList(allSectorsCount);
+            string jobRoleList = opportunityJobRoleDescriptions.ToReferenceDataDescriptionList(allJobRolesCount);
+            string levelList = opportunityLevelDescriptions.ToReferenceDataDescriptionList(allLevelsCount);
+
+            DateTime dateTime = _dateTimeService.UtcNow;
+
+            return new OpportunitySummaryViewModel()
+            {
+                Amount = amount,
+                Description = opportunityIsNamePublic ? $"{opportunityDasAccountName} ({encodedPledgeId})" : "A levy-paying business",
+                JobRoleList = jobRoleList,
+                LevelList = levelList,
+                SectorList = sectorList,
+                YearDescription = dateTime.ToTaxYearDescription(),
+            };
+        }
+
+        [Obsolete("To eventually be replaced with the other method of the same name - please use other overload.")]
         public async Task<OpportunitySummaryViewModel> GetOpportunitySummaryViewModel(OpportunityDto opportunityDto, string encodedPledgeId)
         {
             // Pull back the tags, and use the descriptions to build the lists.
@@ -168,16 +199,24 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         public async Task<ContactDetailsViewModel> GetContactDetailsViewModel(ContactDetailsRequest contactDetailsRequest)
         {
-            var opportunityDto = await _opportunitiesService.GetOpportunity(contactDetailsRequest.PledgeId);
+            var getContactDetailsResult = await _opportunitiesService.GetContactDetails(contactDetailsRequest.AccountId, contactDetailsRequest.PledgeId);
 
-            if (opportunityDto == null)
+            if (getContactDetailsResult == null)
             {
                 return null;
             }
 
-            var encodedPledgeId = _encodingService.Encode(opportunityDto.Id, EncodingType.PledgeId);
-
-            var opportunitySummaryViewModel = await GetOpportunitySummaryViewModel(opportunityDto, encodedPledgeId);
+            var opportunitySummaryViewModel = GetOpportunitySummaryViewModel(
+                getContactDetailsResult.AllSectorsCount,
+                getContactDetailsResult.OpportunitySectorDescriptions,
+                getContactDetailsResult.AllJobRolesCount,
+                getContactDetailsResult.OpportunityJobRoleDescriptions,
+                getContactDetailsResult.AllLevelsCount,
+                getContactDetailsResult.OpportunityLevelDescriptions,
+                getContactDetailsResult.OpportunityAmount,
+                getContactDetailsResult.OpportunityIsNamePublic,
+                getContactDetailsResult.OpportunityDasAccountName,
+                contactDetailsRequest.EncodedPledgeId);
 
             var cacheItem = await this.RetrieveCacheItem(contactDetailsRequest.CacheKey);
 
@@ -196,7 +235,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 EmailAddress = cacheItem.EmailAddress,
                 AdditionalEmailAddresses = additionalEmailAddresses.ToArray(),
                 BusinessWebsite = cacheItem.BusinessWebsite,
-                DasAccountName = opportunityDto.DasAccountName,
+                DasAccountName = getContactDetailsResult.OpportunityDasAccountName,
                 OpportunitySummaryViewModel = opportunitySummaryViewModel,
             };
         }

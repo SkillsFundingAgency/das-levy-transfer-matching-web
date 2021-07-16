@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Models;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService
 {
@@ -40,6 +41,24 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
             }
 
             return opportunity;
+        }
+
+        public async Task<GetContactDetailsResult> GetContactDetails(long accountId, int pledgeId)
+        {
+            GetContactDetailsResult getContactDetailsResult = null;
+
+            var response = await _client.GetAsync($"accounts/{accountId}/opportunities/{pledgeId}/apply/contact-details");
+
+            if (response.IsSuccessStatusCode)
+            {
+                getContactDetailsResult = JsonConvert.DeserializeObject<GetContactDetailsResult>(await response.Content.ReadAsStringAsync());
+            }
+            else if (response.StatusCode != HttpStatusCode.NotFound)
+            {
+                response.EnsureSuccessStatusCode();
+            }
+
+            return getContactDetailsResult;
         }
     }
 }
