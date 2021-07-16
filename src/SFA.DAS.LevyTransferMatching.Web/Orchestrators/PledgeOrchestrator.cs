@@ -12,7 +12,6 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.LocationService;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Location;
-using System.Linq;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {

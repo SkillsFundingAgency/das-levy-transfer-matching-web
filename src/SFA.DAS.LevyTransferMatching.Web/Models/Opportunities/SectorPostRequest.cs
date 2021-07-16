@@ -13,6 +13,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
         [AutoDecode("EncodedPledgeId", Encoding.EncodingType.PledgeId)]
         public int PledgeId { get; set; }
 
+        [AutoDecode("EncodedAccountId", Encoding.EncodingType.AccountId)]
+        public long AccountId { get; set; }
+
         public List<string> Sectors { get; set; }
         public string Postcode { get; set; }
     }

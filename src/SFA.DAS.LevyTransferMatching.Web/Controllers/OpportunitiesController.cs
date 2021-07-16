@@ -4,8 +4,7 @@ using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.LevyTransferMatching.Web.Attributes;
 using System;
-using SFA.DAS.LevyTransferMatching.Web.Authentication;
-using Microsoft.AspNetCore.Authorization;
+using FluentValidation;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
@@ -54,7 +53,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             }
         }
         
-        [Authorize]
+        //[Authorize]
         [Route("opportunities/{encodedPledgeId}/apply")]
         public async Task<IActionResult> SelectAccount(string encodedPledgeId)
         {
@@ -69,7 +68,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         }
 
         [HideAccountNavigation(false)]
-        [Authorize(Policy = PolicyNames.ManageAccount)]
+        //[Authorize(Policy = PolicyNames.ManageAccount)]
         [Route("/accounts/{encodedAccountId}/opportunities/{EncodedPledgeId}/apply")]
         public async Task<IActionResult> Apply(ApplicationRequest request)
         {
@@ -77,7 +76,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         }
 
         [HideAccountNavigation(false)]
-        [Authorize(Policy = PolicyNames.ManageAccount)]
+        //[Authorize(Policy = PolicyNames.ManageAccount)]
         [Route("/accounts/{encodedAccountId}/opportunities/{EncodedPledgeId}/create/more-details")]
         public async Task<IActionResult> MoreDetails(MoreDetailsRequest request)
         {
@@ -85,7 +84,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         }
 
         [HideAccountNavigation(false)]
-        [Authorize(Policy = PolicyNames.ManageAccount)]
+        //[Authorize(Policy = PolicyNames.ManageAccount)]
         [Route("/accounts/{encodedAccountId}/opportunities/{EncodedPledgeId}/create/more-details")]
         [HttpPost]
         public async Task<IActionResult> MoreDetails(MoreDetailsPostRequest request)
@@ -99,14 +98,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             });
         }
 
-        [Authorize(Policy = PolicyNames.ManageAccount)]
+        //[Authorize(Policy = PolicyNames.ManageAccount)]
         [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/create/application-details")]
         public async Task<IActionResult> ApplicationDetails(ApplicationDetailsRequest request)
         {
             return View(await _opportunitiesOrchestrator.GetApplicationViewModel(request));
         }
 
-        [Authorize(Policy = PolicyNames.ManageAccount)]
+        //[Authorize(Policy = PolicyNames.ManageAccount)]
         [HttpPost]
         [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/create/application-details")]
         public async Task<IActionResult> ApplicationDetails(ApplicationDetailsPostRequest request)
@@ -120,19 +119,37 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             });
         }
 
-        [Authorize(Policy = PolicyNames.ManageAccount)]
+        //[Authorize(Policy = PolicyNames.ManageAccount)]
         [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/create/sector")]
         public async Task<IActionResult> Sector(SectorRequest request)
         {
             return View(await _opportunitiesOrchestrator.GetSectorViewModel(request));
         }
 
-        [Authorize(Policy = PolicyNames.ManageAccount)]
+        //[Authorize(Policy = PolicyNames.ManageAccount)]
         [HttpPost]
         [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/create/sector")]
         public async Task<IActionResult> Sector(SectorPostRequest request)
         {
-            await _opportunitiesOrchestrator.UpdateCacheItem(request);
+            try
+            {
+                await _opportunitiesOrchestrator.UpdateCacheItem(request);
+            }
+            catch(ValidationException e)
+            {
+                foreach(var error in e.Errors)
+                {
+                    ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+                }
+
+                return RedirectToAction("Sector", new SectorRequest
+                {
+                    EncodedAccountId = request.EncodedAccountId,
+                    EncodedPledgeId = request.EncodedPledgeId,
+                    CacheKey = request.CacheKey
+                });
+            }
+
             return RedirectToAction("Apply", new ApplicationRequest
             {
                 EncodedAccountId = request.EncodedAccountId,

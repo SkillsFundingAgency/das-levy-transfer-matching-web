@@ -62,6 +62,9 @@
     {
         var result = new Dictionary<string, string>();
 
+        if (ViewData.ModelState[property.PropertyName]?.Errors != null)
+            result.Add(property.PropertyName, ViewData.ModelState[property.PropertyName]?.Errors.First().ErrorMessage);
+
         var i = 0;
         while (true)
         {

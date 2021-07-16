@@ -12,5 +12,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
         Task<OpportunityDto> GetOpportunity(int id);
         Task<ApplicationDetailsDto> GetApplicationDetails(int id);
         Task<GetSectorResponse> GetSector(long accountId, int pledgeId);
+        Task<GetSectorResponse> GetSector(long accountId, int pledgeId, string postcode);
     }
 }

@@ -10,5 +10,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
     {
         public IEnumerable<ReferenceDataItem> Sectors { get; set; }
         public OpportunityDto Opportunity { get; set; }
+        public string Location { get; set; }
     }
 }

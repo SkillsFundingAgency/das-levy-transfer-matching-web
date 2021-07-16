@@ -22,6 +22,7 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using Microsoft.AspNetCore.Http;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Location;
+using SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities;
 
 namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
 {
@@ -39,6 +40,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
             services.AddTransient<IEmployerAccountsService, EmployerAccountsService>();
             services.AddTransient<ILocationValidatorService, LocationValidatorService>();
             services.AddTransient<ICacheStorageService, CacheStorageService>();
+            services.AddTransient<ISectorPostRequestValidator, SectorPostRequestValidator>();
             services.AddTransient<IPledgeOrchestrator, PledgeOrchestrator>();
             services.AddTransient<IOpportunitiesOrchestrator, OpportunitiesOrchestrator>();
             services.AddTransient<ILocationOrchestrator, LocationOrchestrator>();

@@ -67,5 +67,12 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
             response.EnsureSuccessStatusCode();
             return JsonConvert.DeserializeObject<GetSectorResponse>(await response.Content.ReadAsStringAsync());
         }
+
+        public async Task<GetSectorResponse> GetSector(long accountId, int pledgeId, string postcode)
+        {
+            var response = await _client.GetAsync($"/accounts/{accountId}/opportunities/{pledgeId}/create/sector?postcode={postcode}");
+            response.EnsureSuccessStatusCode();
+            return JsonConvert.DeserializeObject<GetSectorResponse>(await response.Content.ReadAsStringAsync());
+        }
     }
 }

@@ -13,6 +13,9 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using System.Collections.Generic;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
+using FluentValidation;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
+using SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
@@ -24,8 +27,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         private readonly ITagService _tagService;
         private readonly IEncodingService _encodingService;
         private readonly IUserService _userService;
+        private readonly ISectorPostRequestValidator _sectorValidator;
 
-        public OpportunitiesOrchestrator(IDateTimeService dateTimeService, IOpportunitiesService opportunitiesService, ITagService tagService, IUserService userService, IEncodingService encodingService, ICacheStorageService cacheStorageService)
+        public OpportunitiesOrchestrator(IDateTimeService dateTimeService, IOpportunitiesService opportunitiesService, ITagService tagService, IUserService userService, IEncodingService encodingService, ICacheStorageService cacheStorageService, ISectorPostRequestValidator sectorValidator)
         {
             _dateTimeService = dateTimeService;
             _opportunitiesService = opportunitiesService;
@@ -34,6 +38,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             _tagService = tagService;
             _userService = userService;
             _cacheStorageService = cacheStorageService;
+            _sectorValidator = sectorValidator;
         }
 
         public async Task<DetailViewModel> GetDetailViewModel(int pledgeId)
@@ -176,7 +181,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             {
                 Sectors = cacheItem.Sectors,
                 SectorOptions = response.Sectors.ToList(),
-                OpportunitySummaryViewModel = await GetOpportunitySummaryViewModel(response.Opportunity, request.EncodedPledgeId)
+                OpportunitySummaryViewModel = await GetOpportunitySummaryViewModel(response.Opportunity, request.EncodedPledgeId),
+                Postcode = cacheItem.Postcode
             };
         }
 
@@ -204,10 +210,29 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         public async Task UpdateCacheItem(SectorPostRequest request)
         {
+            var validationResult = _sectorValidator.Validate(request);
+
+            var response = new GetSectorResponse();
+            if(!validationResult.Errors.Any(x => x.PropertyName == "Postcode"))
+            {
+                response = await _opportunitiesService.GetSector(request.AccountId, request.PledgeId, request.Postcode);
+
+                if(response?.Location == null)
+                {
+                    validationResult.Errors.Add(new FluentValidation.Results.ValidationFailure("Postcode", "Enter a valid postcode"));
+                }
+            }
+
+            if (!validationResult.IsValid)
+            {
+                throw new ValidationException(validationResult.Errors);
+            }
+
             var cacheItem = await RetrieveCacheItem(request.CacheKey);
 
             cacheItem.Sectors = request.Sectors;
-            cacheItem.Location = request.Postcode;
+            cacheItem.Location = response.Location;
+            cacheItem.Postcode = request.Postcode.ToUpper();
 
             await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
         }
