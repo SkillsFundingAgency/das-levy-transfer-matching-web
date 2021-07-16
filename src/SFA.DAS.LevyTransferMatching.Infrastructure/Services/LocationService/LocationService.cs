@@ -19,7 +19,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.LocationService
 
         public async Task<LocationsDto> GetLocations(string searchTerm)
         {
-            var response = await _client.GetAsync($"/Locations?searchTerm={searchTerm}");
+            var response = await _client.GetAsync($"locations?searchTerm={searchTerm}");
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
@@ -30,7 +30,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.LocationService
 
         public async Task<LocationInformationDto> GetLocationInformation(string location)
         {
-            var response = await _client.GetAsync($"/Locations/information?location={location}");
+            var response = await _client.GetAsync($"locations/information?location={location}");
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
