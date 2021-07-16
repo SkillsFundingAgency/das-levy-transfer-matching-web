@@ -4,6 +4,7 @@ using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.LevyTransferMatching.Web.Attributes;
 using Microsoft.AspNetCore.Authorization;
+using SFA.DAS.LevyTransferMatching.Web.Authentication;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
@@ -58,9 +59,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         {
             var encodedAccountId = await _opportunitiesOrchestrator.GetUserEncodedAccountId();
 
-            // TODO: Update to wire up to the actual controller (i.e.
-            //       RedirectToAction) - which doesn't exist currently.
-            return Redirect($"/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/apply");
+            return RedirectToAction("Apply", new { EncodedAccountId = encodedAccountId, EncodedPledgeId = encodedPledgeId });
+        }
+
+        [HideAccountNavigation(false)]
+        [Authorize(Policy = PolicyNames.ManageAccount)]
+        [Route("/accounts/{encodedAccountId}/opportunities/{EncodedPledgeId}/apply")]
+        public async Task<IActionResult> Apply(ApplicationRequest request)
+        {
+            return View(await _opportunitiesOrchestrator.GetApplyViewModel(request));
         }
     }
 }

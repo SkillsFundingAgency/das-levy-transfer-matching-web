@@ -112,12 +112,34 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             return new OpportunitySummaryViewModel()
             {
                 Amount = opportunityDto.Amount,
-                Description = opportunityDto.IsNamePublic ? $"{opportunityDto.DasAccountName} ({encodedPledgeId})" : "A levy-paying business",
+                Description = GenerateDescription(opportunityDto, encodedPledgeId),
                 JobRoleList = jobRoleList,
                 LevelList = levelList,
                 SectorList = sectorList,
                 YearDescription = dateTime.ToTaxYearDescription(),
             };
         }
+
+        public async Task<ApplyViewModel> GetApplyViewModel(ApplicationRequest request)
+        {
+            var opportunityDto = await _opportunitiesService.GetOpportunity(request.PledgeId);
+
+            return new ApplyViewModel
+            {
+                OpportunitySummaryViewModel = await GetOpportunitySummaryViewModel(opportunityDto, request.EncodedPledgeId),
+                JobRole = "-",
+                NumberOfApprentices = "-",
+                StartBy = "-",
+                HaveTrainingProvider = "-",
+                Sectors = "-",
+                Locations = "-",
+                MoreDetail = "-",
+                ContactName = "-",
+                EmailAddress = "-",
+                WebsiteUrl = "-"
+            };
+        }
+
+        private string GenerateDescription(OpportunityDto opportunityDto, string encodedPledgeId) => opportunityDto.IsNamePublic ? $"{opportunityDto.DasAccountName} ({encodedPledgeId})" : "A levy-paying business";
     }
 }
