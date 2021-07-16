@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="5.0.0" />
     <PackageReference Include="SFA.DAS.CosmosDb" Version="1.0.47" />
     <PackageReference Include="SFA.DAS.Encoding" Version="1.1.72" />

@@ -35,10 +35,21 @@ namespace SFA.DAS.LevyTransferMatching.Web.ModelBinders
             try
             {
                 var encodedValue = bindingContext.ValueProvider.GetValue(attribute.Source).FirstValue;
-                var decodedValue = _encodingService.Decode(encodedValue, attribute.EncodingType);
 
-                bindingContext.Result = ModelBindingResult.Success(decodedValue);
-
+                if (GetTargetType(bindingContext) == typeof(long))
+                {
+                    var decodedValue = _encodingService.Decode(encodedValue, attribute.EncodingType);
+                    bindingContext.Result = ModelBindingResult.Success(decodedValue);
+                }
+                else if (GetTargetType(bindingContext) == typeof(int))
+                {
+                    var decodedValue = (int)_encodingService.Decode(encodedValue, attribute.EncodingType);
+                    bindingContext.Result = ModelBindingResult.Success(decodedValue);
+                }
+                else
+                {
+                    bindingContext.Result = ModelBindingResult.Failed();
+                }
             }
             catch
             {
@@ -58,6 +69,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.ModelBinders
             var attribute = (AutoDecodeAttribute)attributes.FirstOrDefault(a => a.GetType().IsEquivalentTo(typeof(AutoDecodeAttribute)));
 
             return attribute;
+        }
+
+        private Type GetTargetType(ModelBindingContext context)
+        {
+            var container = context.ModelMetadata.ContainerType;
+            if (container == null) return null;
+            var property = container.GetProperty(context.ModelMetadata.PropertyName);
+            return property?.PropertyType;
         }
     }
 }

@@ -12,7 +12,6 @@ using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.EmployerUrlHelper.DependencyResolution;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
 using SFA.DAS.LevyTransferMatching.Web.Attributes;
-using SFA.DAS.LevyTransferMatching.Web.Authentication;
 using SFA.DAS.LevyTransferMatching.Web.ModelBinders;
 using SFA.DAS.LevyTransferMatching.Web.StartupExtensions;
 using SFA.DAS.Validation.Mvc.Extensions;

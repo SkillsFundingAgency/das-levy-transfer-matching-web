@@ -6,11 +6,11 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Dto
     {
         public int Id { get; set; }
         public string DasAccountName { get; set; }
+        public IEnumerable<string> JobRoles { get; set; }
+        public IEnumerable<string> Levels { get; set; }
+        public IEnumerable<string> Sectors { get; set; }
+        public IEnumerable<string> Locations { get; set; }
         public int Amount { get; set; }
-        public string EncodedPledgeId { get; set; }
-        public List<string> Sectors { get; set; }
-        public List<string> JobRoles { get; set; }
-        public List<string> Levels { get; set; }
-        public List<string> Locations { get; set; }
+        public bool IsNamePublic { get; set; }
     }
 }
