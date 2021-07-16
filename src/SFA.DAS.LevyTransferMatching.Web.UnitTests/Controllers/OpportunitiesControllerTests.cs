@@ -6,6 +6,7 @@ using SFA.DAS.LevyTransferMatching.Web.Controllers;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Server.Kestrel;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.LevyTransferMatching.Web.Authentication;
 
@@ -210,6 +211,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var encodedPledgeId = _fixture.Create<string>();
             var encodedAccountId = _fixture.Create<string>();
             var cacheKey = _fixture.Create<Guid>();
+            var applicationRequest = _fixture.Create<ApplicationRequest>();
+            applicationRequest.EncodedPledgeId = encodedPledgeId;
+            applicationRequest.EncodedAccountId = encodedAccountId;
+            applicationRequest.CacheKey = cacheKey;
 
             var request = new ApplicationDetailsPostRequest()
             {
@@ -225,7 +230,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
                 SelectedStandardTitle = "Test Standard Title"
             };
 
-            _orchestrator.Setup(x => x.UpdateCacheItem(request));
+            _orchestrator.Setup(x => x.PostApplicationViewModel(request)).ReturnsAsync(applicationRequest);
 
             // Assert
             var redirectToActionResult = (await _opportunitiesController.ApplicationDetails(request)) as RedirectToActionResult;
@@ -236,7 +241,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             Assert.AreEqual(redirectToActionResult.RouteValues["EncodedPledgeId"], encodedPledgeId);
             Assert.AreEqual(redirectToActionResult.RouteValues["EncodedAccountId"], encodedAccountId);
             Assert.AreEqual(redirectToActionResult.RouteValues["CacheKey"], cacheKey);
-            _orchestrator.Verify(x => x.UpdateCacheItem(request), Times.Once);
+            _orchestrator.Verify(x => x.PostApplicationViewModel(request), Times.Once);
         }
     }
 }
