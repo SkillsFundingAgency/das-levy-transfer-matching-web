@@ -179,6 +179,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             return new SectorViewModel
             {
+                CacheKey = request.CacheKey,
+                EncodedAccountId = request.EncodedAccountId,
+                EncodedPledgeId = request.EncodedPledgeId,
                 Sectors = cacheItem.Sectors,
                 SectorOptions = response.Sectors.ToList(),
                 OpportunitySummaryViewModel = await GetOpportunitySummaryViewModel(response.Opportunity, request.EncodedPledgeId),
