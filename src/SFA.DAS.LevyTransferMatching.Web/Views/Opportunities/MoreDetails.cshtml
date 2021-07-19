@@ -1,10 +1,10 @@
 ﻿@using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
 @model SFA.DAS.LevyTransferMatching.Web.Models.Opportunities.MoreDetailsViewModel
-@inject SFA.DAS.EmployerUrlHelper.ILinkGenerator LinkGenerator
+
 @{
     ViewData["Title"] = "Provide more detail about your apprenticeship";
 }
-<a href="@LinkGenerator.AccountsLink()" class="govuk-back-link">Back</a>
+<a href="@Url.Action("Apply", new { Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey })" class="govuk-back-link">Back</a>
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
     <div class="govuk-grid-row">
         <form method="post">
