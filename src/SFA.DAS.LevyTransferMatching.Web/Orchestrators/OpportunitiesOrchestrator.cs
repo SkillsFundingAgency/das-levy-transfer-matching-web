@@ -222,7 +222,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
                 if(response?.Location == null)
                 {
-                    validationResult.Errors.Add(new FluentValidation.Results.ValidationFailure("Postcode", "Enter a valid postcode"));
+                    validationResult.Errors.Add(new FluentValidation.Results.ValidationFailure("Postcode", "Enter a postcode"));
                 }
             }
 

@@ -23,7 +23,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities
 
             if(sectorPostRequest.Postcode == null || sectorPostRequest.Postcode == "" || !regex.IsMatch(sectorPostRequest.Postcode))
             {
-                validationResult.Errors.Add(new ValidationFailure(nameof(sectorPostRequest.Postcode), "Enter a valid postcode"));
+                validationResult.Errors.Add(new ValidationFailure(nameof(sectorPostRequest.Postcode), "Enter a postcode"));
             }
 
             return validationResult;
