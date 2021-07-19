@@ -50,5 +50,36 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
             Assert.That(result.Errors != null);
             Assert.AreEqual(result.Errors.First().PropertyName, "Sectors");
         }
+
+        [TestCase("")]
+        [TestCase("invalid")]
+        [TestCase(null)]
+        public void Returns_Error_When_Postcode_Is_Invalid(string postcode)
+        {
+            var request = new SectorPostRequest
+            {
+                Sectors = new List<string> { "Sector" },
+                Postcode = ""
+            };
+
+            var result = _validator.Validate(request);
+
+            Assert.That(!result.IsValid);
+            Assert.That(result.Errors != null);
+            Assert.AreEqual(result.Errors.First().PropertyName, "Postcode");
+        }
+
+        public void Returns_No_Errors_When_Inputs_Are_Valid()
+        {
+            var request = new SectorPostRequest
+            {
+                Sectors = new List<string> { "Sector" },
+                Postcode = ""
+            };
+
+            var result = _validator.Validate(request);
+
+            Assert.That(result.IsValid);
+        }
     }
 }
