@@ -27,27 +27,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities
                 () =>
                 {
                     RuleFor(x => x.EmailAddress)
-                        .Must(ValidEmailAddress)
+                        .EmailAddress()
                         .WithMessage(EmailAddressError);
                 });
 
             RuleForEach(x => x.AdditionalEmailAddresses)
-                .Must(x => string.IsNullOrEmpty(x) || (!string.IsNullOrEmpty(x) && ValidEmailAddress(x)))
+                .EmailAddress()
                 .WithMessage(EmailAddressError);
 
-        }
-
-        private bool ValidEmailAddress(string address)
-        {
-            try
-            {
-                var addr = new MailAddress(address);
-                return addr.Address == address;
-            }
-            catch
-            {
-                return false;
-            }
         }
     }
 }
