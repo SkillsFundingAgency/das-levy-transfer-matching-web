@@ -4,9 +4,11 @@
 @{
     ViewData["Title"] = "Apprenticeship Training";
 }
+<a href="@Url.Action("Apply", new {Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey})" class="govuk-back-link">Back</a>
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
+    <partial name="_ValidationSummary" />
     <form method="post" class="validate-auto-complete">
-        
+
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
 
@@ -17,8 +19,8 @@
         </div>
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                
-                <partial name="StandardSearch" for="SelectStandardViewModel" />
+
+                <partial name="StandardSearch" for="SelectStandardViewModel"/>
 
                 <div class="govuk-form-group" das-highlight-error-for="NumberOfApprentices" error-class="govuk-form-group--error" id="how-many-apprentices">
                     <label class="govuk-label govuk-label--s" for="opportunity-application-apprentices">How many apprentices do you want to fund?</label>
@@ -26,7 +28,7 @@
                         <span class="govuk-visually-hidden">Error:</span> There is not enough funding to support this many apprentices
                     </span>
                     <span das-validation-for="NumberOfApprentices" class="govuk-error-message"></span>
-                    <input id="opportunity-application-apprentices" class="govuk-input govuk-input--width-5" asp-for="NumberOfApprentices" inputmode="numeric" spellcheck="false" pattern="[0-9]*" type="number" aria-describedby="apprentices-error" />
+                    <input id="opportunity-application-apprentices" class="govuk-input govuk-input--width-5" asp-for="NumberOfApprentices" inputmode="numeric" spellcheck="false" pattern="[0-9]*" type="number" aria-describedby="apprentices-error"/>
                 </div>
 
                 <div class="govuk-form-group" das-highlight-error-for="StartDate" error-class="govuk-form-group--error" id="start-date">
@@ -40,13 +42,13 @@
                             <div class="govuk-date-input__item">
                                 <div class="govuk-form-group">
                                     <label class="govuk-label govuk-date-input__label" for="opportunity-application-start-month">Month</label>
-                                    <input id="opportunity-application-start-month" class="govuk-input govuk-date-input__input govuk-input--width-2" asp-for="Month" type="number" min="1" max="12" das-highlight-error-for="StartDate" error-class="govuk-textarea--error" />
+                                    <input id="opportunity-application-start-month" class="govuk-input govuk-date-input__input govuk-input--width-2" asp-for="Month" type="number" min="1" max="12" das-highlight-error-for="StartDate" error-class="govuk-textarea--error"/>
                                 </div>
                             </div>
                             <div class="govuk-date-input__item">
                                 <div class="govuk-form-group">
                                     <label class="govuk-label govuk-date-input__label" for="opportunity-application-start-year">Year</label>
-                                    <input id="opportunity-application-start-year" class="govuk-input govuk-date-input__input govuk-input--width-4" asp-for="Year" type="number" min="@Model.MinYear" max="@Model.MaxYear" das-highlight-error-for="StartDate" error-class="govuk-textarea--error" />
+                                    <input id="opportunity-application-start-year" class="govuk-input govuk-date-input__input govuk-input--width-4" asp-for="Year" type="number" min="@Model.MinYear" max="@Model.MaxYear" das-highlight-error-for="StartDate" error-class="govuk-textarea--error"/>
                                 </div>
                             </div>
                         </div>
@@ -79,7 +81,7 @@
             </div>
             <div class="govuk-grid-column-one-third">
                 <section class="employer-details side-panel">
-                    <partial name="/Views/Shared/_OpportunitySummary.cshtml" for="OpportunitySummaryViewModel" />
+                    <partial name="/Views/Shared/_OpportunitySummary.cshtml" for="OpportunitySummaryViewModel"/>
                 </section>
             </div>
             <div class="govuk-grid-column-full">
@@ -87,7 +89,7 @@
                     <button id="opportunity-criteria-continue" class="govuk-button" data-module="govuk-button">
                         Continue
                     </button>
-                    <a href="@Url.Action("Apply", new { Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey })" class="govuk-back-link">Back</a>
+                    <a href="@Url.Action("Apply", new {Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey})" class="govuk-back-link">Back</a>
                 </div>
             </div>
         </div>
