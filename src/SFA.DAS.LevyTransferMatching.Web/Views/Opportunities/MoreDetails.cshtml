@@ -19,7 +19,7 @@
                     <li>any long term plans for your apprentice</li>
                 </ul>
                 <div class="govuk-character-count" data-module="govuk-character-count" data-maxwords="200">
-                    <div class="govuk-form-group">
+                    <div class="govuk-form-group" das-highlight-error-for="Details" error-class="govuk-form-group--error" id="more-details">
                         <h1 class="govuk-label-wrapper">
                             <label class="govuk-label govuk-label--l" for="more-detail">
                                 Can you provide more detail?
@@ -27,7 +27,8 @@
                         </h1>
                         <div id="more-detail-hint" class="govuk-hint">
                             Do not include personal or financial information, like your National Insurance number or credit card details.
-                        </div>                        
+                        </div>
+                        <span das-validation-for="Details" class="govuk-error-message"></span>
                         @Html.TextAreaFor(m => m.Details, new { @class = "govuk-textarea govuk-js-character-count", @id = "more-detail", @name = "more-detail", @rows = "5", @aria_describedby = "more-detail-hint more-detail-info" })
                     </div>
                     <div id="more-detail-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
