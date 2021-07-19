@@ -72,7 +72,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             return RedirectToAction("Create", new { request.EncodedAccountId, request.CacheKey });
         }
 
-        [Route("create/jobrole")]
+        [Route("create/job-role")]
         public async Task<IActionResult> JobRole(JobRoleRequest request)
         {
             var viewModel = await _orchestrator.GetJobRoleViewModel(request);
@@ -80,7 +80,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         }
 
         [HttpPost]
-        [Route("create/jobrole")]
+        [Route("create/job-role")]
         public async Task<IActionResult> JobRole(JobRolePostRequest request)
         {
             await _orchestrator.UpdateCacheItem(request);
