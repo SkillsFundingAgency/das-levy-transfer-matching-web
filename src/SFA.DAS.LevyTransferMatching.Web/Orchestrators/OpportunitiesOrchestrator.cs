@@ -220,12 +220,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             var cacheItem = await this.RetrieveCacheItem(contactDetailsRequest.CacheKey);
 
-            IEnumerable<string> additionalEmailAddresses = cacheItem.AdditionalEmailAddresses;
-            if (additionalEmailAddresses == null)
-            {
-                additionalEmailAddresses = Enumerable.Range(0, 4).Select(x => (string)null);
-            }
-
             return new ContactDetailsViewModel()
             {
                 EncodedAccountId = contactDetailsRequest.EncodedAccountId,
@@ -233,7 +227,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 FirstName = cacheItem.FirstName,
                 LastName = cacheItem.LastName,
                 EmailAddress = cacheItem.EmailAddress,
-                AdditionalEmailAddresses = additionalEmailAddresses.ToArray(),
+                AdditionalEmailAddresses = cacheItem.AdditionalEmailAddresses.ToArray(),
                 BusinessWebsite = cacheItem.BusinessWebsite,
                 DasAccountName = getContactDetailsResult.OpportunityDasAccountName,
                 OpportunitySummaryViewModel = opportunitySummaryViewModel,
