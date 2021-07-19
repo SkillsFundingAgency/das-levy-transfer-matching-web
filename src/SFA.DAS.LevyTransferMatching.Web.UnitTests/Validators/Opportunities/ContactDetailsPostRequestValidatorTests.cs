@@ -108,5 +108,31 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
             // Assert
             results.ShouldNotHaveAnyValidationErrors();
         }
+
+        [Test]
+        public void Validator_Returns_Expected_Error_For_Duplicate_Email_Addresses()
+        {
+            // Arrange
+            string emailAddress = "aa@bb";
+            string[] additionalEmailAddresses = new string[]
+            {
+                "cc@dd",
+                null,
+                "aa@bb",
+                null,
+            };
+
+            ContactDetailsPostRequest contactDetailsPostRequest = _fixture
+                .Build<ContactDetailsPostRequest>()
+                .With(x => x.EmailAddress, emailAddress)
+                .With(x => x.AdditionalEmailAddresses, additionalEmailAddresses)
+                .Create();
+
+            // Act
+            var results = _contactDetailsPostRequestValidator.TestValidate(contactDetailsPostRequest);
+
+            // Assert
+            results.ShouldHaveValidationErrorFor(x => x.AdditionalEmailAddresses).WithErrorMessage("You have already entered this email address");
+        }
     }
 }

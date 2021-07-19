@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
-using System.Net.Mail;
+using System.Linq;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities
 {
@@ -35,6 +35,19 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities
                 .EmailAddress()
                 .WithMessage(EmailAddressError);
 
+            // Check for uniqueness
+            RuleFor(x => x.AdditionalEmailAddresses)
+                .Must(ValidateAddressUniqueness)
+                .WithMessage("You have already entered this email address");
+        }
+
+        private bool ValidateAddressUniqueness(ContactDetailsPostRequest contactDetailsPostRequest, string[] additionalEmailAddresses)
+        {
+            var allEmailAddresses = additionalEmailAddresses.Concat(new string[] { contactDetailsPostRequest.EmailAddress });
+
+            var duplicatesExist = allEmailAddresses.Where(x => !string.IsNullOrWhiteSpace(x)).GroupBy(x => x).Any(x => x.Count() > 1);
+
+            return !duplicatesExist;
         }
     }
 }
