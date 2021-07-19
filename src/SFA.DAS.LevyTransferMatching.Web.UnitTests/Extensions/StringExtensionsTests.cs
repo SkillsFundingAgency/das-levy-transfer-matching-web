@@ -3,6 +3,7 @@ using NUnit.Framework;
 using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
@@ -78,12 +79,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
 
             // Assert
             Assert.AreEqual("All", result);
-        }
-
-        [Test]
-        public void IsComplete_Returns_True_When_Text_Is_Entered()
-        {
-            Assert.IsTrue("complete".IsComplete());
         }
 
         [Test]

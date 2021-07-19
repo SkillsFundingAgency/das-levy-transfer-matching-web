@@ -38,7 +38,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Opportunities
         public void ApplyViewModel_IsBusinessDetailsSectionComplete_Returns_False_When_One_Field_Not_Entered()
         {
             var model = _fixture.Create<ApplyViewModel>();
-            model.Sectors = IncompleteString;
+            model.Sectors = null;
 
             Assert.IsFalse(model.IsBusinessDetailsSectionComplete);
         }
@@ -81,7 +81,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Opportunities
         public void ApplyViewModel_IsComplete_Returns_False_When_BusinessDetails_Sections_Incomplete()
         {
             var model = _fixture.Create<ApplyViewModel>();
-            model.Sectors = IncompleteString;
+            model.Sectors = null;
 
             Assert.IsFalse(model.IsComplete);
         }
