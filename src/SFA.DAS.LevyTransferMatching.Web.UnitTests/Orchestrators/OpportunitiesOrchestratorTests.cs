@@ -35,7 +35,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private Mock<IUserService> _userService;
         private Mock<IEncodingService> _encodingService;
         private Mock<ICacheStorageService> _cache;
-        private Mock<IValidator<SectorPostRequest>> _sectorValidator;
 
         private List<ReferenceDataItem> _sectors;
         private List<ReferenceDataItem> _levels;
@@ -57,7 +56,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _userService = new Mock<IUserService>();
             _encodingService = new Mock<IEncodingService>();
             _cache = new Mock<ICacheStorageService>();
-            _sectorValidator = new Mock<IValidator<SectorPostRequest>>();
 
             _opportunityDtoList = _fixture.Create<List<OpportunityDto>>();
             _sectors = _fixture.Create<List<ReferenceDataItem>>();
@@ -70,7 +68,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _tagService.Setup(x => x.GetLevels()).ReturnsAsync(_levels);
             _encodingService.Setup(x => x.Encode(It.IsAny<long>(), EncodingType.PledgeId)).Returns("test");
 
-            _orchestrator = new OpportunitiesOrchestrator(_dateTimeService.Object, _opportunitiesService.Object, _tagService.Object, _userService.Object, _encodingService.Object, _cache.Object, _sectorValidator.Object);
+            _orchestrator = new OpportunitiesOrchestrator(_dateTimeService.Object, _opportunitiesService.Object, _tagService.Object, _userService.Object, _encodingService.Object, _cache.Object);
         }
 
         [Test]
