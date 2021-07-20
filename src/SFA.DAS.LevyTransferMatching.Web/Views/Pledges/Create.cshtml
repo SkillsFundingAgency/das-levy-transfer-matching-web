@@ -86,12 +86,24 @@
                     <ul class="das-task-list__items">
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="#">
+                                <a class="govuk-link" href="@Url.Action("Location", new LocationRequest{EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey})">
                                     Location
                                 </a>
                             </span>
                             <span class="das-task-list__task-tag">
-                                All of England
+                                @if (Model.AreAllLocationsSelected)
+                                {
+                                    <text>England</text>
+                                }
+                                else
+                                {
+                                    <ul class="govuk-list das-!-text-align-right">
+                                        @foreach (var location in Model.Locations)
+                                        {
+                                            <li>@location</li>
+                                        }
+                                    </ul>
+                                }
                             </span>
                         </li>
                         <li class="das-task-list__item">

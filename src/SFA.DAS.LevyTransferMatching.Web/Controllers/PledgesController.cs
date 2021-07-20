@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using SFA.DAS.LevyTransferMatching.Web.Authentication;
 using Microsoft.AspNetCore.Mvc;
@@ -100,11 +102,41 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             return RedirectToAction("Create", new CreateRequest() { EncodedAccountId = request.EncodedAccountId, CacheKey = request.CacheKey });
         }
 
+        [Route("create/location")]
+        public async Task<IActionResult> Location(LocationRequest request)
+        {
+            var viewModel = await _orchestrator.GetLocationViewModel(request);
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [Route("create/location")]
+        public async Task<IActionResult> Location(LocationPostRequest request)
+        {
+            Dictionary<int, string> errors = await _orchestrator.ValidateLocations(request);
+            if (errors.Any())
+            {
+                AddLocationErrorsToModelState(errors);
+                return RedirectToAction("Location", new { request.EncodedAccountId, request.AccountId, request.CacheKey });
+            }
+
+            await _orchestrator.UpdateCacheItem(request);
+            return RedirectToAction("Create", new CreateRequest() { EncodedAccountId = request.EncodedAccountId, CacheKey = request.CacheKey });
+        }
+
         [HttpGet]
         [Route("{EncodedPledgeId}/confirmation")]
         public async Task<IActionResult> Confirmation(ConfirmationRequest request)
         {
             return View(new ConfirmationViewModel() { EncodedAccountId = request.EncodedAccountId, EncodedPledgeId = request.EncodedPledgeId });
+        }
+
+        private void AddLocationErrorsToModelState(Dictionary<int, string> errors)
+        {
+            foreach (var error in errors)
+            {
+                ModelState.AddModelError($"Locations[{error.Key}]", error.Value);
+            }
         }
     }
 }
