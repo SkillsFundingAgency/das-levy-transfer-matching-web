@@ -20,6 +20,7 @@ using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
+using FluentValidation;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 {
@@ -34,7 +35,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private Mock<IUserService> _userService;
         private Mock<IEncodingService> _encodingService;
         private Mock<ICacheStorageService> _cache;
-        private Mock<ISectorPostRequestValidator> _sectorValidator;
+        private Mock<IValidator<SectorPostRequest>> _sectorValidator;
 
         private List<ReferenceDataItem> _sectors;
         private List<ReferenceDataItem> _levels;
@@ -56,7 +57,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _userService = new Mock<IUserService>();
             _encodingService = new Mock<IEncodingService>();
             _cache = new Mock<ICacheStorageService>();
-            _sectorValidator = new Mock<ISectorPostRequestValidator>();
+            _sectorValidator = new Mock<IValidator<SectorPostRequest>>();
 
             _opportunityDtoList = _fixture.Create<List<OpportunityDto>>();
             _sectors = _fixture.Create<List<ReferenceDataItem>>();

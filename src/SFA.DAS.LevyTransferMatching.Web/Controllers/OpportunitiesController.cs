@@ -4,9 +4,9 @@ using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.LevyTransferMatching.Web.Attributes;
 using System;
-using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using SFA.DAS.LevyTransferMatching.Web.Authentication;
+using SFA.DAS.LevyTransferMatching.Web.Validators;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
@@ -131,15 +131,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Authorize(Policy = PolicyNames.ManageAccount)]
         [HttpPost]
         [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/create/sector")]
-        public async Task<IActionResult> Sector(SectorPostRequest request)
+        public async Task<IActionResult> Sector(AsyncValidator<SectorPostRequest> validator, SectorPostRequest request)
         {
-            try
+            var validationResult = await validator.ValidateAsync(request);
+
+            if (!validationResult.IsValid)
             {
-                await _opportunitiesOrchestrator.UpdateCacheItem(request);
-            }
-            catch(ValidationException e)
-            {
-                foreach(var error in e.Errors)
+                foreach (var error in validationResult.Errors)
                 {
                     ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
                 }
@@ -151,6 +149,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
                     CacheKey = request.CacheKey
                 });
             }
+
+            await _opportunitiesOrchestrator.UpdateCacheItem(request);
 
             return RedirectToAction("Apply", new ApplicationRequest
             {
