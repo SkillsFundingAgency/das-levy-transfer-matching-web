@@ -5,6 +5,8 @@ using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.LevyTransferMatching.Web.Attributes;
 using System;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
+using SFA.DAS.LevyTransferMatching.Web.Authentication;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
@@ -53,7 +55,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             }
         }
         
-        //[Authorize]
+        [Authorize]
         [Route("opportunities/{encodedPledgeId}/apply")]
         public async Task<IActionResult> SelectAccount(string encodedPledgeId)
         {
@@ -68,7 +70,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         }
 
         [HideAccountNavigation(false)]
-        //[Authorize(Policy = PolicyNames.ManageAccount)]
+        [Authorize(Policy = PolicyNames.ManageAccount)]
         [Route("/accounts/{encodedAccountId}/opportunities/{EncodedPledgeId}/apply")]
         public async Task<IActionResult> Apply(ApplicationRequest request)
         {
@@ -76,7 +78,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         }
 
         [HideAccountNavigation(false)]
-        //[Authorize(Policy = PolicyNames.ManageAccount)]
+        [Authorize(Policy = PolicyNames.ManageAccount)]
         [Route("/accounts/{encodedAccountId}/opportunities/{EncodedPledgeId}/create/more-details")]
         public async Task<IActionResult> MoreDetails(MoreDetailsRequest request)
         {
@@ -84,7 +86,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         }
 
         [HideAccountNavigation(false)]
-        //[Authorize(Policy = PolicyNames.ManageAccount)]
+        [Authorize(Policy = PolicyNames.ManageAccount)]
         [Route("/accounts/{encodedAccountId}/opportunities/{EncodedPledgeId}/create/more-details")]
         [HttpPost]
         public async Task<IActionResult> MoreDetails(MoreDetailsPostRequest request)
@@ -98,14 +100,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             });
         }
 
-        //[Authorize(Policy = PolicyNames.ManageAccount)]
+        [Authorize(Policy = PolicyNames.ManageAccount)]
         [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/create/application-details")]
         public async Task<IActionResult> ApplicationDetails(ApplicationDetailsRequest request)
         {
             return View(await _opportunitiesOrchestrator.GetApplicationViewModel(request));
         }
 
-        //[Authorize(Policy = PolicyNames.ManageAccount)]
+        [Authorize(Policy = PolicyNames.ManageAccount)]
         [HttpPost]
         [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/create/application-details")]
         public async Task<IActionResult> ApplicationDetails(ApplicationDetailsPostRequest request)
@@ -119,14 +121,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             });
         }
 
-        //[Authorize(Policy = PolicyNames.ManageAccount)]
+        [Authorize(Policy = PolicyNames.ManageAccount)]
         [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/create/sector")]
         public async Task<IActionResult> Sector(SectorRequest request)
         {
             return View(await _opportunitiesOrchestrator.GetSectorViewModel(request));
         }
 
-        //[Authorize(Policy = PolicyNames.ManageAccount)]
+        [Authorize(Policy = PolicyNames.ManageAccount)]
         [HttpPost]
         [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/create/sector")]
         public async Task<IActionResult> Sector(SectorPostRequest request)
