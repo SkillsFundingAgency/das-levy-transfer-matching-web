@@ -259,58 +259,58 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             _orchestrator.Verify(x => x.GetSectorViewModel(request), Times.Once);
         }
 
-        [Test]
-        public async Task POST_Sector_Redirects_To_Apply()
-        {
-            // Arrange
-            var encodedPledgeId = _fixture.Create<string>();
-            var encodedAccountId = _fixture.Create<string>();
-            var cacheKey = _fixture.Create<Guid>();
+        //[Test]
+        //public async Task POST_Sector_Redirects_To_Apply()
+        //{
+        //    // Arrange
+        //    var encodedPledgeId = _fixture.Create<string>();
+        //    var encodedAccountId = _fixture.Create<string>();
+        //    var cacheKey = _fixture.Create<Guid>();
 
-            var request = new SectorPostRequest
-            {
-                EncodedPledgeId = encodedPledgeId,
-                EncodedAccountId = encodedAccountId,
-                CacheKey = cacheKey
-            };
+        //    var request = new SectorPostRequest
+        //    {
+        //        EncodedPledgeId = encodedPledgeId,
+        //        EncodedAccountId = encodedAccountId,
+        //        CacheKey = cacheKey
+        //    };
 
-            _orchestrator.Setup(x => x.UpdateCacheItem(request));
+        //    _orchestrator.Setup(x => x.UpdateCacheItem(request));
 
-            // Assert
-            var redirectToActionResult = (await _opportunitiesController.Sector(request)) as RedirectToActionResult;
+        //    // Assert
+        //    var redirectToActionResult = (await _opportunitiesController.Sector(request)) as RedirectToActionResult;
 
-            // Assert
-            Assert.IsNotNull(redirectToActionResult);
-            Assert.AreEqual(redirectToActionResult.ActionName, nameof(OpportunitiesController.Apply));
-            Assert.AreEqual(redirectToActionResult.RouteValues["EncodedPledgeId"], encodedPledgeId);
-            Assert.AreEqual(redirectToActionResult.RouteValues["EncodedAccountId"], encodedAccountId);
-            Assert.AreEqual(redirectToActionResult.RouteValues["CacheKey"], cacheKey);
-            _orchestrator.Verify(x => x.UpdateCacheItem(request), Times.Once);
-        }
+        //    // Assert
+        //    Assert.IsNotNull(redirectToActionResult);
+        //    Assert.AreEqual(redirectToActionResult.ActionName, nameof(OpportunitiesController.Apply));
+        //    Assert.AreEqual(redirectToActionResult.RouteValues["EncodedPledgeId"], encodedPledgeId);
+        //    Assert.AreEqual(redirectToActionResult.RouteValues["EncodedAccountId"], encodedAccountId);
+        //    Assert.AreEqual(redirectToActionResult.RouteValues["CacheKey"], cacheKey);
+        //    _orchestrator.Verify(x => x.UpdateCacheItem(request), Times.Once);
+        //}
 
-        [Test]
-        public async Task POST_Sector_Redirects_To_Sector_When_Validation_Fails()
-        {
-            // Arrange
-            var encodedPledgeId = _fixture.Create<string>();
-            var encodedAccountId = _fixture.Create<string>();
-            var cacheKey = _fixture.Create<Guid>();
+        //[Test]
+        //public async Task POST_Sector_Redirects_To_Sector_When_Validation_Fails()
+        //{
+        //    // Arrange
+        //    var encodedPledgeId = _fixture.Create<string>();
+        //    var encodedAccountId = _fixture.Create<string>();
+        //    var cacheKey = _fixture.Create<Guid>();
 
-            var request = new SectorPostRequest
-            {
-                EncodedPledgeId = encodedPledgeId,
-                EncodedAccountId = encodedAccountId,
-                CacheKey = cacheKey
-            };
+        //    var request = new SectorPostRequest
+        //    {
+        //        EncodedPledgeId = encodedPledgeId,
+        //        EncodedAccountId = encodedAccountId,
+        //        CacheKey = cacheKey
+        //    };
 
-            _orchestrator.Setup(x => x.UpdateCacheItem(request)).Throws(new ValidationException("Error"));
+        //    _orchestrator.Setup(x => x.UpdateCacheItem(request)).Throws(new ValidationException("Error"));
 
-            // Assert
-            var redirectToActionResult = (await _opportunitiesController.Sector(request)) as RedirectToActionResult;
+        //    // Assert
+        //    var redirectToActionResult = (await _opportunitiesController.Sector(request)) as RedirectToActionResult;
 
-            // Assert
-            Assert.IsNotNull(redirectToActionResult);
-            Assert.AreEqual(redirectToActionResult.ActionName, nameof(OpportunitiesController.Sector));
-        }
+        //    // Assert
+        //    Assert.IsNotNull(redirectToActionResult);
+        //    Assert.AreEqual(redirectToActionResult.ActionName, nameof(OpportunitiesController.Sector));
+        //}
     }
 }
