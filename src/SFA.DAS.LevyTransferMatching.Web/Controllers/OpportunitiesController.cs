@@ -131,7 +131,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Authorize(Policy = PolicyNames.ManageAccount)]
         [HttpPost]
         [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/create/sector")]
-        public async Task<IActionResult> Sector(AsyncValidator<SectorPostRequest> validator, SectorPostRequest request)
+        public async Task<IActionResult> Sector([FromServices] AsyncValidator<SectorPostRequest> validator, SectorPostRequest request)
         {
             var validationResult = await validator.ValidateAsync(request);
 
