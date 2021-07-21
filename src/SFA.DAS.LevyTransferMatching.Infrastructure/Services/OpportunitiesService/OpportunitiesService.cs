@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Models;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService
 {
@@ -43,15 +43,15 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
             return opportunity;
         }
 
-        public async Task<GetContactDetailsResult> GetContactDetails(long accountId, int pledgeId)
+        public async Task<GetContactDetailsResponse> GetContactDetails(long accountId, int pledgeId)
         {
-            GetContactDetailsResult getContactDetailsResult = null;
+            GetContactDetailsResponse getContactDetailsResult = null;
 
             var response = await _client.GetAsync($"accounts/{accountId}/opportunities/{pledgeId}/apply/contact-details");
 
             if (response.IsSuccessStatusCode)
             {
-                getContactDetailsResult = JsonConvert.DeserializeObject<GetContactDetailsResult>(await response.Content.ReadAsStringAsync());
+                getContactDetailsResult = JsonConvert.DeserializeObject<GetContactDetailsResponse>(await response.Content.ReadAsStringAsync());
             }
             else if (response.StatusCode != HttpStatusCode.NotFound)
             {

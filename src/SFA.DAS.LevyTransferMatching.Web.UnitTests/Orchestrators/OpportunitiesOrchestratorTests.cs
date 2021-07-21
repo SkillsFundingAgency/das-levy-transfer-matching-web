@@ -18,7 +18,7 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Models;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 {
@@ -275,7 +275,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                 .Setup(x => x.UtcNow)
                 .Returns(_currentDateTime);
 
-            GetContactDetailsResult getContactDetailsResult = _fixture.Create<GetContactDetailsResult>();
+            GetContactDetailsResponse getContactDetailsResult = _fixture.Create<GetContactDetailsResponse>();
 
             _opportunitiesService
                 .Setup(x => x.GetContactDetails(It.Is<long>(y => y == contactDetailsRequest.AccountId), It.Is<int>(y => y == contactDetailsRequest.PledgeId)))
@@ -305,7 +305,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                 .Setup(x => x.UtcNow)
                 .Returns(_currentDateTime);
 
-            GetContactDetailsResult getContactDetailsResult = _fixture.Create<GetContactDetailsResult>();
+            GetContactDetailsResponse getContactDetailsResult = _fixture.Create<GetContactDetailsResponse>();
 
             _opportunitiesService
                 .Setup(x => x.GetContactDetails(It.Is<long>(y => y == contactDetailsRequest.AccountId), It.Is<int>(y => y == contactDetailsRequest.PledgeId)))

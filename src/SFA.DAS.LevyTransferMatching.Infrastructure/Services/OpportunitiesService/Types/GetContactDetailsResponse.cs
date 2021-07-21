@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace SFA.DAS.LevyTransferMatching.Infrastructure.Models
+namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types
 {
-    public class GetContactDetailsResult
+    public class GetContactDetailsResponse
     {
         public int AllSectorsCount { get; set; }
         public int AllJobRolesCount { get; set; }
