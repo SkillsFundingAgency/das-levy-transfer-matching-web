@@ -161,20 +161,18 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             var emailAddresses = new List<string>();
 
-            var emailAddress = application.EmailAddress;
+            var emailAddress = application.EmailAddresses.First();
 
             if (!string.IsNullOrEmpty(emailAddress))
             {
                 emailAddresses.Add(emailAddress);
             }
 
-            if (application.AdditionalEmailAddresses != null)
-            {
-                var additionalEmailAddresses = application.AdditionalEmailAddresses
-                    .Where(x => !string.IsNullOrEmpty(x));
+            var additionalEmailAddresses = application.EmailAddresses
+                .Skip(1)
+                .Where(x => !string.IsNullOrEmpty(x));
 
-                emailAddresses.AddRange(additionalEmailAddresses);
-            }
+            emailAddresses.AddRange(additionalEmailAddresses);
 
             var contactName = $"{application.FirstName} {application.LastName}";
 
@@ -219,18 +217,20 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             var cacheItem = await RetrieveCacheItem(contactDetailsRequest.CacheKey);
 
-            return new ContactDetailsViewModel()
+            var viewModel = new ContactDetailsViewModel()
             {
                 EncodedAccountId = contactDetailsRequest.EncodedAccountId,
                 EncodedPledgeId = contactDetailsRequest.EncodedPledgeId,
                 FirstName = cacheItem.FirstName,
                 LastName = cacheItem.LastName,
-                EmailAddress = cacheItem.EmailAddress,
-                AdditionalEmailAddresses = cacheItem.AdditionalEmailAddresses.ToArray(),
+                EmailAddress = cacheItem.EmailAddresses.First(),
+                AdditionalEmailAddresses = cacheItem.EmailAddresses.Skip(1).ToArray(),
                 BusinessWebsite = cacheItem.BusinessWebsite,
                 DasAccountName = getContactDetailsResult.OpportunityDasAccountName,
                 OpportunitySummaryViewModel = opportunitySummaryViewModel,
             };
+
+            return viewModel;
         }
 
         public async Task UpdateCacheItem(ContactDetailsPostRequest contactDetailsPostRequest)
@@ -239,8 +239,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             cacheItem.FirstName = contactDetailsPostRequest.FirstName;
             cacheItem.LastName = contactDetailsPostRequest.LastName;
-            cacheItem.EmailAddress = contactDetailsPostRequest.EmailAddress;
-            cacheItem.AdditionalEmailAddresses = contactDetailsPostRequest.AdditionalEmailAddresses.ToList();
+            cacheItem.EmailAddresses = new string[] { contactDetailsPostRequest.EmailAddress }.Concat(contactDetailsPostRequest.AdditionalEmailAddresses.ToArray());
             cacheItem.BusinessWebsite = contactDetailsPostRequest.BusinessWebsite;
 
             await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);

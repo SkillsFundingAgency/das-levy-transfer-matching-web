@@ -317,11 +317,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                 .Setup(x => x.RetrieveFromCache<CreateApplicationCacheItem>(It.Is<string>(y => y == contactDetailsRequest.CacheKey.ToString())))
                 .ReturnsAsync(createApplicationCacheItem);
 
+            var expectedEmailAddress = createApplicationCacheItem.EmailAddresses.First();
+            var expectedAdditionalEmailAddresses = createApplicationCacheItem.EmailAddresses.Skip(1);
+
             // Act
             ContactDetailsViewModel contactDetailsViewModel = await _orchestrator.GetContactDetailsViewModel(contactDetailsRequest);
 
             // Assert
-            CollectionAssert.AreEqual(createApplicationCacheItem.AdditionalEmailAddresses, contactDetailsViewModel.AdditionalEmailAddresses);
+            Assert.AreEqual(expectedEmailAddress, contactDetailsViewModel.EmailAddress);
+            CollectionAssert.AreEqual(expectedAdditionalEmailAddresses, contactDetailsViewModel.AdditionalEmailAddresses);
         }
 
         private void SetupGetOpportunityViewModelServices()

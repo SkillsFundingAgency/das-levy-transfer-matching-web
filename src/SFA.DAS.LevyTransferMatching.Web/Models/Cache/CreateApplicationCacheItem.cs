@@ -28,14 +28,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Cache
         public bool? HasTrainingProvider { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string EmailAddress { get; set; }
-        public IEnumerable<string> AdditionalEmailAddresses
+        public IEnumerable<string> EmailAddresses
         {
             get
             {
                 if (_additionalEmailAddresses == null)
                 {
-                    _additionalEmailAddresses = Enumerable.Range(0, 4).Select(x => (string)null).ToList();
+                    _additionalEmailAddresses = Enumerable.Range(0, 5).Select(x => (string)null).ToArray();
                 }
 
                 return _additionalEmailAddresses;
