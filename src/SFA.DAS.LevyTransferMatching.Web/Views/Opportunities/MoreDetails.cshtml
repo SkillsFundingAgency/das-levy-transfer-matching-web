@@ -6,6 +6,7 @@
 }
 <a href="@Url.Action("Apply", new { Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey })" class="govuk-back-link">Back</a>
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
+    <partial name="_ValidationSummary" />
     <div class="govuk-grid-row">
         <form method="post">
             <div class="govuk-grid-column-two-thirds">
@@ -33,7 +34,7 @@
                     </div>
                     <div id="more-detail-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
                         You have 200 words remaining
-                    </div>                    
+                    </div>
                 </div>
             </div>
             <div class="govuk-grid-column-one-third">
@@ -46,9 +47,9 @@
                     <button id="opportunity-criteria-continue" class="govuk-button" data-module="govuk-button">
                         Continue
                     </button>
-                    <a href="@Url.Action("Apply", new { Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey })" class="govuk-back-link">Back</a>
+                    <a href="@Url.Action("Apply", new {Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey})" class="govuk-back-link">Back</a>
                 </div>
             </div>
         </form>
-    </div>    
+    </div>
 </main>
