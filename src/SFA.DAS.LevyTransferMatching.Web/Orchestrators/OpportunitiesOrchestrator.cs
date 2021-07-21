@@ -245,7 +245,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
         }
 
-        private string GenerateDescription(OpportunityDto opportunityDto, string encodedPledgeId) => opportunityDto.IsNamePublic ? $"{opportunityDto.DasAccountName} ({encodedPledgeId})" : "A levy-paying business wants to fund apprenticeship training in:";
+        private string GenerateDescription(OpportunityDto opportunityDto, string encodedPledgeId)
+        {
+            return opportunityDto.IsNamePublic ? $"{opportunityDto.DasAccountName} ({encodedPledgeId})" : "A levy-paying business wants to fund apprenticeship training in:";
+        }
 
         private async Task<CreateApplicationCacheItem> RetrieveCacheItem(Guid key)
         {
