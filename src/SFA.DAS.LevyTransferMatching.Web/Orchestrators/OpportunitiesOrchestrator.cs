@@ -140,7 +140,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 JobRole = application.JobRole ?? "-",
                 NumberOfApprentices = application.NumberOfApprentices.HasValue ? application.NumberOfApprentices.Value.ToString() : "-",
                 StartBy = application.StartDate.HasValue ? application.StartDate.Value.ToShortDisplayString() : "-",
-                HaveTrainingProvider = application.HasTrainingProvider.HasValue ? "Yes" : "-",
+                HaveTrainingProvider = application.HasTrainingProvider.ToApplyViewString(),
                 Sectors = application.Sectors?.ToList(),
                 SectorOptions = sectorOptions,
                 Location = application.Postcode?? "-",
@@ -151,7 +151,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
-        private string GenerateDescription(OpportunityDto opportunityDto, string encodedPledgeId) => opportunityDto.IsNamePublic ? $"{opportunityDto.DasAccountName} ({encodedPledgeId})" : "A levy-paying business wants to fund apprenticeship training in:";
 
         public async Task<MoreDetailsViewModel> GetMoreDetailsViewModel(MoreDetailsRequest request)
         {
@@ -269,5 +268,23 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 }
             };
         }
+
+        public async Task<ApplicationRequest> PostApplicationViewModel(ApplicationDetailsPostRequest request)
+        {
+            var applicationDetails = await _opportunitiesService.GetApplicationDetails(request.PledgeId);
+
+            request.SelectedStandardTitle = applicationDetails.Standards
+                .FirstOrDefault(standard => standard.StandardUId == request.SelectedStandardId)?.Title;
+
+            await UpdateCacheItem(request);
+
+            return new ApplicationRequest
+            {
+                EncodedAccountId = request.EncodedAccountId,
+                EncodedPledgeId = request.EncodedPledgeId,
+                CacheKey = request.CacheKey
+            };
+        }
+        private string GenerateDescription(OpportunityDto opportunityDto, string encodedPledgeId) => opportunityDto.IsNamePublic ? $"{opportunityDto.DasAccountName} ({encodedPledgeId})" : "A levy-paying business";
     }
 }

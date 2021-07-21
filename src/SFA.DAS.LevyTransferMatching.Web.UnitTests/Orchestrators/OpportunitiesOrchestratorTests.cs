@@ -13,6 +13,7 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using System;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using System.Data;
+using Microsoft.VisualBasic.CompilerServices;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
@@ -350,6 +351,60 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             _cache.Verify(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()), Times.Once);
             _opportunitiesService.Verify(x => x.GetApplicationDetails(1), Times.Once);
+        }
+
+        [Test]
+        public async Task GetApplyViewModel_Returns_Empty_Value_For_Null_HasTrainingProvider()
+        {
+            var applicationRequest = SetupForGetApplyViewModel();
+
+            var orchestrator = new OpportunitiesOrchestrator(_dateTimeService.Object, _opportunitiesService.Object,
+                _tagService.Object, _userService.Object, _encodingService.Object, _cache.Object);
+
+            var result = await orchestrator.GetApplyViewModel(applicationRequest);
+
+            Assert.AreEqual("-", result.HaveTrainingProvider);
+        }
+
+        [Test]
+        public async Task GetApplyViewModel_Returns_Empty_Value_For_True_HasTrainingProvider()
+        {
+            var applicationRequest = SetupForGetApplyViewModel(true);
+            var orchestrator = new OpportunitiesOrchestrator(_dateTimeService.Object, _opportunitiesService.Object,
+                _tagService.Object, _userService.Object, _encodingService.Object, _cache.Object);
+
+            var result = await orchestrator.GetApplyViewModel(applicationRequest);
+
+            Assert.AreEqual("Yes", result.HaveTrainingProvider);
+        }
+
+        [Test]
+        public async Task GetApplyViewModel_Returns_Empty_Value_For_False_HasTrainingProvider()
+        {
+            var applicationRequest = SetupForGetApplyViewModel(false);
+            var orchestrator = new OpportunitiesOrchestrator(_dateTimeService.Object, _opportunitiesService.Object,
+                _tagService.Object, _userService.Object, _encodingService.Object, _cache.Object); 
+
+            var result = await orchestrator.GetApplyViewModel(applicationRequest);
+
+            Assert.AreEqual("No", result.HaveTrainingProvider);
+        }
+
+        private ApplicationRequest SetupForGetApplyViewModel(bool? hasTraininProvider = null)
+        {
+            var opportunity = _fixture.Create<OpportunityDto>();
+            var applicationRequest = _fixture.Create<ApplicationRequest>();
+            var cacheItem = _fixture.Create<CreateApplicationCacheItem>();
+            cacheItem.HasTrainingProvider = hasTraininProvider;
+
+            var cacheKey = _fixture.Create<Guid>();
+            applicationRequest.CacheKey = cacheKey;
+
+            _cache.Setup(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString())).ReturnsAsync(cacheItem);
+            _opportunitiesService.Setup(x => x.GetOpportunity(applicationRequest.PledgeId)).ReturnsAsync(opportunity);
+            _dateTimeService.SetupGet(x => x.UtcNow).Returns(DateTime.Now);
+
+            return applicationRequest;
         }
 
         [Test]

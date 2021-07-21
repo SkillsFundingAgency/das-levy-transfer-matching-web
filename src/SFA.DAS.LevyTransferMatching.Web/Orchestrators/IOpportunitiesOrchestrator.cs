@@ -14,6 +14,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         Task UpdateCacheItem(SectorPostRequest request);
         Task<string> GetUserEncodedAccountId();
         Task<ApplicationDetailsViewModel> GetApplicationViewModel(ApplicationDetailsRequest request);
+        Task<ApplicationRequest> PostApplicationViewModel(ApplicationDetailsPostRequest request);
         Task<SectorViewModel> GetSectorViewModel(SectorRequest request);
     }
 }
