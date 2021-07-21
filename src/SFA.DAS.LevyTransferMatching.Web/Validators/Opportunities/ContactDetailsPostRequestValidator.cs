@@ -36,18 +36,22 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities
                 .WithMessage(EmailAddressError);
 
             // Check for uniqueness
-            RuleFor(x => x.AdditionalEmailAddresses)
+            RuleForEach(x => x.AdditionalEmailAddresses)
                 .Must(ValidateAddressUniqueness)
                 .WithMessage("You have already entered this email address");
         }
 
-        private bool ValidateAddressUniqueness(ContactDetailsPostRequest contactDetailsPostRequest, string[] additionalEmailAddresses)
+        private bool ValidateAddressUniqueness(ContactDetailsPostRequest contactDetailsPostRequest, string additionalEmailAddress)
         {
-            var allEmailAddresses = additionalEmailAddresses.Concat(new string[] { contactDetailsPostRequest.EmailAddress });
+            var allEmailAddresses = contactDetailsPostRequest.AdditionalEmailAddresses
+                .Concat(new string[] { contactDetailsPostRequest.EmailAddress })
+                .Where(x => !string.IsNullOrWhiteSpace(x));
 
-            var duplicatesExist = allEmailAddresses.Where(x => !string.IsNullOrWhiteSpace(x)).GroupBy(x => x).Any(x => x.Count() > 1);
+            var duplicatesExistForAdditionalEmail = allEmailAddresses
+                .GroupBy(x => x)
+                .Any(x => x.Count() > 1 && x.Contains(additionalEmailAddress));
 
-            return !duplicatesExist;
+            return !duplicatesExistForAdditionalEmail;
         }
     }
 }
