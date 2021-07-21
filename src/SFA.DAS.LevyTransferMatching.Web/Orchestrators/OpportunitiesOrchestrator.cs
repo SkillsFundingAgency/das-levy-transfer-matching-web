@@ -111,7 +111,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             string opportunityDasAccountName,
             string encodedPledgeId)
         {
-            // Pull back the tags, and use the descriptions to build the lists.
             string sectorList = opportunitySectorDescriptions.ToReferenceDataDescriptionList(allSectorsCount);
             string jobRoleList = opportunityJobRoleDescriptions.ToReferenceDataDescriptionList(allJobRolesCount);
             string levelList = opportunityLevelDescriptions.ToReferenceDataDescriptionList(allLevelsCount);
@@ -218,7 +217,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 getContactDetailsResult.OpportunityDasAccountName,
                 contactDetailsRequest.EncodedPledgeId);
 
-            var cacheItem = await this.RetrieveCacheItem(contactDetailsRequest.CacheKey);
+            var cacheItem = await RetrieveCacheItem(contactDetailsRequest.CacheKey);
 
             return new ContactDetailsViewModel()
             {
