@@ -4,6 +4,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
 {
     public class ApplyViewModel : ApplyRequest
     {
+        public string EncodedPledgeId { get; set; }
         public string JobRole { get; set; }
         public string NumberOfApprentices { get; set; }
         public string StartBy { get; set; }
