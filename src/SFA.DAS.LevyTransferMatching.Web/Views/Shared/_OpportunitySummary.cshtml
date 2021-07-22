@@ -2,7 +2,7 @@
 
 <div class="das-highlight">
     <h2 class="govuk-heading-s">@Model.Description wants to fund apprenticeship training in:</h2>
-    <dl class="das-definition-list app-dl-inline govuk-!-font-size-16">
+    @*<dl class="das-definition-list app-dl-inline govuk-!-font-size-16">
         <dt class="app-dl-inline__title">Location</dt>
         <dd class="app-dl-inline__definition">####</dd>
         <dt class="app-dl-inline__title">Sector</dt>
@@ -11,7 +11,25 @@
         <dd class="app-dl-inline__definition">@Model.JobRoleList</dd>
         <dt class="app-dl-inline__title">Level</dt>
         <dd class="app-dl-inline__definition">@Model.LevelList</dd>
-    </dl>
+    </dl>*@
+    <ul class="govuk-list">
+        <li>
+            <strong>Location: </strong>
+            <span>####</span>
+        </li>
+        <li>
+            <strong>Sector: </strong>
+            <span class="das-!-color-dark-grey">@Model.SectorList</span>
+        </li>
+        <li>
+            <strong>Type of job role: </strong>
+            <span class="das-!-color-dark-grey">@Model.JobRoleList</span>
+        </li>
+        <li>
+            <strong>Level: </strong>
+            <span class="das-!-color-dark-grey">@Model.LevelList</span>
+        </li>
+    </ul>
     <div class="app-highlight__footer">
         <p class="govuk-heading-s">Total funding available: up to £@Model.Amount.ToString("N0") available in @Model.YearDescription</p>
     </div>
