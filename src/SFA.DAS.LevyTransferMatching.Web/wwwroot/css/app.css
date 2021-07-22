@@ -88,7 +88,43 @@
     margin: 0
 }
 
+.app-extra-fields__fieldset {
+    border-left: 5px solid #b1b4b6;
+    padding: 0 0 0 20px;
+    margin: 0 0 30px;
+}
 
 .das-preformatted-body {
     white-space: pre-wrap;
+}
+
+.js-enabled .app-extra-fields__fieldset {
+    margin-bottom: 0;
+}
+
+.app-extra-fields__form-group {
+    position: relative;
+    margin: 0;
+}
+
+.app-extra-fields__form-group:not(.app-extra-field__form-group--hidden) +
+.app-extra-fields__form-group:not(.app-extra-field__form-group--hidden) {
+    margin-top: 20px;
+}
+
+.app-extra-field__form-group-link--add {
+    display: inline-block;
+    font-size: 19px;
+    margin-top: 10px;
+    margin-bottom: 30px;
+}
+
+.app-extra-field__form-group-link--remove {
+    display: inline-block;
+    margin-top: 5px;
+    margin-bottom: -10px;
+}
+
+.app-extra-field__form-group--hidden {
+    display: none;
 }
