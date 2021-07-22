@@ -13,6 +13,7 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using System.Collections.Generic;
+using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
@@ -99,35 +100,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             return firstEncodedAccountId;
         }
 
-        public OpportunitySummaryViewModel GetOpportunitySummaryViewModel(
-            int allSectorsCount,
-            IEnumerable<string> opportunitySectorDescriptions,
-            int allJobRolesCount,
-            IEnumerable<string> opportunityJobRoleDescriptions,
-            int allLevelsCount,
-            IEnumerable<string> opportunityLevelDescriptions,
-            int amount,
-            bool opportunityIsNamePublic,
-            string opportunityDasAccountName,
-            string encodedPledgeId)
-        {
-            string sectorList = opportunitySectorDescriptions.ToReferenceDataDescriptionList(allSectorsCount);
-            string jobRoleList = opportunityJobRoleDescriptions.ToReferenceDataDescriptionList(allJobRolesCount);
-            string levelList = opportunityLevelDescriptions.ToReferenceDataDescriptionList(allLevelsCount);
-
-            DateTime dateTime = _dateTimeService.UtcNow;
-
-            return new OpportunitySummaryViewModel()
-            {
-                Amount = amount,
-                Description = opportunityIsNamePublic ? $"{opportunityDasAccountName} ({encodedPledgeId})" : "A levy-paying business",
-                JobRoleList = jobRoleList,
-                LevelList = levelList,
-                SectorList = sectorList,
-                YearDescription = dateTime.ToTaxYearDescription(),
-            };
-        }
-
         [Obsolete("To eventually be replaced with the other method of the same name - please use other overload.")]
         public async Task<OpportunitySummaryViewModel> GetOpportunitySummaryViewModel(OpportunityDto opportunityDto, string encodedPledgeId)
         {
@@ -147,6 +119,35 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             {
                 Amount = opportunityDto.Amount,
                 Description = GenerateDescription(opportunityDto, encodedPledgeId),
+                JobRoleList = jobRoleList,
+                LevelList = levelList,
+                SectorList = sectorList,
+                YearDescription = dateTime.ToTaxYearDescription(),
+            };
+        }
+
+        public OpportunitySummaryViewModel GetOpportunitySummaryViewModel(
+            IEnumerable<string> sectors,
+            IEnumerable<string> jobRoles,
+            IEnumerable<string> levels,
+            IEnumerable<ReferenceDataItem> allSectors,
+            IEnumerable<ReferenceDataItem> allJobRoles,
+            IEnumerable<ReferenceDataItem> allLevels,
+            int amount,
+            bool isNamePublic,
+            string dasAccountName,
+            string encodedPledgeId)
+        {
+            string sectorList = sectors.ToReferenceDataDescriptionList(allSectors);
+            string jobRoleList = jobRoles.ToReferenceDataDescriptionList(allJobRoles);
+            string levelList = levels.ToReferenceDataDescriptionList(allLevels, descriptionSource: x => x.ShortDescription);
+
+            DateTime dateTime = _dateTimeService.UtcNow;
+
+            return new OpportunitySummaryViewModel()
+            {
+                Amount = amount,
+                Description = isNamePublic ? $"{dasAccountName} ({encodedPledgeId})" : "A levy-paying business",
                 JobRoleList = jobRoleList,
                 LevelList = levelList,
                 SectorList = sectorList,
@@ -204,15 +205,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             }
 
             var opportunitySummaryViewModel = GetOpportunitySummaryViewModel(
-                getContactDetailsResult.AllSectorsCount,
-                getContactDetailsResult.OpportunitySectorDescriptions,
-                getContactDetailsResult.AllJobRolesCount,
-                getContactDetailsResult.OpportunityJobRoleDescriptions,
-                getContactDetailsResult.AllLevelsCount,
-                getContactDetailsResult.OpportunityLevelDescriptions,
-                getContactDetailsResult.OpportunityAmount,
-                getContactDetailsResult.OpportunityIsNamePublic,
-                getContactDetailsResult.OpportunityDasAccountName,
+                getContactDetailsResult.Sectors.Select(x => x.Id),
+                getContactDetailsResult.JobRoles.Select(x => x.Id),
+                getContactDetailsResult.Levels.Select(x => x.Id),
+                getContactDetailsResult.AllSectors,
+                getContactDetailsResult.AllJobRoles,
+                getContactDetailsResult.AllLevels,
+                getContactDetailsResult.Amount,
+                getContactDetailsResult.IsNamePublic,
+                getContactDetailsResult.DasAccountName,
                 contactDetailsRequest.EncodedPledgeId);
 
             var cacheItem = await RetrieveCacheItem(contactDetailsRequest.CacheKey);
@@ -226,7 +227,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 EmailAddress = cacheItem.EmailAddresses.First(),
                 AdditionalEmailAddresses = cacheItem.EmailAddresses.Skip(1).ToArray(),
                 BusinessWebsite = cacheItem.BusinessWebsite,
-                DasAccountName = getContactDetailsResult.OpportunityDasAccountName,
+                DasAccountName = getContactDetailsResult.DasAccountName,
                 OpportunitySummaryViewModel = opportunitySummaryViewModel,
             };
 
