@@ -6,20 +6,34 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities
 {
     public class ContactDetailsPostRequestValidator : AbstractValidator<ContactDetailsPostRequest>
     {
+        private const string FirstNameError = "Enter your first name";
+        private const string LastNameError = "Enter your last name";
         private const string EmailAddressError = "Enter your email address";
 
         public ContactDetailsPostRequestValidator()
         {
             RuleFor(x => x.FirstName)
                 .NotEmpty()
-                .WithMessage("Enter your first name");
+                .WithMessage(FirstNameError);
+
+            RuleFor(x => x.FirstName)
+                .MaximumLength(25)
+                .WithMessage(FirstNameError);
 
             RuleFor(x => x.LastName)
                 .NotEmpty()
-                .WithMessage("Enter your last name");
+                .WithMessage(LastNameError);
+
+            RuleFor(x => x.LastName)
+                .MaximumLength(25)
+                .WithMessage(LastNameError);
 
             RuleFor(x => x.EmailAddress)
                 .NotEmpty()
+                .WithMessage(EmailAddressError);
+
+            RuleFor(x => x.EmailAddress)
+                .MaximumLength(50)
                 .WithMessage(EmailAddressError);
 
             When(
@@ -35,10 +49,17 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities
                 .EmailAddress()
                 .WithMessage(EmailAddressError);
 
+            RuleForEach(x => x.AdditionalEmailAddresses)
+                .MaximumLength(50)
+                .WithMessage(EmailAddressError);
+
             // Check for uniqueness
             RuleForEach(x => x.AdditionalEmailAddresses)
                 .Must(ValidateAddressUniqueness)
                 .WithMessage("You have already entered this email address");
+
+            RuleFor(x => x.BusinessWebsite)
+                .MaximumLength(75);
         }
 
         private bool ValidateAddressUniqueness(ContactDetailsPostRequest contactDetailsPostRequest, string additionalEmailAddress)

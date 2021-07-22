@@ -3,6 +3,7 @@ using FluentValidation.TestHelper;
 using NUnit.Framework;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities;
+using System.Linq;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
 {
@@ -98,6 +99,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
 
             ContactDetailsPostRequest contactDetailsPostRequest = _fixture
                 .Build<ContactDetailsPostRequest>()
+                .With(x => x.FirstName, new string(_fixture.CreateMany<char>(25).ToArray()))
+                .With(x => x.LastName, new string(_fixture.CreateMany<char>(25).ToArray()))
                 .With(x => x.EmailAddress, emailAddress)
                 .With(x => x.AdditionalEmailAddresses, additionalEmailAddresses)
                 .Create();
@@ -133,6 +136,39 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
 
             // Assert
             results.ShouldHaveValidationErrorFor(x => x.AdditionalEmailAddresses).WithErrorMessage("You have already entered this email address");
+        }
+
+        [Test]
+        public void Validator_Returns_Expected_Errors_For_Strings_Over_Maximum_Lengths()
+        {
+            // Arrange
+            string emailAddress = "this.is.a.very.very.very.very.very.long@email.address.example.com"; 
+            string[] additionalEmailAddresses = new string[]
+            {
+                null,
+                null,
+                "this.is.also.a.very.very.very.very.very.long@email.address.example.com",
+                null,
+            };
+
+            ContactDetailsPostRequest contactDetailsPostRequest = _fixture
+                .Build<ContactDetailsPostRequest>()
+                .With(x => x.FirstName, new string(_fixture.CreateMany<char>(26).ToArray()))
+                .With(x => x.LastName, new string(_fixture.CreateMany<char>(26).ToArray()))
+                .With(x => x.EmailAddress, emailAddress)
+                .With(x => x.AdditionalEmailAddresses, additionalEmailAddresses)
+                .With(x => x.BusinessWebsite, new string(_fixture.CreateMany<char>(76).ToArray()))
+                .Create();
+
+            // Act
+            var results = _contactDetailsPostRequestValidator.TestValidate(contactDetailsPostRequest);
+
+            // Assert
+            results.ShouldHaveValidationErrorFor(x => x.FirstName).WithErrorMessage("Enter your first name");
+            results.ShouldHaveValidationErrorFor(x => x.LastName).WithErrorMessage("Enter your last name");
+            results.ShouldHaveValidationErrorFor(x => x.EmailAddress).WithErrorMessage("Enter your email address");
+            results.ShouldHaveValidationErrorFor(x => x.AdditionalEmailAddresses).WithErrorMessage("Enter your email address");
+            results.ShouldHaveValidationErrorFor(x => x.BusinessWebsite);
         }
     }
 }
