@@ -7,6 +7,7 @@ using System;
 using Microsoft.AspNetCore.Authorization;
 using SFA.DAS.LevyTransferMatching.Web.Authentication;
 using SFA.DAS.LevyTransferMatching.Web.Validators;
+using FluentValidation.AspNetCore;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
@@ -131,10 +132,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
             if (!validationResult.IsValid)
             {
-                foreach (var error in validationResult.Errors)
-                {
-                    ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
-                }
+                validationResult.AddToModelState(ModelState, "");
 
                 return RedirectToAction("Sector", new SectorRequest
                 {
