@@ -10,5 +10,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Dto
         public List<string> Sectors { get; set; }
         public List<string> JobRoles { get; set; }
         public List<string> Levels { get; set; }
+        public List<string> Locations { get; set; }
     }
 }

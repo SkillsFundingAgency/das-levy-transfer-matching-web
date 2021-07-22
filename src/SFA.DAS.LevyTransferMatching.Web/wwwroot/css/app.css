@@ -92,11 +92,11 @@
     border-left: 5px solid #b1b4b6;
     padding: 0 0 0 20px;
     margin: 0 0 30px;
-  }
+}
 
-  .js-enabled .app-extra-fields__fieldset {
+.js-enabled .app-extra-fields__fieldset {
     margin-bottom: 0;
-  }
+}
 
 .app-extra-fields__form-group {
     position: relative;
