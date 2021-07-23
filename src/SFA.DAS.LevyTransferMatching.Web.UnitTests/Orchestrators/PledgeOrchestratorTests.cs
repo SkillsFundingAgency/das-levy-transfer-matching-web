@@ -33,6 +33,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private GetSectorResponse _sectorResponse;
         private GetJobRoleResponse _jobRoleResponse;
         private GetLevelResponse _levelResponse;
+        private GetMyPledgesResponse _myPledgesResponse;
         private string _encodedAccountId;
         private Guid _cacheKey;
         private readonly long _accountId = 1;
@@ -58,9 +59,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _sectorResponse = new GetSectorResponse {Sectors = _sectors};
             _levelResponse = new GetLevelResponse {Levels = _levels};
             _jobRoleResponse = new GetJobRoleResponse {JobRoles = _jobRoles};
+            _myPledgesResponse = _fixture.Create<GetMyPledgesResponse>();
            
             _encodedPledgeId = _fixture.Create<string>();
 
+            _pledgeService.Setup(x => x.GetMyPledges(_accountId)).ReturnsAsync(_myPledgesResponse);
             _pledgeService.Setup(x => x.GetCreate(_accountId)).ReturnsAsync(() => new GetCreateResponse
             {
                 Sectors = _sectors,
@@ -88,6 +91,20 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         {
             var result = _orchestrator.GetInformViewModel(_encodedAccountId);
             Assert.AreNotEqual(Guid.Empty, result.CacheKey);
+        }
+
+        [Test]
+        public async Task GetMyPledgesViewModel_EncodedId_Is_Correct()
+        {
+            var result = await _orchestrator.GetMyPledgesViewModel(new MyPledgesRequest { EncodedAccountId = _encodedAccountId, AccountId = _accountId });
+            Assert.AreEqual(_encodedAccountId, result.EncodedAccountId);
+        }
+
+        [Test]
+        public async Task GetMyPledgesViewModel_Pledges_Is_Populated()
+        {
+            var result = await _orchestrator.GetMyPledgesViewModel(new MyPledgesRequest { EncodedAccountId = _encodedAccountId, AccountId = _accountId });
+            Assert.NotNull(result.Pledges);
         }
 
         [Test]
