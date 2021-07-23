@@ -13,9 +13,11 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using System;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using System.Data;
+using System.Drawing.Text;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 
@@ -306,6 +308,22 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _cache.Verify(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()), Times.Once);
             _encodingService.Verify(x => x.Decode(encodedPledgeId, EncodingType.PledgeId), Times.Once);
             _opportunitiesService.Verify(x => x.GetOpportunity(1), Times.Once);
+        }
+
+        [Test]
+        public async Task GetConfirmationViewModel_Returns_Expected_Model()
+        {
+            var opportunityId = _fixture.Create<int>();
+            var response = _fixture.Create<GetConfirmationResponse>();
+
+            _opportunitiesService.Setup(x => x.GetConfirmation(opportunityId))
+                .ReturnsAsync(response);
+
+            var result =
+                await _orchestrator.GetConfirmationViewModel(new ConfirmationRequest {PledgeId = opportunityId});
+
+            Assert.AreEqual(response.AccountName, result.AccountName);
+            Assert.AreEqual(response.IsNamePublic, result.IsNamePublic);
         }
     }
 }

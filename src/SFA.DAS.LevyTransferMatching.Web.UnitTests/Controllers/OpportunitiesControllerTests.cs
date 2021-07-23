@@ -183,5 +183,24 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             Assert.AreEqual(redirectToActionResult.RouteValues["CacheKey"], cacheKey);
             _orchestrator.Verify(x => x.UpdateCacheItem(request), Times.Once);
         }
+
+
+        [Test]
+        public async Task GET_Confirmation_Returns_Expected_View()
+        {
+            var request = _fixture.Create<ConfirmationRequest>();
+            var expectedViewModel = _fixture.Create<ConfirmationViewModel>();
+
+            _orchestrator
+                .Setup(x => x.GetConfirmationViewModel(request))
+                .ReturnsAsync(expectedViewModel);
+
+            var viewResult = await _opportunitiesController.Confirmation(request) as ViewResult;
+            var actualViewModel = viewResult.Model as ConfirmationViewModel;
+
+            Assert.IsNotNull(viewResult);
+            Assert.IsNotNull(actualViewModel);
+            Assert.AreEqual(expectedViewModel, actualViewModel);
+        }
     }
 }

@@ -99,6 +99,16 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             return firstEncodedAccountId;
         }
 
+        public async Task<ConfirmationViewModel> GetConfirmationViewModel(ConfirmationRequest request)
+        {
+            var result = await _opportunitiesService.GetConfirmation(request.PledgeId);
+            return new ConfirmationViewModel
+            {
+                AccountName = result.AccountName,
+                IsNamePublic = result.IsNamePublic
+            };
+        }
+
         public async Task<OpportunitySummaryViewModel> GetOpportunitySummaryViewModel(OpportunityDto opportunityDto, string encodedPledgeId)
         {
             // Pull back the tags, and use the descriptions to build the lists.

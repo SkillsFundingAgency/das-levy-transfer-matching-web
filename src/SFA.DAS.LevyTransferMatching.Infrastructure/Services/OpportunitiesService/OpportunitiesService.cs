@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService
 {
@@ -40,6 +41,11 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
             }
 
             return opportunity;
+        }
+
+        public async Task<GetConfirmationResponse> GetConfirmation(int opportunityId)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
