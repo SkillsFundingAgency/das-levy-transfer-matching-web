@@ -9,6 +9,7 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsersReadStore
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CosmosDb;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.LocationService;
 using SFA.DAS.LevyTransferMatching.Web.Authentication;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using System;
@@ -20,6 +21,7 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.TagService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using Microsoft.AspNetCore.Http;
+using SFA.DAS.LevyTransferMatching.Web.Validators.Location;
 
 namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
 {
@@ -35,10 +37,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
             services.AddSingleton<IAuthorizationHandler, ManageAccountAuthorizationHandler>();
 
             services.AddTransient<IEmployerAccountsService, EmployerAccountsService>();
-
+            services.AddTransient<ILocationValidatorService, LocationValidatorService>();
             services.AddTransient<ICacheStorageService, CacheStorageService>();
             services.AddTransient<IPledgeOrchestrator, PledgeOrchestrator>();
             services.AddTransient<IOpportunitiesOrchestrator, OpportunitiesOrchestrator>();
+            services.AddTransient<ILocationOrchestrator, LocationOrchestrator>();
 
             services.AddSingleton<IDateTimeService, DateTimeService>();
 
@@ -46,6 +49,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
             services.AddClient<IPledgeService>((c, s) => new PledgeService(c));
             services.AddClient<ITagService>((c, s) => new TagService(c, s.GetService<ICacheStorageService>()));
             services.AddClient<IOpportunitiesService>((c, s) => new OpportunitiesService(c));
+            services.AddClient<ILocationService>((c, s) => new LocationService(c));
             services.AddClient<IUserService>((c, s) => new UserService(s.GetService<IHttpContextAccessor>(), c));
         }
 
@@ -65,10 +69,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
                 var httpClient = clientBuilder.Build();
 
                 if (!settings.ApiBaseUrl.EndsWith("/"))
-                {
-                    settings.ApiBaseUrl += "/";
-                }
-                httpClient.BaseAddress = new Uri(settings.ApiBaseUrl);
+                    httpClient.BaseAddress = new Uri(settings.ApiBaseUrl + "/");
+                else
+                    httpClient.BaseAddress = new Uri(settings.ApiBaseUrl);
 
                 return instance.Invoke(httpClient, s);
             });
