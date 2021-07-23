@@ -101,11 +101,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         public async Task<ConfirmationViewModel> GetConfirmationViewModel(ConfirmationRequest request)
         {
-            var result = await _opportunitiesService.GetConfirmation(request.PledgeId);
+            var result = await _opportunitiesService.GetConfirmation(request.AccountId, request.PledgeId);
             return new ConfirmationViewModel
             {
                 AccountName = result.AccountName,
-                IsNamePublic = result.IsNamePublic
+                IsNamePublic = result.IsNamePublic,
+                Reference = _encodingService.Encode(request.PledgeId, EncodingType.PledgeId),
+                EncodedAccountId = request.EncodedAccountId
             };
         }
 

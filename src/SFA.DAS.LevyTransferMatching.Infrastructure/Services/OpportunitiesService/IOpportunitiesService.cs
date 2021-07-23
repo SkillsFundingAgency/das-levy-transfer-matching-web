@@ -11,6 +11,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
 
         Task<OpportunityDto> GetOpportunity(int id);
 
-        Task<GetConfirmationResponse> GetConfirmation(int opportunityId);
+        Task<GetConfirmationResponse> GetConfirmation(long accountId, int opportunityId);
     }
 }

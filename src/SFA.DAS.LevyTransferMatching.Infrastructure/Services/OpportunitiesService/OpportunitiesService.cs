@@ -43,9 +43,14 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
             return opportunity;
         }
 
-        public async Task<GetConfirmationResponse> GetConfirmation(int opportunityId)
+        public async Task<GetConfirmationResponse> GetConfirmation(long accountId, int opportunityId)
         {
-            throw new System.NotImplementedException();
+            var response =
+                await _client.GetAsync($"accounts/{accountId}/opportunities/{opportunityId}/apply/confirmation");
+
+            response.EnsureSuccessStatusCode();
+
+            return JsonConvert.DeserializeObject<GetConfirmationResponse>(await response.Content.ReadAsStringAsync());
         }
     }
 }

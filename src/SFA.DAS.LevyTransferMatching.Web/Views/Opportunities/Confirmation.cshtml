@@ -10,28 +10,40 @@
         <div class="govuk-width-container form-entry" id="transfers-hub">
 
             <div class="govuk-grid-row">
-                <div class="govuk-grid-column-two-thirds">
+                <p class="govuk-grid-column-two-thirds">
                     <div class="govuk-panel govuk-panel--confirmation pledge-approved">
                         <h1 class="govuk-panel__title">Your application has been submitted</h1>
                     </div>
 
-                    @*<h2 class="govuk-heading-m">What happens next</h2>
+                    <h2 class="govuk-heading-m">What happens next</h2>
 
-                    <p>Your pledge is now public and can be <a href="@Url.Action("index", "Opportunities")">viewed online</a>.</p>
+                    @if (Model.IsNamePublic)
+                    {
+                        <p><strong>@Model.AccountName (@Model.Reference)</strong> will review your application.</p>
+                    }
+                    else
+                    {
+                        <p>The organisation offering <strong>opportunity @Model.Reference</strong> will review your application.</p>
+                    }
 
-                    <p>You can share your pledge link with organisations you work with to promote your pledge.</p>
+                    <p>They may contact you to ask follow-up questions about your application.</p>
 
-                    <p>You'll receive notifications when an employer applies for your funding transfer.</p>
+                    @if (Model.IsNamePublic)
+                    {
+                        <p>When <strong>@Model.AccountName (@Model.Reference)</strong> have made a decision you will receive an email and a notification in your apprenticeship service account.</p>
+                    }
+                    else
+                    {
+                        <p>When they have made a decision you will receive an email and a notification in your apprenticeship service account.</p>
+                    }
 
-                    <p>You can then:</p>
+                    <h2 class="govuk-heading-m">You can apply to another opportunity</h2>
 
-                    <ul class="govuk-list govuk-list--bullet">
-                        <li>view applications</li>
-                        <li>accept applications</li>
-                        <li>reject applications</li>
-                    </ul>*@
-
-                    @*<a href="@LinkGenerator.AccountsLink($"accounts/{Model.EncodedAccountId}/transfers")" class="govuk-back-link" )">Back to Transfers</a>*@
+                    <p>
+                        <a class="govuk-link" href="@Url.Action("Index")">View other opportunities</a>
+                        <br />or<br />
+                        <a href="@LinkGenerator.AccountsLink($"accounts/{Model.EncodedAccountId}/teams")" class="govuk-link" )>Continue to my account</a>
+                    </p>
                 </div>
             </div>
         </div>

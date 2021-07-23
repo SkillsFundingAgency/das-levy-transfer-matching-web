@@ -313,17 +313,25 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         [Test]
         public async Task GetConfirmationViewModel_Returns_Expected_Model()
         {
+            var encodedAccountId = _fixture.Create<string>();
+            var accountId = _fixture.Create<long>();
             var opportunityId = _fixture.Create<int>();
             var response = _fixture.Create<GetConfirmationResponse>();
+            var reference = _fixture.Create<string>();
 
-            _opportunitiesService.Setup(x => x.GetConfirmation(opportunityId))
+            _opportunitiesService.Setup(x => x.GetConfirmation(accountId, opportunityId))
                 .ReturnsAsync(response);
 
+            _encodingService.Setup(x => x.Encode(opportunityId, EncodingType.PledgeId))
+                .Returns(reference);
+
             var result =
-                await _orchestrator.GetConfirmationViewModel(new ConfirmationRequest {PledgeId = opportunityId});
+                await _orchestrator.GetConfirmationViewModel(new ConfirmationRequest {PledgeId = opportunityId, AccountId = accountId, EncodedAccountId = encodedAccountId});
 
             Assert.AreEqual(response.AccountName, result.AccountName);
             Assert.AreEqual(response.IsNamePublic, result.IsNamePublic);
+            Assert.AreEqual(reference, result.Reference);
+            Assert.AreEqual(encodedAccountId, result.EncodedAccountId);
         }
     }
 }
