@@ -157,7 +157,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         public async Task<ApplyViewModel> GetApplyViewModel(ApplicationRequest request)
         {
-            var application = await RetrieveCacheItem(request.CacheKey);
+            var application = await RetrievePledgeCacheItem(request.CacheKey);
             var opportunityDto = await _opportunitiesService.GetOpportunity(request.PledgeId);
 
             var emailAddresses = new List<string>();
@@ -180,6 +180,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             return new ApplyViewModel
             {
                 EncodedAccountId = request.EncodedAccountId,
+                CacheKey = application.Key,
                 EncodedPledgeId = request.EncodedPledgeId,
                 OpportunitySummaryViewModel = await GetOpportunitySummaryViewModel(opportunityDto, request.EncodedPledgeId),
                 JobRole = "-",
@@ -216,7 +217,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 getContactDetailsResult.DasAccountName,
                 contactDetailsRequest.EncodedPledgeId);
 
-            var cacheItem = await RetrieveCacheItem(contactDetailsRequest.CacheKey);
+            var cacheItem = await RetrievePledgeCacheItem(contactDetailsRequest.CacheKey);
 
             var viewModel = new ContactDetailsViewModel()
             {
@@ -236,7 +237,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         public async Task UpdateCacheItem(ContactDetailsPostRequest contactDetailsPostRequest)
         {
-            var cacheItem = await RetrieveCacheItem(contactDetailsPostRequest.CacheKey);
+            var cacheItem = await RetrievePledgeCacheItem(contactDetailsPostRequest.CacheKey);
 
             cacheItem.FirstName = contactDetailsPostRequest.FirstName;
             cacheItem.LastName = contactDetailsPostRequest.LastName;
@@ -251,7 +252,31 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             return opportunityDto.IsNamePublic ? $"{opportunityDto.DasAccountName} ({encodedPledgeId})" : "A levy-paying business wants to fund apprenticeship training in:";
         }
 
-        private async Task<CreateApplicationCacheItem> RetrieveCacheItem(Guid key)
+        public async Task<MoreDetailsViewModel> GetMoreDetailsViewModel(MoreDetailsRequest request)
+        {
+            var application = await RetrievePledgeCacheItem(request.CacheKey);
+            var opportunityDto = await _opportunitiesService.GetOpportunity((int)_encodingService.Decode(request.EncodedPledgeId, EncodingType.PledgeId));
+
+            return new MoreDetailsViewModel()
+            {
+                CacheKey = request.CacheKey,
+                EncodedAccountId = request.EncodedAccountId,
+                EncodedPledgeId = request.EncodedPledgeId,
+                Details = application.Details,
+                OpportunitySummaryViewModel = await GetOpportunitySummaryViewModel(opportunityDto, request.EncodedPledgeId),
+            };
+        }
+
+        public async Task UpdateCacheItem(MoreDetailsPostRequest request)
+        {
+            var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
+
+            cacheItem.Details = request.Details;
+
+            await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
+        }
+
+        private async Task<CreateApplicationCacheItem> RetrievePledgeCacheItem(Guid key)
         {
             var result = await _cacheStorageService.RetrieveFromCache<CreateApplicationCacheItem>(key.ToString());
 

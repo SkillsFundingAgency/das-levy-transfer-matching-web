@@ -14,8 +14,8 @@ using System;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using System.Data;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
-using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
+using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
@@ -356,6 +356,40 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _dateTimeService
                 .Setup(x => x.UtcNow)
                 .Returns(_currentDateTime);
+        }
+
+        [Test]
+        public async Task GetMoreDetailsViewModel_Is_Correct()
+        {
+            SetupGetOpportunityViewModelServices();
+
+            var cacheKey = _fixture.Create<Guid>();
+            var encodedAccountId = _fixture.Create<string>();
+            var encodedPledgeId = _fixture.Create<string>();
+            var cacheItem = _fixture.Create<CreateApplicationCacheItem>();
+            var opportunityDto = _fixture.Create<OpportunityDto>();
+
+            _cacheStorageService.Setup(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString())).ReturnsAsync(cacheItem);
+            _encodingService.Setup(x => x.Decode(encodedPledgeId, EncodingType.PledgeId)).Returns(1);
+            _opportunitiesService.Setup(x => x.GetOpportunity(1)).ReturnsAsync(opportunityDto);
+
+            var result = await _orchestrator.GetMoreDetailsViewModel(new MoreDetailsRequest { EncodedAccountId = encodedAccountId, CacheKey = cacheKey, EncodedPledgeId = encodedPledgeId});
+
+            Assert.IsNotNull(result);            
+            Assert.AreEqual(cacheKey, result.CacheKey);
+            Assert.AreEqual(encodedAccountId, result.EncodedAccountId);
+            Assert.AreEqual(encodedPledgeId, result.EncodedPledgeId);
+            Assert.AreEqual(cacheItem.Details, result.Details);
+            Assert.IsNotNull(result.OpportunitySummaryViewModel);
+            Assert.AreEqual(opportunityDto.Amount, result.OpportunitySummaryViewModel.Amount);
+            Assert.AreEqual(string.Join(", ", opportunityDto.JobRoles.ToReferenceDataDescriptionList(_jobRoleReferenceDataItems)), result.OpportunitySummaryViewModel.JobRoleList);
+            Assert.AreEqual(string.Join(", ", opportunityDto.Levels.ToReferenceDataDescriptionList(_levelReferenceDataItems, (x) => x.ShortDescription)), result.OpportunitySummaryViewModel.LevelList);
+            Assert.AreEqual(string.Join(", ", opportunityDto.Sectors.ToReferenceDataDescriptionList(_sectorReferenceDataItems)), result.OpportunitySummaryViewModel.SectorList);
+            Assert.AreEqual(_currentDateTime.ToTaxYearDescription(), result.OpportunitySummaryViewModel.YearDescription);
+
+            _cacheStorageService.Verify(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()), Times.Once);
+            _encodingService.Verify(x => x.Decode(encodedPledgeId, EncodingType.PledgeId), Times.Once);
+            _opportunitiesService.Verify(x => x.GetOpportunity(1), Times.Once);
         }
     }
 }

@@ -137,12 +137,12 @@
                     <ul class="das-task-list__items">
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="#">
+                                <a class="govuk-link" href="@Url.Action("MoreDetails", new { EncodedAccountId = Model.EncodedAccountId, EncodedPledgeId = Model.EncodedPledgeId, CacheKey = Model.CacheKey })">
                                     More detail
                                 </a>
                             </span>
                             <span class="das-task-list__task-tag">
-                                <text>@Model.MoreDetail</text>
+                                <pre class="govuk-body das-preformatted-body">@Model.MoreDetail</pre>
                             </span>
                         </li>
                     </ul>
