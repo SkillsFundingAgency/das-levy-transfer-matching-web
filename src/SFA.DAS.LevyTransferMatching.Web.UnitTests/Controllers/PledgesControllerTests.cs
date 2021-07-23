@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using AutoFixture;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -158,11 +159,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
 
             // Act
             var viewResult = await _pledgesController.JobRole(request) as ViewResult;
-            var amountViewModel = viewResult?.Model as JobRoleViewModel;
+            var jobRoleViewModel = viewResult?.Model as JobRoleViewModel;
 
             // Assert
             Assert.NotNull(viewResult);
-            Assert.NotNull(amountViewModel);
+            Assert.NotNull(jobRoleViewModel);
         }
 
         [Test]
@@ -177,6 +178,56 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             // Assert
             Assert.NotNull(actionResult);
             Assert.AreEqual("Create", actionResult.ActionName);
+            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
+        }
+
+
+
+        [Test]
+        public async Task GET_Location_Returns_Expected_View_With_Expected_ViewModel()
+        {
+            // Arrange
+            var request = _fixture.Create<LocationRequest>();
+            _orchestrator.Setup(x => x.GetLocationViewModel(request)).ReturnsAsync(() => new LocationViewModel());
+
+            // Act
+            var viewResult = await _pledgesController.Location(request) as ViewResult;
+            var locationViewModel = viewResult?.Model as LocationViewModel;
+
+            // Assert
+            Assert.NotNull(viewResult);
+            Assert.NotNull(locationViewModel);
+        }
+
+        [Test]
+        public async Task POST_Location_Returns_Expected_Redirect_With_Valid_Location()
+        {
+            // Arrange
+            var request = _fixture.Create<LocationPostRequest>();
+            _orchestrator.Setup(x => x.ValidateLocations(It.IsAny<LocationPostRequest>())).Returns(Task.FromResult(new Dictionary<int, string>()));
+
+            // Act
+            var actionResult = await _pledgesController.Location(request) as RedirectToActionResult;
+
+            // Assert
+            Assert.NotNull(actionResult);
+            Assert.AreEqual("Create", actionResult.ActionName);
+            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
+        }
+
+        [Test]
+        public async Task POST_Location_Returns_Expected_Redirect_With_Invalid_Location()
+        {
+            // Arrange
+            var request = _fixture.Create<LocationPostRequest>();
+            _orchestrator.Setup(x => x.ValidateLocations(It.IsAny<LocationPostRequest>())).Returns(Task.FromResult(new Dictionary<int, string>() { { 1, "Error Message" } }));
+
+            // Act
+            var actionResult = await _pledgesController.Location(request) as RedirectToActionResult;
+
+            // Assert
+            Assert.NotNull(actionResult);
+            Assert.AreEqual("Location", actionResult.ActionName);
             Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
         }
 

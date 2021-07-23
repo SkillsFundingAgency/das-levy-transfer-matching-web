@@ -16,11 +16,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public List<ReferenceDataItem> LevelOptions { get; set; }
         public List<ReferenceDataItem> SectorOptions { get; set; }
         public List<ReferenceDataItem> JobRoleOptions { get; set; }
+        public List<string> Locations { get; set; }
 
         public string IsNamePublicDisplayValue => IsNamePublic.HasValue ? IsNamePublic.Value ? "Show" : "Hide" : "-";
         public bool AreAllSectorsSelected => Sectors == null || !Sectors.Any() || Sectors.Count == SectorOptions.Count;
         public bool AreAllJobRolesSelected => JobRoles == null || !JobRoles.Any() || JobRoles.Count == JobRoleOptions.Count;
         public bool AreAllLevelsSelected => Levels == null || !Levels.Any() || Levels.Count == LevelOptions.Count;
         public bool AmountSectionComplete => Amount.HasValue && IsNamePublic.HasValue;
+        public bool AreAllLocationsSelected => Locations == null || Locations.Count == 0 || Locations.All(x => x == null);
     }
 }
