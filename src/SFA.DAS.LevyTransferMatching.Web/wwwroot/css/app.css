@@ -94,6 +94,10 @@
     margin: 0 0 30px;
 }
 
+.das-preformatted-body {
+    white-space: pre-wrap;
+}
+
 .js-enabled .app-extra-fields__fieldset {
     margin-bottom: 0;
 }

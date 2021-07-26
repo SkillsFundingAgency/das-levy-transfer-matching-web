@@ -3,8 +3,9 @@ using System.Threading.Tasks;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.LevyTransferMatching.Web.Attributes;
-using Microsoft.AspNetCore.Authorization;
+using System;
 using SFA.DAS.LevyTransferMatching.Web.Authentication;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
@@ -59,7 +60,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         {
             var encodedAccountId = await _opportunitiesOrchestrator.GetUserEncodedAccountId();
 
-            return RedirectToAction("Apply", new { EncodedAccountId = encodedAccountId, EncodedPledgeId = encodedPledgeId });
+            return RedirectToAction("Apply", new 
+            { 
+                CacheKey = Guid.NewGuid(),
+                EncodedAccountId = encodedAccountId,
+                EncodedPledgeId = encodedPledgeId
+            });
         }
 
         [HideAccountNavigation(false)]
@@ -68,6 +74,29 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         public async Task<IActionResult> Apply(ApplicationRequest request)
         {
             return View(await _opportunitiesOrchestrator.GetApplyViewModel(request));
+        }
+
+        [HideAccountNavigation(false)]
+        [Authorize(Policy = PolicyNames.ManageAccount)]
+        [Route("/accounts/{encodedAccountId}/opportunities/{EncodedPledgeId}/create/more-details")]
+        public async Task<IActionResult> MoreDetails(MoreDetailsRequest request)
+        {
+            return View(await _opportunitiesOrchestrator.GetMoreDetailsViewModel(request));
+        }
+
+        [HideAccountNavigation(false)]
+        [Authorize(Policy = PolicyNames.ManageAccount)]
+        [Route("/accounts/{encodedAccountId}/opportunities/{EncodedPledgeId}/create/more-details")]
+        [HttpPost]
+        public async Task<IActionResult> MoreDetails(MoreDetailsPostRequest request)
+        {
+            await _opportunitiesOrchestrator.UpdateCacheItem(request);
+            return RedirectToAction("Apply", new ApplicationRequest 
+            { 
+                EncodedAccountId = request.EncodedAccountId,
+                EncodedPledgeId = request.EncodedPledgeId,
+                CacheKey = request.CacheKey
+            });
         }
     }
 }
