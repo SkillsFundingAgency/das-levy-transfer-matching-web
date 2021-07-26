@@ -22,7 +22,6 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using Microsoft.AspNetCore.Http;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Location;
-using SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities;
 
 namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
 {

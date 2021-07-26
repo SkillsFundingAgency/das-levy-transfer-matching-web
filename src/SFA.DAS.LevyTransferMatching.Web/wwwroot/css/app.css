@@ -88,14 +88,14 @@
     margin: 0
 }
 
-
-.das-preformatted-body {
-    white-space: pre-wrap;
-}
 .app-extra-fields__fieldset {
     border-left: 5px solid #b1b4b6;
     padding: 0 0 0 20px;
     margin: 0 0 30px;
+}
+
+.das-preformatted-body {
+    white-space: pre-wrap;
 }
 
 .js-enabled .app-extra-fields__fieldset {
