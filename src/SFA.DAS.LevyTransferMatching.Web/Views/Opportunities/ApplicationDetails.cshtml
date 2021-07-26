@@ -34,21 +34,21 @@
                 <div class="govuk-form-group" das-highlight-error-for="StartDate" error-class="govuk-form-group--error" id="start-date">
                     <fieldset class="govuk-fieldset" role="group" aria-describedby="opportunity-application-start-hint">
                         <legend class="govuk-fieldset__legend">
-                            <h1 id="StartDate" class="govuk-fieldset__heading govuk-label--s">When would you like the apprenticeship training to start by?</h1>
+                            <h1 class="govuk-fieldset__heading govuk-label--s">When would you like the apprenticeship training to start by?</h1>
                         </legend>
                         <div id="opportunity-application-start-hint" class="govuk-hint">For example, 11 2007</div>
                         <span das-validation-for="StartDate" class="govuk-error-message"></span>
                         <div class="govuk-date-input" id="opportunity-application-start">
                             <div class="govuk-date-input__item">
                                 <div class="govuk-form-group">
-                                    <label class="govuk-label govuk-date-input__label" for="opportunity-application-start-month">Month</label>
-                                    <input id="opportunity-application-start-month" class="govuk-input govuk-date-input__input govuk-input--width-2" asp-for="Month" type="number" min="1" max="12" das-highlight-error-for="StartDate" error-class="govuk-textarea--error"/>
+                                    <label id="StartDate" class="govuk-label govuk-date-input__label" for="opportunity-application-start-month">Month</label>
+                                    <input id="opportunity-application-start-month" class="govuk-input govuk-date-input__input govuk-input--width-2" asp-for="Month" type="number" min="1" max="12" />
                                 </div>
                             </div>
                             <div class="govuk-date-input__item">
                                 <div class="govuk-form-group">
                                     <label class="govuk-label govuk-date-input__label" for="opportunity-application-start-year">Year</label>
-                                    <input id="opportunity-application-start-year" class="govuk-input govuk-date-input__input govuk-input--width-4" asp-for="Year" type="number" min="@Model.MinYear" max="@Model.MaxYear" das-highlight-error-for="StartDate" error-class="govuk-textarea--error"/>
+                                    <input id="opportunity-application-start-year" class="govuk-input govuk-date-input__input govuk-input--width-4" asp-for="Year" type="number" min="@Model.MinYear" max="@Model.MaxYear" />
                                 </div>
                             </div>
                         </div>
