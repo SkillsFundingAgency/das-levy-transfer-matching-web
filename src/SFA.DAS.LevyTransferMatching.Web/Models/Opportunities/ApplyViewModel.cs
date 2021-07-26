@@ -24,6 +24,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
         public bool IsContactDetailsSectionComplete { get; set; }
         public bool IsComplete => IsApprenticeshipTrainingSectionComplete
                                   && IsBusinessDetailsSectionComplete
-                                  && IsContactDetailsSectionComplete;        
+                                  && IsContactDetailsSectionComplete;
     }   
 }

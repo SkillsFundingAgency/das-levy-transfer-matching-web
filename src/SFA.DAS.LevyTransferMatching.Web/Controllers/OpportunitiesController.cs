@@ -82,7 +82,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Route("/accounts/{encodedAccountId}/opportunities/{EncodedPledgeId}/apply")]
         public async Task<IActionResult> Apply(ApplyPostRequest request)
         {
-            throw new NotImplementedException();
+            await _opportunitiesOrchestrator.SubmitApplication(request);
+
+            return RedirectToAction("Confirmation", new ConfirmationRequest
+            {
+                EncodedAccountId = request.EncodedAccountId,
+                EncodedPledgeId = request.EncodedPledgeId
+            });
         }
 
         [Authorize(Policy = PolicyNames.ManageAccount)]

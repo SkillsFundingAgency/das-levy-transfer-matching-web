@@ -111,6 +111,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
+        public Task SubmitApplication(ApplyPostRequest request)
+        {
+            return Task.CompletedTask;
+        }
+
         public async Task<OpportunitySummaryViewModel> GetOpportunitySummaryViewModel(OpportunityDto opportunityDto, string encodedPledgeId)
         {
             // Pull back the tags, and use the descriptions to build the lists.

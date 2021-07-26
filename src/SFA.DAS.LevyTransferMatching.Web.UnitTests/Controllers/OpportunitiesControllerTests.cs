@@ -184,6 +184,33 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             _orchestrator.Verify(x => x.UpdateCacheItem(request), Times.Once);
         }
 
+        [Test]
+        public async Task POST_Apply_Redirects_To_Confirmation()
+        {
+            // Arrange
+            var encodedPledgeId = _fixture.Create<string>();
+            var encodedAccountId = _fixture.Create<string>();
+            var cacheKey = _fixture.Create<Guid>();
+
+            var request = new ApplyPostRequest
+            {
+                EncodedPledgeId = encodedPledgeId,
+                EncodedAccountId = encodedAccountId,
+                CacheKey = cacheKey
+            };
+
+            _orchestrator.Setup(x => x.SubmitApplication(request)).Returns(Task.CompletedTask);
+            
+            // Assert
+            var redirectToActionResult = (await _opportunitiesController.Apply(request)) as RedirectToActionResult;
+
+            // Assert
+            Assert.IsNotNull(redirectToActionResult);
+            Assert.AreEqual(redirectToActionResult.ActionName, nameof(OpportunitiesController.Apply));
+            Assert.AreEqual(redirectToActionResult.RouteValues["EncodedPledgeId"], encodedPledgeId);
+            Assert.AreEqual(redirectToActionResult.RouteValues["EncodedAccountId"], encodedAccountId);
+            Assert.AreEqual(redirectToActionResult.RouteValues["CacheKey"], cacheKey);
+        }
 
         [Test]
         public async Task GET_Confirmation_Returns_Expected_View()

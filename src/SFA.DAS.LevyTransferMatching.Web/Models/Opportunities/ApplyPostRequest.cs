@@ -2,5 +2,6 @@
 {
     public class ApplyPostRequest : ApplyRequest
     {
+        public string EncodedPledgeId { get; set; }
     }
 }
