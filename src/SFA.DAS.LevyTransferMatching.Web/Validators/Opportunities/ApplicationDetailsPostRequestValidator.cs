@@ -35,7 +35,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities
 
             RuleFor(request => request.HasTrainingProvider)
                 .NotNull()
-                .WithMessage("You must select either yes or no")
+                .WithMessage("You must select whether or not you have found a training provider")
             ;
         }
     }
