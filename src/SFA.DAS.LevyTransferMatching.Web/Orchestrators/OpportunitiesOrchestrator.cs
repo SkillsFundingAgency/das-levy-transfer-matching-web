@@ -206,9 +206,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             }
 
             var opportunitySummaryViewModel = GetOpportunitySummaryViewModel(
-                getContactDetailsResult.Sectors.Select(x => x.Id),
-                getContactDetailsResult.JobRoles.Select(x => x.Id),
-                getContactDetailsResult.Levels.Select(x => x.Id),
+                getContactDetailsResult.Sectors,
+                getContactDetailsResult.JobRoles,
+                getContactDetailsResult.Levels,
                 getContactDetailsResult.AllSectors,
                 getContactDetailsResult.AllJobRoles,
                 getContactDetailsResult.AllLevels,
