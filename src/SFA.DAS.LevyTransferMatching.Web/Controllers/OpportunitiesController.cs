@@ -118,7 +118,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         {
             await _opportunitiesOrchestrator.UpdateCacheItem(contactDetailsPostRequest);
 
-            return RedirectToAction(nameof(Apply), new { contactDetailsPostRequest.EncodedAccountId, contactDetailsPostRequest.EncodedPledgeId, contactDetailsPostRequest.CacheKey });
+            return RedirectToAction(nameof(Apply), new
+            {
+                encodedAccountId = contactDetailsPostRequest.EncodedAccountId,
+                encodedPledgeId = contactDetailsPostRequest.EncodedPledgeId,
+                cacheKey = contactDetailsPostRequest.CacheKey
+            });
         }
     }
 }

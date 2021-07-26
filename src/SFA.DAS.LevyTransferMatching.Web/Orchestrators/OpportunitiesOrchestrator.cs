@@ -217,6 +217,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             {
                 EncodedAccountId = contactDetailsRequest.EncodedAccountId,
                 EncodedPledgeId = contactDetailsRequest.EncodedPledgeId,
+                CacheKey = contactDetailsRequest.CacheKey,
                 FirstName = cacheItem.FirstName,
                 LastName = cacheItem.LastName,
                 EmailAddress = cacheItem.EmailAddresses.FirstOrDefault(),
