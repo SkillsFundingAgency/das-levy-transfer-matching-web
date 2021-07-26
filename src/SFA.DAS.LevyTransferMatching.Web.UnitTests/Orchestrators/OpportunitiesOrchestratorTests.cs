@@ -318,7 +318,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                 .ReturnsAsync(createApplicationCacheItem);
 
             var expectedEmailAddress = createApplicationCacheItem.EmailAddresses.First();
-            var expectedAdditionalEmailAddresses = createApplicationCacheItem.EmailAddresses.Skip(1);
+            var expectedAdditionalEmailAddresses = createApplicationCacheItem.EmailAddresses.Skip(1).Concat(new string[] { null, null });
 
             // Act
             ContactDetailsViewModel contactDetailsViewModel = await _orchestrator.GetContactDetailsViewModel(contactDetailsRequest);

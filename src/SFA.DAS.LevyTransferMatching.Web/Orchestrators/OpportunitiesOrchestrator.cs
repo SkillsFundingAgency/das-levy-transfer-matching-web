@@ -19,6 +19,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
     public class OpportunitiesOrchestrator : IOpportunitiesOrchestrator
     {
+        private const int MaximumNumberAdditionalEmailAddresses = 4;
+
         private readonly ICacheStorageService _cacheStorageService;
         private readonly IDateTimeService _dateTimeService;
         private readonly IOpportunitiesService _opportunitiesService;
@@ -160,21 +162,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             var application = await RetrievePledgeCacheItem(request.CacheKey);
             var opportunityDto = await _opportunitiesService.GetOpportunity(request.PledgeId);
 
-            var emailAddresses = new List<string>();
-
-            var emailAddress = application.EmailAddresses.First();
-
-            if (!string.IsNullOrEmpty(emailAddress))
-            {
-                emailAddresses.Add(emailAddress);
-            }
-
-            var additionalEmailAddresses = application.EmailAddresses
-                .Skip(1)
-                .Where(x => !string.IsNullOrEmpty(x));
-
-            emailAddresses.AddRange(additionalEmailAddresses);
-
             var contactName = $"{application.FirstName} {application.LastName}";
 
             return new ApplyViewModel
@@ -191,7 +178,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 Locations = "-",
                 MoreDetail = "-",
                 ContactName = string.IsNullOrWhiteSpace(contactName) ? "-" : contactName,
-                EmailAddresses = emailAddresses,
+                EmailAddresses = application.EmailAddresses,
                 WebsiteUrl = string.IsNullOrEmpty(application.BusinessWebsite) ? "-" : application.BusinessWebsite,
             };
         }
@@ -219,14 +206,21 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             var cacheItem = await RetrievePledgeCacheItem(contactDetailsRequest.CacheKey);
 
+            var additionalEmailAddresses = cacheItem.EmailAddresses.Skip(1).ToList();
+
+            var placeholders = Enumerable.Range(0, MaximumNumberAdditionalEmailAddresses - additionalEmailAddresses.Count())
+                .Select(x => (string)null);
+            
+            additionalEmailAddresses.AddRange(placeholders);
+
             var viewModel = new ContactDetailsViewModel()
             {
                 EncodedAccountId = contactDetailsRequest.EncodedAccountId,
                 EncodedPledgeId = contactDetailsRequest.EncodedPledgeId,
                 FirstName = cacheItem.FirstName,
                 LastName = cacheItem.LastName,
-                EmailAddress = cacheItem.EmailAddresses.First(),
-                AdditionalEmailAddresses = cacheItem.EmailAddresses.Skip(1).ToArray(),
+                EmailAddress = cacheItem.EmailAddresses.FirstOrDefault(),
+                AdditionalEmailAddresses = additionalEmailAddresses.ToArray(),
                 BusinessWebsite = cacheItem.BusinessWebsite,
                 DasAccountName = getContactDetailsResult.DasAccountName,
                 OpportunitySummaryViewModel = opportunitySummaryViewModel,
@@ -241,7 +235,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             cacheItem.FirstName = contactDetailsPostRequest.FirstName;
             cacheItem.LastName = contactDetailsPostRequest.LastName;
-            cacheItem.EmailAddresses = new string[] { contactDetailsPostRequest.EmailAddress }.Concat(contactDetailsPostRequest.AdditionalEmailAddresses.ToArray());
+
+            cacheItem.EmailAddresses.Clear();
+            cacheItem.EmailAddresses.Add(contactDetailsPostRequest.EmailAddress);
+            cacheItem.EmailAddresses.AddRange(contactDetailsPostRequest.AdditionalEmailAddresses.Where(x => !string.IsNullOrWhiteSpace(x)));
+
             cacheItem.BusinessWebsite = contactDetailsPostRequest.BusinessWebsite;
 
             await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
