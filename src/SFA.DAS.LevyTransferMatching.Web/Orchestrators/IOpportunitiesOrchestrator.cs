@@ -10,7 +10,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         Task<ApplyViewModel> GetApplyViewModel(ApplicationRequest request);
         Task<MoreDetailsViewModel> GetMoreDetailsViewModel(MoreDetailsRequest request);
         Task UpdateCacheItem(MoreDetailsPostRequest request);
+        Task UpdateCacheItem(ApplicationDetailsPostRequest request);
         Task<string> GetUserEncodedAccountId();
+        Task<ApplicationDetailsViewModel> GetApplicationViewModel(ApplicationDetailsRequest request);
+        Task<ApplicationRequest> PostApplicationViewModel(ApplicationDetailsPostRequest request);
         Task<ConfirmationViewModel> GetConfirmationViewModel(ConfirmationRequest request);
         Task SubmitApplication(ApplyPostRequest request);
     }
