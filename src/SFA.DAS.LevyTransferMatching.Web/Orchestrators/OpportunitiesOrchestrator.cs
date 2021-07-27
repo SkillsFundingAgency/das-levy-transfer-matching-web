@@ -125,21 +125,17 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 NumberOfApprentices = cacheItem.NumberOfApprentices.Value,
                 StartDate = cacheItem.StartDate.Value,
                 HasTrainingProvider = cacheItem.HasTrainingProvider.Value,
-                Sectors = new List<string>(),
-                Postcode = string.Empty,
+                Sectors = cacheItem.Sectors,
+                Postcode = cacheItem.Postcode,
                 FirstName = string.Empty,
                 LastName = string.Empty,
                 EmailAddresses = new List<string>(),
                 BusinessWebsite = string.Empty
-                //public string Postcode { get; set; }
-
-                //public string FirstName { get; set; }
-                //public string LastName { get; set; }
-                //public IEnumerable<string> EmailAddresses { get; set; }
-                //public string BusinessWebsite { get; set; }
             };
 
             await _opportunitiesService.PostApplication(request.AccountId, request.PledgeId, applyRequest);
+
+            await _cacheStorageService.DeleteFromCache(request.CacheKey.ToString());
         }
 
         public async Task<OpportunitySummaryViewModel> GetOpportunitySummaryViewModel(OpportunityDto opportunityDto, string encodedPledgeId)

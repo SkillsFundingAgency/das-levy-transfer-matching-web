@@ -439,7 +439,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                                           r.StandardId == cacheItem.StandardId &&
                                           r.NumberOfApprentices == cacheItem.NumberOfApprentices.Value &&
                                           r.StartDate == cacheItem.StartDate &&
-                                          r.HasTrainingProvider == cacheItem.HasTrainingProvider.Value
+                                          r.HasTrainingProvider == cacheItem.HasTrainingProvider.Value &&
+                                          r.Sectors.Equals(cacheItem.Sectors) &&
+                                          r.Postcode == cacheItem.Postcode
 
                                              //public IEnumerable<string> Sectors { get; set; }
                                              //public string Postcode { get; set; }
@@ -452,12 +454,24 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                                              )));
         }
 
-
         [Test]
         public async Task SubmitApplication_Clears_CacheItem()
         {
-            throw new NotImplementedException();
+            var cacheKey = _fixture.Create<Guid>();
+            var encodedAccountId = _fixture.Create<string>();
+            var encodedPledgeId = _fixture.Create<string>();
+            var accountId = _fixture.Create<long>();
+            var opportunityId = _fixture.Create<int>();
+            var cacheItem = _fixture.Create<CreateApplicationCacheItem>();
 
+            _cache.Setup(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()))
+                .ReturnsAsync(cacheItem);
+
+            var request = new ApplyPostRequest { CacheKey = cacheKey, EncodedAccountId = encodedAccountId, EncodedPledgeId = encodedPledgeId, AccountId = accountId, PledgeId = opportunityId };
+
+            await _orchestrator.SubmitApplication(request);
+
+            _cache.Verify(x => x.DeleteFromCache(cacheKey.ToString()), Times.Once);
         }
 
         private ApplicationRequest SetupForGetApplyViewModel(bool? hasTraininProvider = null)
