@@ -19,6 +19,9 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
+using SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
+using FluentValidation;
 using ApplyRequest = SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types.ApplyRequest;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
@@ -472,6 +475,39 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _dateTimeService.SetupGet(x => x.UtcNow).Returns(DateTime.Now);
 
             return applicationRequest;
+        }
+
+        [Test]
+        public async Task GetSectorViewModel_Is_Correct()
+        {
+            SetupGetOpportunityViewModelServices();
+
+            var cacheKey = _fixture.Create<Guid>();
+            var encodedAccountId = _fixture.Create<string>();
+            var encodedPledgeId = _fixture.Create<string>();
+            var cacheItem = _fixture.Create<CreateApplicationCacheItem>();
+            var getSectorResponse = _fixture.Create<GetSectorResponse>();
+
+            _cache.Setup(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString())).ReturnsAsync(cacheItem);
+            _opportunitiesService.Setup(x => x.GetSector(1, 1)).ReturnsAsync(getSectorResponse);
+
+            var result = await _orchestrator.GetSectorViewModel(new SectorRequest { EncodedAccountId = encodedAccountId, CacheKey = cacheKey, EncodedPledgeId = encodedPledgeId, PledgeId = 1, AccountId = 1 });
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(cacheKey, result.CacheKey);
+            Assert.AreEqual(encodedAccountId, result.EncodedAccountId);
+            Assert.AreEqual(encodedPledgeId, result.EncodedPledgeId);
+            Assert.AreEqual(cacheItem.Sectors, result.Sectors);
+            Assert.AreEqual(cacheItem.Postcode, result.Postcode);
+            Assert.IsNotNull(result.OpportunitySummaryViewModel);
+            Assert.AreEqual(getSectorResponse.Opportunity.Amount, result.OpportunitySummaryViewModel.Amount);
+            Assert.AreEqual(string.Join(", ", getSectorResponse.Opportunity.JobRoles.ToReferenceDataDescriptionList(_jobRoleReferenceDataItems)), result.OpportunitySummaryViewModel.JobRoleList);
+            Assert.AreEqual(string.Join(", ", getSectorResponse.Opportunity.Levels.ToReferenceDataDescriptionList(_levelReferenceDataItems)), result.OpportunitySummaryViewModel.LevelList);
+            Assert.AreEqual(string.Join(", ", getSectorResponse.Opportunity.Sectors.ToReferenceDataDescriptionList(_sectorReferenceDataItems)), result.OpportunitySummaryViewModel.SectorList);
+            Assert.AreEqual(_currentDateTime.ToTaxYearDescription(), result.OpportunitySummaryViewModel.YearDescription);
+
+            _cache.Verify(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()), Times.Once);
+            _opportunitiesService.Verify(x => x.GetSector(1, 1), Times.Once);
         }
     }
 }
