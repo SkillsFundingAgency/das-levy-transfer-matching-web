@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
 
@@ -69,6 +70,17 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
             response.EnsureSuccessStatusCode();
 
             return JsonConvert.DeserializeObject<GetConfirmationResponse>(await response.Content.ReadAsStringAsync());
+        }
+
+        public async Task<ApplyResponse> PostApplication(long accountId, int opportunityId, ApplyRequest request)
+        {
+            var json = JsonConvert.SerializeObject(request);
+            var response = await _client.PostAsync($"accounts/{accountId}/opportunities/{opportunityId}/apply",
+                new StringContent(json, System.Text.Encoding.UTF8, "application/json"));
+
+            response.EnsureSuccessStatusCode();
+
+            return JsonConvert.DeserializeObject<ApplyResponse>(await response.Content.ReadAsStringAsync());
         }
     }
 }

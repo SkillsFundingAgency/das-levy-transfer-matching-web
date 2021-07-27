@@ -19,6 +19,7 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
+using ApplyRequest = SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types.ApplyRequest;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 {
@@ -409,6 +410,52 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             Assert.AreEqual(response.IsNamePublic, result.IsNamePublic);
             Assert.AreEqual(reference, result.Reference);
             Assert.AreEqual(encodedAccountId, result.EncodedAccountId);
+        }
+
+        [Test]
+        public async Task SubmitApplication_Creates_Application()
+        {
+            var cacheKey = _fixture.Create<Guid>();
+            var encodedAccountId = _fixture.Create<string>();
+            var encodedPledgeId = _fixture.Create<string>();
+            var accountId = _fixture.Create<long>();
+            var opportunityId = _fixture.Create<int>();
+            var cacheItem = _fixture.Create<CreateApplicationCacheItem>();
+
+            _cache.Setup(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()))
+                .ReturnsAsync(cacheItem);
+
+            var request = new ApplyPostRequest {CacheKey = cacheKey, EncodedAccountId = encodedAccountId, EncodedPledgeId = encodedPledgeId, AccountId = accountId, PledgeId = opportunityId};
+
+            await _orchestrator.SubmitApplication(request);
+
+            
+             _opportunitiesService.Verify(x => x.PostApplication(accountId, opportunityId,
+                 It.Is<ApplyRequest>(r => r.EncodedAccountId == encodedAccountId &&
+                                          r.Details == cacheItem.Details &&
+                                          r.StandardId == cacheItem.StandardId &&
+                                          r.NumberOfApprentices == cacheItem.NumberOfApprentices.Value &&
+                                          r.StartDate == cacheItem.StartDate &&
+                                          r.HasTrainingProvider == cacheItem.HasTrainingProvider.Value
+
+
+                                             //public IEnumerable<string> Sectors { get; set; }
+                                             //public string Postcode { get; set; }
+
+                                             //public string FirstName { get; set; }
+                                             //public string LastName { get; set; }
+                                             //public IEnumerable<string> EmailAddresses { get; set; }
+                                             //public string BusinessWebsite { get; set; }
+
+                                             )));
+        }
+
+
+        [Test]
+        public async Task SubmitApplication_Clears_CacheItem()
+        {
+            throw new NotImplementedException();
+
         }
 
         private ApplicationRequest SetupForGetApplyViewModel(bool? hasTraininProvider = null)

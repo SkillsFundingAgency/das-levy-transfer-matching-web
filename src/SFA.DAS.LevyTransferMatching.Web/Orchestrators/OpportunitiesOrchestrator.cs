@@ -12,6 +12,7 @@ using SFA.DAS.LevyTransferMatching.Web.Models.Shared;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using System.Collections.Generic;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
@@ -111,9 +112,21 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
-        public Task SubmitApplication(ApplyPostRequest request)
+        public async Task SubmitApplication(ApplyPostRequest request)
         {
-            return Task.CompletedTask;
+            var cacheItem = await RetrieveCacheItem(request.CacheKey);
+
+            var applyRequest = new Infrastructure.Services.OpportunitiesService.Types.ApplyRequest
+            {
+                EncodedAccountId = request.EncodedAccountId,
+                Details = cacheItem.Details,
+                StandardId = cacheItem.StandardId,
+                NumberOfApprentices = cacheItem.NumberOfApprentices.Value,
+                StartDate = cacheItem.StartDate.Value,
+                HasTrainingProvider = cacheItem.HasTrainingProvider.Value
+            };
+
+            await _opportunitiesService.PostApplication(request.AccountId, request.PledgeId, applyRequest);
         }
 
         public async Task<OpportunitySummaryViewModel> GetOpportunitySummaryViewModel(OpportunityDto opportunityDto, string encodedPledgeId)
