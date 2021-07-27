@@ -1,0 +1,61 @@
+﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Opportunities.SectorViewModel
+@inject SFA.DAS.EmployerUrlHelper.ILinkGenerator LinkGenerator
+@{
+    ViewData["Title"] = "Apprenticeship Training";
+}
+
+<a href="@Url.Action("Apply", new { Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey })" class="govuk-back-link">Back</a>
+<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
+    <partial name="_ValidationSummary" />
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <span class="govuk-caption-m">Find a business to fund training for your apprentices</span>
+            <h1 class="govuk-heading-xl">Add your business details</h1>
+        </div>
+    </div>
+    <form method="post" class="validate-auto-complete">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <div class="govuk-form-group govuk-!-margin-bottom-9" das-highlight-error-for="Sectors" error-class="govuk-form-group--error">
+                    <label class="govuk-label" asp-for="Sectors">
+                        <strong>Your business sector</strong>
+                    </label>
+                    <fieldset class="govuk-fieldset">
+
+                        <span das-validation-for="Sectors" class="govuk-error-message"></span>
+                        <checkbox-list asp-for="Sectors" source="@Model.SectorOptions"></checkbox-list>
+
+                    </fieldset>
+                </div>
+
+                <div class="govuk-form-group" das-highlight-error-for="Postcode" error-class="govuk-form-group--error">
+                    <label class="govuk-label" asp-for="Postcode">
+                        <strong>Add the location where your apprentice will work</strong>
+                    </label>
+                    <div class="govuk-hint">
+                        If your apprentice will work at more than one location, enter the one where they will spend most time. If they are based at home, use this postcode or your business location.
+                    </div>
+                    <br />
+                    <div class="govuk-hint">
+                        Enter postcode, for example SW1 2AT
+                    </div>
+                    <span das-validation-for="Postcode" class="govuk-error-message"></span>
+                    <input class="govuk-input" type="text" asp-for="Postcode" das-highlight-error-for="Postcode" error-class="govuk-input--error" />
+                </div>
+            </div>
+            <div class="govuk-grid-column-one-third">
+                <section class="employer-details side-panel">
+                    <partial name="/Views/Shared/_OpportunitySummary.cshtml" for="OpportunitySummaryViewModel" />
+                </section>
+            </div>
+            <div class="govuk-grid-column-full">
+                <div class="govuk-button-group">
+                    <button id="opportunity-criteria-continue" class="govuk-button" data-module="govuk-button">
+                        Continue
+                    </button>
+                    <a href="@Url.Action("Apply", new { Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey })" class="govuk-back-link">Back</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</main>

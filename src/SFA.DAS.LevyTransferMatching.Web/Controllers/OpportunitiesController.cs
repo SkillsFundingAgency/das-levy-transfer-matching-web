@@ -4,8 +4,10 @@ using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.LevyTransferMatching.Web.Attributes;
 using System;
-using SFA.DAS.LevyTransferMatching.Web.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using SFA.DAS.LevyTransferMatching.Web.Authentication;
+using SFA.DAS.LevyTransferMatching.Web.Validators;
+using FluentValidation.AspNetCore;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
@@ -112,6 +114,42 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         public async Task<IActionResult> ApplicationDetails(ApplicationDetailsPostRequest request)
         {
             return RedirectToAction("Apply", await _opportunitiesOrchestrator.PostApplicationViewModel(request));
+        }
+
+        [Authorize(Policy = PolicyNames.ManageAccount)]
+        [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/create/sector")]
+        public async Task<IActionResult> Sector(SectorRequest request)
+        {
+            return View(await _opportunitiesOrchestrator.GetSectorViewModel(request));
+        }
+
+        [Authorize(Policy = PolicyNames.ManageAccount)]
+        [HttpPost]
+        [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/create/sector")]
+        public async Task<IActionResult> Sector([FromServices] AsyncValidator<SectorPostRequest> validator, SectorPostRequest request)
+        {
+            var validationResult = await validator.ValidateAsync(request);
+
+            if (!validationResult.IsValid)
+            {
+                validationResult.AddToModelState(ModelState, "");
+
+                return RedirectToAction("Sector", new SectorRequest
+                {
+                    EncodedAccountId = request.EncodedAccountId,
+                    EncodedPledgeId = request.EncodedPledgeId,
+                    CacheKey = request.CacheKey
+                });
+            }
+
+            await _opportunitiesOrchestrator.UpdateCacheItem(request);
+
+            return RedirectToAction("Apply", new ApplicationRequest
+            {
+                EncodedAccountId = request.EncodedAccountId,
+                EncodedPledgeId = request.EncodedPledgeId,
+                CacheKey = request.CacheKey
+            });
         }
     }
 }
