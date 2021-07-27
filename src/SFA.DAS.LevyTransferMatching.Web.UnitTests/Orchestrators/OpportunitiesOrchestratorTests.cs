@@ -438,7 +438,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                                           r.StartDate == cacheItem.StartDate &&
                                           r.HasTrainingProvider == cacheItem.HasTrainingProvider.Value
 
-
                                              //public IEnumerable<string> Sectors { get; set; }
                                              //public string Postcode { get; set; }
 

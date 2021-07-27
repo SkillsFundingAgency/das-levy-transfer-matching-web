@@ -119,11 +119,23 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             var applyRequest = new Infrastructure.Services.OpportunitiesService.Types.ApplyRequest
             {
                 EncodedAccountId = request.EncodedAccountId,
-                Details = cacheItem.Details,
+                Details = cacheItem.Details ?? string.Empty,
                 StandardId = cacheItem.StandardId,
                 NumberOfApprentices = cacheItem.NumberOfApprentices.Value,
                 StartDate = cacheItem.StartDate.Value,
-                HasTrainingProvider = cacheItem.HasTrainingProvider.Value
+                HasTrainingProvider = cacheItem.HasTrainingProvider.Value,
+                Sectors = new List<string>(),
+                Postcode = string.Empty,
+                FirstName = string.Empty,
+                LastName = string.Empty,
+                EmailAddresses = new List<string>(),
+                BusinessWebsite = string.Empty
+                //public string Postcode { get; set; }
+
+                //public string FirstName { get; set; }
+                //public string LastName { get; set; }
+                //public IEnumerable<string> EmailAddresses { get; set; }
+                //public string BusinessWebsite { get; set; }
             };
 
             await _opportunitiesService.PostApplication(request.AccountId, request.PledgeId, applyRequest);

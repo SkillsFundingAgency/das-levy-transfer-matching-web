@@ -84,10 +84,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         {
             await _opportunitiesOrchestrator.SubmitApplication(request);
 
-            return RedirectToAction("Confirmation", new ConfirmationRequest
+            return RedirectToAction("Confirmation", new
             {
-                EncodedAccountId = request.EncodedAccountId,
-                EncodedPledgeId = request.EncodedPledgeId
+                request.EncodedAccountId,
+                request.EncodedPledgeId
             });
         }
 
