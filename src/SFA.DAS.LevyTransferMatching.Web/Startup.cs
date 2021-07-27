@@ -12,6 +12,7 @@ using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.EmployerUrlHelper.DependencyResolution;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
 using SFA.DAS.LevyTransferMatching.Web.Attributes;
+using SFA.DAS.LevyTransferMatching.Web.FeatureToggles;
 using SFA.DAS.LevyTransferMatching.Web.ModelBinders;
 using SFA.DAS.LevyTransferMatching.Web.StartupExtensions;
 using SFA.DAS.Validation.Mvc.Extensions;
@@ -67,6 +68,10 @@ namespace SFA.DAS.LevyTransferMatching.Web
                 options.AddValidation();
                 options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
                 options.Filters.Add(new HideAccountNavigationAttribute(false));
+                if (!config.IsLive)
+                {
+                    options.Filters.Add<DisabledActionFilter>();
+                }
                 options.ModelBinderProviders.Insert(0, new AutoDecodeModelBinderProvider());
             })
             .AddControllersAsServices()
@@ -85,6 +90,7 @@ namespace SFA.DAS.LevyTransferMatching.Web
             services.AddServiceRegistrations();
             services.AddEmployerSharedUI(Configuration);
             services.AddEmployerUrlHelper();
+            services.AddAsyncValidators();
 
             #if DEBUG
             services.AddControllersWithViews().AddRazorRuntimeCompilation();

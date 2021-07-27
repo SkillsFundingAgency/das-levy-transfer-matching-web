@@ -13,6 +13,7 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using System.Collections.Generic;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
+using FluentValidation;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
@@ -73,9 +74,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     Amount = x.Amount,
                     EmployerName = x.DasAccountName,
                     ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),
-                    Sectors = sectorsTask.Result.Where(y => x.Sectors.Contains(y.Id)).Select(y => y.Description).ToList(),
-                    JobRoles = jobRolesTask.Result.Where(y => x.JobRoles.Contains(y.Id)).Select(y => y.Description).ToList(),
-                    Levels = levelsTask.Result.Where(y => x.Levels.Contains(y.Id)).Select(y => y.ShortDescription).ToList(),
+                    Sectors = x.Sectors.ToReferenceDataDescriptionList(sectorsTask.Result),
+                    JobRoles = x.JobRoles.ToReferenceDataDescriptionList(jobRolesTask.Result),
+                    Levels = x.Levels.ToReferenceDataDescriptionList(levelsTask.Result, descriptionSource: y => y.ShortDescription),
                     Locations = x.Locations
                 }).ToList();
 
@@ -126,8 +127,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         public async Task<ApplyViewModel> GetApplyViewModel(ApplicationRequest request)
         {
-            var application = await RetrievePledgeCacheItem(request.CacheKey);
+            var application = await RetrieveCacheItem(request.CacheKey);
             var opportunityDto = await _opportunitiesService.GetOpportunity(request.PledgeId);
+            var sectorOptions = await _tagService.GetSectors();
 
             return new ApplyViewModel
             {
@@ -135,12 +137,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 EncodedPledgeId = request.EncodedPledgeId,
                 EncodedAccountId = request.EncodedAccountId,
                 OpportunitySummaryViewModel = await GetOpportunitySummaryViewModel(opportunityDto, request.EncodedPledgeId),
-                JobRole = "-",
-                NumberOfApprentices = "-",
-                StartBy = "-",
-                HaveTrainingProvider = "-",
-                Sectors = "-",
-                Locations = "-",
+                JobRole = application.JobRole ?? "-",
+                NumberOfApprentices = application.NumberOfApprentices.HasValue ? application.NumberOfApprentices.Value.ToString() : "-",
+                StartBy = application.StartDate.HasValue ? application.StartDate.Value.ToShortDisplayString() : "-",
+                HaveTrainingProvider = application.HasTrainingProvider.ToApplyViewString(),
+                Sectors = application.Sectors?.ToList(),
+                SectorOptions = sectorOptions,
+                Location = application.Postcode?? "-",
                 MoreDetail = application.Details ?? "-",
                 ContactName = "-",
                 EmailAddress = "-",
@@ -151,7 +154,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         public async Task<MoreDetailsViewModel> GetMoreDetailsViewModel(MoreDetailsRequest request)
         {
-            var application = await RetrievePledgeCacheItem(request.CacheKey);
+            var application = await RetrieveCacheItem(request.CacheKey);
             var opportunityDto = await _opportunitiesService.GetOpportunity((int)_encodingService.Decode(request.EncodedPledgeId, EncodingType.PledgeId));
 
             return new MoreDetailsViewModel()
@@ -164,16 +167,56 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
+        public async Task<SectorViewModel> GetSectorViewModel(SectorRequest request)
+        {
+            var cacheItem = await RetrieveCacheItem(request.CacheKey);
+            var response = await _opportunitiesService.GetSector(request.AccountId, request.PledgeId);
+
+            return new SectorViewModel
+            {
+                CacheKey = request.CacheKey,
+                EncodedAccountId = request.EncodedAccountId,
+                EncodedPledgeId = request.EncodedPledgeId,
+                Sectors = cacheItem.Sectors,
+                SectorOptions = response.Sectors.ToList(),
+                OpportunitySummaryViewModel = await GetOpportunitySummaryViewModel(response.Opportunity, request.EncodedPledgeId),
+                Postcode = cacheItem.Postcode
+            };
+        }
+
         public async Task UpdateCacheItem(MoreDetailsPostRequest request)
         {
-            var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
+            var cacheItem = await RetrieveCacheItem(request.CacheKey);
 
             cacheItem.Details = request.Details;
 
             await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
         }
 
-        private async Task<CreateApplicationCacheItem> RetrievePledgeCacheItem(Guid key)
+        public async Task UpdateCacheItem(ApplicationDetailsPostRequest request)
+        {
+            var cacheItem = await RetrieveCacheItem(request.CacheKey);
+
+            cacheItem.JobRole = request.SelectedStandardTitle;
+            cacheItem.StandardId = request.SelectedStandardId;
+            cacheItem.NumberOfApprentices = request.NumberOfApprentices.Value;
+            cacheItem.StartDate = request.StartDate;
+            cacheItem.HasTrainingProvider = request.HasTrainingProvider.Value;
+
+            await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
+        }
+
+        public async Task UpdateCacheItem(SectorPostRequest request)
+        {
+            var cacheItem = await RetrieveCacheItem(request.CacheKey);
+
+            cacheItem.Sectors = request.Sectors;
+            cacheItem.Postcode = request.Postcode.ToUpper();
+
+            await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
+        }
+
+        private async Task<CreateApplicationCacheItem> RetrieveCacheItem(Guid key)
         {
             var result = await _cacheStorageService.RetrieveFromCache<CreateApplicationCacheItem>(key.ToString());
 
@@ -184,6 +227,63 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             }
 
             return result;
+        }
+
+        public async Task<ApplicationDetailsViewModel> GetApplicationViewModel(ApplicationDetailsRequest request)
+        {
+            var applicationDetailsTask = _opportunitiesService.GetApplicationDetails(request.PledgeId);
+            var applicationTask = RetrieveCacheItem(request.CacheKey);
+            var sectorReferenceDataItemsTask = _tagService.GetSectors();
+            var jobRoleReferenceDataItemsTask = _tagService.GetJobRoles();
+            var levelReferenceDataItemsTask = _tagService.GetLevels();
+
+            await Task.WhenAll(applicationDetailsTask, applicationTask, sectorReferenceDataItemsTask, jobRoleReferenceDataItemsTask, levelReferenceDataItemsTask);
+
+            var application = applicationTask.Result;
+            var applicationDetails = applicationDetailsTask.Result;
+
+            return new ApplicationDetailsViewModel()
+            {
+                CacheKey = request.CacheKey,
+                EncodedAccountId = request.EncodedAccountId,
+                EncodedPledgeId = request.EncodedPledgeId,
+                JobRole = application.JobRole,
+                NumberOfApprentices = application.NumberOfApprentices,
+                Month = application.StartDate?.Month,
+                Year = application.StartDate?.Year,
+                HasTrainingProvider = application.HasTrainingProvider,
+                OpportunitySummaryViewModel = await GetOpportunitySummaryViewModel(applicationDetails.Opportunity, request.EncodedPledgeId),
+                MinYear = DateTime.Now.Year,
+                MaxYear = DateTime.Now.FinancialYearEnd().Year,
+                SelectStandardViewModel = new SelectStandardViewModel
+                {
+                    Standards = applicationDetails.Standards.Select(app => new StandardsListItemViewModel
+                    {
+                        Id = app.StandardUId,
+                        LarsCode = app.LarsCode,
+                        Level = app.Level,
+                        Title = app.Title,
+                        Selected = !string.IsNullOrEmpty(application.StandardId) && (app.StandardUId == application.StandardId) ? "selected": null
+                    })
+                }
+            };
+        }
+
+        public async Task<ApplicationRequest> PostApplicationViewModel(ApplicationDetailsPostRequest request)
+        {
+            var applicationDetails = await _opportunitiesService.GetApplicationDetails(request.PledgeId);
+
+            request.SelectedStandardTitle = applicationDetails.Standards
+                .FirstOrDefault(standard => standard.StandardUId == request.SelectedStandardId)?.Title;
+
+            await UpdateCacheItem(request);
+
+            return new ApplicationRequest
+            {
+                EncodedAccountId = request.EncodedAccountId,
+                EncodedPledgeId = request.EncodedPledgeId,
+                CacheKey = request.CacheKey
+            };
         }
         private string GenerateDescription(OpportunityDto opportunityDto, string encodedPledgeId) => opportunityDto.IsNamePublic ? $"{opportunityDto.DasAccountName} ({encodedPledgeId})" : "A levy-paying business";
     }
