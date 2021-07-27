@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{49D40A60
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.LevyTransferMatching.Web.UnitTests", "SFA.DAS.LevyTransferMatching.Web.UnitTests\SFA.DAS.LevyTransferMatching.Web.UnitTests.csproj", "{BD334F66-8E3C-48B0-926C-3A9DDC77B291}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.LevyTransferMatching.Infrastructure.UnitTests", "SFA.DAS.LevyTransferMatching.Infrastructure.UnitTests\SFA.DAS.LevyTransferMatching.Infrastructure.UnitTests.csproj", "{A7D159CC-206F-48FB-8A67-55C3A3713316}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.LevyTransferMatching.Infrastructure.UnitTests", "SFA.DAS.LevyTransferMatching.Infrastructure.UnitTests\SFA.DAS.LevyTransferMatching.Infrastructure.UnitTests.csproj", "{A7D159CC-206F-48FB-8A67-55C3A3713316}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
