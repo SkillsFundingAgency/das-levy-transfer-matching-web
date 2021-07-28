@@ -44,11 +44,11 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
             return opportunity;
         }
 
-        public async Task<ApplicationDetailsDto> GetApplicationDetails(int id)
+        public async Task<ApplicationDetailsDto> GetApplicationDetails(long accountId, int id)
         {
             ApplicationDetailsDto applicationDetailsResponse = null;
 
-            var response = await _client.GetAsync($"opportunities/{id}/create/application-details");
+            var response = await _client.GetAsync($"/accounts/{accountId}/opportunities/{id}/create/application-details");
 
             if (response.IsSuccessStatusCode)
             {

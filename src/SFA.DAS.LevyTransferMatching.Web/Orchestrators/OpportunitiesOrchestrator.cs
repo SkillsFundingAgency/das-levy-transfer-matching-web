@@ -269,7 +269,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         public async Task<ApplicationDetailsViewModel> GetApplicationViewModel(ApplicationDetailsRequest request)
         {
-            var applicationDetailsTask = _opportunitiesService.GetApplicationDetails(request.PledgeId);
+            var applicationDetailsTask = _opportunitiesService.GetApplicationDetails(request.AccountId, request.PledgeId);
             var applicationTask = RetrieveCacheItem(request.CacheKey);
             var sectorReferenceDataItemsTask = _tagService.GetSectors();
             var jobRoleReferenceDataItemsTask = _tagService.GetJobRoles();
@@ -309,7 +309,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         public async Task<ApplicationRequest> PostApplicationViewModel(ApplicationDetailsPostRequest request)
         {
-            var applicationDetails = await _opportunitiesService.GetApplicationDetails(request.PledgeId);
+            var applicationDetails = await _opportunitiesService.GetApplicationDetails(request.AccountId, request.PledgeId);
 
             request.SelectedStandardTitle = applicationDetails.Standards
                 .FirstOrDefault(standard => standard.StandardUId == request.SelectedStandardId)?.Title;
