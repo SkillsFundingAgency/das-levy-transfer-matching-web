@@ -20,7 +20,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
         public async Task<long> PostPledge(PledgeDto pledgeDto, long accountId)
         {
             var json = JsonConvert.SerializeObject(pledgeDto, new StringEnumConverter());
-            var response = await _client.PostAsync($"accounts/{accountId}/pledges", new StringContent(json, System.Text.Encoding.UTF8, "application/json"));
+            var response = await _client.PostAsync($"accounts/{accountId}/pledges/create", new StringContent(json, System.Text.Encoding.UTF8, "application/json"));
             response.EnsureSuccessStatusCode();
 
             var id = (string)JObject.Parse(await response.Content.ReadAsStringAsync())["id"];
