@@ -55,6 +55,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
+        public async Task<DetailViewModel> GetDetailViewModel(DetailRequest request)
+        {
+            return new DetailViewModel
+            {
+                EncodedPledgeId = request.EncodedPledgeId
+            };
+        }
+
         public async Task<CreateViewModel> GetCreateViewModel(CreateRequest request)
         {
             var cacheItemTask = RetrievePledgeCacheItem(request.CacheKey);

@@ -34,6 +34,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             return View(viewModel);
         }
 
+        [Route("{EncodedPledgeId}/detail")]
+        public async Task<IActionResult> Detail(DetailRequest request)
+        {
+            var viewModel = await _orchestrator.GetDetailViewModel(request);
+            return View(viewModel);
+        }
+
         [Route("create")]
         public async Task<IActionResult> Create(CreateRequest request)
         {
