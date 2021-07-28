@@ -46,10 +46,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             {
                 EncodedAccountId = request.EncodedAccountId,
                 Pledges = myPledgesResponse.Pledges.Select(x => new MyPledgesViewModel.MyPledge 
-                { 
+                {
                     ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),
                     Amount = x.Amount,
-                    NumberOfApplications = x.NumberOfApplications
+                    RemainingAmount = x.RemainingAmount,
+                    ApplicationCount = x.ApplicationCount
                 })
             };
         }

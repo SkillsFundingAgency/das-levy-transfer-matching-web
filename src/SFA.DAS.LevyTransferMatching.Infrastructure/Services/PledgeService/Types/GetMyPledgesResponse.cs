@@ -10,7 +10,8 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Typ
         {
             public int Id { get; set; }
             public int Amount { get; set; }
-            public int NumberOfApplications { get; set; }
+            public int RemainingAmount { get; set; }
+            public int ApplicationCount { get; set; }
         }
     }
 }
