@@ -101,10 +101,18 @@ if (locationInputs.length > 0) {
       autoselect: true
     });
   }
+
+  var autocompleteInputs = document.querySelectorAll(".autocomplete__input");
+  if (autocompleteInputs.length > 0) {
+    for (var i = 0; i < autocompleteInputs.length; i++) {
+      var input = autocompleteInputs[i];
+      input.setAttribute("autocomplete", "new-password");
+    }
+  }
 }
 
 
-// Show/Hide Extra Location Fields
+// Show/Hide Extra Form Fields
 
 function ExtraFieldRows(container) {
   this.container = container
@@ -115,25 +123,37 @@ function ExtraFieldRows(container) {
   this.hiddenClass = 'app-extra-field__form-group--hidden'
   this.addButtonId = 'app-extra-fields-add-link'
   this.addButtonText = this.container.dataset.addButtonText || 'Add another'
+}
 
-  this.addLink()
+ExtraFieldRows.prototype.init = function () {
+  this.insertAddLink()
   if (this.allCheckbox) {
     this.allCheckboxEvent()
   }
-
   this.firstField.addEventListener('change', this.clearAllCheckbox.bind(this))
 
+  // Hide any empty rows on page load
+  // Create the remove links 
+
+  var hiddenRowCount = 0
   for (var f = 0; f < this.extraFieldRows.length; f++) {
     var extraFieldRow = this.extraFieldRows[f]
     var textInput = extraFieldRow.querySelector('input')
-    this.addRemoveLink(extraFieldRow)
+    this.appendRemoveLink(extraFieldRow)
     if (textInput.value === '') {
       this.hideRow(extraFieldRow)
+      hiddenRowCount++;
     }
+  }
+
+  // If all rows are hidden, add class to hide the fieldset
+
+  if (hiddenRowCount === this.extraFieldRows.length) {
+    this.fieldset.classList.add('app-extra-fields__fieldset--all-hidden')
   }
 }
 
-ExtraFieldRows.prototype.addLink = function () {
+ExtraFieldRows.prototype.insertAddLink = function () {
   var addRowLink = document.createElement('a');
   addRowLink.innerHTML = this.addButtonText
   addRowLink.className = 'govuk-link govuk-link--no-visited-state app-extra-field__form-group-link--add'
@@ -141,6 +161,23 @@ ExtraFieldRows.prototype.addLink = function () {
   addRowLink.id = this.addButtonId
   addRowLink.addEventListener('click', this.showFirstAvailableRow.bind(this))
   this.fieldset.parentNode.insertBefore(addRowLink, this.fieldset.nextSibling);
+}
+
+ExtraFieldRows.prototype.appendRemoveLink = function (row) {
+  var that = this
+  var removeLink = document.createElement('a');
+  removeLink.innerHTML = 'Remove'
+  removeLink.className = 'govuk-link govuk-link--no-visited-state app-extra-field__form-group-link--remove'
+  removeLink.href = "#"
+  removeLink.addEventListener('click',
+    function(e) {
+      e.preventDefault();
+      document.getElementById(that.addButtonId).classList.remove(that.hiddenClass)
+      that.hideRow(row);
+      that.fieldset.append(row)
+      that.extraFieldRows = that.fieldset.querySelectorAll('.app-extra-fields__form-group')
+  })
+  row.append(removeLink)
 }
 
 ExtraFieldRows.prototype.showFirstAvailableRow = function (e) {
@@ -183,50 +220,68 @@ ExtraFieldRows.prototype.clearAllCheckbox = function () {
   }
 }
 
-ExtraFieldRows.prototype.addRemoveLink = function (row) {
-  var that = this
-  var removeLink = document.createElement('a');
-  removeLink.innerHTML = 'Remove'
-  removeLink.className = 'govuk-link govuk-link--no-visited-state app-extra-field__form-group-link--remove'
-  removeLink.href = "#"
-  removeLink.addEventListener('click',
-    function(e){
-      e.preventDefault();
-      document.getElementById(that.addButtonId).classList.remove(that.hiddenClass)
-      that.hideRow(row);
-  })
-  row.append(removeLink)
-}
-
-ExtraFieldRows.prototype.hideRow = function (row, e) {
+ExtraFieldRows.prototype.hideRow = function (row) {
   var textInput = row.querySelector('input')
   textInput.value = ''
   row.classList.add(this.hiddenClass)
+  if (this.areAllRowsHidden()) {
+    this.fieldset.classList.add('app-extra-fields__fieldset--all-hidden')
+  } else {
+    this.fieldset.classList.remove('app-extra-fields__fieldset--all-hidden')
+  }
 }
 
 ExtraFieldRows.prototype.showRow = function (row) {
   this.clearAllCheckbox()
+  this.fieldset.classList.remove('app-extra-fields__fieldset--all-hidden')
   var errorMessage = row.querySelector('.govuk-error-message')
+  var textInput = row.querySelector('input')
+
   if (errorMessage) {
     errorMessage.remove()
   }
+
   row.classList.remove('govuk-form-group--error')
   row.classList.remove(this.hiddenClass)
+
+  textInput.focus()
+}
+
+ExtraFieldRows.prototype.areAllRowsHidden = function () {
+  var hiddenRowCount = 0
+  for (var f = 0; f < this.extraFieldRows.length; f++) {
+    var extraFieldRow = this.extraFieldRows[f]
+    if (extraFieldRow.classList.contains(this.hiddenClass)) {
+      hiddenRowCount++
+    }
+  }
+  return hiddenRowCount === this.extraFieldRows.length
 }
 
 
 
 // App 
 
+function nodeListForEach(nodes, callback) {
+  if (window.NodeList.prototype.forEach) {
+    return nodes.forEach(callback)
+  }
+  for (var i = 0; i < nodes.length; i++) {
+    callback.call(window, nodes[i], i, nodes);
+  }
+}
+
 var selectAllCheckboxes = document.querySelector('[data-checkboxes-select-all]')
 if (selectAllCheckboxes) {
   var selectAllFormControl = new SelectAllCheckboxes(selectAllCheckboxes);
 }
 
-var extraFieldRows = document.querySelector('[data-extra-field-rows]')
-if (extraFieldRows) {
-  var extraLocationFields = new ExtraFieldRows(extraFieldRows);
-}
+var extraFieldRows = document.querySelectorAll('[data-extra-field-rows]');
+nodeListForEach(extraFieldRows, function (extraFieldRows) {
+  new ExtraFieldRows(extraFieldRows).init();
+});
+
+
 
 var forms = $('.validate-auto-complete');
 var idSelectField = 'SelectedStandardId';
