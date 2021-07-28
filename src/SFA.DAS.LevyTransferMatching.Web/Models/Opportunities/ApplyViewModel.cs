@@ -31,7 +31,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
                                                                && HaveTrainingProvider.IsComplete();
 
         public bool IsBusinessDetailsSectionComplete => Sectors.IsComplete()
-                                                        && Locations.IsComplete();
+                                                        && Location.IsComplete();
 
         public bool IsContactDetailsSectionComplete => ContactName.IsComplete()
                                                        && EmailAddress.IsComplete()
