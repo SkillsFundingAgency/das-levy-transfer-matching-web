@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
+using System;
 using System.Linq;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities
@@ -62,15 +63,28 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities
                 .MaximumLength(75);
         }
 
-        private bool ValidateAddressUniqueness(ContactDetailsPostRequest contactDetailsPostRequest, string additionalEmailAddress)
+        private bool ValidateAddressUniqueness(ContactDetailsPostRequest contactDetailsPostRequest, string additionalEmailAddress, ValidationContext<ContactDetailsPostRequest> validationContext)
         {
             var allEmailAddresses = contactDetailsPostRequest.AdditionalEmailAddresses
-                .Concat(new string[] { contactDetailsPostRequest.EmailAddress })
-                .Where(x => !string.IsNullOrWhiteSpace(x));
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .ToArray();
 
-            var duplicatesExistForAdditionalEmail = allEmailAddresses
-                .GroupBy(x => x)
-                .Any(x => x.Count() > 1 && x.Contains(additionalEmailAddress));
+            // First off, if the primary email address has been specified,
+            // simply return false - this is an easy one.
+            if (additionalEmailAddress == contactDetailsPostRequest.EmailAddress)
+            {
+                return false;
+            }
+
+            // It's not enough just to check for a duplicate.
+            // We also need to make sure that this isn't the first occurance -
+            // as we only want to trigger the validation for subsequent
+            // additional email addresses.
+            int emailIndex = (int)validationContext.MessageFormatter.PlaceholderValues["CollectionIndex"];
+
+            var preceeding = allEmailAddresses.Take(emailIndex);
+
+            var duplicatesExistForAdditionalEmail = preceeding.Contains(additionalEmailAddress);
 
             return !duplicatesExistForAdditionalEmail;
         }

@@ -113,16 +113,16 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
         }
 
         [Test]
-        public void Validator_Returns_Expected_Error_For_Duplicate_Email_Addresses()
+        public void Validator_Returns_Expected_Error_For_Duplicate_Of_Primary_Email_Address()
         {
             // Arrange
             string emailAddress = "aa@bb";
             string[] additionalEmailAddresses = new string[]
             {
-                "cc@dd",
-                null,
-                "aa@bb",
-                null,
+                "cc@dd", // 0
+                null,    // 1
+                "aa@bb", // 2
+                "aa@bb", // 3
             };
 
             ContactDetailsPostRequest contactDetailsPostRequest = _fixture
@@ -136,6 +136,52 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
 
             // Assert
             results.ShouldHaveValidationErrorFor(x => x.AdditionalEmailAddresses).WithErrorMessage("You have already entered this email address");
+
+            // Note - we should have 2 validation errors,
+            //        for AdditionalEmailAddresses[2] and AdditionalEmailAddresses[3]
+            var index2Error = results.Errors.SingleOrDefault(x => x.PropertyName == "AdditionalEmailAddresses[2]");
+            Assert.NotNull(index2Error);
+
+            var index3Error = results.Errors.SingleOrDefault(x => x.PropertyName == "AdditionalEmailAddresses[3]");
+            Assert.IsNotNull(index3Error);
+        }
+
+        [Test]
+        public void Validator_Returns_Expected_Error_For_Duplicate_Of_Other_Additional_Email_Address()
+        {
+            // Arrange
+            string emailAddress = "aa@bb";
+            string[] additionalEmailAddresses = new string[]
+            {
+                "cc@dd", // 0
+                "cc@dd", // 1
+                null,    // 2
+                "cc@dd", // 3
+            };
+
+            ContactDetailsPostRequest contactDetailsPostRequest = _fixture
+                .Build<ContactDetailsPostRequest>()
+                .With(x => x.EmailAddress, emailAddress)
+                .With(x => x.AdditionalEmailAddresses, additionalEmailAddresses)
+                .Create();
+
+            // Act
+            var results = _contactDetailsPostRequestValidator.TestValidate(contactDetailsPostRequest);
+
+            // Assert
+            results.ShouldHaveValidationErrorFor(x => x.AdditionalEmailAddresses).WithErrorMessage("You have already entered this email address");
+
+            // Note - we should have 2 validation errors,
+            //        for AdditionalEmailAddresses[1] and AdditionalEmailAddresses[3]
+            //        But *not* for AdditionalEmailAddresses[0]!
+            var index1Error = results.Errors.SingleOrDefault(x => x.PropertyName == "AdditionalEmailAddresses[1]");
+            Assert.NotNull(index1Error);
+
+            var index3Error = results.Errors.SingleOrDefault(x => x.PropertyName == "AdditionalEmailAddresses[3]");
+            Assert.IsNotNull(index3Error);
+
+            var index0Error = results.Errors.SingleOrDefault(x => x.PropertyName == "AdditionalEmailAddresses[0]");
+            Assert.IsNull(index0Error);
         }
 
         [Test]
