@@ -65,21 +65,29 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities
 
         private bool ValidateAddressUniqueness(ContactDetailsPostRequest contactDetailsPostRequest, string additionalEmailAddress, ValidationContext<ContactDetailsPostRequest> validationContext)
         {
-            var allEmailAddresses = contactDetailsPostRequest.AdditionalEmailAddresses
-                .Where(x => !string.IsNullOrWhiteSpace(x))
-                .ToArray();
+            // First off, empty is valid.
+            if (string.IsNullOrWhiteSpace(additionalEmailAddress))
+            {
+                return true;
+            }
 
-            // First off, if the primary email address has been specified,
-            // simply return false - this is an easy one.
+            // Second, if the primary email address has been specified as
+            // an additional email address, simply return false - this is an
+            // easy one.
             if (additionalEmailAddress == contactDetailsPostRequest.EmailAddress)
             {
                 return false;
             }
 
-            // It's not enough just to check for a duplicate.
-            // We also need to make sure that this isn't the first occurance -
-            // as we only want to trigger the validation for subsequent
+            // Thirdly, it's not enough just to check for a duplicate.
+            // We also need to make sure that this isn't the *first*
+            // occurance -
+            // as we *only* want to trigger the validation for *subsequent*
             // additional email addresses.
+            var allEmailAddresses = contactDetailsPostRequest.AdditionalEmailAddresses
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .ToArray();
+
             int emailIndex = (int)validationContext.MessageFormatter.PlaceholderValues["CollectionIndex"];
 
             var preceeding = allEmailAddresses.Take(emailIndex);
