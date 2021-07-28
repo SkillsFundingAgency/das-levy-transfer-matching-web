@@ -48,7 +48,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
         {
             ApplicationDetailsDto applicationDetailsResponse = null;
 
-            var response = await _client.GetAsync($"/accounts/{accountId}/opportunities/{id}/create/application-details");
+            var response = await _client.GetAsync($"accounts/{accountId}/opportunities/{id}/create/application-details");
 
             if (response.IsSuccessStatusCode)
             {
