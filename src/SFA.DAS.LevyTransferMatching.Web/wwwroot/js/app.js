@@ -60,10 +60,11 @@ SelectAllCheckboxes.prototype.toggleCheckboxes = function (e) {
 
 var locationInputs = document.querySelectorAll(".app-location-autocomplete");
 var apiUrl = '/location';
+var i;
 
 if (locationInputs.length > 0) {
 
-  for (var i = 0; i < locationInputs.length; i++) {
+  for (i = 0; i < locationInputs.length; i++) {
 
     var input = locationInputs[i]
     var container = document.createElement('div');
@@ -104,9 +105,9 @@ if (locationInputs.length > 0) {
 
   var autocompleteInputs = document.querySelectorAll(".autocomplete__input");
   if (autocompleteInputs.length > 0) {
-    for (var i = 0; i < autocompleteInputs.length; i++) {
-      var input = autocompleteInputs[i];
-      input.setAttribute("autocomplete", "new-password");
+    for (i = 0; a < autocompleteInputs.length; i++) {
+      var autocompleteInput = autocompleteInputs[i];
+      autocompleteInput.setAttribute("autocomplete", "new-password");
     }
   }
 }
@@ -118,6 +119,7 @@ function ExtraFieldRows(container) {
   this.container = container
   this.firstField = this.container.querySelector('input[type=text]')
   this.fieldset = this.container.querySelector('.app-extra-fields__fieldset')
+  this.fieldsetHiddenClass = 'app-extra-fields__fieldset--all-hidden'
   this.extraFieldRows = this.fieldset.querySelectorAll('.app-extra-fields__form-group')
   this.allCheckbox = this.container.querySelector('.app-extra-fields__all-checkbox')
   this.hiddenClass = 'app-extra-field__form-group--hidden'
@@ -131,7 +133,7 @@ ExtraFieldRows.prototype.init = function () {
   }
   this.firstField.addEventListener('change', this.clearAllCheckbox.bind(this))
 
-  // Append the remove links 
+  // Append the remove links
   for (var f = 0; f < this.extraFieldRows.length; f++) {
     var extraFieldRow = this.extraFieldRows[f]
     this.appendRemoveLink(extraFieldRow)
@@ -140,7 +142,7 @@ ExtraFieldRows.prototype.init = function () {
   // If all rows are hidden, add class to hide the fieldset
   var hiddenRowCount = this.showHideEmptyRows()
   if (hiddenRowCount === this.extraFieldRows.length) {
-    this.fieldset.classList.add('app-extra-fields__fieldset--all-hidden')
+    this.fieldset.classList.add(this.fieldsetHiddenClass)
   }
 }
 
@@ -148,7 +150,7 @@ ExtraFieldRows.prototype.showHideEmptyRows = function () {
   var hiddenRowCount = 0
   for (var f = 0; f < this.extraFieldRows.length; f++) {
     var extraFieldRow = this.extraFieldRows[f]
-    var textInput = extraFieldRow.querySelector('input') 
+    var textInput = extraFieldRow.querySelector('input')
     if (textInput.value === '') {
       this.hideRow(extraFieldRow)
       hiddenRowCount++;
@@ -216,8 +218,8 @@ ExtraFieldRows.prototype.updateRowOrder = function () {
     extraFieldRow.querySelector('input').value = ''
     that.hideRow(extraFieldRow)
   }
-  answers.forEach(function(answer, i) {
-    var extraFieldRow = that.extraFieldRows[i]
+  answers.forEach(function(answer, answerIndex) {
+    var extraFieldRow = that.extraFieldRows[answerIndex]
     var textInput = extraFieldRow.querySelector('input')
     textInput.value = answer
     that.showRow(extraFieldRow, false)
@@ -252,9 +254,9 @@ ExtraFieldRows.prototype.hideRow = function (row) {
   textInput.value = ''
   row.classList.add(this.hiddenClass)
   if (this.areAllRowsHidden()) {
-    this.fieldset.classList.add('app-extra-fields__fieldset--all-hidden')
+    this.fieldset.classList.add(this.fieldsetHiddenClass)
   } else {
-    this.fieldset.classList.remove('app-extra-fields__fieldset--all-hidden')
+    this.fieldset.classList.remove(this.fieldsetHiddenClass)
   }
 }
 
@@ -262,7 +264,7 @@ ExtraFieldRows.prototype.showRow = function (row, focus = false) {
   var errorMessage = row.querySelector('.govuk-error-message')
   var textInput = row.querySelector('input')
   this.clearAllCheckbox()
-  this.fieldset.classList.remove('app-extra-fields__fieldset--all-hidden')
+  this.fieldset.classList.remove(this.fieldsetHiddenClass)
   if (errorMessage) {
     errorMessage.remove()
   }
