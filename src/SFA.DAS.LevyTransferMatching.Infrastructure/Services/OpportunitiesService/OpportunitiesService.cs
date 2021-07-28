@@ -75,7 +75,8 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
             response.EnsureSuccessStatusCode();
             return JsonConvert.DeserializeObject<GetSectorResponse>(await response.Content.ReadAsStringAsync());
         }
-public async Task<GetConfirmationResponse> GetConfirmation(long accountId, int opportunityId)
+
+        public async Task<GetConfirmationResponse> GetConfirmation(long accountId, int opportunityId)
         {
             var response =
                 await _client.GetAsync($"accounts/{accountId}/opportunities/{opportunityId}/apply/confirmation");
