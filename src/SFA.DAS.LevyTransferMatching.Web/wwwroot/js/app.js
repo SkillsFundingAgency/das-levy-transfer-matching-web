@@ -105,7 +105,7 @@ if (locationInputs.length > 0) {
 
   var autocompleteInputs = document.querySelectorAll(".autocomplete__input");
   if (autocompleteInputs.length > 0) {
-    for (i = 0; a < autocompleteInputs.length; i++) {
+    for (i = 0; i < autocompleteInputs.length; i++) {
       var autocompleteInput = autocompleteInputs[i];
       autocompleteInput.setAttribute("autocomplete", "new-password");
     }
