@@ -64,6 +64,10 @@
     {
         var result = new Dictionary<string, string>();
 
+        var propertyErrors = ViewData.ModelState[property.PropertyName]?.Errors;
+        if (propertyErrors != null && propertyErrors.Any())
+            result.Add(property.PropertyName, propertyErrors.First().ErrorMessage);
+
         var i = 0;
         while (true)
         {

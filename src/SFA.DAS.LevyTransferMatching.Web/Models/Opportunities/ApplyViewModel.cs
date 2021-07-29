@@ -1,4 +1,5 @@
-﻿using SFA.DAS.LevyTransferMatching.Web.Models.Shared;
+﻿using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
+using SFA.DAS.LevyTransferMatching.Web.Models.Shared;
 using System.Collections.Generic;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
@@ -10,8 +11,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
         public string NumberOfApprentices { get; set; }
         public string StartBy { get; set; }
         public string HaveTrainingProvider { get; set; }
-        public string Sectors { get; set; }
-        public string Locations { get; set; }
+        public List<ReferenceDataItem> SectorOptions { get; set; }
+        public List<string> Sectors { get; set; }
+        public string Location { get; set; }
 
         public string MoreDetail { get; set; }
         public string ContactName { get; set; }

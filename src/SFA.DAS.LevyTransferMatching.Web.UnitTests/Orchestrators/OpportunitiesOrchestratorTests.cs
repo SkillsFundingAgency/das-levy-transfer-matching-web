@@ -17,8 +17,9 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
-using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
+using FluentValidation;
+using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 {
@@ -390,6 +391,134 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _cacheStorageService.Verify(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()), Times.Once);
             _encodingService.Verify(x => x.Decode(encodedPledgeId, EncodingType.PledgeId), Times.Once);
             _opportunitiesService.Verify(x => x.GetOpportunity(1), Times.Once);
+        }
+
+        [Test]
+        public async Task GetApplicationViewModel_Is_Correct()
+        {
+            SetupGetOpportunityViewModelServices();
+
+            var cacheKey = _fixture.Create<Guid>();
+            var encodedAccountId = _fixture.Create<string>();
+            var encodedPledgeId = _fixture.Create<string>();
+            var cacheItem = _fixture.Create<CreateApplicationCacheItem>();
+            var applicationDetailsDto = _fixture.Create<ApplicationDetailsDto>();
+
+            _cacheStorageService.Setup(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString())).ReturnsAsync(cacheItem);
+            _opportunitiesService.Setup(x => x.GetApplicationDetails(1)).ReturnsAsync(applicationDetailsDto);
+
+            var result = await _orchestrator.GetApplicationViewModel(new ApplicationDetailsRequest { EncodedAccountId = encodedAccountId, CacheKey = cacheKey, EncodedPledgeId = encodedPledgeId, PledgeId = 1 });
+
+            Assert.IsNotNull(result);
+            Assert.NotNull(result.SelectStandardViewModel);
+            Assert.NotNull(result.SelectStandardViewModel.Standards);
+            Assert.AreEqual(cacheKey, result.CacheKey);
+            Assert.AreEqual(encodedAccountId, result.EncodedAccountId);
+            Assert.AreEqual(encodedPledgeId, result.EncodedPledgeId);
+            Assert.AreEqual(cacheItem.JobRole, result.JobRole);
+            Assert.AreEqual(cacheItem.NumberOfApprentices, result.NumberOfApprentices);
+            Assert.AreEqual(DateTime.Now.Year, result.MinYear);
+            Assert.AreEqual(DateTime.Now.FinancialYearEnd().Year, result.MaxYear);
+            Assert.AreEqual(cacheItem.HasTrainingProvider, result.HasTrainingProvider);
+            Assert.IsNotNull(result.OpportunitySummaryViewModel);
+            Assert.AreEqual(applicationDetailsDto.Opportunity.Amount, result.OpportunitySummaryViewModel.Amount);
+            Assert.AreEqual(string.Join(", ", applicationDetailsDto.Opportunity.JobRoles.ToReferenceDataDescriptionList(_jobRoleReferenceDataItems)), result.OpportunitySummaryViewModel.JobRoleList);
+            Assert.AreEqual(string.Join(", ", applicationDetailsDto.Opportunity.Levels.ToReferenceDataDescriptionList(_levelReferenceDataItems)), result.OpportunitySummaryViewModel.LevelList);
+            Assert.AreEqual(string.Join(", ", applicationDetailsDto.Opportunity.Sectors.ToReferenceDataDescriptionList(_sectorReferenceDataItems)), result.OpportunitySummaryViewModel.SectorList);
+            Assert.AreEqual(_currentDateTime.ToTaxYearDescription(), result.OpportunitySummaryViewModel.YearDescription);
+            Assert.AreEqual(cacheItem.StartDate.Value.Month, result.Month);
+            Assert.AreEqual(cacheItem.StartDate.Value.Year, result.Year);
+            Assert.AreEqual(applicationDetailsDto.Standards.Count(), result.SelectStandardViewModel.Standards.Count());
+
+            _cacheStorageService.Verify(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()), Times.Once);
+            _opportunitiesService.Verify(x => x.GetApplicationDetails(1), Times.Once);
+        }
+
+        [Test]
+        public async Task GetApplyViewModel_Returns_Empty_Value_For_Null_HasTrainingProvider()
+        {
+            var applicationRequest = SetupForGetApplyViewModel();
+
+            var orchestrator = new OpportunitiesOrchestrator(_dateTimeService.Object, _opportunitiesService.Object,
+                _tagService.Object, _userService.Object, _encodingService.Object, _cacheStorageService.Object);
+
+            var result = await orchestrator.GetApplyViewModel(applicationRequest);
+
+            Assert.AreEqual("-", result.HaveTrainingProvider);
+        }
+
+        [Test]
+        public async Task GetApplyViewModel_Returns_Empty_Value_For_True_HasTrainingProvider()
+        {
+            var applicationRequest = SetupForGetApplyViewModel(true);
+            var orchestrator = new OpportunitiesOrchestrator(_dateTimeService.Object, _opportunitiesService.Object,
+                _tagService.Object, _userService.Object, _encodingService.Object, _cacheStorageService.Object);
+
+            var result = await orchestrator.GetApplyViewModel(applicationRequest);
+
+            Assert.AreEqual("Yes", result.HaveTrainingProvider);
+        }
+
+        [Test]
+        public async Task GetApplyViewModel_Returns_Empty_Value_For_False_HasTrainingProvider()
+        {
+            var applicationRequest = SetupForGetApplyViewModel(false);
+            var orchestrator = new OpportunitiesOrchestrator(_dateTimeService.Object, _opportunitiesService.Object,
+                _tagService.Object, _userService.Object, _encodingService.Object, _cacheStorageService.Object); 
+
+            var result = await orchestrator.GetApplyViewModel(applicationRequest);
+
+            Assert.AreEqual("No", result.HaveTrainingProvider);
+        }
+
+        private ApplicationRequest SetupForGetApplyViewModel(bool? hasTraininProvider = null)
+        {
+            var opportunity = _fixture.Create<OpportunityDto>();
+            var applicationRequest = _fixture.Create<ApplicationRequest>();
+            var cacheItem = _fixture.Create<CreateApplicationCacheItem>();
+            cacheItem.HasTrainingProvider = hasTraininProvider;
+
+            var cacheKey = _fixture.Create<Guid>();
+            applicationRequest.CacheKey = cacheKey;
+
+            _cacheStorageService.Setup(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString())).ReturnsAsync(cacheItem);
+            _opportunitiesService.Setup(x => x.GetOpportunity(applicationRequest.PledgeId)).ReturnsAsync(opportunity);
+            _dateTimeService.SetupGet(x => x.UtcNow).Returns(DateTime.Now);
+
+            return applicationRequest;
+        }
+
+        [Test]
+        public async Task GetSectorViewModel_Is_Correct()
+        {
+            SetupGetOpportunityViewModelServices();
+
+            var cacheKey = _fixture.Create<Guid>();
+            var encodedAccountId = _fixture.Create<string>();
+            var encodedPledgeId = _fixture.Create<string>();
+            var cacheItem = _fixture.Create<CreateApplicationCacheItem>();
+            var getSectorResponse = _fixture.Create<GetSectorResponse>();
+
+            _cacheStorageService.Setup(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString())).ReturnsAsync(cacheItem);
+            _opportunitiesService.Setup(x => x.GetSector(1, 1)).ReturnsAsync(getSectorResponse);
+
+            var result = await _orchestrator.GetSectorViewModel(new SectorRequest { EncodedAccountId = encodedAccountId, CacheKey = cacheKey, EncodedPledgeId = encodedPledgeId, PledgeId = 1, AccountId = 1 });
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(cacheKey, result.CacheKey);
+            Assert.AreEqual(encodedAccountId, result.EncodedAccountId);
+            Assert.AreEqual(encodedPledgeId, result.EncodedPledgeId);
+            Assert.AreEqual(cacheItem.Sectors, result.Sectors);
+            Assert.AreEqual(cacheItem.Postcode, result.Postcode);
+            Assert.IsNotNull(result.OpportunitySummaryViewModel);
+            Assert.AreEqual(getSectorResponse.Opportunity.Amount, result.OpportunitySummaryViewModel.Amount);
+            Assert.AreEqual(string.Join(", ", getSectorResponse.Opportunity.JobRoles.ToReferenceDataDescriptionList(_jobRoleReferenceDataItems)), result.OpportunitySummaryViewModel.JobRoleList);
+            Assert.AreEqual(string.Join(", ", getSectorResponse.Opportunity.Levels.ToReferenceDataDescriptionList(_levelReferenceDataItems)), result.OpportunitySummaryViewModel.LevelList);
+            Assert.AreEqual(string.Join(", ", getSectorResponse.Opportunity.Sectors.ToReferenceDataDescriptionList(_sectorReferenceDataItems)), result.OpportunitySummaryViewModel.SectorList);
+            Assert.AreEqual(_currentDateTime.ToTaxYearDescription(), result.OpportunitySummaryViewModel.YearDescription);
+
+            _cacheStorageService.Verify(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()), Times.Once);
+            _opportunitiesService.Verify(x => x.GetSector(1, 1), Times.Once);
         }
     }
 }

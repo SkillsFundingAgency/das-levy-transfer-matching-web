@@ -49,8 +49,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
             services.AddClient<IPledgeService>((c, s) => new PledgeService(c));
             services.AddClient<ITagService>((c, s) => new TagService(c, s.GetService<ICacheStorageService>()));
             services.AddClient<IOpportunitiesService>((c, s) => new OpportunitiesService(c));
-            services.AddClient<ILocationService>((c, s) => new LocationService(c));
             services.AddClient<IUserService>((c, s) => new UserService(s.GetService<IHttpContextAccessor>(), c));
+            services.AddClient<ILocationService>((c, s) => new LocationService(c));
         }
 
         private static IServiceCollection AddClient<T>(

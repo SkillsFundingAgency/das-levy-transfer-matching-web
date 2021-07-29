@@ -9,13 +9,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
         public string EmployerName { get; set; }
         public string ReferenceNumber { get; set; }
         public IEnumerable<string> Locations { get; set; }
-        public IEnumerable<string> Sectors { get; set; }
-        public IEnumerable<string> JobRoles { get; set; }
-        public IEnumerable<string> Levels { get; set; }
+        public string Sectors { get; set; }
+        public string JobRoles { get; set; }
+        public string Levels { get; set; }
         public string DisplayAmount => Amount.ToString("C0", new CultureInfo("en-GB"));
         public string DisplayLocations => (Locations != null && Locations.Any()) ? string.Join(", ", Locations) : "All";
-        public string DisplaySectors => (Sectors != null && Sectors.Any()) ? string.Join(", ", Sectors) : "All";
-        public string DisplayJobRoles => (JobRoles != null && JobRoles.Any()) ? string.Join(", ", JobRoles) : "All";
-        public string DisplayLevels => (Levels != null && Levels.Any()) ? string.Join(", ", Levels) : "All";
     }
 }

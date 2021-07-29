@@ -43,6 +43,38 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
             return opportunity;
         }
 
+        public async Task<ApplicationDetailsDto> GetApplicationDetails(int id)
+        {
+            ApplicationDetailsDto applicationDetailsResponse = null;
+
+            var response = await _client.GetAsync($"opportunities/{id}/create/application-details");
+
+            if (response.IsSuccessStatusCode)
+            {
+                applicationDetailsResponse = JsonConvert.DeserializeObject<ApplicationDetailsDto>(await response.Content.ReadAsStringAsync());
+            }
+            else if (response.StatusCode != HttpStatusCode.NotFound)
+            {
+                response.EnsureSuccessStatusCode();
+            }
+
+            return applicationDetailsResponse;
+        }
+
+        public async Task<GetSectorResponse> GetSector(long accountId, int pledgeId)
+        {
+            var response = await _client.GetAsync($"accounts/{accountId}/opportunities/{pledgeId}/create/sector");
+            response.EnsureSuccessStatusCode();
+            return JsonConvert.DeserializeObject<GetSectorResponse>(await response.Content.ReadAsStringAsync());
+        }
+
+        public async Task<GetSectorResponse> GetSector(long accountId, int pledgeId, string postcode)
+        {
+            var response = await _client.GetAsync($"accounts/{accountId}/opportunities/{pledgeId}/create/sector?postcode={postcode}");
+            response.EnsureSuccessStatusCode();
+            return JsonConvert.DeserializeObject<GetSectorResponse>(await response.Content.ReadAsStringAsync());
+        }
+
         public async Task<GetContactDetailsResponse> GetContactDetails(long accountId, int pledgeId)
         {
             GetContactDetailsResponse getContactDetailsResult = null;

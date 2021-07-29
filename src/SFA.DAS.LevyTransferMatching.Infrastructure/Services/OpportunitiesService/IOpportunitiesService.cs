@@ -8,9 +8,10 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
     public interface IOpportunitiesService
     {
         Task<List<OpportunityDto>> GetAllOpportunities();
-
         Task<OpportunityDto> GetOpportunity(int id);
-
         Task<GetContactDetailsResponse> GetContactDetails(long accountId, int pledgeId);
+        Task<ApplicationDetailsDto> GetApplicationDetails(int id);
+        Task<GetSectorResponse> GetSector(long accountId, int pledgeId);
+        Task<GetSectorResponse> GetSector(long accountId, int pledgeId, string postcode);
     }
 }
