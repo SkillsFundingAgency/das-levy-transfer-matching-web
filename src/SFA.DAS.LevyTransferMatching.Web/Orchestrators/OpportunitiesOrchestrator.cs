@@ -103,8 +103,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             return firstEncodedAccountId;
         }
-		
-		public async Task<ConfirmationViewModel> GetConfirmationViewModel(ConfirmationRequest request)
+
+        public async Task<ConfirmationViewModel> GetConfirmationViewModel(ConfirmationRequest request)
         {
             var result = await _opportunitiesService.GetConfirmation(request.AccountId, request.PledgeId);
             return new ConfirmationViewModel
@@ -129,11 +129,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 StartDate = cacheItem.StartDate.Value,
                 HasTrainingProvider = cacheItem.HasTrainingProvider.Value,
                 Sectors = cacheItem.Sectors,
-                Postcode = cacheItem.Postcode,
-                FirstName = cacheItem.FirstName,
-                LastName = cacheItem.LastName,
+                Postcode = cacheItem.Postcode ?? string.Empty,
+                FirstName = cacheItem.FirstName ?? string.Empty,
+                LastName = cacheItem.LastName ?? string.Empty,
                 EmailAddresses = cacheItem.EmailAddresses,
-                BusinessWebsite = cacheItem.BusinessWebsite
+                BusinessWebsite = cacheItem.BusinessWebsite ?? string.Empty
             };
 
             await _opportunitiesService.PostApplication(request.AccountId, request.PledgeId, applyRequest);

@@ -473,8 +473,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             Assert.AreEqual("No", result.HaveTrainingProvider);
         }
-		
-		[Test]
+
+        [Test]
         public async Task GetConfirmationViewModel_Returns_Expected_Model()
         {
             var encodedAccountId = _fixture.Create<string>();
