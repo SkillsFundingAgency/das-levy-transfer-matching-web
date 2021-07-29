@@ -92,31 +92,27 @@
     border-left: 5px solid #b1b4b6;
     padding: 0 0 0 20px;
     margin: 0 0 30px;
-}
-
-.das-preformatted-body {
-    white-space: pre-wrap;
+    padding-top: 10px;
 }
 
 .js-enabled .app-extra-fields__fieldset {
-    margin-bottom: 0;
+    margin-bottom: 10px;
+}
+
+.js-enabled .app-extra-fields__fieldset--all-hidden {
+    padding: 0;
+    margin: 0;
 }
 
 .app-extra-fields__form-group {
     position: relative;
-    margin: 0;
-}
-
-.app-extra-fields__form-group:not(.app-extra-field__form-group--hidden) +
-.app-extra-fields__form-group:not(.app-extra-field__form-group--hidden) {
-    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 .app-extra-field__form-group-link--add {
     display: inline-block;
     font-size: 19px;
-    margin-top: 10px;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 }
 
 .app-extra-field__form-group-link--remove {
@@ -127,4 +123,8 @@
 
 .app-extra-field__form-group--hidden {
     display: none;
+}
+
+.das-preformatted-body {
+    white-space: pre-wrap;
 }
