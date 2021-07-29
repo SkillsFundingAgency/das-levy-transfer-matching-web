@@ -41,10 +41,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private List<ReferenceDataItem> _levels;
         private List<ReferenceDataItem> _jobRoles;
 
-        private List<OpportunityDto> _opportunityDtoList;
         private List<ReferenceDataItem> _sectorReferenceDataItems;
         private List<ReferenceDataItem> _jobRoleReferenceDataItems;
         private List<ReferenceDataItem> _levelReferenceDataItems;
+        private GetIndexResponse _getIndexResponse;
         private DateTime _currentDateTime;
 
         [SetUp]
@@ -58,12 +58,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _encodingService = new Mock<IEncodingService>();
             _cache = new Mock<ICacheStorageService>();
 
-            _opportunityDtoList = _fixture.Create<List<OpportunityDto>>();
             _sectors = _fixture.Create<List<ReferenceDataItem>>();
             _levels = _fixture.Create<List<ReferenceDataItem>>();
             _jobRoles = _fixture.Create<List<ReferenceDataItem>>();
-            
-            _opportunitiesService.Setup(x => x.GetAllOpportunities()).ReturnsAsync(_opportunityDtoList);
+            _getIndexResponse = _fixture.Create<GetIndexResponse>();
+
+            _opportunitiesService.Setup(x => x.GetIndex()).ReturnsAsync(_getIndexResponse);
             _tagService.Setup(x => x.GetJobRoles()).ReturnsAsync(_jobRoles);
             _tagService.Setup(x => x.GetSectors()).ReturnsAsync(_sectors);
             _tagService.Setup(x => x.GetLevels()).ReturnsAsync(_levels);
@@ -75,11 +75,18 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         [Test]
         public async Task GetIndexViewModel_Opportunities_Are_Populated()
         {
+            string encodedId = _fixture.Create<string>();
+            _encodingService.Setup(x => x.Encode(It.IsAny<long>(), EncodingType.PledgeId)).Returns(encodedId);
+
             var viewModel = await _orchestrator.GetIndexViewModel();
 
-            Assert.AreEqual(viewModel.Opportunities[0].EmployerName, _opportunityDtoList[0].DasAccountName);
-            Assert.AreEqual(viewModel.Opportunities[0].Amount, _opportunityDtoList[0].Amount);
-            Assert.AreEqual("test", viewModel.Opportunities[0].ReferenceNumber);
+            CollectionAssert.AreEqual(_getIndexResponse.Opportunities.Select(x => x.DasAccountName), viewModel.Opportunities.Select(x => x.EmployerName));
+            CollectionAssert.AreEqual(_getIndexResponse.Opportunities.Select(x => x.Amount), viewModel.Opportunities.Select(x => x.Amount));
+            Assert.AreEqual(encodedId, viewModel.Opportunities[0].ReferenceNumber);
+            CollectionAssert.AreEqual(_getIndexResponse.Opportunities.Select(x => x.Locations), viewModel.Opportunities.Select(x => x.Locations));
+            CollectionAssert.AreEqual(_getIndexResponse.Opportunities.Select(x => x.Sectors.ToReferenceDataDescriptionList(_getIndexResponse.Sectors)), viewModel.Opportunities.Select(x => x.Sectors));
+            CollectionAssert.AreEqual(_getIndexResponse.Opportunities.Select(x => x.JobRoles.ToReferenceDataDescriptionList(_getIndexResponse.JobRoles)), viewModel.Opportunities.Select(x => x.JobRoles));
+            CollectionAssert.AreEqual(_getIndexResponse.Opportunities.Select(x => x.Levels.ToReferenceDataDescriptionList(_getIndexResponse.Levels, descriptionSource: y => y.ShortDescription)), viewModel.Opportunities.Select(x => x.Levels));
         }
 
         [Test]
