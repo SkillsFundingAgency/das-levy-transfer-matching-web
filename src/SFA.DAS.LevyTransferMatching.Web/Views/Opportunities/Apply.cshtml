@@ -1,4 +1,4 @@
-﻿@using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
+﻿@using SFA.DAS.LevyTransferMatching.Web.Extensions
 @model SFA.DAS.LevyTransferMatching.Web.Models.Opportunities.ApplyViewModel
 @inject SFA.DAS.EmployerUrlHelper.ILinkGenerator LinkGenerator
 @{
@@ -9,11 +9,11 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <span class="govuk-caption-m">Find a business to transfer your levy to</span>
-            <h1 class="govuk-heading-xl">Create a transfers application</h1>            
+            <h1 class="govuk-heading-xl">Create a transfers application</h1>
         </div>
     </div>
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">            
+        <div class="govuk-grid-column-two-thirds">
             <div class="govuk-warning-text">
                 <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                 <strong class="govuk-warning-text__text">
@@ -175,7 +175,7 @@
                     <ul class="das-task-list__items">
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="#">
+                                <a class="govuk-link" href="@Url.Action("ContactDetails", new { encodedAccountId = Model.EncodedAccountId, encodedPledgeId = Model.EncodedPledgeId, cacheKey = Model.CacheKey }, true)">
                                     Name
                                 </a>
                             </span>
@@ -185,17 +185,29 @@
                         </li>
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="#">
+                                <a class="govuk-link" href="@Url.Action("ContactDetails", new { encodedAccountId = Model.EncodedAccountId, encodedPledgeId = Model.EncodedPledgeId, cacheKey = Model.CacheKey }, true)">
                                     Email address
                                 </a>
                             </span>
                             <span class="das-task-list__task-tag">
-                                <text>@Model.EmailAddress</text>
+                                @if (Model.EmailAddresses.Count() > 0)
+                                {
+                                    <ul class="govuk-list das-!-text-align-right">
+                                        @foreach (var emailAddress in Model.EmailAddresses)
+                                        {
+                                            <li>@emailAddress</li>
+                                        }
+                                    </ul>
+                                }
+                                else
+                                {
+                                    <text>-</text>
+                                }
                             </span>
                         </li>
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="#">
+                                <a class="govuk-link" href="@Url.Action("ContactDetails", new { encodedAccountId = Model.EncodedAccountId, encodedPledgeId = Model.EncodedPledgeId, cacheKey = Model.CacheKey }, true)">
                                     Business website
                                 </a>
                             </span>

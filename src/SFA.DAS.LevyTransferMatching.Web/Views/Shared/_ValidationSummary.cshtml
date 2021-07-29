@@ -13,6 +13,8 @@
                     var explorer = ViewData.ModelExplorer;
                     foreach (var property in explorer.Properties)
                     {
+                        // Need to explicitly check that the type isn't string -
+                        // Because it implements IEnumerable<>.
                         var errors = (typeof(IEnumerable).IsAssignableFrom(property.ModelType) && property.ModelType != typeof(string))
                             ? GetErrorsForIEnumerable(property.Metadata)
                             : GetErrors(property.Metadata);
@@ -27,7 +29,7 @@
                         }
                     }
                 }
-                
+
             </ul>
         </div>
     </div>
@@ -37,7 +39,7 @@
 
 @functions{
 
-    Dictionary<string,string> GetErrors(ModelMetadata property)
+    Dictionary<string, string> GetErrors(ModelMetadata property)
     {
         var result = new Dictionary<string, string>();
 
@@ -96,4 +98,3 @@
     }
 
 }
-

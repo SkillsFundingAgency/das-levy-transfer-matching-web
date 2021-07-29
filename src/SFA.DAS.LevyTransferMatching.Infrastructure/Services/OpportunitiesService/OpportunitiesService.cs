@@ -76,7 +76,25 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
             return JsonConvert.DeserializeObject<GetSectorResponse>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<GetConfirmationResponse> GetConfirmation(long accountId, int opportunityId)
+        public async Task<GetContactDetailsResponse> GetContactDetails(long accountId, int pledgeId)
+        {
+            GetContactDetailsResponse getContactDetailsResult = null;
+
+            var response = await _client.GetAsync($"accounts/{accountId}/opportunities/{pledgeId}/apply/contact-details");
+
+            if (response.IsSuccessStatusCode)
+            {
+                getContactDetailsResult = JsonConvert.DeserializeObject<GetContactDetailsResponse>(await response.Content.ReadAsStringAsync());
+            }
+            else if (response.StatusCode != HttpStatusCode.NotFound)
+            {
+                response.EnsureSuccessStatusCode();
+            }
+
+            return getContactDetailsResult;
+        }
+		
+		public async Task<GetConfirmationResponse> GetConfirmation(long accountId, int opportunityId)
         {
             var response =
                 await _client.GetAsync($"accounts/{accountId}/opportunities/{opportunityId}/apply/confirmation");
