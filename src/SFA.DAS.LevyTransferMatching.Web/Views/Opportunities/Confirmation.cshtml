@@ -6,44 +6,40 @@
 }
 
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
-    <div class="govuk-grid-row">
-        <div class="govuk-width-container form-entry" id="transfers-hub">
+    <div class="govuk-width-container">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <div class="govuk-panel govuk-panel--confirmation">
+                    <h1 class="govuk-panel__title">Your application has been submitted</h1>
+                </div>
+                <h2 class="govuk-heading-m">What happens next</h2>
 
-            <div class="govuk-grid-row">
-                <p class="govuk-grid-column-two-thirds">
-                    <div class="govuk-panel govuk-panel--confirmation">
-                        <h1 class="govuk-panel__title">Your application has been submitted</h1>
-                    </div>
+                @if (Model.IsNamePublic)
+                {
+                    <p><strong>@Model.AccountName (@Model.Reference)</strong> will review your application.</p>
+                }
+                else
+                {
+                    <p>The organisation offering <strong>opportunity @Model.Reference</strong> will review your application.</p>
+                }
 
-                    <h2 class="govuk-heading-m">What happens next</h2>
+                <p>They may contact you to ask follow-up questions about your application.</p>
 
-                    @if (Model.IsNamePublic)
-                    {
-                        <p><strong>@Model.AccountName (@Model.Reference)</strong> will review your application.</p>
-                    }
-                    else
-                    {
-                        <p>The organisation offering <strong>opportunity @Model.Reference</strong> will review your application.</p>
-                    }
+                @if (Model.IsNamePublic)
+                {
+                    <p>When <strong>@Model.AccountName (@Model.Reference)</strong> have made a decision you will receive an email and a notification in your apprenticeship service account.</p>
+                }
+                else
+                {
+                    <p>When they have made a decision you will receive an email and a notification in your apprenticeship service account.</p>
+                }
 
-                    <p>They may contact you to ask follow-up questions about your application.</p>
-
-                    @if (Model.IsNamePublic)
-                    {
-                        <p>When <strong>@Model.AccountName (@Model.Reference)</strong> have made a decision you will receive an email and a notification in your apprenticeship service account.</p>
-                    }
-                    else
-                    {
-                        <p>When they have made a decision you will receive an email and a notification in your apprenticeship service account.</p>
-                    }
-
-                    <h2 class="govuk-heading-m">You can apply to another opportunity</h2>
-
-                    <d class="govuk-grid-column-two-thirds">
-                        <a class="govuk-link" href="@Url.Action("Index")">View other opportunities</a>
-                        <span class="das-!-display-block">or</span>
-                        <a href="@LinkGenerator.AccountsLink($"accounts/{Model.EncodedAccountId}/teams")" class="govuk-link" )>Continue to my account</a>
-                    </d>
+                <h2 class="govuk-heading-m">You can apply to another opportunity</h2>
+                <p>
+                    <a class="govuk-link govuk-link--no-visited-state" href="@Url.Action("Index")">View other opportunities</a>
+                    <span class="das-!-display-block">or</span>
+                    <a href="@LinkGenerator.AccountsLink($"accounts/{Model.EncodedAccountId}/teams")" class="govuk-link govuk-link--no-visited-state" )>Continue to my account</a>
+                </p>
             </div>
         </div>
     </div>
