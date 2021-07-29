@@ -34,5 +34,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Extensions
         {
             return !string.IsNullOrEmpty(str) && str != NotEntered;
         }
+
+        public static bool IsComplete(this IEnumerable<string> list)
+        {
+            return list != null && list.Any();
+        }
     }
 }
