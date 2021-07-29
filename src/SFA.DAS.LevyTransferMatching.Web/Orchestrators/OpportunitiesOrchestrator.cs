@@ -374,11 +374,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var applicationDetailsTask = _opportunitiesService.GetApplicationDetails(request.AccountId, request.PledgeId);
             var applicationTask = RetrieveCacheItem(request.CacheKey);
-            var sectorReferenceDataItemsTask = _tagService.GetSectors();
-            var jobRoleReferenceDataItemsTask = _tagService.GetJobRoles();
-            var levelReferenceDataItemsTask = _tagService.GetLevels();
 
-            await Task.WhenAll(applicationDetailsTask, applicationTask, sectorReferenceDataItemsTask, jobRoleReferenceDataItemsTask, levelReferenceDataItemsTask);
+            await Task.WhenAll(applicationDetailsTask, applicationTask);
 
             var application = applicationTask.Result;
             var applicationDetails = applicationDetailsTask.Result;
