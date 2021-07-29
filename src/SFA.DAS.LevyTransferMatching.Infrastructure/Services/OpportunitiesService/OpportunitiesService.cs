@@ -62,7 +62,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
             return applicationDetailsResponse;
         }
 
-         public async Task<GetSectorResponse> GetSector(long accountId, int pledgeId)
+        public async Task<GetSectorResponse> GetSector(long accountId, int pledgeId)
         {
             var response = await _client.GetAsync($"accounts/{accountId}/opportunities/{pledgeId}/create/sector");
             response.EnsureSuccessStatusCode();
