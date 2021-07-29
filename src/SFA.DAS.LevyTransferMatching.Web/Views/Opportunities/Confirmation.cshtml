@@ -11,7 +11,7 @@
 
             <div class="govuk-grid-row">
                 <p class="govuk-grid-column-two-thirds">
-                    <div class="govuk-panel govuk-panel--confirmation pledge-approved">
+                    <div class="govuk-panel govuk-panel--confirmation">
                         <h1 class="govuk-panel__title">Your application has been submitted</h1>
                     </div>
 
@@ -39,12 +39,11 @@
 
                     <h2 class="govuk-heading-m">You can apply to another opportunity</h2>
 
-                    <p>
+                    <d class="govuk-grid-column-two-thirds">
                         <a class="govuk-link" href="@Url.Action("Index")">View other opportunities</a>
-                        <br />or<br />
+                        <span class="das-!-display-block">or</span>
                         <a href="@LinkGenerator.AccountsLink($"accounts/{Model.EncodedAccountId}/teams")" class="govuk-link" )>Continue to my account</a>
-                    </p>
-                </div>
+                    </d>
             </div>
         </div>
     </div>
