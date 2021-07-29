@@ -43,6 +43,13 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
             return opportunity;
         }
 
+        public async Task<GetIndexResponse> GetIndex()
+        {
+            var response = await _client.GetAsync($"opportunities");
+            response.EnsureSuccessStatusCode();
+            return JsonConvert.DeserializeObject<GetIndexResponse>(await response.Content.ReadAsStringAsync());
+        }
+
         public async Task<ApplicationDetailsDto> GetApplicationDetails(int id)
         {
             ApplicationDetailsDto applicationDetailsResponse = null;

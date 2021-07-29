@@ -61,22 +61,17 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         public async Task<IndexViewModel> GetIndexViewModel()
         {
-            var opportunitiesDto = _opportunitiesService.GetAllOpportunities();
-            var levelsTask = _tagService.GetLevels();
-            var sectorsTask = _tagService.GetSectors();
-            var jobRolesTask = _tagService.GetJobRoles();
+            var response = await _opportunitiesService.GetIndex();
 
-            await Task.WhenAll(opportunitiesDto, levelsTask, sectorsTask, jobRolesTask);
-
-            List<Opportunity> opportunities = opportunitiesDto.Result
+            List<Opportunity> opportunities = response?.Opportunities
                 .Select(x => new Opportunity
                 {
                     Amount = x.Amount,
                     EmployerName = x.DasAccountName,
                     ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),
-                    Sectors = x.Sectors.ToReferenceDataDescriptionList(sectorsTask.Result),
-                    JobRoles = x.JobRoles.ToReferenceDataDescriptionList(jobRolesTask.Result),
-                    Levels = x.Levels.ToReferenceDataDescriptionList(levelsTask.Result, descriptionSource: y => y.ShortDescription),
+                    Sectors = x.Sectors.ToReferenceDataDescriptionList(response.Sectors),
+                    JobRoles = x.JobRoles.ToReferenceDataDescriptionList(response.JobRoles),
+                    Levels = x.Levels.ToReferenceDataDescriptionList(response.Levels, descriptionSource: y => y.ShortDescription),
                     Locations = x.Locations
                 }).ToList();
 
