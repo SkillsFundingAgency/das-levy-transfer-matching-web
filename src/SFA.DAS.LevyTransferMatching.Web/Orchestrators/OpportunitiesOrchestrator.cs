@@ -130,10 +130,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 HasTrainingProvider = cacheItem.HasTrainingProvider.Value,
                 Sectors = cacheItem.Sectors,
                 Postcode = cacheItem.Postcode,
-                FirstName = string.Empty,
-                LastName = string.Empty,
-                EmailAddresses = new List<string>(),
-                BusinessWebsite = string.Empty
+                FirstName = cacheItem.FirstName,
+                LastName = cacheItem.LastName,
+                EmailAddresses = cacheItem.EmailAddresses,
+                BusinessWebsite = cacheItem.BusinessWebsite
             };
 
             await _opportunitiesService.PostApplication(request.AccountId, request.PledgeId, applyRequest);

@@ -514,7 +514,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var request = new ApplyPostRequest {CacheKey = cacheKey, EncodedAccountId = encodedAccountId, EncodedPledgeId = encodedPledgeId, AccountId = accountId, PledgeId = opportunityId};
 
             await _orchestrator.SubmitApplication(request);
-
             
              _opportunitiesService.Verify(x => x.PostApplication(accountId, opportunityId,
                  It.Is<ApplyRequest>(r => r.EncodedAccountId == encodedAccountId &&
@@ -524,17 +523,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                                           r.StartDate == cacheItem.StartDate &&
                                           r.HasTrainingProvider == cacheItem.HasTrainingProvider.Value &&
                                           r.Sectors.Equals(cacheItem.Sectors) &&
-                                          r.Postcode == cacheItem.Postcode
-
-                                             //public IEnumerable<string> Sectors { get; set; }
-                                             //public string Postcode { get; set; }
-
-                                             //public string FirstName { get; set; }
-                                             //public string LastName { get; set; }
-                                             //public IEnumerable<string> EmailAddresses { get; set; }
-                                             //public string BusinessWebsite { get; set; }
-
-                                             )));
+                                          r.Postcode == cacheItem.Postcode &&
+                                          r.FirstName == cacheItem.FirstName &&
+                                          r.LastName == cacheItem.LastName &&
+                                          r.EmailAddresses == cacheItem.EmailAddresses &&
+                                          r.BusinessWebsite == cacheItem.BusinessWebsite)));
         }
 
         [Test]
