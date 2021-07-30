@@ -63,21 +63,19 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var response = await _opportunitiesService.GetIndex();
 
-            List<Opportunity> opportunities = response?.Opportunities
-                .Select(x => new Opportunity
-                {
-                    Amount = x.Amount,
-                    EmployerName = x.DasAccountName,
-                    ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),
-                    Sectors = x.Sectors.ToReferenceDataDescriptionList(response.Sectors),
-                    JobRoles = x.JobRoles.ToReferenceDataDescriptionList(response.JobRoles),
-                    Levels = x.Levels.ToReferenceDataDescriptionList(response.Levels, descriptionSource: y => y.ShortDescription),
-                    Locations = x.Locations
-                }).ToList();
-
             return new IndexViewModel 
             { 
-                Opportunities = opportunities
+                Opportunities = response?.Opportunities
+                    .Select(x => new IndexViewModel.Opportunity
+                    {
+                        Amount = x.Amount,
+                        EmployerName = x.DasAccountName,
+                        ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),
+                        Sectors = x.Sectors.ToReferenceDataDescriptionList(response.Sectors),
+                        JobRoles = x.JobRoles.ToReferenceDataDescriptionList(response.JobRoles),
+                        Levels = x.Levels.ToReferenceDataDescriptionList(response.Levels, descriptionSource: y => y.ShortDescription),
+                        Locations = x.Locations
+                    }).ToList()
             };
         }
 
