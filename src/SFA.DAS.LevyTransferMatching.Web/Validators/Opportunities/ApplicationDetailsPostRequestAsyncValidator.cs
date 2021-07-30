@@ -11,9 +11,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities
 {
     internal class ApplicationDetailsPostRequestAsyncValidator : AsyncValidator<ApplicationDetailsPostRequest>
     {
-        private const int MinApprentices = 1;
         private const string NumApprenticesError = "There is not enough funding to support this many apprentices";
-        private const string StartDateError = "Start date must be between {0} and {1}";        
+        private const string StartDateError = "Start date must be between {0} and {1}";
 
         public ApplicationDetailsPostRequestAsyncValidator(IOpportunitiesService opportunitiesService)
         {
