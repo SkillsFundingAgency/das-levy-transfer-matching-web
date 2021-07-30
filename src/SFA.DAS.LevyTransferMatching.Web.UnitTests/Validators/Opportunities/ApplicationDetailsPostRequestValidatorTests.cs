@@ -131,7 +131,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
             new ApplicationDetailsPostRequest()
             {
                 SelectedStandardId = _fixture.Create<string>(),
-                Amount = 100_000,
                 Year = DateTime.UtcNow.Year,
                 Month = DateTime.UtcNow.Month,
                 NumberOfApprentices = 1,

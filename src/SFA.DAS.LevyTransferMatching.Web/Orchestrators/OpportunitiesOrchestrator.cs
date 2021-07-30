@@ -15,7 +15,6 @@ using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
 using System.Collections.Generic;
-using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
@@ -333,7 +332,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
         }
 
-        public async Task UpdateCacheItem(ApplicationDetailsPostRequest request)
+        public async Task UpdateCacheItem(ApplicationDetailsPostRequest request, int amount)
         {
             var cacheItem = await RetrieveCacheItem(request.CacheKey);
 
@@ -342,7 +341,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             cacheItem.NumberOfApprentices = request.NumberOfApprentices.Value;
             cacheItem.StartDate = request.StartDate;
             cacheItem.HasTrainingProvider = request.HasTrainingProvider.Value;
-            cacheItem.Amount = request.Amount;
+            cacheItem.Amount = amount;
 
             await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
         }
@@ -411,7 +410,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var applicationDetails = await _opportunitiesService.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId);
 
-            request.Amount = (await GetFundingEstimate(new GetFundingEstimateRequest
+            var amount = (await GetFundingEstimate(new GetFundingEstimateRequest
             {
                 StartDate = request.StartDate.Value,
                 SelectedStandardId = request.SelectedStandardId,
@@ -422,7 +421,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             request.SelectedStandardTitle = applicationDetails.Standards
                     .FirstOrDefault(standard => standard.StandardUId == request.SelectedStandardId)?.Title;
 
-            await UpdateCacheItem(request);
+            await UpdateCacheItem(request, amount);
 
             return new ApplicationRequest
             {

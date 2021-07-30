@@ -17,7 +17,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Extensions
                         apprenticeshipFunding.First(c => c.EffectiveTo.IsNull());
         }
 
-        public static double CalcFundingForDate(this ApprenticeshipFundingDto apprenticeshipFunding, int? numberOfApprentices, DateTime startDate)
+        public static int CalcFundingForDate(this ApprenticeshipFundingDto apprenticeshipFunding, int? numberOfApprentices, DateTime startDate)
         {
             var net = apprenticeshipFunding.MaxEmployerLevyCap - (apprenticeshipFunding.MaxEmployerLevyCap * 0.2);
             var monthlyCost = (net / apprenticeshipFunding.Duration);

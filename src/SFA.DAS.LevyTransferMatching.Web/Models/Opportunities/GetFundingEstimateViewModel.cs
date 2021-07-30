@@ -2,7 +2,7 @@
 {
     public class GetFundingEstimateViewModel
     {
-        public double Amount { get; set; }
+        public int Amount { get; set; }
         public bool HasEnoughFunding { get; set; }
     }
 }

@@ -27,7 +27,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Cache
         public List<string> Sectors { get; set; }
         public string Postcode { get; set; }
         public string FirstName { get; set; }
-        public double Amount { get; set; }
+        public int Amount { get; set; }
         public string LastName { get; set; }
         public List<string> EmailAddresses { get; set; }
         public string BusinessWebsite { get; set; }
