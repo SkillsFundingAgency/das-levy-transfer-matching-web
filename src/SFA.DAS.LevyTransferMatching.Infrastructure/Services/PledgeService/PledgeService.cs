@@ -30,7 +30,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
 
         public async Task<GetMyPledgesResponse> GetMyPledges(long accountId)
         {
-            var response = await _client.GetAsync($"accounts/{accountId}/pledges/my-pledges");
+            var response = await _client.GetAsync($"accounts/{accountId}/pledges");
             response.EnsureSuccessStatusCode();
             return JsonConvert.DeserializeObject<GetMyPledgesResponse>(await response.Content.ReadAsStringAsync());
         }
