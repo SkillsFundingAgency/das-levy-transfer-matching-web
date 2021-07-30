@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 {
-    public class JobRoleRequest : PledgesRequest
+    public class JobRoleRequest : BasePledgesRequest
     {
     }
 }

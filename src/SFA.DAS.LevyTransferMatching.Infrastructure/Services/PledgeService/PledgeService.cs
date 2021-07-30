@@ -28,11 +28,11 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
             return long.Parse(id);
         }
 
-        public async Task<GetMyPledgesResponse> GetMyPledges(long accountId)
+        public async Task<GetPledgesResponse> GetPledges(long accountId)
         {
             var response = await _client.GetAsync($"accounts/{accountId}/pledges");
             response.EnsureSuccessStatusCode();
-            return JsonConvert.DeserializeObject<GetMyPledgesResponse>(await response.Content.ReadAsStringAsync());
+            return JsonConvert.DeserializeObject<GetPledgesResponse>(await response.Content.ReadAsStringAsync());
         }
 
         public async Task<GetCreateResponse> GetCreate(long accountId)

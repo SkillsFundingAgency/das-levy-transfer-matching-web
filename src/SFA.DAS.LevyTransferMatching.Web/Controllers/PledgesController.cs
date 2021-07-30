@@ -9,7 +9,7 @@ using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
-    [Authorize(Policy = PolicyNames.ManageAccount)]
+    //[Authorize(Policy = PolicyNames.ManageAccount)]
     [Route("accounts/{encodedAccountId}/pledges")]
     public class PledgesController : Controller
     {
@@ -20,17 +20,17 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             _orchestrator = orchestrator;
         }
 
+        [Route("")]
+        public async Task<IActionResult> Pledges(PledgesRequest request)
+        {
+            var viewModel = await _orchestrator.GetMyPledgesViewModel(request);
+            return View(viewModel);
+        }
+
         [Route("create/inform")]
         public IActionResult Inform(string encodedAccountId)
         {
             var viewModel = _orchestrator.GetInformViewModel(encodedAccountId);
-            return View(viewModel);
-        }
-
-        [Route("my-pledges")]
-        public async Task<IActionResult> MyPledges(MyPledgesRequest request)
-        {
-            var viewModel = await _orchestrator.GetMyPledgesViewModel(request);
             return View(viewModel);
         }
 

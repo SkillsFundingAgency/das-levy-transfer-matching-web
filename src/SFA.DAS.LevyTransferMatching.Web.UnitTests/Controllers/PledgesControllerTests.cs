@@ -45,12 +45,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         public async Task GET_MyPledges_Returns_Expected_View_With_Expected_ViewModel()
         {
             // Arrange
-            var request = _fixture.Create<MyPledgesRequest>();
-            _orchestrator.Setup(x => x.GetMyPledgesViewModel(request)).ReturnsAsync(() => new MyPledgesViewModel());
+            var request = _fixture.Create<PledgesRequest>();
+            _orchestrator.Setup(x => x.GetMyPledgesViewModel(request)).ReturnsAsync(() => new PledgesViewModel());
 
             // Act
-            var viewResult = await _pledgesController.MyPledges(request) as ViewResult;
-            var myPledgesViewModel = viewResult?.Model as MyPledgesViewModel;
+            var viewResult = await _pledgesController.Pledges(request) as ViewResult;
+            var myPledgesViewModel = viewResult?.Model as PledgesViewModel;
 
             // Assert
             Assert.NotNull(viewResult);

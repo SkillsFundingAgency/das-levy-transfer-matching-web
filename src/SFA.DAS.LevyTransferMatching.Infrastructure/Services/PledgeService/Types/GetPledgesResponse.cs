@@ -2,11 +2,11 @@
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types
 {
-    public class GetMyPledgesResponse
+    public class GetPledgesResponse
     {
-        public IEnumerable<MyPledge> Pledges { get; set; }
+        public IEnumerable<Pledge> Pledges { get; set; }
 
-        public class MyPledge
+        public class Pledge
         {
             public int Id { get; set; }
             public int Amount { get; set; }

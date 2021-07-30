@@ -3,12 +3,12 @@ using System.Linq;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 {
-    public class MyPledgesViewModel : MyPledgesRequest
+    public class PledgesViewModel : PledgesRequest
     {
-        public IEnumerable<MyPledge> Pledges { get; set; }
+        public IEnumerable<Pledge> Pledges { get; set; }
         public int PledgeCount => Pledges.Count();
 
-        public class MyPledge
+        public class Pledge
         {
             public string ReferenceNumber { get; set; }
             public int Amount { get; set; }

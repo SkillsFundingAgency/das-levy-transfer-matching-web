@@ -1,5 +1,5 @@
 ﻿@using SFA.DAS.LevyTransferMatching.Web.Models.Pledges
-@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.MyPledgesViewModel
+@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.PledgesViewModel
 
 @{
     ViewData["Title"] = "Pledges";
@@ -29,8 +29,8 @@
                         {
                             <tr class="govuk-table__row">
                                 <td class="govuk-table__cell"><a href="@Url.Action("Detail", "Pledges", new DetailRequest { EncodedPledgeId = pledge.ReferenceNumber, EncodedAccountId = Model.EncodedAccountId })" class=govuk-link--no-visited-state>@pledge.ReferenceNumber</a></td>
-                                <td class="govuk-table__cell govuk-table__cell--numeric">@pledge.Amount</td>
-                                <td class="govuk-table__cell govuk-table__cell--numeric">@pledge.RemainingAmount</td>
+                                <td class="govuk-table__cell govuk-table__cell--numeric">£@pledge.Amount.ToString("N0")</td>
+                                <td class="govuk-table__cell govuk-table__cell--numeric">£@pledge.RemainingAmount.ToString("N0")</td>
                                 <td class="govuk-table__cell govuk-table__cell--numeric">@pledge.ApplicationCount</td>
                             </tr>
                         }
