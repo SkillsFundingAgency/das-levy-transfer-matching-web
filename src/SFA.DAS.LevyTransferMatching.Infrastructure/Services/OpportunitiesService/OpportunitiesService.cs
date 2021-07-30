@@ -92,5 +92,12 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
 
             return getContactDetailsResult;
         }
+
+        public async Task<GetDetailResponse> GetDetail(int pledgeId)
+        {
+            var response = await _client.GetAsync($"opportunities/{pledgeId}");
+            response.EnsureSuccessStatusCode();
+            return JsonConvert.DeserializeObject<GetDetailResponse>(await response.Content.ReadAsStringAsync());
+        }
     }
 }

@@ -42,22 +42,29 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         public async Task<DetailViewModel> GetDetailViewModel(int pledgeId)
         {
-            var opportunityDto = await _opportunitiesService.GetOpportunity(pledgeId);
+            var response = await _opportunitiesService.GetDetail(pledgeId);
 
-            if (opportunityDto == null)
-            {
-                return null;
-            }
+            var encodedPledgeId = _encodingService.Encode(response.OpportunitySummary.Id, EncodingType.PledgeId);
 
-            var encodedPledgeId = _encodingService.Encode(opportunityDto.Id, EncodingType.PledgeId);
-
-            var opportunitySummaryViewModel = await GetOpportunitySummaryViewModel(opportunityDto, encodedPledgeId);
+            var opportunitySummaryViewModel = GetOpportunitySummaryViewModel
+                (
+                    response.OpportunitySummary.Sectors,
+                    response.OpportunitySummary.JobRoles,
+                    response.OpportunitySummary.Levels,
+                    response.Sectors,
+                    response.JobRoles,
+                    response.Sectors,
+                    response.OpportunitySummary.Amount,
+                    response.OpportunitySummary.IsNamePublic,
+                    response.OpportunitySummary.DasAccountName,
+                    encodedPledgeId
+                );
 
             return new DetailViewModel()
             {
-                EmployerName = opportunityDto.DasAccountName,
+                EmployerName = response.OpportunitySummary.DasAccountName,
                 EncodedPledgeId = encodedPledgeId,
-                IsNamePublic = opportunityDto.IsNamePublic,
+                IsNamePublic = response.OpportunitySummary.IsNamePublic,
                 OpportunitySummaryView = opportunitySummaryViewModel,
             };
         }
