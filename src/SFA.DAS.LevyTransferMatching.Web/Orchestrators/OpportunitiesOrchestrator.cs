@@ -10,15 +10,18 @@ using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.LevyTransferMatching.Web.Models.Shared;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
-using System.Collections.Generic;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
+using System.Collections.Generic;
+using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 using FluentValidation;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
     public class OpportunitiesOrchestrator : IOpportunitiesOrchestrator
     {
+        private const int MaximumNumberAdditionalEmailAddresses = 4;
+
         private readonly ICacheStorageService _cacheStorageService;
         private readonly IDateTimeService _dateTimeService;
         private readonly IOpportunitiesService _opportunitiesService;
@@ -93,6 +96,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             return firstEncodedAccountId;
         }
 
+        [Obsolete("To eventually be replaced with the other method of the same name - please use other overload.")]
         public async Task<OpportunitySummaryViewModel> GetOpportunitySummaryViewModel(OpportunityDto opportunityDto, string encodedPledgeId)
         {
             // Pull back the tags, and use the descriptions to build the lists.
@@ -118,11 +122,42 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
+        public OpportunitySummaryViewModel GetOpportunitySummaryViewModel(
+            IEnumerable<string> sectors,
+            IEnumerable<string> jobRoles,
+            IEnumerable<string> levels,
+            IEnumerable<ReferenceDataItem> allSectors,
+            IEnumerable<ReferenceDataItem> allJobRoles,
+            IEnumerable<ReferenceDataItem> allLevels,
+            int amount,
+            bool isNamePublic,
+            string dasAccountName,
+            string encodedPledgeId)
+        {
+            string sectorList = sectors.ToReferenceDataDescriptionList(allSectors);
+            string jobRoleList = jobRoles.ToReferenceDataDescriptionList(allJobRoles);
+            string levelList = levels.ToReferenceDataDescriptionList(allLevels, descriptionSource: x => x.ShortDescription);
+
+            DateTime dateTime = _dateTimeService.UtcNow;
+
+            return new OpportunitySummaryViewModel()
+            {
+                Amount = amount,
+                Description = isNamePublic ? $"{dasAccountName} ({encodedPledgeId})" : "A levy-paying business",
+                JobRoleList = jobRoleList,
+                LevelList = levelList,
+                SectorList = sectorList,
+                YearDescription = dateTime.ToTaxYearDescription(),
+            };
+        }
+
         public async Task<ApplyViewModel> GetApplyViewModel(ApplicationRequest request)
         {
             var application = await RetrieveCacheItem(request.CacheKey);
             var opportunityDto = await _opportunitiesService.GetOpportunity(request.PledgeId);
             var sectorOptions = await _tagService.GetSectors();
+
+            var contactName = $"{application.FirstName} {application.LastName}";
 
             return new ApplyViewModel
             {
@@ -136,14 +171,81 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 HaveTrainingProvider = application.HasTrainingProvider.ToApplyViewString(),
                 Sectors = application.Sectors?.ToList(),
                 SectorOptions = sectorOptions,
-                Location = application.Postcode?? "-",
+                Location = application.Postcode ?? "-",
                 MoreDetail = application.Details ?? "-",
-                ContactName = "-",
-                EmailAddress = "-",
-                WebsiteUrl = "-"
+                ContactName = string.IsNullOrWhiteSpace(contactName) ? "-" : contactName,
+                EmailAddresses = application.EmailAddresses,
+                WebsiteUrl = string.IsNullOrEmpty(application.BusinessWebsite) ? "-" : application.BusinessWebsite,
             };
         }
 
+        public async Task<ContactDetailsViewModel> GetContactDetailsViewModel(ContactDetailsRequest contactDetailsRequest)
+        {
+            var getContactDetailsResult = await _opportunitiesService.GetContactDetails(contactDetailsRequest.AccountId, contactDetailsRequest.PledgeId);
+
+            if (getContactDetailsResult == null)
+            {
+                return null;
+            }
+
+            var opportunitySummaryViewModel = GetOpportunitySummaryViewModel(
+                getContactDetailsResult.Sectors,
+                getContactDetailsResult.JobRoles,
+                getContactDetailsResult.Levels,
+                getContactDetailsResult.AllSectors,
+                getContactDetailsResult.AllJobRoles,
+                getContactDetailsResult.AllLevels,
+                getContactDetailsResult.Amount,
+                getContactDetailsResult.IsNamePublic,
+                getContactDetailsResult.DasAccountName,
+                contactDetailsRequest.EncodedPledgeId);
+
+            var cacheItem = await RetrieveCacheItem(contactDetailsRequest.CacheKey);
+
+            var additionalEmailAddresses = cacheItem.EmailAddresses.Skip(1).ToList();
+
+            var placeholders = Enumerable.Range(0, MaximumNumberAdditionalEmailAddresses - additionalEmailAddresses.Count())
+                .Select(x => (string)null);
+            
+            additionalEmailAddresses.AddRange(placeholders);
+
+            var viewModel = new ContactDetailsViewModel()
+            {
+                EncodedAccountId = contactDetailsRequest.EncodedAccountId,
+                EncodedPledgeId = contactDetailsRequest.EncodedPledgeId,
+                CacheKey = contactDetailsRequest.CacheKey,
+                FirstName = cacheItem.FirstName,
+                LastName = cacheItem.LastName,
+                EmailAddress = cacheItem.EmailAddresses.FirstOrDefault(),
+                AdditionalEmailAddresses = additionalEmailAddresses.ToArray(),
+                BusinessWebsite = cacheItem.BusinessWebsite,
+                DasAccountName = getContactDetailsResult.DasAccountName,
+                OpportunitySummaryViewModel = opportunitySummaryViewModel,
+            };
+
+            return viewModel;
+        }
+
+        public async Task UpdateCacheItem(ContactDetailsPostRequest contactDetailsPostRequest)
+        {
+            var cacheItem = await RetrieveCacheItem(contactDetailsPostRequest.CacheKey);
+
+            cacheItem.FirstName = contactDetailsPostRequest.FirstName;
+            cacheItem.LastName = contactDetailsPostRequest.LastName;
+
+            cacheItem.EmailAddresses.Clear();
+            cacheItem.EmailAddresses.Add(contactDetailsPostRequest.EmailAddress);
+            cacheItem.EmailAddresses.AddRange(contactDetailsPostRequest.AdditionalEmailAddresses.Where(x => !string.IsNullOrWhiteSpace(x)));
+
+            cacheItem.BusinessWebsite = contactDetailsPostRequest.BusinessWebsite;
+
+            await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
+        }
+
+        private string GenerateDescription(OpportunityDto opportunityDto, string encodedPledgeId)
+        {
+            return opportunityDto.IsNamePublic ? $"{opportunityDto.DasAccountName} ({encodedPledgeId})" : "A levy-paying business wants to fund apprenticeship training in:";
+        }
 
         public async Task<MoreDetailsViewModel> GetMoreDetailsViewModel(MoreDetailsRequest request)
         {
@@ -278,6 +380,5 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 CacheKey = request.CacheKey
             };
         }
-        private string GenerateDescription(OpportunityDto opportunityDto, string encodedPledgeId) => opportunityDto.IsNamePublic ? $"{opportunityDto.DasAccountName} ({encodedPledgeId})" : "A levy-paying business";
     }
 }

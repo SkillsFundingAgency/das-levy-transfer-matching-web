@@ -13,15 +13,13 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using System;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using System.Data;
-using Microsoft.VisualBasic.CompilerServices;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
-using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
-using SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
 using FluentValidation;
+using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 {
@@ -30,12 +28,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
     {
         private OpportunitiesOrchestrator _orchestrator;
         private Fixture _fixture;
+
         private Mock<IDateTimeService> _dateTimeService;
         private Mock<IOpportunitiesService> _opportunitiesService;
         private Mock<ITagService> _tagService;
         private Mock<IUserService> _userService;
         private Mock<IEncodingService> _encodingService;
-        private Mock<ICacheStorageService> _cache;
+        private Mock<ICacheStorageService> _cacheStorageService;
 
         private List<ReferenceDataItem> _sectors;
         private List<ReferenceDataItem> _levels;
@@ -56,7 +55,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _tagService = new Mock<ITagService>();
             _userService = new Mock<IUserService>();
             _encodingService = new Mock<IEncodingService>();
-            _cache = new Mock<ICacheStorageService>();
+            _cacheStorageService = new Mock<ICacheStorageService>();
 
             _sectors = _fixture.Create<List<ReferenceDataItem>>();
             _levels = _fixture.Create<List<ReferenceDataItem>>();
@@ -69,7 +68,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _tagService.Setup(x => x.GetLevels()).ReturnsAsync(_levels);
             _encodingService.Setup(x => x.Encode(It.IsAny<long>(), EncodingType.PledgeId)).Returns("test");
 
-            _orchestrator = new OpportunitiesOrchestrator(_dateTimeService.Object, _opportunitiesService.Object, _tagService.Object, _userService.Object, _encodingService.Object, _cache.Object);
+            _orchestrator = new OpportunitiesOrchestrator(_dateTimeService.Object, _opportunitiesService.Object, _tagService.Object, _userService.Object, _encodingService.Object, _cacheStorageService.Object);
         }
 
         [Test]
@@ -255,6 +254,87 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             Assert.AreEqual(result.YearDescription, $"{_currentDateTime.ToTaxYear("yyyy")}/{_currentDateTime.AddYears(1).ToTaxYear("yy")}");
         }
 
+        [Test]
+        public async Task GetContactDetailsViewModel_No_Opportunity_Found_Returns_Null()
+        {
+            // Arrange
+            ContactDetailsRequest contactDetailsRequest = _fixture.Create<ContactDetailsRequest>();
+
+            _opportunitiesService
+                .Setup(x => x.GetOpportunity(It.Is<int>(y => y == contactDetailsRequest.PledgeId)))
+                .ReturnsAsync((OpportunityDto)null);
+
+            // Act
+            ContactDetailsViewModel contactDetailsViewModel = await _orchestrator.GetContactDetailsViewModel(contactDetailsRequest);
+
+            // Assert
+            Assert.IsNull(contactDetailsViewModel);
+        }
+
+        [Test]
+        public async Task GetContactDetailsViewModel_Not_In_Cache_AdditionalEmailAddresses_Populated_Correctly()
+        {
+            // Arrange
+            ContactDetailsRequest contactDetailsRequest = _fixture.Create<ContactDetailsRequest>();
+
+            _currentDateTime = _fixture.Create<DateTime>();
+            _dateTimeService
+                .Setup(x => x.UtcNow)
+                .Returns(_currentDateTime);
+
+            GetContactDetailsResponse getContactDetailsResult = _fixture.Create<GetContactDetailsResponse>();
+
+            _opportunitiesService
+                .Setup(x => x.GetContactDetails(It.Is<long>(y => y == contactDetailsRequest.AccountId), It.Is<int>(y => y == contactDetailsRequest.PledgeId)))
+                .ReturnsAsync(getContactDetailsResult);
+
+            string[] expectedAdditionalEmailAddresses = new string[] { null, null, null, null, };
+
+            _cacheStorageService
+                .Setup(x => x.RetrieveFromCache<CreateApplicationCacheItem>(It.Is<string>(y => y == contactDetailsRequest.CacheKey.ToString())))
+                .ReturnsAsync((CreateApplicationCacheItem)null);
+
+            // Act
+            ContactDetailsViewModel contactDetailsViewModel = await _orchestrator.GetContactDetailsViewModel(contactDetailsRequest);
+
+            // Assert
+            CollectionAssert.AreEqual(expectedAdditionalEmailAddresses, contactDetailsViewModel.AdditionalEmailAddresses);
+        }
+
+        [Test]
+        public async Task GetContactDetailsViewModel_Already_In_Cache_Result_Populated_Correctly()
+        {
+            // Arrange
+            ContactDetailsRequest contactDetailsRequest = _fixture.Create<ContactDetailsRequest>();
+
+            _currentDateTime = _fixture.Create<DateTime>();
+            _dateTimeService
+                .Setup(x => x.UtcNow)
+                .Returns(_currentDateTime);
+
+            GetContactDetailsResponse getContactDetailsResult = _fixture.Create<GetContactDetailsResponse>();
+
+            _opportunitiesService
+                .Setup(x => x.GetContactDetails(It.Is<long>(y => y == contactDetailsRequest.AccountId), It.Is<int>(y => y == contactDetailsRequest.PledgeId)))
+                .ReturnsAsync(getContactDetailsResult);
+
+            CreateApplicationCacheItem createApplicationCacheItem = _fixture.Create<CreateApplicationCacheItem>();
+
+            _cacheStorageService
+                .Setup(x => x.RetrieveFromCache<CreateApplicationCacheItem>(It.Is<string>(y => y == contactDetailsRequest.CacheKey.ToString())))
+                .ReturnsAsync(createApplicationCacheItem);
+
+            var expectedEmailAddress = createApplicationCacheItem.EmailAddresses.First();
+            var expectedAdditionalEmailAddresses = createApplicationCacheItem.EmailAddresses.Skip(1).Concat(new string[] { null, null });
+
+            // Act
+            ContactDetailsViewModel contactDetailsViewModel = await _orchestrator.GetContactDetailsViewModel(contactDetailsRequest);
+
+            // Assert
+            Assert.AreEqual(expectedEmailAddress, contactDetailsViewModel.EmailAddress);
+            CollectionAssert.AreEqual(expectedAdditionalEmailAddresses, contactDetailsViewModel.AdditionalEmailAddresses);
+        }
+
         private void SetupGetOpportunityViewModelServices()
         {
             _sectorReferenceDataItems = _fixture
@@ -296,7 +376,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var cacheItem = _fixture.Create<CreateApplicationCacheItem>();
             var opportunityDto = _fixture.Create<OpportunityDto>();
 
-            _cache.Setup(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString())).ReturnsAsync(cacheItem);
+            _cacheStorageService.Setup(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString())).ReturnsAsync(cacheItem);
             _encodingService.Setup(x => x.Decode(encodedPledgeId, EncodingType.PledgeId)).Returns(1);
             _opportunitiesService.Setup(x => x.GetOpportunity(1)).ReturnsAsync(opportunityDto);
 
@@ -314,7 +394,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             Assert.AreEqual(string.Join(", ", opportunityDto.Sectors.ToReferenceDataDescriptionList(_sectorReferenceDataItems)), result.OpportunitySummaryViewModel.SectorList);
             Assert.AreEqual(_currentDateTime.ToTaxYearDescription(), result.OpportunitySummaryViewModel.YearDescription);
 
-            _cache.Verify(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()), Times.Once);
+            _cacheStorageService.Verify(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()), Times.Once);
             _encodingService.Verify(x => x.Decode(encodedPledgeId, EncodingType.PledgeId), Times.Once);
             _opportunitiesService.Verify(x => x.GetOpportunity(1), Times.Once);
         }
@@ -330,7 +410,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var cacheItem = _fixture.Create<CreateApplicationCacheItem>();
             var applicationDetailsDto = _fixture.Create<ApplicationDetailsDto>();
 
-            _cache.Setup(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString())).ReturnsAsync(cacheItem);
+            _cacheStorageService.Setup(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString())).ReturnsAsync(cacheItem);
             _opportunitiesService.Setup(x => x.GetApplicationDetails(1)).ReturnsAsync(applicationDetailsDto);
 
             var result = await _orchestrator.GetApplicationViewModel(new ApplicationDetailsRequest { EncodedAccountId = encodedAccountId, CacheKey = cacheKey, EncodedPledgeId = encodedPledgeId, PledgeId = 1 });
@@ -356,7 +436,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             Assert.AreEqual(cacheItem.StartDate.Value.Year, result.Year);
             Assert.AreEqual(applicationDetailsDto.Standards.Count(), result.SelectStandardViewModel.Standards.Count());
 
-            _cache.Verify(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()), Times.Once);
+            _cacheStorageService.Verify(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()), Times.Once);
             _opportunitiesService.Verify(x => x.GetApplicationDetails(1), Times.Once);
         }
 
@@ -366,7 +446,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var applicationRequest = SetupForGetApplyViewModel();
 
             var orchestrator = new OpportunitiesOrchestrator(_dateTimeService.Object, _opportunitiesService.Object,
-                _tagService.Object, _userService.Object, _encodingService.Object, _cache.Object);
+                _tagService.Object, _userService.Object, _encodingService.Object, _cacheStorageService.Object);
 
             var result = await orchestrator.GetApplyViewModel(applicationRequest);
 
@@ -378,7 +458,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         {
             var applicationRequest = SetupForGetApplyViewModel(true);
             var orchestrator = new OpportunitiesOrchestrator(_dateTimeService.Object, _opportunitiesService.Object,
-                _tagService.Object, _userService.Object, _encodingService.Object, _cache.Object);
+                _tagService.Object, _userService.Object, _encodingService.Object, _cacheStorageService.Object);
 
             var result = await orchestrator.GetApplyViewModel(applicationRequest);
 
@@ -390,7 +470,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         {
             var applicationRequest = SetupForGetApplyViewModel(false);
             var orchestrator = new OpportunitiesOrchestrator(_dateTimeService.Object, _opportunitiesService.Object,
-                _tagService.Object, _userService.Object, _encodingService.Object, _cache.Object); 
+                _tagService.Object, _userService.Object, _encodingService.Object, _cacheStorageService.Object); 
 
             var result = await orchestrator.GetApplyViewModel(applicationRequest);
 
@@ -407,7 +487,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var cacheKey = _fixture.Create<Guid>();
             applicationRequest.CacheKey = cacheKey;
 
-            _cache.Setup(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString())).ReturnsAsync(cacheItem);
+            _cacheStorageService.Setup(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString())).ReturnsAsync(cacheItem);
             _opportunitiesService.Setup(x => x.GetOpportunity(applicationRequest.PledgeId)).ReturnsAsync(opportunity);
             _dateTimeService.SetupGet(x => x.UtcNow).Returns(DateTime.Now);
 
@@ -425,7 +505,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var cacheItem = _fixture.Create<CreateApplicationCacheItem>();
             var getSectorResponse = _fixture.Create<GetSectorResponse>();
 
-            _cache.Setup(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString())).ReturnsAsync(cacheItem);
+            _cacheStorageService.Setup(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString())).ReturnsAsync(cacheItem);
             _opportunitiesService.Setup(x => x.GetSector(1, 1)).ReturnsAsync(getSectorResponse);
 
             var result = await _orchestrator.GetSectorViewModel(new SectorRequest { EncodedAccountId = encodedAccountId, CacheKey = cacheKey, EncodedPledgeId = encodedPledgeId, PledgeId = 1, AccountId = 1 });
@@ -443,7 +523,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             Assert.AreEqual(string.Join(", ", getSectorResponse.Opportunity.Sectors.ToReferenceDataDescriptionList(_sectorReferenceDataItems)), result.OpportunitySummaryViewModel.SectorList);
             Assert.AreEqual(_currentDateTime.ToTaxYearDescription(), result.OpportunitySummaryViewModel.YearDescription);
 
-            _cache.Verify(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()), Times.Once);
+            _cacheStorageService.Verify(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()), Times.Once);
             _opportunitiesService.Verify(x => x.GetSector(1, 1), Times.Once);
         }
     }

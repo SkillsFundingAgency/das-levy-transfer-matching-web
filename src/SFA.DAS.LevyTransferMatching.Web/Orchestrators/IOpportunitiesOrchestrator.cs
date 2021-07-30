@@ -7,7 +7,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
     {
         Task<IndexViewModel> GetIndexViewModel();
         Task<DetailViewModel> GetDetailViewModel(int pledgeId);
-        Task<ApplyViewModel> GetApplyViewModel(ApplicationRequest request);
         Task<MoreDetailsViewModel> GetMoreDetailsViewModel(MoreDetailsRequest request);
         Task UpdateCacheItem(MoreDetailsPostRequest request);
         Task UpdateCacheItem(ApplicationDetailsPostRequest request);
@@ -16,5 +15,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         Task<ApplicationDetailsViewModel> GetApplicationViewModel(ApplicationDetailsRequest request);
         Task<ApplicationRequest> PostApplicationViewModel(ApplicationDetailsPostRequest request);
         Task<SectorViewModel> GetSectorViewModel(SectorRequest request);
+        Task<ApplyViewModel> GetApplyViewModel(ApplicationRequest request);
+        Task<ContactDetailsViewModel> GetContactDetailsViewModel(ContactDetailsRequest contactDetailsRequest);
+        Task UpdateCacheItem(ContactDetailsPostRequest contactDetailsPostRequest);
     }
 }

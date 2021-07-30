@@ -13,6 +13,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Cache
         public CreateApplicationCacheItem(Guid key)
         {
             Key = key;
+            EmailAddresses = new List<string>();
         }
 
         public Guid Key { get; set; }
@@ -25,5 +26,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Cache
         public bool? HasTrainingProvider { get; set; }
         public List<string> Sectors { get; set; }
         public string Postcode { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public List<string> EmailAddresses { get; set; }
+        public string BusinessWebsite { get; set; }
     }
 }
