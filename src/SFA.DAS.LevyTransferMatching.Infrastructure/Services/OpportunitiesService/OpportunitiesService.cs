@@ -18,14 +18,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
             _client = client;
         }
 
-        public async Task<List<OpportunityDto>> GetAllOpportunities()
-        {
-            var response = await _client.GetAsync($"pledges");
-            response.EnsureSuccessStatusCode();
-
-            return JsonConvert.DeserializeObject<List<OpportunityDto>>(await response.Content.ReadAsStringAsync());
-        }
-
         public async Task<OpportunityDto> GetOpportunity(int id)
         {
             OpportunityDto opportunity = null;
@@ -42,6 +34,13 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
             }
 
             return opportunity;
+        }
+
+        public async Task<GetIndexResponse> GetIndex()
+        {
+            var response = await _client.GetAsync($"opportunities");
+            response.EnsureSuccessStatusCode();
+            return JsonConvert.DeserializeObject<GetIndexResponse>(await response.Content.ReadAsStringAsync());
         }
 
         public async Task<ApplicationDetailsDto> GetApplicationDetails(long accountId, int id)
