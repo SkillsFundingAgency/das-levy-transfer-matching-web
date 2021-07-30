@@ -70,12 +70,35 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             });
         }
 
+
         [HideAccountNavigation(false)]
         [Authorize(Policy = PolicyNames.ManageAccount)]
         [Route("accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/apply")]
         public async Task<IActionResult> Apply(ApplicationRequest request)
         {
             return View(await _opportunitiesOrchestrator.GetApplyViewModel(request));
+        }
+
+        [Authorize(Policy = PolicyNames.ManageAccount)]
+        [HttpPost]
+        [Route("/accounts/{encodedAccountId}/opportunities/{EncodedPledgeId}/apply")]
+        public async Task<IActionResult> Apply(ApplyPostRequest request)
+        {
+            await _opportunitiesOrchestrator.SubmitApplication(request);
+
+            return RedirectToAction("Confirmation", new
+            {
+                request.EncodedAccountId,
+                request.EncodedPledgeId
+            });
+        }
+
+        [Authorize(Policy = PolicyNames.ManageAccount)]
+        [HideAccountNavigation(false)]
+        [Route("/accounts/{encodedAccountId}/opportunities/{EncodedPledgeId}/apply/confirmation")]
+        public async Task<IActionResult> Confirmation(ConfirmationRequest request)
+        {
+            return View(await _opportunitiesOrchestrator.GetConfirmationViewModel(request));
         }
 
         [HideAccountNavigation(false)]

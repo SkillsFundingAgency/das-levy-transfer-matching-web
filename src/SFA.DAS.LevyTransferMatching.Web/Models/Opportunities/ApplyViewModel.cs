@@ -1,6 +1,9 @@
 ﻿using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
+using System.Collections.Generic;
+using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 using SFA.DAS.LevyTransferMatching.Web.Models.Shared;
 using System.Collections.Generic;
+using SFA.DAS.LevyTransferMatching.Web.Extensions;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
 {
@@ -22,11 +25,19 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
 
         public OpportunitySummaryViewModel OpportunitySummaryViewModel { get; set; }
 
-        public bool IsApprenticeshipTrainingSectionComplete { get; set; }
-        public bool IsBusinessDetailsSectionComplete { get; set; }
-        public bool IsContactDetailsSectionComplete { get; set; }
+        public bool IsApprenticeshipTrainingSectionComplete => JobRole.IsComplete()
+                                                               && NumberOfApprentices.IsComplete()
+                                                               && StartBy.IsComplete()
+                                                               && HaveTrainingProvider.IsComplete();
+
+        public bool IsBusinessDetailsSectionComplete => Sectors.IsComplete()
+                                                        && Location.IsComplete();
+
+        public bool IsContactDetailsSectionComplete => ContactName.IsComplete()
+                                                       && EmailAddresses.IsComplete();
+        
         public bool IsComplete => IsApprenticeshipTrainingSectionComplete
                                   && IsBusinessDetailsSectionComplete
-                                  && IsContactDetailsSectionComplete;        
+                                  && IsContactDetailsSectionComplete;
     }   
 }
