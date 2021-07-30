@@ -35,8 +35,6 @@ resources:
 
 stages:
 - stage: Build
-  pool:
-    name: DAS - Continuous Integration
   jobs:
   - template: pipeline-templates/job/code-build.yml
     parameters:
