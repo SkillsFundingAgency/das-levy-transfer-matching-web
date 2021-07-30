@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using System;
@@ -18,6 +18,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities
         public ApplicationDetailsPostRequestAsyncValidator(IOpportunitiesService opportunitiesService)
         {
             RuleFor(request => request.SelectedStandardId)
+                .Cascade(CascadeMode.Stop)
                 .NotNull().WithMessage("Enter a valid job role")
                 .NotEmpty().WithMessage("Enter a valid job role")
             ;
