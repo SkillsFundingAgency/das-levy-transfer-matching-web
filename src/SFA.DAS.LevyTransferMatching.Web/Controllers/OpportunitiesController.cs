@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Authorization;
 using SFA.DAS.LevyTransferMatching.Web.Authentication;
 using SFA.DAS.LevyTransferMatching.Web.Validators;
 using FluentValidation.AspNetCore;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
