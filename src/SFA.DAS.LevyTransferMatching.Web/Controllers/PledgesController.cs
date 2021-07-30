@@ -9,7 +9,7 @@ using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
-    //[Authorize(Policy = PolicyNames.ManageAccount)]
+    [Authorize(Policy = PolicyNames.ManageAccount)]
     [Route("accounts/{encodedAccountId}/pledges")]
     public class PledgesController : Controller
     {
