@@ -30,7 +30,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
                 }
             }.AsEnumerable();
 
-            var result = sut.GetEffectiveFundingLine(DateTime.UtcNow);
+            var result = sut.GetEffectiveFundingLine(DateTime.UtcNow.Date);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(12, result.Duration);
@@ -60,7 +60,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
                 }
             }.AsEnumerable();
 
-            var result = sut.GetEffectiveFundingLine(DateTime.UtcNow);
+            var result = sut.GetEffectiveFundingLine(DateTime.UtcNow.Date);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(15, result.Duration);

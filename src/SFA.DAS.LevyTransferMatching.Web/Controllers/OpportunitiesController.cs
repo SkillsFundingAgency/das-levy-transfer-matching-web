@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using SFA.DAS.LevyTransferMatching.Web.Authentication;
 using SFA.DAS.LevyTransferMatching.Web.Validators;
 using FluentValidation.AspNetCore;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
@@ -213,6 +214,16 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
                 encodedPledgeId = contactDetailsPostRequest.EncodedPledgeId,
                 cacheKey = contactDetailsPostRequest.CacheKey
             });
+        }
+
+        [Authorize(Policy = PolicyNames.ManageAccount)]
+        [HttpGet]
+        [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/create/application-details/funding-estimate")]
+        public async Task<IActionResult> GetFundingEstimate(GetFundingEstimateRequest request)
+        {
+            var result = await _opportunitiesOrchestrator.GetFundingEstimate(request);
+
+            return Json(result);
         }
     }
 }

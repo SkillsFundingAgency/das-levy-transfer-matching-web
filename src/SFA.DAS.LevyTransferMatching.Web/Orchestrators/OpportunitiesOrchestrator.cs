@@ -16,7 +16,6 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
 using System.Collections.Generic;
 using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
-using FluentValidation;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
@@ -411,10 +410,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         public async Task<ApplicationRequest> PostApplicationViewModel(ApplicationDetailsPostRequest request)
         {
             var applicationDetails = await _opportunitiesService.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId);
-            
-            request.Amount = applicationDetails.Standards.Single()
-                            .ApprenticeshipFunding.GetEffectiveFundingLine(request.StartDate.Value)
-                            .CalcFundingForDate(request.NumberOfApprentices, request.StartDate.Value);
+
+            request.Amount = (await GetFundingEstimate(new GetFundingEstimateRequest
+            {
+                StartDate = request.StartDate.Value,
+                SelectedStandardId = request.SelectedStandardId,
+                NumberOfApprentices = request.NumberOfApprentices.Value,
+                PledgeId = request.PledgeId
+            }, applicationDetails)).Amount;
 
             request.SelectedStandardTitle = applicationDetails.Standards
                     .FirstOrDefault(standard => standard.StandardUId == request.SelectedStandardId)?.Title;
@@ -428,5 +431,21 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 CacheKey = request.CacheKey
             };
         }
+
+        public async Task<GetFundingEstimateViewModel> GetFundingEstimate(GetFundingEstimateRequest request, ApplicationDetailsDto applicationDetails = null)
+        {
+            applicationDetails ??= await _opportunitiesService.GetApplicationDetails(request.PledgeId, request.SelectedStandardId);
+
+            var amount = applicationDetails.Standards.Single()
+                .ApprenticeshipFunding.GetEffectiveFundingLine(request.StartDate)
+                .CalcFundingForDate(request.NumberOfApprentices, request.StartDate);
+
+            return new GetFundingEstimateViewModel()
+            {
+                Amount = amount,
+                HasEnoughFunding = applicationDetails.Opportunity.RemainingAmount >= amount
+            };
+        }
+
     }
 }
