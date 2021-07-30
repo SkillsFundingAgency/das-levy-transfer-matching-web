@@ -30,5 +30,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
         public bool? HasTrainingProvider { get; set; }
         public string SelectedStandardId { get; set; }
         public string SelectedStandardTitle { get; set; }
+        public double Amount { get; set; }
     }
 }

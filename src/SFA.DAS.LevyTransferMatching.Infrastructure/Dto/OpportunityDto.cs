@@ -12,5 +12,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Dto
         public IEnumerable<string> Locations { get; set; }
         public int Amount { get; set; }
         public bool IsNamePublic { get; set; }
+        public int RemainingAmount => Amount; //TODO: Will be replaced by Chris' RemainingAmount in TM-43
     }
 }

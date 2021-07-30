@@ -3,21 +3,23 @@ using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
 
+[assembly: InternalsVisibleTo("SFA.DAS.LevyTransferMatching.Web.UnitTests")]
 namespace SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities
 {
-    public class ApplicationDetailsPostRequestValidator : AbstractValidator<ApplicationDetailsPostRequest>
+    internal class ApplicationDetailsPostRequestAsyncValidator : AsyncValidator<ApplicationDetailsPostRequest>
     {
         private const int MinApprentices = 1;
         private const string NumApprenticesError = "There is not enough funding to support this many apprentices";
         private const string StartDateError = "Start date must be between {0} and {1}";        
 
-        public ApplicationDetailsPostRequestValidator(IOpportunitiesService opportunitiesService)
+        public ApplicationDetailsPostRequestAsyncValidator(IOpportunitiesService opportunitiesService)
         {
             RuleFor(request => request.SelectedStandardId)
-                .NotNull()
-                .WithMessage("Enter a valid job role")
+                .NotNull().WithMessage("Enter a valid job role")
+                .NotEmpty().WithMessage("Enter a valid job role")
             ;
 
             RuleFor(request => request.StartDate)
@@ -47,13 +49,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities
                         return false;
                     }
 
-                    var funding = selectedStandard.ApprenticeshipFunding
-                        .FirstOrDefault(c =>
-                            c.EffectiveFrom <= model.StartDate
-                            && (c.EffectiveTo.IsNull() || c.EffectiveTo >= model.StartDate)) ??
-                                  selectedStandard.ApprenticeshipFunding.First(c => c.EffectiveTo.IsNull());
-
-                    return result.Opportunity.Amount >= CurrentYearFunding(numberOfApprentices.Value, funding.MaxEmployerLevyCap, funding.Duration, model.StartDate.Value);
+                    return result.Opportunity.RemainingAmount >= selectedStandard.ApprenticeshipFunding
+                            .GetEffectiveFundingLine(model.StartDate.Value)
+                            .CalcFundingForDate(numberOfApprentices, model.StartDate.Value);
                 })
                 .WithMessage(NumApprenticesError)
             ;
@@ -63,9 +61,5 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities
                 .WithMessage("You must select whether or not you have found a training provider")
             ;
         }
-
-        private static int MaxFunding(int? numberOfApprentices, int maxEmployerLevyCap) => (numberOfApprentices ?? 0) * maxEmployerLevyCap;
-
-        private static int CurrentYearFunding(int? numberOfApprentices, int maxEmployerLevyCap, int duration, DateTime startDate) => (MaxFunding(numberOfApprentices, maxEmployerLevyCap) / duration) * startDate.MonthsTillFinancialYearEnd();
     }
 }

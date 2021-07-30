@@ -10,7 +10,10 @@ using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
 using System.Collections.Generic;
+using FluentValidation.Results;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
+using SFA.DAS.LevyTransferMatching.Web.Validators;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
 {
@@ -261,6 +264,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         public async Task POST_ApplicationDetails_Redirects_To_Apply()
         {
             // Arrange
+            var selectedStandardId = _fixture.Create<string>();
             var encodedPledgeId = _fixture.Create<string>();
             var encodedAccountId = _fixture.Create<string>();
             var cacheKey = _fixture.Create<Guid>();
@@ -279,21 +283,47 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
                 Year = DateTime.Now.Year,
                 NumberOfApprentices = 1,
                 PledgeId = 1,
-                SelectedStandardId = "ST_001",
+                SelectedStandardId = selectedStandardId,
                 SelectedStandardTitle = "Test Standard Title"
             };
+
+            var opportunitiesService = new Mock<IOpportunitiesService>();
+            opportunitiesService.Setup(x => x.GetApplicationDetails(1, selectedStandardId)).ReturnsAsync(new ApplicationDetailsDto()
+            {
+                Opportunity = new OpportunityDto()
+                {
+                    Amount = 100_000
+                },
+                Standards = new List<StandardsListItemDto>()
+                {
+                    new StandardsListItemDto()
+                    {
+                        ApprenticeshipFunding = new List<ApprenticeshipFundingDto>()
+                        {
+                            new ApprenticeshipFundingDto()
+                            {
+                                Duration = 12,
+                                MaxEmployerLevyCap = 9_000,
+                                EffectiveFrom = new DateTime(DateTime.UtcNow.AddYears(-1).Year, DateTime.UtcNow.Month, 1),
+                                EffectiveTo = null
+                            }
+                        }
+                    }
+                }
+            });
+
 
             _orchestrator.Setup(x => x.PostApplicationViewModel(request)).ReturnsAsync(applicationRequest);
 
             // Assert
-            var redirectToActionResult = (await _opportunitiesController.ApplicationDetails(request)) as RedirectToActionResult;
+            var redirectToActionResult = (await _opportunitiesController.ApplicationDetails(new ApplicationDetailsPostRequestAsyncValidator(opportunitiesService.Object), request)) as RedirectToActionResult;
 
             // Assert
             Assert.IsNotNull(redirectToActionResult);
-            Assert.AreEqual(redirectToActionResult.ActionName, nameof(OpportunitiesController.Apply));
-            Assert.AreEqual(redirectToActionResult.RouteValues["EncodedPledgeId"], encodedPledgeId);
-            Assert.AreEqual(redirectToActionResult.RouteValues["EncodedAccountId"], encodedAccountId);
-            Assert.AreEqual(redirectToActionResult.RouteValues["CacheKey"], cacheKey);
+            Assert.AreEqual(nameof(OpportunitiesController.Apply), redirectToActionResult.ActionName);
+            Assert.AreEqual(encodedPledgeId, redirectToActionResult.RouteValues["EncodedPledgeId"]);
+            Assert.AreEqual(encodedAccountId, redirectToActionResult.RouteValues["EncodedAccountId"]);
+            Assert.AreEqual(cacheKey, redirectToActionResult.RouteValues["CacheKey"]);
         }
 
         [Test]

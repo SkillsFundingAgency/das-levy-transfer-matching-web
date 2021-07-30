@@ -343,6 +343,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             cacheItem.NumberOfApprentices = request.NumberOfApprentices.Value;
             cacheItem.StartDate = request.StartDate;
             cacheItem.HasTrainingProvider = request.HasTrainingProvider.Value;
+            cacheItem.Amount = request.Amount;
 
             await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
         }
@@ -409,10 +410,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         public async Task<ApplicationRequest> PostApplicationViewModel(ApplicationDetailsPostRequest request)
         {
-            var applicationDetails = await _opportunitiesService.GetApplicationDetails(request.AccountId, request.PledgeId);
+            var applicationDetails = await _opportunitiesService.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId);
+            
+            request.Amount = applicationDetails.Standards.Single()
+                            .ApprenticeshipFunding.GetEffectiveFundingLine(request.StartDate.Value)
+                            .CalcFundingForDate(request.NumberOfApprentices, request.StartDate.Value);
 
             request.SelectedStandardTitle = applicationDetails.Standards
-                .FirstOrDefault(standard => standard.StandardUId == request.SelectedStandardId)?.Title;
+                    .FirstOrDefault(standard => standard.StandardUId == request.SelectedStandardId)?.Title;
 
             await UpdateCacheItem(request);
 

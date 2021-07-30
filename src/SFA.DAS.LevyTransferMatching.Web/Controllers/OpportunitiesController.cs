@@ -134,8 +134,21 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Authorize(Policy = PolicyNames.ManageAccount)]
         [HttpPost]
         [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/create/application-details")]
-        public async Task<IActionResult> ApplicationDetails(ApplicationDetailsPostRequest request)
+        public async Task<IActionResult> ApplicationDetails([FromServices] AsyncValidator<ApplicationDetailsPostRequest> validator, ApplicationDetailsPostRequest request)
         {
+            var validationResult = await validator.ValidateAsync(request);
+            if (!validationResult.IsValid)
+            {
+                validationResult.AddToModelState(ModelState, string.Empty);
+
+                return RedirectToAction("ApplicationDetails", new ApplicationDetailsRequest()
+                {
+                    EncodedAccountId = request.EncodedAccountId,
+                    EncodedPledgeId = request.EncodedPledgeId,
+                    CacheKey = request.CacheKey
+                });
+            }
+
             return RedirectToAction("Apply", await _opportunitiesOrchestrator.PostApplicationViewModel(request));
         }
 

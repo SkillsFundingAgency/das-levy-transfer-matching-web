@@ -408,7 +408,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var applicationDetailsDto = _fixture.Create<ApplicationDetailsDto>();
 
             _cacheStorageService.Setup(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString())).ReturnsAsync(cacheItem);
-            _opportunitiesService.Setup(x => x.GetApplicationDetails(1,1)).ReturnsAsync(applicationDetailsDto);
+            _opportunitiesService.Setup(x => x.GetApplicationDetails(1,1, default)).ReturnsAsync(applicationDetailsDto);
 
             var result = await _orchestrator.GetApplicationViewModel(new ApplicationDetailsRequest { EncodedAccountId = encodedAccountId, CacheKey = cacheKey, EncodedPledgeId = encodedPledgeId, PledgeId = 1, AccountId = 1  });
 
@@ -434,7 +434,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             Assert.AreEqual(applicationDetailsDto.Standards.Count(), result.SelectStandardViewModel.Standards.Count());
 
             _cacheStorageService.Verify(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()), Times.Once);
-            _opportunitiesService.Verify(x => x.GetApplicationDetails(1, 1), Times.Once);
+            _opportunitiesService.Verify(x => x.GetApplicationDetails(1, 1, default), Times.Once);
         }
 
         [Test]
