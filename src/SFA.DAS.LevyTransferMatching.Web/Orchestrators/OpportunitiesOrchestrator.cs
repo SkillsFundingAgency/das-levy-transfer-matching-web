@@ -295,16 +295,30 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         public async Task<MoreDetailsViewModel> GetMoreDetailsViewModel(MoreDetailsRequest request)
         {
-            var application = await RetrieveCacheItem(request.CacheKey);
-            var opportunityDto = await _opportunitiesService.GetOpportunity((int)_encodingService.Decode(request.EncodedPledgeId, EncodingType.PledgeId));
+            var applicationTask = RetrieveCacheItem(request.CacheKey);
+            var moreDetailsResponseTask = _opportunitiesService.GetMoreDetails(request.AccountId, request.PledgeId);
+
+            await Task.WhenAll(applicationTask, moreDetailsResponseTask);
 
             return new MoreDetailsViewModel()
             {
                 CacheKey = request.CacheKey,
                 EncodedAccountId = request.EncodedAccountId,
                 EncodedPledgeId = request.EncodedPledgeId,
-                Details = application.Details,
-                OpportunitySummaryViewModel = await GetOpportunitySummaryViewModel(opportunityDto, request.EncodedPledgeId),
+                Details = applicationTask.Result.Details,
+                OpportunitySummaryViewModel = GetOpportunitySummaryViewModel
+                    (
+                        moreDetailsResponseTask.Result.Opportunity.Sectors,
+                        moreDetailsResponseTask.Result.Opportunity.JobRoles,
+                        moreDetailsResponseTask.Result.Opportunity.Levels,
+                        moreDetailsResponseTask.Result.Sectors,
+                        moreDetailsResponseTask.Result.JobRoles,
+                        moreDetailsResponseTask.Result.Levels,
+                        moreDetailsResponseTask.Result.Opportunity.Amount,
+                        moreDetailsResponseTask.Result.Opportunity.IsNamePublic,
+                        moreDetailsResponseTask.Result.Opportunity.DasAccountName,
+                        request.EncodedPledgeId
+                    )
             };
         }
 
