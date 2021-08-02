@@ -222,7 +222,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                         applyResponseTask.Result.Opportunity.Amount,
                         applyResponseTask.Result.Opportunity.IsNamePublic,
                         applyResponseTask.Result.Opportunity.DasAccountName,
-                        _encodingService.Encode(applyResponseTask.Result.Opportunity.Id, EncodingType.PledgeId)
+                        request.EncodedPledgeId
                     ),
                 JobRole = applicationTask.Result.JobRole ?? "-",
                 NumberOfApprentices = applicationTask.Result.NumberOfApprentices.HasValue ? applicationTask.Result.NumberOfApprentices.Value.ToString() : "-",
