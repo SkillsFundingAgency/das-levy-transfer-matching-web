@@ -44,6 +44,13 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
             return opportunity;
         }
 
+        public async Task<GetApplyResponse> GetApply(long accountId, int opportunityId)
+        {
+            var response = await _client.GetAsync($"accounts/{accountId}/opportunities/{opportunityId}/apply");
+            response.EnsureSuccessStatusCode();
+            return JsonConvert.DeserializeObject<GetApplyResponse>(await response.Content.ReadAsStringAsync());
+        }
+
         public async Task<ApplicationDetailsDto> GetApplicationDetails(long accountId, int id)
         {
             ApplicationDetailsDto applicationDetailsResponse = null;
