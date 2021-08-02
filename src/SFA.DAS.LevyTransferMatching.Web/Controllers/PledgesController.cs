@@ -23,7 +23,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Route("")]
         public async Task<IActionResult> Pledges(PledgesRequest request)
         {
-            var viewModel = await _orchestrator.GetMyPledgesViewModel(request);
+            var viewModel = await _orchestrator.GetPledgesViewModel(request);
             return View(viewModel);
         }
 

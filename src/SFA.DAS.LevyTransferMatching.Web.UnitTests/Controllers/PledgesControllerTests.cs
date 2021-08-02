@@ -42,19 +42,19 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         }
 
         [Test]
-        public async Task GET_MyPledges_Returns_Expected_View_With_Expected_ViewModel()
+        public async Task GET_Pledges_Returns_Expected_View_With_Expected_ViewModel()
         {
             // Arrange
             var request = _fixture.Create<PledgesRequest>();
-            _orchestrator.Setup(x => x.GetMyPledgesViewModel(request)).ReturnsAsync(() => new PledgesViewModel());
+            _orchestrator.Setup(x => x.GetPledgesViewModel(request)).ReturnsAsync(() => new PledgesViewModel());
 
             // Act
             var viewResult = await _pledgesController.Pledges(request) as ViewResult;
-            var myPledgesViewModel = viewResult?.Model as PledgesViewModel;
+            var pledgesViewModel = viewResult?.Model as PledgesViewModel;
 
             // Assert
             Assert.NotNull(viewResult);
-            Assert.NotNull(myPledgesViewModel);
+            Assert.NotNull(pledgesViewModel);
         }
 
         [Test]

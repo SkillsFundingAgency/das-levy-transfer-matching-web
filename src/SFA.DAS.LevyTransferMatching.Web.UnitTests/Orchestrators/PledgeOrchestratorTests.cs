@@ -33,7 +33,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private GetSectorResponse _sectorResponse;
         private GetJobRoleResponse _jobRoleResponse;
         private GetLevelResponse _levelResponse;
-        private GetPledgesResponse _myPledgesResponse;
+        private GetPledgesResponse _pledgesResponse;
         private string _encodedAccountId;
         private Guid _cacheKey;
         private readonly long _accountId = 1;
@@ -59,11 +59,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _sectorResponse = new GetSectorResponse {Sectors = _sectors};
             _levelResponse = new GetLevelResponse {Levels = _levels};
             _jobRoleResponse = new GetJobRoleResponse {JobRoles = _jobRoles};
-            _myPledgesResponse = _fixture.Create<GetPledgesResponse>();
+            _pledgesResponse = _fixture.Create<GetPledgesResponse>();
            
             _encodedPledgeId = _fixture.Create<string>();
 
-            _pledgeService.Setup(x => x.GetPledges(_accountId)).ReturnsAsync(_myPledgesResponse);
+            _pledgeService.Setup(x => x.GetPledges(_accountId)).ReturnsAsync(_pledgesResponse);
             _pledgeService.Setup(x => x.GetCreate(_accountId)).ReturnsAsync(() => new GetCreateResponse
             {
                 Sectors = _sectors,
@@ -94,16 +94,16 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         }
 
         [Test]
-        public async Task GetMyPledgesViewModel_EncodedId_Is_Correct()
+        public async Task GetPledgesViewModel_EncodedId_Is_Correct()
         {
-            var result = await _orchestrator.GetMyPledgesViewModel(new PledgesRequest { EncodedAccountId = _encodedAccountId, AccountId = _accountId });
+            var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest { EncodedAccountId = _encodedAccountId, AccountId = _accountId });
             Assert.AreEqual(_encodedAccountId, result.EncodedAccountId);
         }
 
         [Test]
-        public async Task GetMyPledgesViewModel_Pledges_Is_Populated()
+        public async Task GetPledgesViewModel_Pledges_Is_Populated()
         {
-            var result = await _orchestrator.GetMyPledgesViewModel(new PledgesRequest { EncodedAccountId = _encodedAccountId, AccountId = _accountId });
+            var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest { EncodedAccountId = _encodedAccountId, AccountId = _accountId });
             Assert.NotNull(result.Pledges);
         }
 
