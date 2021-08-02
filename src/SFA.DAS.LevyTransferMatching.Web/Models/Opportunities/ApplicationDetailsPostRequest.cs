@@ -8,6 +8,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
         public string EncodedPledgeId { get; set; }
         [AutoDecode("EncodedPledgeId", Encoding.EncodingType.PledgeId)]
         public int PledgeId { get; set; }
+
+        [AutoDecode("EncodedAccountId", Encoding.EncodingType.AccountId)]
+        public int AccountId { get; set; }
+
         public int? NumberOfApprentices { get; set; }
         public DateTime? StartDate
         {
