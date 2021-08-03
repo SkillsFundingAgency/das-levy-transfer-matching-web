@@ -433,7 +433,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         public async Task<GetFundingEstimateViewModel> GetFundingEstimate(GetFundingEstimateRequest request, ApplicationDetailsDto applicationDetails = null)
         {
-            applicationDetails ??= await _opportunitiesService.GetApplicationDetails(request.PledgeId, request.SelectedStandardId);
+            applicationDetails ??= await _opportunitiesService.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId);
 
             var amount = applicationDetails.Standards.Single()
                 .ApprenticeshipFunding.GetEffectiveFundingLine(request.StartDate)

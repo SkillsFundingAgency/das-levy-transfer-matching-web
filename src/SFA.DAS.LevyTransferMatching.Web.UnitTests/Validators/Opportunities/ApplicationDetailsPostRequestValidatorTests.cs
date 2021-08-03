@@ -29,7 +29,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
         public async Task Validator_Returns_True_For_All_Valid_Input()
         {
             var request = CreateApplicationDetailsPostRequest();
-            _service.Setup(x => x.GetApplicationDetails(request.PledgeId, request.SelectedStandardId)).ReturnsAsync(CreateApplicationDetailsDto());
+            _service.Setup(x => x.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId)).ReturnsAsync(CreateApplicationDetailsDto());
 
             var result = (await _validator.ValidateAsync(request));
 
@@ -37,11 +37,26 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
         }
 
         [Test]
+        public async Task Validator_Returns_False_When_There_Are_Insufficient_Funds()
+        {
+            var request = CreateApplicationDetailsPostRequest();
+            var applicationDetailsDto = CreateApplicationDetailsDto();
+            applicationDetailsDto.Opportunity.RemainingAmount = 0;
+
+            _service.Setup(x => x.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId)).ReturnsAsync(applicationDetailsDto);
+
+            var result = (await _validator.ValidateAsync(request));
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual("There is not enough funding to support this many apprentices", result.Errors.First().ErrorMessage);
+        }
+
+        [Test]
         public async Task Validator_Returns_False_For_Null_NumberOfApprentices()
         {
             var request = CreateApplicationDetailsPostRequest();
             request.NumberOfApprentices = null;
-            _service.Setup(x => x.GetApplicationDetails(request.PledgeId, request.SelectedStandardId)).ReturnsAsync(CreateApplicationDetailsDto());
+            _service.Setup(x => x.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId)).ReturnsAsync(CreateApplicationDetailsDto());
 
             var result = (await _validator.ValidateAsync(request));
 
@@ -54,7 +69,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
         {
             var request = CreateApplicationDetailsPostRequest();
             request.NumberOfApprentices = 0;
-            _service.Setup(x => x.GetApplicationDetails(request.PledgeId, request.SelectedStandardId)).ReturnsAsync(CreateApplicationDetailsDto());
+            _service.Setup(x => x.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId)).ReturnsAsync(CreateApplicationDetailsDto());
 
             var result = (await _validator.ValidateAsync(request));
 
@@ -67,7 +82,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
         {
             var request = CreateApplicationDetailsPostRequest();
             request.NumberOfApprentices = -1;
-            _service.Setup(x => x.GetApplicationDetails(request.PledgeId, request.SelectedStandardId)).ReturnsAsync(CreateApplicationDetailsDto());
+            _service.Setup(x => x.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId)).ReturnsAsync(CreateApplicationDetailsDto());
 
             var result = (await _validator.ValidateAsync(request));
 
@@ -80,7 +95,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
         {
             var request = CreateApplicationDetailsPostRequest();
             request.SelectedStandardId = null;
-            _service.Setup(x => x.GetApplicationDetails(request.PledgeId, request.SelectedStandardId)).ReturnsAsync(CreateApplicationDetailsDto());
+            _service.Setup(x => x.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId)).ReturnsAsync(CreateApplicationDetailsDto());
 
             var result = (await _validator.ValidateAsync(request));
 
@@ -93,7 +108,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
         {
             var request = CreateApplicationDetailsPostRequest();
             request.SelectedStandardId = string.Empty;
-            _service.Setup(x => x.GetApplicationDetails(request.PledgeId, request.SelectedStandardId)).ReturnsAsync(CreateApplicationDetailsDto());
+            _service.Setup(x => x.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId)).ReturnsAsync(CreateApplicationDetailsDto());
 
             var result = (await _validator.ValidateAsync(request));
 
@@ -107,7 +122,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
             var request = CreateApplicationDetailsPostRequest();
             request.Month = null;
             request.Year = null;
-            _service.Setup(x => x.GetApplicationDetails(request.PledgeId, request.SelectedStandardId)).ReturnsAsync(CreateApplicationDetailsDto());
+            _service.Setup(x => x.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId)).ReturnsAsync(CreateApplicationDetailsDto());
 
             var result = (await _validator.ValidateAsync(request));
 
@@ -119,7 +134,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
         {
             var request = CreateApplicationDetailsPostRequest();
             request.HasTrainingProvider = null;
-            _service.Setup(x => x.GetApplicationDetails(request.PledgeId, request.SelectedStandardId)).ReturnsAsync(CreateApplicationDetailsDto());
+            _service.Setup(x => x.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId)).ReturnsAsync(CreateApplicationDetailsDto());
 
             var result = (await _validator.ValidateAsync(request));
 
@@ -139,14 +154,16 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
                 CacheKey = _fixture.Create<Guid>(),
                 EncodedAccountId = _fixture.Create<string>(),
                 EncodedPledgeId = _fixture.Create<string>(),
-                SelectedStandardTitle = _fixture.Create<string>()
+                SelectedStandardTitle = _fixture.Create<string>(),
+                AccountId = 1
             };
 
         private ApplicationDetailsDto CreateApplicationDetailsDto() => new ApplicationDetailsDto()
         {
             Opportunity = new OpportunityDto()
             {
-                Amount = 100_000
+                Amount = 100_000,
+                RemainingAmount = 100_000
             },
             Standards = new List<StandardsListItemDto>()
             {

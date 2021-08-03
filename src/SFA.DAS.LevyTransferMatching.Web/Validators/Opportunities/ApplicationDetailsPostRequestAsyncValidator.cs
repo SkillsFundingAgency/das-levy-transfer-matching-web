@@ -41,7 +41,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities
                         return false;
                     }
 
-                    var result = await opportunitiesService.GetApplicationDetails(model.PledgeId, model.SelectedStandardId);
+                    var result = await opportunitiesService.GetApplicationDetails(model.AccountId, model.PledgeId, model.SelectedStandardId);
                     var selectedStandard = result.Standards.First();
 
                     if (selectedStandard.ApprenticeshipFunding == null || !selectedStandard.ApprenticeshipFunding.Any())

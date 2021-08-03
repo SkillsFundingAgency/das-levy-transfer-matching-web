@@ -11,5 +11,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
         public string SelectedStandardId { get; set; }
         public DateTime StartDate { get; set; }
         public int NumberOfApprentices { get; set; }
+
+        [AutoDecode("EncodedAccountId", Encoding.EncodingType.AccountId)]
+        public int AccountId { get; set; }
     }
 }
