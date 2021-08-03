@@ -552,7 +552,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
         private ApplicationRequest SetupForGetApplyViewModel(bool? hasTraininProvider = null)
         {
-            var opportunity = _fixture.Create<OpportunityDto>();
+            var getApplyResponse = _fixture.Create<GetApplyResponse>();
             var applicationRequest = _fixture.Create<ApplicationRequest>();
             var cacheItem = _fixture.Create<CreateApplicationCacheItem>();
             cacheItem.HasTrainingProvider = hasTraininProvider;
@@ -561,7 +561,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             applicationRequest.CacheKey = cacheKey;
 
             _cacheStorageService.Setup(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString())).ReturnsAsync(cacheItem);
-            _opportunitiesService.Setup(x => x.GetOpportunity(applicationRequest.PledgeId)).ReturnsAsync(opportunity);
+            _opportunitiesService.Setup(x => x.GetApply(applicationRequest.AccountId, applicationRequest.PledgeId)).ReturnsAsync(getApplyResponse);
             _dateTimeService.SetupGet(x => x.UtcNow).Returns(DateTime.Now);
 
             return applicationRequest;
