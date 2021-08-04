@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.LevyTransferMatching.Infrastructure.Dto
+﻿using System.Collections.Generic;
+
+namespace SFA.DAS.LevyTransferMatching.Infrastructure.Dto
 {
     public class StandardsListItemDto
     {
@@ -6,5 +8,7 @@
         public int LarsCode { get; set; }
         public string Title { get; set; }
         public int Level { get; set; }
+        public List<ApprenticeshipFundingDto> ApprenticeshipFunding { get; set; }
+
     }
 }
