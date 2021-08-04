@@ -11,6 +11,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
         public static void AddAsyncValidators(this IServiceCollection services)
         {
             services.AddTransient<AsyncValidator<SectorPostRequest>>((s) => new SectorPostRequestAsyncValidator(s.GetService<IOpportunitiesService>()));
+            services.AddTransient<AsyncValidator<ApplicationDetailsPostRequest>>((s) => new ApplicationDetailsPostRequestAsyncValidator(s.GetService<IOpportunitiesService>()));
         }
     }
 }
