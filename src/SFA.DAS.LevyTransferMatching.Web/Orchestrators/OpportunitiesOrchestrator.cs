@@ -10,11 +10,11 @@ using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.LevyTransferMatching.Web.Models.Shared;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
+using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
 using System.Collections.Generic;
-using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
-using FluentValidation;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
@@ -108,6 +108,43 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 .First();
 
             return firstEncodedAccountId;
+        }
+
+        public async Task<ConfirmationViewModel> GetConfirmationViewModel(ConfirmationRequest request)
+        {
+            var result = await _opportunitiesService.GetConfirmation(request.AccountId, request.PledgeId);
+            return new ConfirmationViewModel
+            {
+                AccountName = result.AccountName,
+                IsNamePublic = result.IsNamePublic,
+                Reference = _encodingService.Encode(request.PledgeId, EncodingType.PledgeId),
+                EncodedAccountId = request.EncodedAccountId
+            };
+        }
+
+        public async Task SubmitApplication(ApplyPostRequest request)
+        {
+            var cacheItem = await RetrieveCacheItem(request.CacheKey);
+
+            var applyRequest = new Infrastructure.Services.OpportunitiesService.Types.ApplyRequest
+            {
+                EncodedAccountId = request.EncodedAccountId,
+                Details = cacheItem.Details ?? string.Empty,
+                StandardId = cacheItem.StandardId,
+                NumberOfApprentices = cacheItem.NumberOfApprentices.Value,
+                StartDate = cacheItem.StartDate.Value,
+                HasTrainingProvider = cacheItem.HasTrainingProvider.Value,
+                Sectors = cacheItem.Sectors,
+                Postcode = cacheItem.Postcode ?? string.Empty,
+                FirstName = cacheItem.FirstName ?? string.Empty,
+                LastName = cacheItem.LastName ?? string.Empty,
+                EmailAddresses = cacheItem.EmailAddresses,
+                BusinessWebsite = cacheItem.BusinessWebsite ?? string.Empty
+            };
+
+            await _opportunitiesService.PostApplication(request.AccountId, request.PledgeId, applyRequest);
+
+            await _cacheStorageService.DeleteFromCache(request.CacheKey.ToString());
         }
 
         [Obsolete("To eventually be replaced with the other method of the same name - please use other overload.")]
@@ -302,7 +339,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
         }
 
-        public async Task UpdateCacheItem(ApplicationDetailsPostRequest request)
+        public async Task UpdateCacheItem(ApplicationDetailsPostRequest request, int amount)
         {
             var cacheItem = await RetrieveCacheItem(request.CacheKey);
 
@@ -311,6 +348,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             cacheItem.NumberOfApprentices = request.NumberOfApprentices.Value;
             cacheItem.StartDate = request.StartDate;
             cacheItem.HasTrainingProvider = request.HasTrainingProvider.Value;
+            cacheItem.Amount = amount;
 
             await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
         }
@@ -340,13 +378,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         public async Task<ApplicationDetailsViewModel> GetApplicationViewModel(ApplicationDetailsRequest request)
         {
-            var applicationDetailsTask = _opportunitiesService.GetApplicationDetails(request.PledgeId);
+            var applicationDetailsTask = _opportunitiesService.GetApplicationDetails(request.AccountId, request.PledgeId);
             var applicationTask = RetrieveCacheItem(request.CacheKey);
-            var sectorReferenceDataItemsTask = _tagService.GetSectors();
-            var jobRoleReferenceDataItemsTask = _tagService.GetJobRoles();
-            var levelReferenceDataItemsTask = _tagService.GetLevels();
 
-            await Task.WhenAll(applicationDetailsTask, applicationTask, sectorReferenceDataItemsTask, jobRoleReferenceDataItemsTask, levelReferenceDataItemsTask);
+            await Task.WhenAll(applicationDetailsTask, applicationTask);
 
             var application = applicationTask.Result;
             var applicationDetails = applicationDetailsTask.Result;
@@ -380,12 +415,20 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         public async Task<ApplicationRequest> PostApplicationViewModel(ApplicationDetailsPostRequest request)
         {
-            var applicationDetails = await _opportunitiesService.GetApplicationDetails(request.PledgeId);
+            var applicationDetails = await _opportunitiesService.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId);
+
+            var amount = (await GetFundingEstimate(new GetFundingEstimateRequest
+            {
+                StartDate = request.StartDate.Value,
+                SelectedStandardId = request.SelectedStandardId,
+                NumberOfApprentices = request.NumberOfApprentices.Value,
+                PledgeId = request.PledgeId
+            }, applicationDetails)).Amount;
 
             request.SelectedStandardTitle = applicationDetails.Standards
-                .FirstOrDefault(standard => standard.StandardUId == request.SelectedStandardId)?.Title;
+                    .FirstOrDefault(standard => standard.StandardUId == request.SelectedStandardId)?.Title;
 
-            await UpdateCacheItem(request);
+            await UpdateCacheItem(request, amount);
 
             return new ApplicationRequest
             {
@@ -394,5 +437,21 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 CacheKey = request.CacheKey
             };
         }
+
+        public async Task<GetFundingEstimateViewModel> GetFundingEstimate(GetFundingEstimateRequest request, ApplicationDetailsDto applicationDetails = null)
+        {
+            applicationDetails ??= await _opportunitiesService.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId);
+
+            var amount = applicationDetails.Standards.Single()
+                .ApprenticeshipFunding.GetEffectiveFundingLine(request.StartDate)
+                .CalcFundingForDate(request.NumberOfApprentices, request.StartDate);
+
+            return new GetFundingEstimateViewModel()
+            {
+                Amount = amount,
+                HasEnoughFunding = applicationDetails.Opportunity.RemainingAmount >= amount
+            };
+        }
+
     }
 }

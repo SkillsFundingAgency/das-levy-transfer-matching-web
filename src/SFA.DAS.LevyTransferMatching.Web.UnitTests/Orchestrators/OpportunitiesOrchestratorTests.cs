@@ -16,10 +16,13 @@ using System.Data;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
+using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
 using FluentValidation;
-using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
+using ApplyRequest = SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types.ApplyRequest;
+
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 {
@@ -405,9 +408,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var applicationDetailsDto = _fixture.Create<ApplicationDetailsDto>();
 
             _cacheStorageService.Setup(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString())).ReturnsAsync(cacheItem);
-            _opportunitiesService.Setup(x => x.GetApplicationDetails(1)).ReturnsAsync(applicationDetailsDto);
+            _opportunitiesService.Setup(x => x.GetApplicationDetails(1,1, default)).ReturnsAsync(applicationDetailsDto);
 
-            var result = await _orchestrator.GetApplicationViewModel(new ApplicationDetailsRequest { EncodedAccountId = encodedAccountId, CacheKey = cacheKey, EncodedPledgeId = encodedPledgeId, PledgeId = 1 });
+            var result = await _orchestrator.GetApplicationViewModel(new ApplicationDetailsRequest { EncodedAccountId = encodedAccountId, CacheKey = cacheKey, EncodedPledgeId = encodedPledgeId, PledgeId = 1, AccountId = 1  });
 
             Assert.IsNotNull(result);
             Assert.NotNull(result.SelectStandardViewModel);
@@ -431,7 +434,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             Assert.AreEqual(applicationDetailsDto.Standards.Count(), result.SelectStandardViewModel.Standards.Count());
 
             _cacheStorageService.Verify(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()), Times.Once);
-            _opportunitiesService.Verify(x => x.GetApplicationDetails(1), Times.Once);
+            _opportunitiesService.Verify(x => x.GetApplicationDetails(1, 1, default), Times.Once);
         }
 
         [Test]
@@ -469,6 +472,82 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var result = await orchestrator.GetApplyViewModel(applicationRequest);
 
             Assert.AreEqual("No", result.HaveTrainingProvider);
+        }
+
+        [Test]
+        public async Task GetConfirmationViewModel_Returns_Expected_Model()
+        {
+            var encodedAccountId = _fixture.Create<string>();
+            var accountId = _fixture.Create<long>();
+            var opportunityId = _fixture.Create<int>();
+            var response = _fixture.Create<GetConfirmationResponse>();
+            var reference = _fixture.Create<string>();
+
+            _opportunitiesService.Setup(x => x.GetConfirmation(accountId, opportunityId))
+                .ReturnsAsync(response);
+
+            _encodingService.Setup(x => x.Encode(opportunityId, EncodingType.PledgeId))
+                .Returns(reference);
+
+            var result =
+                await _orchestrator.GetConfirmationViewModel(new ConfirmationRequest {PledgeId = opportunityId, AccountId = accountId, EncodedAccountId = encodedAccountId});
+
+            Assert.AreEqual(response.AccountName, result.AccountName);
+            Assert.AreEqual(response.IsNamePublic, result.IsNamePublic);
+            Assert.AreEqual(reference, result.Reference);
+            Assert.AreEqual(encodedAccountId, result.EncodedAccountId);
+        }
+
+        [Test]
+        public async Task SubmitApplication_Creates_Application()
+        {
+            var cacheKey = _fixture.Create<Guid>();
+            var encodedAccountId = _fixture.Create<string>();
+            var encodedPledgeId = _fixture.Create<string>();
+            var accountId = _fixture.Create<long>();
+            var opportunityId = _fixture.Create<int>();
+            var cacheItem = _fixture.Create<CreateApplicationCacheItem>();
+
+            _cacheStorageService.Setup(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()))
+                .ReturnsAsync(cacheItem);
+
+            var request = new ApplyPostRequest {CacheKey = cacheKey, EncodedAccountId = encodedAccountId, EncodedPledgeId = encodedPledgeId, AccountId = accountId, PledgeId = opportunityId};
+
+            await _orchestrator.SubmitApplication(request);
+            
+             _opportunitiesService.Verify(x => x.PostApplication(accountId, opportunityId,
+                 It.Is<ApplyRequest>(r => r.EncodedAccountId == encodedAccountId &&
+                                          r.Details == cacheItem.Details &&
+                                          r.StandardId == cacheItem.StandardId &&
+                                          r.NumberOfApprentices == cacheItem.NumberOfApprentices.Value &&
+                                          r.StartDate == cacheItem.StartDate &&
+                                          r.HasTrainingProvider == cacheItem.HasTrainingProvider.Value &&
+                                          r.Sectors.Equals(cacheItem.Sectors) &&
+                                          r.Postcode == cacheItem.Postcode &&
+                                          r.FirstName == cacheItem.FirstName &&
+                                          r.LastName == cacheItem.LastName &&
+                                          r.EmailAddresses == cacheItem.EmailAddresses &&
+                                          r.BusinessWebsite == cacheItem.BusinessWebsite)));
+        }
+
+        [Test]
+        public async Task SubmitApplication_Clears_CacheItem()
+        {
+            var cacheKey = _fixture.Create<Guid>();
+            var encodedAccountId = _fixture.Create<string>();
+            var encodedPledgeId = _fixture.Create<string>();
+            var accountId = _fixture.Create<long>();
+            var opportunityId = _fixture.Create<int>();
+            var cacheItem = _fixture.Create<CreateApplicationCacheItem>();
+
+            _cacheStorageService.Setup(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()))
+                .ReturnsAsync(cacheItem);
+
+            var request = new ApplyPostRequest { CacheKey = cacheKey, EncodedAccountId = encodedAccountId, EncodedPledgeId = encodedPledgeId, AccountId = accountId, PledgeId = opportunityId };
+
+            await _orchestrator.SubmitApplication(request);
+
+            _cacheStorageService.Verify(x => x.DeleteFromCache(cacheKey.ToString()), Times.Once);
         }
 
         private ApplicationRequest SetupForGetApplyViewModel(bool? hasTraininProvider = null)

@@ -70,12 +70,35 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             });
         }
 
+
         [HideAccountNavigation(false)]
         [Authorize(Policy = PolicyNames.ManageAccount)]
         [Route("accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/apply")]
         public async Task<IActionResult> Apply(ApplicationRequest request)
         {
             return View(await _opportunitiesOrchestrator.GetApplyViewModel(request));
+        }
+
+        [Authorize(Policy = PolicyNames.ManageAccount)]
+        [HttpPost]
+        [Route("/accounts/{encodedAccountId}/opportunities/{EncodedPledgeId}/apply")]
+        public async Task<IActionResult> Apply(ApplyPostRequest request)
+        {
+            await _opportunitiesOrchestrator.SubmitApplication(request);
+
+            return RedirectToAction("Confirmation", new
+            {
+                request.EncodedAccountId,
+                request.EncodedPledgeId
+            });
+        }
+
+        [Authorize(Policy = PolicyNames.ManageAccount)]
+        [HideAccountNavigation(false)]
+        [Route("/accounts/{encodedAccountId}/opportunities/{EncodedPledgeId}/apply/confirmation")]
+        public async Task<IActionResult> Confirmation(ConfirmationRequest request)
+        {
+            return View(await _opportunitiesOrchestrator.GetConfirmationViewModel(request));
         }
 
         [HideAccountNavigation(false)]
@@ -111,8 +134,21 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Authorize(Policy = PolicyNames.ManageAccount)]
         [HttpPost]
         [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/create/application-details")]
-        public async Task<IActionResult> ApplicationDetails(ApplicationDetailsPostRequest request)
+        public async Task<IActionResult> ApplicationDetails([FromServices] AsyncValidator<ApplicationDetailsPostRequest> validator, ApplicationDetailsPostRequest request)
         {
+            var validationResult = await validator.ValidateAsync(request);
+            if (!validationResult.IsValid)
+            {
+                validationResult.AddToModelState(ModelState, string.Empty);
+
+                return RedirectToAction("ApplicationDetails", new ApplicationDetailsRequest()
+                {
+                    EncodedAccountId = request.EncodedAccountId,
+                    EncodedPledgeId = request.EncodedPledgeId,
+                    CacheKey = request.CacheKey
+                });
+            }
+
             return RedirectToAction("Apply", await _opportunitiesOrchestrator.PostApplicationViewModel(request));
         }
 
@@ -177,6 +213,16 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
                 encodedPledgeId = contactDetailsPostRequest.EncodedPledgeId,
                 cacheKey = contactDetailsPostRequest.CacheKey
             });
+        }
+
+        [Authorize(Policy = PolicyNames.ManageAccount)]
+        [HttpGet]
+        [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/create/application-details/funding-estimate")]
+        public async Task<IActionResult> GetFundingEstimate(GetFundingEstimateRequest request)
+        {
+            var result = await _opportunitiesOrchestrator.GetFundingEstimate(request);
+
+            return Json(result);
         }
     }
 }

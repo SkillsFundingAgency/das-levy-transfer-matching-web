@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
 
@@ -43,11 +44,11 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
             return opportunity;
         }
 
-        public async Task<ApplicationDetailsDto> GetApplicationDetails(int id)
+        public async Task<ApplicationDetailsDto> GetApplicationDetails(long accountId, int id, string standardId = default)
         {
             ApplicationDetailsDto applicationDetailsResponse = null;
 
-            var response = await _client.GetAsync($"opportunities/{id}/create/application-details");
+            var response = await _client.GetAsync($"accounts/{accountId}/opportunities/{id}/create/application-details{(standardId != default ? $"?standardId={standardId}" : string.Empty)}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -91,6 +92,27 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
             }
 
             return getContactDetailsResult;
+        }
+		
+		public async Task<GetConfirmationResponse> GetConfirmation(long accountId, int opportunityId)
+        {
+            var response =
+                await _client.GetAsync($"accounts/{accountId}/opportunities/{opportunityId}/apply/confirmation");
+
+            response.EnsureSuccessStatusCode();
+
+            return JsonConvert.DeserializeObject<GetConfirmationResponse>(await response.Content.ReadAsStringAsync());
+        }
+
+        public async Task<ApplyResponse> PostApplication(long accountId, int opportunityId, ApplyRequest request)
+        {
+            var json = JsonConvert.SerializeObject(request);
+            var response = await _client.PostAsync($"accounts/{accountId}/opportunities/{opportunityId}/apply",
+                new StringContent(json, System.Text.Encoding.UTF8, "application/json"));
+
+            response.EnsureSuccessStatusCode();
+
+            return JsonConvert.DeserializeObject<ApplyResponse>(await response.Content.ReadAsStringAsync());
         }
 
         public async Task<GetDetailResponse> GetDetail(int pledgeId)
