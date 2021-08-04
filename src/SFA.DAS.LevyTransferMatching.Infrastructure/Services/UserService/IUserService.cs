@@ -7,5 +7,9 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService
     public interface IUserService
     {
         Task<IEnumerable<UserAccountDto>> GetLoggedInUserAccounts();
+
+        string GetUserId();
+
+        string GetUserDisplayName();
     }
 }
