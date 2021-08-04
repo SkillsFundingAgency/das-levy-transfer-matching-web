@@ -204,29 +204,42 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         public async Task<ApplyViewModel> GetApplyViewModel(ApplicationRequest request)
         {
-            var application = await RetrieveCacheItem(request.CacheKey);
-            var opportunityDto = await _opportunitiesService.GetOpportunity(request.PledgeId);
-            var sectorOptions = await _tagService.GetSectors();
+            var applicationTask = RetrieveCacheItem(request.CacheKey);
+            var applyResponseTask = _opportunitiesService.GetApply(request.AccountId, request.PledgeId);
 
-            var contactName = $"{application.FirstName} {application.LastName}";
+            await Task.WhenAll(applicationTask, applyResponseTask);
+
+            var contactName = $"{applicationTask.Result.FirstName} {applicationTask.Result.LastName}";
 
             return new ApplyViewModel
             {
-                CacheKey = application.Key,
+                CacheKey = applicationTask.Result.Key,
                 EncodedPledgeId = request.EncodedPledgeId,
                 EncodedAccountId = request.EncodedAccountId,
-                OpportunitySummaryViewModel = await GetOpportunitySummaryViewModel(opportunityDto, request.EncodedPledgeId),
-                JobRole = application.JobRole ?? "-",
-                NumberOfApprentices = application.NumberOfApprentices.HasValue ? application.NumberOfApprentices.Value.ToString() : "-",
-                StartBy = application.StartDate.HasValue ? application.StartDate.Value.ToShortDisplayString() : "-",
-                HaveTrainingProvider = application.HasTrainingProvider.ToApplyViewString(),
-                Sectors = application.Sectors?.ToList(),
-                SectorOptions = sectorOptions,
-                Location = application.Postcode ?? "-",
-                MoreDetail = application.Details ?? "-",
+                OpportunitySummaryViewModel = GetOpportunitySummaryViewModel
+                    (
+                        applyResponseTask.Result.Opportunity.Sectors,
+                        applyResponseTask.Result.Opportunity.JobRoles,
+                        applyResponseTask.Result.Opportunity.Levels,
+                        applyResponseTask.Result.Sectors,
+                        applyResponseTask.Result.JobRoles,
+                        applyResponseTask.Result.Levels,
+                        applyResponseTask.Result.Opportunity.Amount,
+                        applyResponseTask.Result.Opportunity.IsNamePublic,
+                        applyResponseTask.Result.Opportunity.DasAccountName,
+                        request.EncodedPledgeId
+                    ),
+                JobRole = applicationTask.Result.JobRole ?? "-",
+                NumberOfApprentices = applicationTask.Result.NumberOfApprentices.HasValue ? applicationTask.Result.NumberOfApprentices.Value.ToString() : "-",
+                StartBy = applicationTask.Result.StartDate.HasValue ? applicationTask.Result.StartDate.Value.ToShortDisplayString() : "-",
+                HaveTrainingProvider = applicationTask.Result.HasTrainingProvider.ToApplyViewString(),
+                Sectors = applicationTask.Result.Sectors?.ToList(),
+                SectorOptions = applyResponseTask.Result.Sectors?.ToList(),
+                Location = applicationTask.Result.Postcode ?? "-",
+                MoreDetail = applicationTask.Result.Details ?? "-",
                 ContactName = string.IsNullOrWhiteSpace(contactName) ? "-" : contactName,
-                EmailAddresses = application.EmailAddresses,
-                WebsiteUrl = string.IsNullOrEmpty(application.BusinessWebsite) ? "-" : application.BusinessWebsite,
+                EmailAddresses = applicationTask.Result.EmailAddresses,
+                WebsiteUrl = string.IsNullOrEmpty(applicationTask.Result.BusinessWebsite) ? "-" : applicationTask.Result.BusinessWebsite,
             };
         }
 
