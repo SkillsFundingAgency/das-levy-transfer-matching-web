@@ -66,7 +66,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _jobRoles = _fixture.Create<List<ReferenceDataItem>>();
             _userId = _fixture.Create<string>();
             _userDisplayName = _fixture.Create<string>();
-            
+
+            _userService.Setup(x => x.GetUserId()).Returns(_userId);
+            _userService.Setup(x => x.GetUserDisplayName()).Returns(_userDisplayName);
+
             _opportunitiesService.Setup(x => x.GetAllOpportunities()).ReturnsAsync(_opportunityDtoList);
             _tagService.Setup(x => x.GetJobRoles()).ReturnsAsync(_jobRoles);
             _tagService.Setup(x => x.GetSectors()).ReturnsAsync(_sectors);
