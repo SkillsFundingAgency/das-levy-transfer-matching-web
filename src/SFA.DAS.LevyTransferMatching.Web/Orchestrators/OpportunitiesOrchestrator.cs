@@ -389,7 +389,19 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 Month = application.StartDate?.Month,
                 Year = application.StartDate?.Year,
                 HasTrainingProvider = application.HasTrainingProvider,
-                OpportunitySummaryViewModel = await GetOpportunitySummaryViewModel(applicationDetails.Opportunity, request.EncodedPledgeId),
+                OpportunitySummaryViewModel = GetOpportunitySummaryViewModel
+                    (
+                        applicationDetails.Opportunity.Sectors,
+                        applicationDetails.Opportunity.JobRoles,
+                        applicationDetails.Opportunity.Levels,
+                        applicationDetails.Sectors,
+                        applicationDetails.JobRoles,
+                        applicationDetails.Levels,
+                        applicationDetails.Opportunity.Amount,
+                        applicationDetails.Opportunity.IsNamePublic,
+                        applicationDetails.Opportunity.DasAccountName,
+                        request.EncodedPledgeId
+                    ),
                 MinYear = DateTime.Now.Year,
                 MaxYear = DateTime.Now.FinancialYearEnd().Year,
                 SelectStandardViewModel = new SelectStandardViewModel
@@ -431,7 +443,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
-        public async Task<GetFundingEstimateViewModel> GetFundingEstimate(GetFundingEstimateRequest request, ApplicationDetailsDto applicationDetails = null)
+        public async Task<GetFundingEstimateViewModel> GetFundingEstimate(GetFundingEstimateRequest request, GetApplicationDetailsResponse applicationDetails = null)
         {
             applicationDetails ??= await _opportunitiesService.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId);
 
