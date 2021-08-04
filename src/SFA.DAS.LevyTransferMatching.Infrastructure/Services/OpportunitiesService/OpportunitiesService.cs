@@ -129,9 +129,9 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
             return JsonConvert.DeserializeObject<ApplyResponse>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<GetDetailResponse> GetDetail(int pledgeId)
+        public async Task<GetDetailResponse> GetDetail(int opportunityId)
         {
-            var response = await _client.GetAsync($"opportunities/{pledgeId}");
+            var response = await _client.GetAsync($"opportunities/{opportunityId}");
             response.EnsureSuccessStatusCode();
             return JsonConvert.DeserializeObject<GetDetailResponse>(await response.Content.ReadAsStringAsync());
         }

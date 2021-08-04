@@ -7,12 +7,12 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
 {
     public class GetDetailResponse
     {
-        public Opportunity OpportunitySummary { get; set; }
+        public OpportunityData Opportunity { get; set; }
         public List<ReferenceDataItem> Sectors { get; set; }
         public List<ReferenceDataItem> JobRoles { get; set; }
         public List<ReferenceDataItem> Levels { get; set; }
-
-        public class Opportunity
+        
+        public class OpportunityData
         {
             public int Id { get; set; }
             public string DasAccountName { get; set; }

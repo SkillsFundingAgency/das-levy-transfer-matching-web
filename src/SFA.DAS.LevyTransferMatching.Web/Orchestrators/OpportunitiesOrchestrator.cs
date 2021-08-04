@@ -44,27 +44,27 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var response = await _opportunitiesService.GetDetail(pledgeId);
 
-            var encodedPledgeId = _encodingService.Encode(response.OpportunitySummary.Id, EncodingType.PledgeId);
+            var encodedPledgeId = _encodingService.Encode(response.Opportunity.Id, EncodingType.PledgeId);
 
             var opportunitySummaryViewModel = GetOpportunitySummaryViewModel
                 (
-                    response.OpportunitySummary.Sectors,
-                    response.OpportunitySummary.JobRoles,
-                    response.OpportunitySummary.Levels,
+                    response.Opportunity.Sectors,
+                    response.Opportunity.JobRoles,
+                    response.Opportunity.Levels,
                     response.Sectors,
                     response.JobRoles,
                     response.Sectors,
-                    response.OpportunitySummary.Amount,
-                    response.OpportunitySummary.IsNamePublic,
-                    response.OpportunitySummary.DasAccountName,
+                    response.Opportunity.Amount,
+                    response.Opportunity.IsNamePublic,
+                    response.Opportunity.DasAccountName,
                     encodedPledgeId
                 );
 
             return new DetailViewModel()
             {
-                EmployerName = response.OpportunitySummary.DasAccountName,
+                EmployerName = response.Opportunity.DasAccountName,
                 EncodedPledgeId = encodedPledgeId,
-                IsNamePublic = response.OpportunitySummary.IsNamePublic,
+                IsNamePublic = response.Opportunity.IsNamePublic,
                 OpportunitySummaryView = opportunitySummaryViewModel,
             };
         }
