@@ -31,5 +31,17 @@ namespace SFA.DAS.LevyTransferMatching.Web.Extensions
         {
             return dateTime.ToString("MM/yyyy");
         }
+
+        public static int MonthsTillFinancialYearEnd(this DateTime date)
+        {
+            var financialYear = FinancialYearEnd(date);
+            return ((financialYear.Year - date.Year) * 12) + financialYear.Month - date.Month;
+        }
+
+        public static bool IsNull(this DateTime? date)
+        {
+            return !date.HasValue || date == new DateTime(1900, 1, 1);
+        }
+
     }
 }
