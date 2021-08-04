@@ -69,6 +69,13 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
             return applicationDetailsResponse;
         }
 
+        public async Task<GetMoreDetailsResponse> GetMoreDetails(long accountId, int pledgeId)
+        {
+            var response = await _client.GetAsync($"accounts/{accountId}/opportunities/{pledgeId}/create/more-details");
+            response.EnsureSuccessStatusCode();
+            return JsonConvert.DeserializeObject<GetMoreDetailsResponse>(await response.Content.ReadAsStringAsync());
+        }
+
         public async Task<GetSectorResponse> GetSector(long accountId, int pledgeId)
         {
             var response = await _client.GetAsync($"accounts/{accountId}/opportunities/{pledgeId}/create/sector");
