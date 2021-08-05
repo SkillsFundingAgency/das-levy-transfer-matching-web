@@ -19,7 +19,6 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
 using FluentValidation;
 using ApplyRequest = SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types.ApplyRequest;
 
@@ -404,10 +403,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var encodedAccountId = _fixture.Create<string>();
             var encodedPledgeId = _fixture.Create<string>();
             var cacheItem = _fixture.Create<CreateApplicationCacheItem>();
-            var applicationDetailsDto = _fixture.Create<ApplicationDetailsDto>();
+            var applicationDetailsResponse = _fixture.Create<GetApplicationDetailsResponse>();
 
             _cacheStorageService.Setup(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString())).ReturnsAsync(cacheItem);
-            _opportunitiesService.Setup(x => x.GetApplicationDetails(1,1, default)).ReturnsAsync(applicationDetailsDto);
+            _opportunitiesService.Setup(x => x.GetApplicationDetails(1,1, default)).ReturnsAsync(applicationDetailsResponse);
 
             var result = await _orchestrator.GetApplicationViewModel(new ApplicationDetailsRequest { EncodedAccountId = encodedAccountId, CacheKey = cacheKey, EncodedPledgeId = encodedPledgeId, PledgeId = 1, AccountId = 1  });
 
@@ -423,14 +422,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             Assert.AreEqual(DateTime.Now.FinancialYearEnd().Year, result.MaxYear);
             Assert.AreEqual(cacheItem.HasTrainingProvider, result.HasTrainingProvider);
             Assert.IsNotNull(result.OpportunitySummaryViewModel);
-            Assert.AreEqual(applicationDetailsDto.Opportunity.Amount, result.OpportunitySummaryViewModel.Amount);
-            Assert.AreEqual(string.Join(", ", applicationDetailsDto.Opportunity.JobRoles.ToReferenceDataDescriptionList(_jobRoleReferenceDataItems)), result.OpportunitySummaryViewModel.JobRoleList);
-            Assert.AreEqual(string.Join(", ", applicationDetailsDto.Opportunity.Levels.ToReferenceDataDescriptionList(_levelReferenceDataItems)), result.OpportunitySummaryViewModel.LevelList);
-            Assert.AreEqual(string.Join(", ", applicationDetailsDto.Opportunity.Sectors.ToReferenceDataDescriptionList(_sectorReferenceDataItems)), result.OpportunitySummaryViewModel.SectorList);
+            Assert.AreEqual(applicationDetailsResponse.Opportunity.Amount, result.OpportunitySummaryViewModel.Amount);
+            Assert.AreEqual(result.OpportunitySummaryViewModel.SectorList, applicationDetailsResponse.Opportunity.Sectors.ToReferenceDataDescriptionList(applicationDetailsResponse.Sectors));
+            Assert.AreEqual(result.OpportunitySummaryViewModel.JobRoleList, applicationDetailsResponse.Opportunity.JobRoles.ToReferenceDataDescriptionList(applicationDetailsResponse.JobRoles));
+            Assert.AreEqual(result.OpportunitySummaryViewModel.LevelList, applicationDetailsResponse.Opportunity.Levels.ToReferenceDataDescriptionList(applicationDetailsResponse.Levels, x => x.ShortDescription));
             Assert.AreEqual(_currentDateTime.ToTaxYearDescription(), result.OpportunitySummaryViewModel.YearDescription);
             Assert.AreEqual(cacheItem.StartDate.Value.Month, result.Month);
             Assert.AreEqual(cacheItem.StartDate.Value.Year, result.Year);
-            Assert.AreEqual(applicationDetailsDto.Standards.Count(), result.SelectStandardViewModel.Standards.Count());
+            Assert.AreEqual(applicationDetailsResponse.Standards.Count(), result.SelectStandardViewModel.Standards.Count());
 
             _cacheStorageService.Verify(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()), Times.Once);
             _opportunitiesService.Verify(x => x.GetApplicationDetails(1, 1, default), Times.Once);

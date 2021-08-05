@@ -3,7 +3,6 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
 
@@ -51,15 +50,15 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
             return JsonConvert.DeserializeObject<GetApplyResponse>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<ApplicationDetailsDto> GetApplicationDetails(long accountId, int id, string standardId = default)
+        public async Task<GetApplicationDetailsResponse> GetApplicationDetails(long accountId, int id, string standardId = default)
         {
-            ApplicationDetailsDto applicationDetailsResponse = null;
+            GetApplicationDetailsResponse applicationDetailsResponse = null;
 
             var response = await _client.GetAsync($"accounts/{accountId}/opportunities/{id}/create/application-details{(standardId != default ? $"?standardId={standardId}" : string.Empty)}");
 
             if (response.IsSuccessStatusCode)
             {
-                applicationDetailsResponse = JsonConvert.DeserializeObject<ApplicationDetailsDto>(await response.Content.ReadAsStringAsync());
+                applicationDetailsResponse = JsonConvert.DeserializeObject<GetApplicationDetailsResponse>(await response.Content.ReadAsStringAsync());
             }
             else if (response.StatusCode != HttpStatusCode.NotFound)
             {

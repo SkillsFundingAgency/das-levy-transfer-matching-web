@@ -7,6 +7,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities;
 
@@ -29,7 +30,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
         public async Task Validator_Returns_True_For_All_Valid_Input()
         {
             var request = CreateApplicationDetailsPostRequest();
-            _service.Setup(x => x.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId)).ReturnsAsync(CreateApplicationDetailsDto());
+            _service.Setup(x => x.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId)).ReturnsAsync(CreateApplicationDetailsResponse());
 
             var result = (await _validator.ValidateAsync(request));
 
@@ -40,7 +41,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
         public async Task Validator_Returns_False_When_There_Are_Insufficient_Funds()
         {
             var request = CreateApplicationDetailsPostRequest();
-            var applicationDetailsDto = CreateApplicationDetailsDto();
+            var applicationDetailsDto = CreateApplicationDetailsResponse();
             applicationDetailsDto.Opportunity.RemainingAmount = 0;
 
             _service.Setup(x => x.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId)).ReturnsAsync(applicationDetailsDto);
@@ -56,7 +57,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
         {
             var request = CreateApplicationDetailsPostRequest();
             request.NumberOfApprentices = null;
-            _service.Setup(x => x.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId)).ReturnsAsync(CreateApplicationDetailsDto());
+            _service.Setup(x => x.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId)).ReturnsAsync(CreateApplicationDetailsResponse());
 
             var result = (await _validator.ValidateAsync(request));
 
@@ -69,7 +70,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
         {
             var request = CreateApplicationDetailsPostRequest();
             request.NumberOfApprentices = 0;
-            _service.Setup(x => x.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId)).ReturnsAsync(CreateApplicationDetailsDto());
+            _service.Setup(x => x.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId)).ReturnsAsync(CreateApplicationDetailsResponse());
 
             var result = (await _validator.ValidateAsync(request));
 
@@ -82,7 +83,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
         {
             var request = CreateApplicationDetailsPostRequest();
             request.NumberOfApprentices = -1;
-            _service.Setup(x => x.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId)).ReturnsAsync(CreateApplicationDetailsDto());
+            _service.Setup(x => x.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId)).ReturnsAsync(CreateApplicationDetailsResponse());
 
             var result = (await _validator.ValidateAsync(request));
 
@@ -95,7 +96,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
         {
             var request = CreateApplicationDetailsPostRequest();
             request.SelectedStandardId = null;
-            _service.Setup(x => x.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId)).ReturnsAsync(CreateApplicationDetailsDto());
+            _service.Setup(x => x.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId)).ReturnsAsync(CreateApplicationDetailsResponse());
 
             var result = (await _validator.ValidateAsync(request));
 
@@ -108,7 +109,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
         {
             var request = CreateApplicationDetailsPostRequest();
             request.SelectedStandardId = string.Empty;
-            _service.Setup(x => x.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId)).ReturnsAsync(CreateApplicationDetailsDto());
+            _service.Setup(x => x.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId)).ReturnsAsync(CreateApplicationDetailsResponse());
 
             var result = (await _validator.ValidateAsync(request));
 
@@ -122,7 +123,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
             var request = CreateApplicationDetailsPostRequest();
             request.Month = null;
             request.Year = null;
-            _service.Setup(x => x.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId)).ReturnsAsync(CreateApplicationDetailsDto());
+            _service.Setup(x => x.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId)).ReturnsAsync(CreateApplicationDetailsResponse());
 
             var result = (await _validator.ValidateAsync(request));
 
@@ -134,7 +135,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
         {
             var request = CreateApplicationDetailsPostRequest();
             request.HasTrainingProvider = null;
-            _service.Setup(x => x.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId)).ReturnsAsync(CreateApplicationDetailsDto());
+            _service.Setup(x => x.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId)).ReturnsAsync(CreateApplicationDetailsResponse());
 
             var result = (await _validator.ValidateAsync(request));
 
@@ -158,9 +159,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
                 AccountId = 1
             };
 
-        private ApplicationDetailsDto CreateApplicationDetailsDto() => new ApplicationDetailsDto()
+        private GetApplicationDetailsResponse CreateApplicationDetailsResponse() => new GetApplicationDetailsResponse()
         {
-            Opportunity = new OpportunityDto()
+            Opportunity = new GetApplicationDetailsResponse.OpportunityData()
             {
                 Amount = 100_000,
                 RemainingAmount = 100_000
