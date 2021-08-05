@@ -8,6 +8,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
     public interface IOpportunitiesService
     {
         Task<List<OpportunityDto>> GetAllOpportunities();
+        Task<GetIndexResponse> GetIndex();
         Task<GetApplyResponse> GetApply(long accountId, int opportunityId);
         Task<GetContactDetailsResponse> GetContactDetails(long accountId, int pledgeId); 
         Task<GetApplicationDetailsResponse> GetApplicationDetails(long accountId, int id, string standardId = default);
