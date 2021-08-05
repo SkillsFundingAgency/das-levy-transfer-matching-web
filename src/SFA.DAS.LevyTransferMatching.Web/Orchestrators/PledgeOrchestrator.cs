@@ -121,7 +121,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             ValidateCreatePledgeCacheItem(cacheItem);
 
-            var apiRequest = new CreatePledgeRequest
+            var createPledgeRequest = new CreatePledgeRequest
             {
                 Amount = cacheItem.Amount.Value,
                 IsNamePublic = cacheItem.IsNamePublic.Value,
@@ -134,7 +134,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 UserDisplayName = _userService.GetUserDisplayName()
             };
 
-            var pledgeId = await _pledgeService.PostPledge(apiRequest, request.AccountId);
+            var pledgeId = await _pledgeService.PostPledge(createPledgeRequest, request.AccountId);
             await _cacheStorageService.DeleteFromCache(request.CacheKey.ToString());
 
             return _encodingService.Encode(pledgeId, EncodingType.PledgeId);
