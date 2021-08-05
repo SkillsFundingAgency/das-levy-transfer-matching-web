@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using System.Net.Http;
 using System.Threading.Tasks;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types;
