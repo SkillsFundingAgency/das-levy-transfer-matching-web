@@ -25,24 +25,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
             return JsonConvert.DeserializeObject<List<OpportunityDto>>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<OpportunityDto> GetOpportunity(int id)
-        {
-            OpportunityDto opportunity = null;
-
-            var response = await _client.GetAsync($"opportunities/{id}");
-
-            if (response.IsSuccessStatusCode)
-            {
-                opportunity = JsonConvert.DeserializeObject<OpportunityDto>(await response.Content.ReadAsStringAsync());
-            }
-            else if (response.StatusCode != HttpStatusCode.NotFound)
-            {
-                response.EnsureSuccessStatusCode();
-            }
-
-            return opportunity;
-        }
-
         public async Task<GetApplyResponse> GetApply(long accountId, int opportunityId)
         {
             var response = await _client.GetAsync($"accounts/{accountId}/opportunities/{opportunityId}/apply");

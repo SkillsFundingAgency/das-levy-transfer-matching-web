@@ -44,6 +44,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var response = await _opportunitiesService.GetDetail(pledgeId);
 
+            if (response.Opportunity == null)
+                return null;
+
             var encodedPledgeId = _encodingService.Encode(response.Opportunity.Id, EncodingType.PledgeId);
 
             var opportunitySummaryViewModel = GetOpportunitySummaryViewModel
@@ -53,7 +56,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     response.Opportunity.Levels,
                     response.Sectors,
                     response.JobRoles,
-                    response.Sectors,
+                    response.Levels,
                     response.Opportunity.Amount,
                     response.Opportunity.IsNamePublic,
                     response.Opportunity.DasAccountName,
@@ -145,32 +148,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             await _opportunitiesService.PostApplication(request.AccountId, request.PledgeId, applyRequest);
 
             await _cacheStorageService.DeleteFromCache(request.CacheKey.ToString());
-        }
-
-        [Obsolete("To eventually be replaced with the other method of the same name - please use other overload.")]
-        public async Task<OpportunitySummaryViewModel> GetOpportunitySummaryViewModel(OpportunityDto opportunityDto, string encodedPledgeId)
-        {
-            // Pull back the tags, and use the descriptions to build the lists.
-            var sectorReferenceDataItems = await _tagService.GetSectors();
-            string sectorList = opportunityDto.Sectors.ToReferenceDataDescriptionList(sectorReferenceDataItems);
-
-            var jobRoleReferenceDataItems = await _tagService.GetJobRoles();
-            string jobRoleList = opportunityDto.JobRoles.ToReferenceDataDescriptionList(jobRoleReferenceDataItems);
-
-            var levelReferenceDataItems = await _tagService.GetLevels();
-            string levelList = opportunityDto.Levels.ToReferenceDataDescriptionList(levelReferenceDataItems, descriptionSource: x => x.ShortDescription);
-
-            DateTime dateTime = _dateTimeService.UtcNow;
-
-            return new OpportunitySummaryViewModel()
-            {
-                Amount = opportunityDto.Amount,
-                Description = GenerateDescription(opportunityDto, encodedPledgeId),
-                JobRoleList = jobRoleList,
-                LevelList = levelList,
-                SectorList = sectorList,
-                YearDescription = dateTime.ToTaxYearDescription(),
-            };
         }
 
         public OpportunitySummaryViewModel GetOpportunitySummaryViewModel(
@@ -352,7 +329,19 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 EncodedPledgeId = request.EncodedPledgeId,
                 Sectors = cacheItem.Sectors,
                 SectorOptions = response.Sectors.ToList(),
-                OpportunitySummaryViewModel = await GetOpportunitySummaryViewModel(response.Opportunity, request.EncodedPledgeId),
+                OpportunitySummaryViewModel = GetOpportunitySummaryViewModel
+                    (
+                        response.Opportunity.Sectors,
+                        response.Opportunity.JobRoles,
+                        response.Opportunity.Levels,
+                        response.Sectors,
+                        response.JobRoles,
+                        response.Levels,
+                        response.Opportunity.Amount,
+                        response.Opportunity.IsNamePublic,
+                        response.Opportunity.DasAccountName,
+                        request.EncodedPledgeId
+                    ),
                 Postcode = cacheItem.Postcode
             };
         }
