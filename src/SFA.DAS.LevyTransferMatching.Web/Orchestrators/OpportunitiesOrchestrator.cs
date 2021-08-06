@@ -132,7 +132,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 FirstName = cacheItem.FirstName ?? string.Empty,
                 LastName = cacheItem.LastName ?? string.Empty,
                 EmailAddresses = cacheItem.EmailAddresses,
-                BusinessWebsite = cacheItem.BusinessWebsite ?? string.Empty
+                BusinessWebsite = cacheItem.BusinessWebsite ?? string.Empty,
+                UserId = _userService.GetUserId(),
+                UserDisplayName = _userService.GetUserDisplayName()
             };
 
             await _opportunitiesService.PostApplication(request.AccountId, request.PledgeId, applyRequest);

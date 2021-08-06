@@ -21,6 +21,8 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
         public string LastName { get; set; }
         public IEnumerable<string> EmailAddresses { get; set; }
         public string BusinessWebsite { get; set; }
+        public string UserId { get; set; }
+        public string UserDisplayName { get; set; }
     }
 
     public class ApplyResponse
