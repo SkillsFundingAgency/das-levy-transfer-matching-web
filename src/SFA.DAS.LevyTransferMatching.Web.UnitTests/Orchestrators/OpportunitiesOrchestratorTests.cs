@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.TagService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
 using System.Linq;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
@@ -33,7 +32,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
         private Mock<IDateTimeService> _dateTimeService;
         private Mock<IOpportunitiesService> _opportunitiesService;
-        private Mock<ITagService> _tagService;
         private Mock<IUserService> _userService;
         private Mock<IEncodingService> _encodingService;
         private Mock<ICacheStorageService> _cacheStorageService;
@@ -54,7 +52,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _fixture = new Fixture();
             _dateTimeService = new Mock<IDateTimeService>();
             _opportunitiesService = new Mock<IOpportunitiesService>();
-            _tagService = new Mock<ITagService>();
             _userService = new Mock<IUserService>();
             _encodingService = new Mock<IEncodingService>();
             _cacheStorageService = new Mock<ICacheStorageService>();
@@ -65,12 +62,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _getIndexResponse = _fixture.Create<GetIndexResponse>();
 
             _opportunitiesService.Setup(x => x.GetIndex()).ReturnsAsync(_getIndexResponse);
-            _tagService.Setup(x => x.GetJobRoles()).ReturnsAsync(_jobRoles);
-            _tagService.Setup(x => x.GetSectors()).ReturnsAsync(_sectors);
-            _tagService.Setup(x => x.GetLevels()).ReturnsAsync(_levels);
             _encodingService.Setup(x => x.Encode(It.IsAny<long>(), EncodingType.PledgeId)).Returns("test");
 
-            _orchestrator = new OpportunitiesOrchestrator(_dateTimeService.Object, _opportunitiesService.Object, _tagService.Object, _userService.Object, _encodingService.Object, _cacheStorageService.Object);
+            _orchestrator = new OpportunitiesOrchestrator(_dateTimeService.Object, _opportunitiesService.Object, _userService.Object, _encodingService.Object, _cacheStorageService.Object);
         }
 
         [Test]
@@ -477,7 +471,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var applicationRequest = SetupForGetApplyViewModel();
 
             var orchestrator = new OpportunitiesOrchestrator(_dateTimeService.Object, _opportunitiesService.Object,
-                _tagService.Object, _userService.Object, _encodingService.Object, _cacheStorageService.Object);
+                _userService.Object, _encodingService.Object, _cacheStorageService.Object);
 
             var result = await orchestrator.GetApplyViewModel(applicationRequest);
 
@@ -489,7 +483,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         {
             var applicationRequest = SetupForGetApplyViewModel(true);
             var orchestrator = new OpportunitiesOrchestrator(_dateTimeService.Object, _opportunitiesService.Object,
-                _tagService.Object, _userService.Object, _encodingService.Object, _cacheStorageService.Object);
+                _userService.Object, _encodingService.Object, _cacheStorageService.Object);
 
             var result = await orchestrator.GetApplyViewModel(applicationRequest);
 
@@ -501,7 +495,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         {
             var applicationRequest = SetupForGetApplyViewModel(false);
             var orchestrator = new OpportunitiesOrchestrator(_dateTimeService.Object, _opportunitiesService.Object,
-                _tagService.Object, _userService.Object, _encodingService.Object, _cacheStorageService.Object); 
+                _userService.Object, _encodingService.Object, _cacheStorageService.Object); 
 
             var result = await orchestrator.GetApplyViewModel(applicationRequest);
 

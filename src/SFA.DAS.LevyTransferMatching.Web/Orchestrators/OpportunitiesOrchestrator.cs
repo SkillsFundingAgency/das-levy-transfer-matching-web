@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.TagService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
@@ -25,17 +24,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         private readonly ICacheStorageService _cacheStorageService;
         private readonly IDateTimeService _dateTimeService;
         private readonly IOpportunitiesService _opportunitiesService;
-        private readonly ITagService _tagService;
         private readonly IEncodingService _encodingService;
         private readonly IUserService _userService;
 
-        public OpportunitiesOrchestrator(IDateTimeService dateTimeService, IOpportunitiesService opportunitiesService, ITagService tagService, IUserService userService, IEncodingService encodingService, ICacheStorageService cacheStorageService)
+        public OpportunitiesOrchestrator(IDateTimeService dateTimeService, IOpportunitiesService opportunitiesService, IUserService userService, IEncodingService encodingService, ICacheStorageService cacheStorageService)
         {
             _dateTimeService = dateTimeService;
             _opportunitiesService = opportunitiesService;
-            _tagService = tagService;
             _encodingService = encodingService;
-            _tagService = tagService;
             _userService = userService;
             _cacheStorageService = cacheStorageService;
         }
@@ -274,11 +270,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             cacheItem.BusinessWebsite = contactDetailsPostRequest.BusinessWebsite;
 
             await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
-        }
-
-        private string GenerateDescription(OpportunityDto opportunityDto, string encodedPledgeId)
-        {
-            return opportunityDto.IsNamePublic ? $"{opportunityDto.DasAccountName} ({encodedPledgeId})" : "A levy-paying business wants to fund apprenticeship training in:";
         }
 
         public async Task<MoreDetailsViewModel> GetMoreDetailsViewModel(MoreDetailsRequest request)
