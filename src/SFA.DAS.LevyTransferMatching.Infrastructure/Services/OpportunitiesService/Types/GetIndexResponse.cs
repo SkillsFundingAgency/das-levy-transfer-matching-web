@@ -4,15 +4,14 @@ using System.Collections.Generic;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types
 {
-    public class GetSectorResponse
+    public class GetIndexResponse
     {
-        public OpportunityData Opportunity { get; set; }
-        public string Location { get; set; }
+        public List<Opportunity> Opportunities { get; set; }
+        public List<ReferenceDataItem> Levels { get; set; }
         public List<ReferenceDataItem> Sectors { get; set; }
         public List<ReferenceDataItem> JobRoles { get; set; }
-        public List<ReferenceDataItem> Levels { get; set; }
 
-        public class OpportunityData
+        public class Opportunity
         {
             public int Id { get; set; }
             public string DasAccountName { get; set; }

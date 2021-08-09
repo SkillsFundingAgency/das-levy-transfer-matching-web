@@ -17,7 +17,6 @@ using System.Net.Http;
 using Microsoft.AspNetCore.Authorization;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.EmployerAccountsService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.TagService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using Microsoft.AspNetCore.Http;
@@ -47,7 +46,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
 
             services.AddClient<IAccountsService>((c, s) => new AccountsService(c));
             services.AddClient<IPledgeService>((c, s) => new PledgeService(c));
-            services.AddClient<ITagService>((c, s) => new TagService(c, s.GetService<ICacheStorageService>()));
             services.AddClient<IOpportunitiesService>((c, s) => new OpportunitiesService(c));
             services.AddClient<IUserService>((c, s) => new UserService(s.GetService<IHttpContextAccessor>(), c));
             services.AddClient<ILocationService>((c, s) => new LocationService(c));

@@ -3,7 +3,6 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
 
@@ -18,41 +17,29 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
             _client = client;
         }
 
-        public async Task<List<OpportunityDto>> GetAllOpportunities()
+        public async Task<GetApplyResponse> GetApply(long accountId, int opportunityId)
         {
-            var response = await _client.GetAsync($"pledges");
+            var response = await _client.GetAsync($"accounts/{accountId}/opportunities/{opportunityId}/apply");
             response.EnsureSuccessStatusCode();
-
-            return JsonConvert.DeserializeObject<List<OpportunityDto>>(await response.Content.ReadAsStringAsync());
+            return JsonConvert.DeserializeObject<GetApplyResponse>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<OpportunityDto> GetOpportunity(int id)
+        public async Task<GetIndexResponse> GetIndex()
         {
-            OpportunityDto opportunity = null;
-
-            var response = await _client.GetAsync($"opportunities/{id}");
-
-            if (response.IsSuccessStatusCode)
-            {
-                opportunity = JsonConvert.DeserializeObject<OpportunityDto>(await response.Content.ReadAsStringAsync());
-            }
-            else if (response.StatusCode != HttpStatusCode.NotFound)
-            {
-                response.EnsureSuccessStatusCode();
-            }
-
-            return opportunity;
+            var response = await _client.GetAsync($"opportunities");
+            response.EnsureSuccessStatusCode();
+            return JsonConvert.DeserializeObject<GetIndexResponse>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<ApplicationDetailsDto> GetApplicationDetails(long accountId, int id, string standardId = default)
+        public async Task<GetApplicationDetailsResponse> GetApplicationDetails(long accountId, int id, string standardId = default)
         {
-            ApplicationDetailsDto applicationDetailsResponse = null;
+            GetApplicationDetailsResponse applicationDetailsResponse = null;
 
             var response = await _client.GetAsync($"accounts/{accountId}/opportunities/{id}/create/application-details{(standardId != default ? $"?standardId={standardId}" : string.Empty)}");
 
             if (response.IsSuccessStatusCode)
             {
-                applicationDetailsResponse = JsonConvert.DeserializeObject<ApplicationDetailsDto>(await response.Content.ReadAsStringAsync());
+                applicationDetailsResponse = JsonConvert.DeserializeObject<GetApplicationDetailsResponse>(await response.Content.ReadAsStringAsync());
             }
             else if (response.StatusCode != HttpStatusCode.NotFound)
             {
@@ -60,6 +47,13 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
             }
 
             return applicationDetailsResponse;
+        }
+
+        public async Task<GetMoreDetailsResponse> GetMoreDetails(long accountId, int pledgeId)
+        {
+            var response = await _client.GetAsync($"accounts/{accountId}/opportunities/{pledgeId}/create/more-details");
+            response.EnsureSuccessStatusCode();
+            return JsonConvert.DeserializeObject<GetMoreDetailsResponse>(await response.Content.ReadAsStringAsync());
         }
 
         public async Task<GetSectorResponse> GetSector(long accountId, int pledgeId)
@@ -113,6 +107,13 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
             response.EnsureSuccessStatusCode();
 
             return JsonConvert.DeserializeObject<ApplyResponse>(await response.Content.ReadAsStringAsync());
+        }
+
+        public async Task<GetDetailResponse> GetDetail(int opportunityId)
+        {
+            var response = await _client.GetAsync($"opportunities/{opportunityId}");
+            response.EnsureSuccessStatusCode();
+            return JsonConvert.DeserializeObject<GetDetailResponse>(await response.Content.ReadAsStringAsync());
         }
     }
 }

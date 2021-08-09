@@ -10,10 +10,8 @@ using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
 using System.Collections.Generic;
-using FluentValidation.Results;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
-using SFA.DAS.LevyTransferMatching.Web.Validators;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
 {
@@ -289,9 +287,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             };
 
             var opportunitiesService = new Mock<IOpportunitiesService>();
-            opportunitiesService.Setup(x => x.GetApplicationDetails(1, 1, selectedStandardId)).ReturnsAsync(new ApplicationDetailsDto()
+            opportunitiesService.Setup(x => x.GetApplicationDetails(1, 1, selectedStandardId)).ReturnsAsync(new GetApplicationDetailsResponse()
             {
-                Opportunity = new OpportunityDto()
+                Opportunity = new GetApplicationDetailsResponse.OpportunityData()
                 {
                     Amount = 100_000,
                     RemainingAmount = 100_000
@@ -357,9 +355,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             };
 
             var opportunitiesService = new Mock<IOpportunitiesService>();
-            opportunitiesService.Setup(x => x.GetApplicationDetails(1, 1, selectedStandardId)).ReturnsAsync(new ApplicationDetailsDto()
+            opportunitiesService.Setup(x => x.GetApplicationDetails(1, 1, selectedStandardId)).ReturnsAsync(new GetApplicationDetailsResponse()
             {
-                Opportunity = new OpportunityDto()
+                Opportunity = new GetApplicationDetailsResponse.OpportunityData()
                 {
                     Amount = 100_000,
                     RemainingAmount = 0
