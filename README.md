@@ -21,6 +21,13 @@ It consists of this web application, an Api and an Azure Function component, lin
 
 ## 🚀 Installation
 
+A PowerShell script is available to take some of the work out of setting up a develop environment for LTM and can be found [here](https://github.com/SkillsFundingAgency/das-levy-transfer-matching-web/start-ltm.ps1). This script will attempt a few tasks dependant on switches that are passed to it all of which are described in the script file itself:
+
+* Look for required LTM git repo's and clone them if they don't exist, including 3rd party dependencies
+* Look for and load the solutions in VS2019
+* Look for and start Docker Desktop and three containers: shared-redis, das-config & ms-sql
+* Look for and start the CosmosDB emulator
+
 ### Pre-Requisites
 
 The Azure Functions component is not necessary for the website to function but can be found [here](https://github.com/SkillsFundingAgency/das-levy-transfer-matching-functions)
