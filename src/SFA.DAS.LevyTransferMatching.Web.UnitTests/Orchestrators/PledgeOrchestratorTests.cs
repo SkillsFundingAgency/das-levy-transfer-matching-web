@@ -5,11 +5,11 @@ using AutoFixture;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Encoding;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
@@ -26,6 +26,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private Mock<IPledgeService> _pledgeService;
 		private Mock<IEncodingService> _encodingService;
         private Mock<ILocationValidatorService> _validatorService;
+        private Mock<IUserService> _userService;
         private List<ReferenceDataItem> _sectors;
         private List<ReferenceDataItem> _levels;
         private List<ReferenceDataItem> _jobRoles;
@@ -38,6 +39,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private readonly long _accountId = 1;
         private readonly int _pledgeId = 1;
         private string _encodedPledgeId;
+        private string _userId;
+        private string _userDisplayName;
 
         [SetUp]
         public void Setup()
@@ -49,6 +52,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _pledgeService = new Mock<IPledgeService>();
             _encodingService = new Mock<IEncodingService>();
             _validatorService = new Mock<ILocationValidatorService>();
+            _userService = new Mock<IUserService>();
 
             _sectors = _fixture.Create<List<ReferenceDataItem>>();
             _levels = _fixture.Create<List<ReferenceDataItem>>();
@@ -60,6 +64,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _jobRoleResponse = new GetJobRoleResponse {JobRoles = _jobRoles};
            
             _encodedPledgeId = _fixture.Create<string>();
+            _userId = _fixture.Create<string>();
+            _userDisplayName = _fixture.Create<string>();
 
             _pledgeService.Setup(x => x.GetCreate(_accountId)).ReturnsAsync(() => new GetCreateResponse
             {
@@ -73,7 +79,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _pledgeService.Setup(x => x.GetJobRole(_accountId)).ReturnsAsync(_jobRoleResponse);
             _pledgeService.Setup(x => x.GetLevel(_accountId)).ReturnsAsync(_levelResponse);
 
-            _orchestrator = new PledgeOrchestrator(_cache.Object, _pledgeService.Object, _encodingService.Object, _validatorService.Object);
+            _orchestrator = new PledgeOrchestrator(_cache.Object, _pledgeService.Object, _encodingService.Object, _validatorService.Object, _userService.Object);
         }
 
         [Test]
@@ -328,14 +334,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             _cache.Setup(x => x.RetrieveFromCache<CreatePledgeCacheItem>(_cacheKey.ToString())).ReturnsAsync(cacheItem);
             _cache.Setup(x => x.DeleteFromCache(_cacheKey.ToString()));
-            _pledgeService.Setup(x => x.PostPledge(It.IsAny<PledgeDto>(), _accountId)).ReturnsAsync(_pledgeId);
+            _pledgeService.Setup(x => x.PostPledge(It.IsAny<CreatePledgeRequest>(), _accountId)).ReturnsAsync(_pledgeId);
             _encodingService.Setup(x => x.Encode(_pledgeId, EncodingType.PledgeId)).Returns(_encodedPledgeId);
 
             var result = await _orchestrator.SubmitPledge(new CreatePostRequest { AccountId = _accountId, CacheKey = _cacheKey, EncodedAccountId = _encodedAccountId });
 
             _cache.Verify(x => x.RetrieveFromCache<CreatePledgeCacheItem>(_cacheKey.ToString()), Times.Once);
             _cache.Verify(x => x.DeleteFromCache(_cacheKey.ToString()), Times.Once);
-            _pledgeService.Verify(x => x.PostPledge(It.IsAny<PledgeDto>(), _accountId), Times.Once);
+            _pledgeService.Verify(x => x.PostPledge(It.IsAny<CreatePledgeRequest>(), _accountId), Times.Once);
             _encodingService.Verify(x => x.Encode(_pledgeId, EncodingType.PledgeId), Times.Once);
 
             Assert.AreEqual(_encodedPledgeId, result);

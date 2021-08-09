@@ -30,6 +30,16 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService
             return JsonConvert.DeserializeObject<IEnumerable<UserAccountDto>>(await response.Content.ReadAsStringAsync());
         }
 
+        public string GetUserId()
+        {
+            return GetUserClaimAsString(ClaimIdentifierConfiguration.Id);
+        }
+
+        public string GetUserDisplayName()
+        {
+            return GetUserClaimAsString(ClaimIdentifierConfiguration.DisplayName);
+        }
+
         private bool IsUserAuthenticated()
         {
             return _httpContextAccessor.HttpContext.User.Identity.IsAuthenticated;

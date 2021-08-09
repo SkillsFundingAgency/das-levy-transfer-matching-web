@@ -11,14 +11,12 @@ using System.Linq;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using System;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;
-using System.Data;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
-using FluentValidation;
 using ApplyRequest = SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types.ApplyRequest;
 
 
@@ -45,6 +43,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private List<ReferenceDataItem> _levelReferenceDataItems;
         private GetIndexResponse _getIndexResponse;
         private DateTime _currentDateTime;
+        private string _userId;
+        private string _userDisplayName;
 
         [SetUp]
         public void SetUp()
@@ -59,8 +59,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _sectors = _fixture.Create<List<ReferenceDataItem>>();
             _levels = _fixture.Create<List<ReferenceDataItem>>();
             _jobRoles = _fixture.Create<List<ReferenceDataItem>>();
-            _getIndexResponse = _fixture.Create<GetIndexResponse>();
+            _userId = _fixture.Create<string>();
+            _userDisplayName = _fixture.Create<string>();
 
+            _userService.Setup(x => x.GetUserId()).Returns(_userId);
+            _userService.Setup(x => x.GetUserDisplayName()).Returns(_userDisplayName);
+
+            _getIndexResponse = _fixture.Create<GetIndexResponse>();
             _opportunitiesService.Setup(x => x.GetIndex()).ReturnsAsync(_getIndexResponse);
             _encodingService.Setup(x => x.Encode(It.IsAny<long>(), EncodingType.PledgeId)).Returns("test");
 
@@ -555,7 +560,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                                           r.FirstName == cacheItem.FirstName &&
                                           r.LastName == cacheItem.LastName &&
                                           r.EmailAddresses == cacheItem.EmailAddresses &&
-                                          r.BusinessWebsite == cacheItem.BusinessWebsite)));
+                                          r.BusinessWebsite == cacheItem.BusinessWebsite &&
+                                          r.UserId == _userId &&
+                                          r.UserDisplayName == _userDisplayName)));
         }
 
         [Test]
