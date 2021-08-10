@@ -1,16 +1,16 @@
-﻿using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
-using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
+﻿using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
+using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types
 {
-    public class GetSectorResponse
+    public class GetMoreDetailsResponse
     {
         public OpportunityData Opportunity { get; set; }
-        public string Location { get; set; }
-        public List<ReferenceDataItem> Sectors { get; set; }
-        public List<ReferenceDataItem> JobRoles { get; set; }
-        public List<ReferenceDataItem> Levels { get; set; }
+        public IEnumerable<ReferenceDataItem> Sectors { get; set; }
+        public IEnumerable<ReferenceDataItem> JobRoles { get; set; }
+        public IEnumerable<ReferenceDataItem> Levels { get; set; }
 
         public class OpportunityData
         {

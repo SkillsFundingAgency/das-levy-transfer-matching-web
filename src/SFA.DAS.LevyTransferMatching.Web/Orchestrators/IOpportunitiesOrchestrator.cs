@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
@@ -17,7 +17,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         Task<ApplicationDetailsViewModel> GetApplicationViewModel(ApplicationDetailsRequest request);
         Task<ApplicationRequest> PostApplicationViewModel(ApplicationDetailsPostRequest request);
         Task<SectorViewModel> GetSectorViewModel(SectorRequest request);
-        Task<GetFundingEstimateViewModel> GetFundingEstimate(GetFundingEstimateRequest request, ApplicationDetailsDto applicationDetails = null);
+        Task<GetFundingEstimateViewModel> GetFundingEstimate(GetFundingEstimateRequest request, GetApplicationDetailsResponse applicationDetails = null);
         Task<ContactDetailsViewModel> GetContactDetailsViewModel(ContactDetailsRequest contactDetailsRequest);
         Task UpdateCacheItem(ContactDetailsPostRequest contactDetailsPostRequest);
         Task<ConfirmationViewModel> GetConfirmationViewModel(ConfirmationRequest request);

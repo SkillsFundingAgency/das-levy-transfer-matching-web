@@ -5,7 +5,6 @@ using AutoFixture;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Encoding;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService;
@@ -41,6 +40,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private readonly long _accountId = 1;
         private readonly int _pledgeId = 1;
         private string _encodedPledgeId;
+        private string _userId;
+        private string _userDisplayName;
 
         [SetUp]
         public void Setup()
@@ -65,6 +66,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _pledgesResponse = _fixture.Create<GetPledgesResponse>();
            
             _encodedPledgeId = _fixture.Create<string>();
+            _userId = _fixture.Create<string>();
+            _userDisplayName = _fixture.Create<string>();
 
             _pledgeService.Setup(x => x.GetPledges(_accountId)).ReturnsAsync(_pledgesResponse);
             _pledgeService.Setup(x => x.GetCreate(_accountId)).ReturnsAsync(() => new GetCreateResponse
@@ -357,14 +360,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             _cache.Setup(x => x.RetrieveFromCache<CreatePledgeCacheItem>(_cacheKey.ToString())).ReturnsAsync(cacheItem);
             _cache.Setup(x => x.DeleteFromCache(_cacheKey.ToString()));
-            _pledgeService.Setup(x => x.PostPledge(It.IsAny<PledgeDto>(), _accountId)).ReturnsAsync(_pledgeId);
+            _pledgeService.Setup(x => x.PostPledge(It.IsAny<CreatePledgeRequest>(), _accountId)).ReturnsAsync(_pledgeId);
             _encodingService.Setup(x => x.Encode(_pledgeId, EncodingType.PledgeId)).Returns(_encodedPledgeId);
 
             var result = await _orchestrator.SubmitPledge(new CreatePostRequest { AccountId = _accountId, CacheKey = _cacheKey, EncodedAccountId = _encodedAccountId });
 
             _cache.Verify(x => x.RetrieveFromCache<CreatePledgeCacheItem>(_cacheKey.ToString()), Times.Once);
             _cache.Verify(x => x.DeleteFromCache(_cacheKey.ToString()), Times.Once);
-            _pledgeService.Verify(x => x.PostPledge(It.IsAny<PledgeDto>(), _accountId), Times.Once);
+            _pledgeService.Verify(x => x.PostPledge(It.IsAny<CreatePledgeRequest>(), _accountId), Times.Once);
             _encodingService.Verify(x => x.Encode(_pledgeId, EncodingType.PledgeId), Times.Once);
 
             Assert.AreEqual(_encodedPledgeId, result);

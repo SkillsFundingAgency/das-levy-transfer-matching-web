@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.Encoding;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Location;
@@ -148,7 +149,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             ValidateCreatePledgeCacheItem(cacheItem);
 
-            var pledgeDto = new PledgeDto
+            var createPledgeRequest = new CreatePledgeRequest
             {
                 Amount = cacheItem.Amount.Value,
                 IsNamePublic = cacheItem.IsNamePublic.Value,
@@ -156,10 +157,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 Sectors = cacheItem.Sectors ?? new List<string>(),
                 JobRoles = cacheItem.JobRoles ?? new List<string>(),
                 Levels = cacheItem.Levels ?? new List<string>(),
-                Locations = cacheItem.Locations?.Where(x => x != null).ToList() ?? new List<string>()
+                Locations = cacheItem.Locations?.Where(x => x != null).ToList() ?? new List<string>(),
+                UserId = _userService.GetUserId(),
+                UserDisplayName = _userService.GetUserDisplayName()
             };
 
-            var pledgeId = await _pledgeService.PostPledge(pledgeDto, request.AccountId);
+            var pledgeId = await _pledgeService.PostPledge(createPledgeRequest, request.AccountId);
             await _cacheStorageService.DeleteFromCache(request.CacheKey.ToString());
 
             return _encodingService.Encode(pledgeId, EncodingType.PledgeId);
