@@ -11,6 +11,9 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.LocationService;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Location;
+using SFA.DAS.LevyTransferMatching.Web.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
@@ -20,13 +23,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         private readonly IPledgeService _pledgeService;
         private readonly IEncodingService _encodingService;
         private readonly ILocationValidatorService _validatorService;
+        private readonly IAuthorizationService _authorizationService;
 
-        public PledgeOrchestrator(ICacheStorageService cacheStorageService, IPledgeService pledgeService, IEncodingService encodingService, ILocationValidatorService validatorService)
+        public PledgeOrchestrator(ICacheStorageService cacheStorageService, IPledgeService pledgeService, IEncodingService encodingService, ILocationValidatorService validatorService, IAuthorizationService authorizationService)
         {
             _cacheStorageService = cacheStorageService;
             _pledgeService = pledgeService;
             _encodingService = encodingService;
             _validatorService = validatorService;
+            _authorizationService = authorizationService;
         }
 
         public InformViewModel GetInformViewModel(string encodedAccountId)
@@ -41,10 +46,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         public async Task<PledgesViewModel> GetPledgesViewModel(PledgesRequest request)
         {
             var pledgesResponse = await _pledgeService.GetPledges(request.AccountId);
-
+            var changeAuthorized = await _authorizationService.AuthorizeAsync(ClaimsPrincipal.Current, PolicyNames.ManageAccount);
+            
             return new PledgesViewModel
             {
                 EncodedAccountId = request.EncodedAccountId,
+                RenderCreatePledgeButton = true,
                 Pledges = pledgesResponse.Pledges.Select(x => new PledgesViewModel.Pledge 
                 {
                     ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),

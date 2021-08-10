@@ -53,9 +53,12 @@
                         }
                     </tbody>
                 </table>
-                <div class="govuk-button-group">
-                    <a class="govuk-button" data-module="govuk-button" href="@Url.Action("Inform", "Pledges", new { EncodedAccountId = Model.EncodedAccountId })">Create a transfers pledge</a>
-                </div>
+                @if (Model.RenderCreatePledgeButton)
+                {
+                    <div class="govuk-button-group">
+                        <a class="govuk-button" data-module="govuk-button" href="@Url.Action("Inform", "Pledges", new { EncodedAccountId = Model.EncodedAccountId })">Create a transfers pledge</a>
+                    </div>
+                }
             </div>
         </div>
     </div>
