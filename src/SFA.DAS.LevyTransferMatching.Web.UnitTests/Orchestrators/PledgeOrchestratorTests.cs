@@ -10,6 +10,7 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
@@ -26,6 +27,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private Mock<IPledgeService> _pledgeService;
 		private Mock<IEncodingService> _encodingService;
         private Mock<ILocationValidatorService> _validatorService;
+        private Mock<IUserService> _userService;
         private List<ReferenceDataItem> _sectors;
         private List<ReferenceDataItem> _levels;
         private List<ReferenceDataItem> _jobRoles;
@@ -50,6 +52,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _pledgeService = new Mock<IPledgeService>();
             _encodingService = new Mock<IEncodingService>();
             _validatorService = new Mock<ILocationValidatorService>();
+            _userService = new Mock<IUserService>();
 
             _sectors = _fixture.Create<List<ReferenceDataItem>>();
             _levels = _fixture.Create<List<ReferenceDataItem>>();
@@ -76,7 +79,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _pledgeService.Setup(x => x.GetJobRole(_accountId)).ReturnsAsync(_jobRoleResponse);
             _pledgeService.Setup(x => x.GetLevel(_accountId)).ReturnsAsync(_levelResponse);
 
-            _orchestrator = new PledgeOrchestrator(_cache.Object, _pledgeService.Object, _encodingService.Object, _validatorService.Object);
+            _orchestrator = new PledgeOrchestrator(_cache.Object, _pledgeService.Object, _encodingService.Object, _validatorService.Object, _userService.Object);
         }
 
         [Test]

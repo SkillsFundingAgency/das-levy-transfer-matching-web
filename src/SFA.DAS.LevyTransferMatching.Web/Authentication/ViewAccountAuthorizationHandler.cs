@@ -68,9 +68,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Authentication
             }
 
             var accountClaim = context.User.FindFirst(c =>
-                c.Type.Equals(ClaimIdentifierConfiguration.AccountViewer) ||
+                (c.Type.Equals(ClaimIdentifierConfiguration.AccountViewer) ||
                 c.Type.Equals(ClaimIdentifierConfiguration.AccountOwner) ||
-                c.Type.Equals(ClaimIdentifierConfiguration.AccountTransactor) &&
+                c.Type.Equals(ClaimIdentifierConfiguration.AccountTransactor)) &&
                 c.Value.Equals(decodedAccountId.ToString(), StringComparison.InvariantCultureIgnoreCase)
             );
 

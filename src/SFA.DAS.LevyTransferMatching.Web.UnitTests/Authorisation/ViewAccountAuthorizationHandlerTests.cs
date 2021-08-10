@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using AutoFixture;
+﻿using AutoFixture;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
@@ -13,13 +9,18 @@ using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
 using SFA.DAS.LevyTransferMatching.Web.Authentication;
 using SFA.DAS.LevyTransferMatching.Web.Authorization;
+using System;
+using System.Collections.Generic;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Authorisation
 {
     [TestFixture]
-    public class WhenHandleRequirementAsync
+    public class ViewAccountAuthorizationHandlerTests
     {
-        private ManageAccountAuthorizationHandler _sut;
+        private ViewAccountAuthorizationHandler _handler;
         private List<IAuthorizationRequirement> _requirements;
         private ClaimsPrincipal _user;
         private ClaimsIdentity _identity;
@@ -41,7 +42,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Authorisation
 
             _requirements = new List<IAuthorizationRequirement>
             {
-                new ManageAccountRequirement()
+                new ViewAccountRequirement()
             };
 
             _encodedAccountId = _fixture.Create<string>();
@@ -59,7 +60,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Authorisation
             _claims = new List<Claim>
             {
                 new Claim(ClaimIdentifierConfiguration.Id, _userId.ToString()),
-                new Claim(ClaimIdentifierConfiguration.AccountOwner, _decodedAccountId.ToString()),
+                new Claim(ClaimIdentifierConfiguration.AccountViewer, _decodedAccountId.ToString()),
 
             };
             _identity = new ClaimsIdentity(_claims);
@@ -67,14 +68,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Authorisation
 
             _context = new AuthorizationHandlerContext(_requirements, _user, "");
 
-            _sut = new ManageAccountAuthorizationHandler(_httpContextAccessor.Object, Mock.Of<ILogger<ManageAccountAuthorizationHandler>>(), _encodingService.Object);
+            _handler = new ViewAccountAuthorizationHandler(_httpContextAccessor.Object, Mock.Of<ILogger<ManageAccountAuthorizationHandler>>(), _encodingService.Object);
         }
 
         [Test]
         public async Task Then_the_requirement_does_not_succeed_if_the_route_does_not_contain_the_accountId()
         {
             _httpContext.Request.RouteValues.Remove(RouteValueKeys.EncodedAccountId);
-            await _sut.HandleAsync(_context);
+            await _handler.HandleAsync(_context);
             Assert.IsFalse(_context.HasSucceeded);
         }
 
@@ -86,7 +87,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Authorisation
             _user = new ClaimsPrincipal(_identity);
             _context = new AuthorizationHandlerContext(_requirements, _user, _context);
 
-            await _sut.HandleAsync(_context);
+            await _handler.HandleAsync(_context);
 
             Assert.IsFalse(_context.HasSucceeded);
         }
@@ -103,20 +104,20 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Authorisation
             _user = new ClaimsPrincipal(_identity);
             _context = new AuthorizationHandlerContext(_requirements, _user, _context);
 
-            await _sut.HandleAsync(_context);
+            await _handler.HandleAsync(_context);
 
             Assert.IsFalse(_context.HasSucceeded);
         }
 
         [Test]
-        public async Task Then_the_requirement_does_not_succeed_if_the_accountId_claim_does_not_exist()
+        public async Task Then_the_requirement_does_not_succeed_if_the_account_viewer_claim_does_not_exist()
         {
-            _claims.Remove(_claims.Find(c => c.Type == ClaimIdentifierConfiguration.AccountOwner));
+            _claims.Remove(_claims.Find(c => c.Type == ClaimIdentifierConfiguration.AccountViewer));
             _identity = new ClaimsIdentity(_claims);
             _user = new ClaimsPrincipal(_identity);
             _context = new AuthorizationHandlerContext(_requirements, _user, _context);
 
-            await _sut.HandleAsync(_context);
+            await _handler.HandleAsync(_context);
 
             Assert.IsFalse(_context.HasSucceeded);
         }
@@ -124,21 +125,21 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Authorisation
         [Test]
         public async Task Then_the_requirement_does_not_succeed_if_the_accountId_claim_does_not_match_the_route_data()
         {
-            _claims.Remove(_claims.Find(c => c.Type == ClaimIdentifierConfiguration.AccountOwner));
-            _claims.Add(new Claim(ClaimIdentifierConfiguration.AccountOwner, Guid.NewGuid().ToString()));
+            _claims.Remove(_claims.Find(c => c.Type == ClaimIdentifierConfiguration.AccountViewer));
+            _claims.Add(new Claim(ClaimIdentifierConfiguration.AccountViewer, Guid.NewGuid().ToString()));
             _identity = new ClaimsIdentity(_claims);
             _user = new ClaimsPrincipal(_identity);
             _context = new AuthorizationHandlerContext(_requirements, _user, _context);
 
-            await _sut.HandleAsync(_context);
-            
+            await _handler.HandleAsync(_context);
+
             Assert.IsFalse(_context.HasSucceeded);
         }
 
         [Test]
         public async Task Then_the_requirement_succeeds_if_the_route_accountid_matches_the_account_claim()
         {
-            await _sut.HandleAsync(_context);
+            await _handler.HandleAsync(_context);
             Assert.IsTrue(_context.HasSucceeded);
         }
     }
