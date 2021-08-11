@@ -20,6 +20,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         Task<LevelViewModel> GetLevelViewModel(LevelRequest request);
         Task UpdateCacheItem(LocationPostRequest request);
         Task<string> SubmitPledge(CreatePostRequest request);
-        Task<ApplicationsViewModel> GetApplications(GetApplicationsRequest request);
+        Task<ApplicationsViewModel> GetApplications(ApplicationsRequest request);
     }
 }

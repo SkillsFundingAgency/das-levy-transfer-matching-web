@@ -3,7 +3,7 @@ using SFA.DAS.LevyTransferMatching.Web.Attributes;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 {
-    public class GetApplicationsRequest
+    public class ApplicationsRequest
     {
         public string EncodedAccountId { get; set; }
         [AutoDecode(nameof(EncodedAccountId), EncodingType.AccountId)]

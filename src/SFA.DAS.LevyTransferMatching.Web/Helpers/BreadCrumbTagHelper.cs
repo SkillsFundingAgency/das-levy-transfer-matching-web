@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
@@ -18,10 +19,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
             content.Append($"<div class=\"govuk-breadcrumbs\">");
             content.Append($"<ol class=\"govuk-breadcrumbs__list\">");
 
-            foreach (var crumb in Source)
-            {
-                content.Append($"<li class=\"govuk-breadcrumbs__list-item\"><a class=\"govuk-breadcrumbs__link\" href=\"{crumb.Item1}\">{crumb.Item2}</a></li>");
-            }
+            var i = 1;
+            Source.ToList().ForEach(crumb => 
+                content.Append(i++ == Source.Count()
+                    ? $"<li class=\"govuk-breadcrumbs__list-item\">{crumb.Item2}</li>"
+                    : $"<li class=\"govuk-breadcrumbs__list-item\"><a class=\"govuk-breadcrumbs__link\" href=\"{crumb.Item1}\">{crumb.Item2}</a></li>"));
 
             content.Append("</ol>");
             content.Append("</div>");

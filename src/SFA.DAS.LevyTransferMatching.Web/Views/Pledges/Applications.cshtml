@@ -8,7 +8,7 @@
         new Tuple<string, string>(LinkGenerator.FinanceLink($"accounts/{Model.EncodedAccountId}/finance"), "Finance"),
         new Tuple<string, string>(LinkGenerator.FinanceLink($"accounts/{Model.EncodedAccountId}/transfers"), "Transfers"),
         new Tuple<string, string>($"/accounts/{@Model.EncodedAccountId}/pledges", "My transfer pledges"),
-        new Tuple<string, string>("#", $"Transfer pledge {@Model.EncodedPledgeId}")
+        new Tuple<string, string>("", $"Transfer pledge {@Model.EncodedPledgeId}")
     };
 }
 

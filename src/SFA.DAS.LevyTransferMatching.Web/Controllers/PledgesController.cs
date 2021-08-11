@@ -141,7 +141,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
         [HttpGet]
         [Route("{encodedPledgeId}/applications")]
-        public async Task<IActionResult> Applications(GetApplicationsRequest request)
+        public async Task<IActionResult> Applications(ApplicationsRequest request)
         {
             var response = await _orchestrator.GetApplications(request);
 

@@ -251,7 +251,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             }
         }
 
-        public async Task<ApplicationsViewModel> GetApplications(GetApplicationsRequest request)
+        public async Task<ApplicationsViewModel> GetApplications(ApplicationsRequest request)
         {
             var result = await _pledgeService.GetApplications(request.AccountId, request.PledgeId);
 
