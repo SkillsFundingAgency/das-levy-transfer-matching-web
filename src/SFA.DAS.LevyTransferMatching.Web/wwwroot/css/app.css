@@ -128,3 +128,7 @@
 .das-preformatted-body {
     white-space: pre-wrap;
 }
+
+td[colspan] {
+    text-align: center;
+}

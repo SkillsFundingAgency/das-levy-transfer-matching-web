@@ -1,8 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
@@ -60,6 +62,14 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
             var response = await _client.GetAsync($"accounts/{accountId}/pledges/create/level");
             response.EnsureSuccessStatusCode();
             return JsonConvert.DeserializeObject<GetLevelResponse>(await response.Content.ReadAsStringAsync());
+        }
+
+        public async Task<GetApplicationsResponse> GetApplications(long accountId, int pledgeId)
+        {
+            var response = await _client.GetAsync($"accounts/{accountId}/pledges/{pledgeId}/applications");
+            response.EnsureSuccessStatusCode();
+
+            return JsonConvert.DeserializeObject<GetApplicationsResponse>(await response.Content.ReadAsStringAsync());
         }
     }
 }

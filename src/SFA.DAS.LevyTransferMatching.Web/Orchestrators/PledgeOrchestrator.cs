@@ -7,9 +7,11 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
+using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Location;
+using SFA.DAS.Validation.Extensions;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
@@ -247,6 +249,27 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             {
                 throw new InvalidOperationException("Unable to submit pledge due to null cache value for pledge IsNamePublic");
             }
+        }
+
+        public async Task<ApplicationsViewModel> GetApplications(GetApplicationsRequest request)
+        {
+            var result = await _pledgeService.GetApplications(request.AccountId, request.PledgeId);
+
+            return new ApplicationsViewModel
+            {
+                EncodedAccountId = request.EncodedAccountId,
+                EncodedPledgeId = request.EncodedPledgeId,
+                Applications = result.Applications.Select(app => new ApplicationViewModel
+                {
+                    EncodedApplicationId = _encodingService.Encode(app.Id, EncodingType.PledgeApplicationId),
+                    DasAccountName = app.DasAccountName,
+                    Amount = app.Amount,
+                    Duration = result.Standard.ApprenticeshipFunding.GetEffectiveFundingLine(app.StartDate).Duration,
+                    CreateDate = app.CreateDate,
+                    Status = "Awaiting approval"
+                }),
+                Standard = result.Standard
+            };
         }
     }
 }

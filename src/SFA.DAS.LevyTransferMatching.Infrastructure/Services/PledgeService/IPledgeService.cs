@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
@@ -11,5 +13,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
         Task<GetSectorResponse> GetSector(long accountId);
         Task<GetJobRoleResponse> GetJobRole(long accountId);
         Task<GetLevelResponse> GetLevel(long accountId);
+        Task<GetApplicationsResponse> GetApplications(long accountId, int pledgeId);
     }
 }
