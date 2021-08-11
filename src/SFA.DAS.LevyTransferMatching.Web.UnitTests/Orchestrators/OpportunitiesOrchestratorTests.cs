@@ -83,7 +83,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             CollectionAssert.AreEqual(_getIndexResponse.Opportunities.Select(x => x.DasAccountName), viewModel.Opportunities.Select(x => x.EmployerName));
             CollectionAssert.AreEqual(_getIndexResponse.Opportunities.Select(x => x.Amount), viewModel.Opportunities.Select(x => x.Amount));
             Assert.AreEqual(encodedId, viewModel.Opportunities[0].ReferenceNumber);
-            CollectionAssert.AreEqual(_getIndexResponse.Opportunities.Select(x => x.Locations), viewModel.Opportunities.Select(x => x.Locations));
+            CollectionAssert.AreEqual(_getIndexResponse.Opportunities.Select(x => x.Locations.ToLocationsList()), viewModel.Opportunities.Select(x => x.Locations));
             CollectionAssert.AreEqual(_getIndexResponse.Opportunities.Select(x => x.Sectors.ToReferenceDataDescriptionList(_getIndexResponse.Sectors)), viewModel.Opportunities.Select(x => x.Sectors));
             CollectionAssert.AreEqual(_getIndexResponse.Opportunities.Select(x => x.JobRoles.ToReferenceDataDescriptionList(_getIndexResponse.JobRoles)), viewModel.Opportunities.Select(x => x.JobRoles));
             CollectionAssert.AreEqual(_getIndexResponse.Opportunities.Select(x => x.Levels.ToReferenceDataDescriptionList(_getIndexResponse.Levels, descriptionSource: y => y.ShortDescription)), viewModel.Opportunities.Select(x => x.Levels));
@@ -169,6 +169,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                     opportunity.Sectors,
                     opportunity.JobRoles,
                     opportunity.Levels,
+                    opportunity.Locations,
                     _sectorReferenceDataItems,
                     _jobRoleReferenceDataItems,
                     _levelReferenceDataItems,
@@ -212,6 +213,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                     opportunity.Sectors,
                     opportunity.JobRoles,
                     opportunity.Levels,
+                    opportunity.Locations,
                     _sectorReferenceDataItems,
                     _jobRoleReferenceDataItems,
                     _levelReferenceDataItems,
@@ -267,6 +269,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                     opportunity.Sectors,
                     opportunity.JobRoles,
                     opportunity.Levels,
+                    opportunity.Locations,
                     _sectorReferenceDataItems,
                     _jobRoleReferenceDataItems,
                     _levelReferenceDataItems,
