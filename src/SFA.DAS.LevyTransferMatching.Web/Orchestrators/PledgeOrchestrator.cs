@@ -151,6 +151,18 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 Locations = cacheItem.Locations?.ToList()
             };
         }
+
+        public async Task<ApplicationApprovedViewModel> GetApplicationApprovedViewModel(ApplicationApprovedRequest request)
+        {
+            var response = await _pledgeService.GetApplicationApproved(request.AccountId, request.PledgeId, request.ApplicationId);
+
+            return new ApplicationApprovedViewModel
+            {
+                EncodedAccountId = request.EncodedAccountId,
+                EncodedPledgeId = request.EncodedPledgeId,
+                EmployerAccountName = response.EmployerAccountName
+            };
+        }
         
         public async Task<Dictionary<int, string>> ValidateLocations(LocationPostRequest request)
         {

@@ -34,10 +34,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private Mock<IEncodingService> _encodingService;
         private Mock<ICacheStorageService> _cacheStorageService;
 
-        private List<ReferenceDataItem> _sectors;
-        private List<ReferenceDataItem> _levels;
-        private List<ReferenceDataItem> _jobRoles;
-
         private List<ReferenceDataItem> _sectorReferenceDataItems;
         private List<ReferenceDataItem> _jobRoleReferenceDataItems;
         private List<ReferenceDataItem> _levelReferenceDataItems;
@@ -56,9 +52,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _encodingService = new Mock<IEncodingService>();
             _cacheStorageService = new Mock<ICacheStorageService>();
 
-            _sectors = _fixture.Create<List<ReferenceDataItem>>();
-            _levels = _fixture.Create<List<ReferenceDataItem>>();
-            _jobRoles = _fixture.Create<List<ReferenceDataItem>>();
             _userId = _fixture.Create<string>();
             _userDisplayName = _fixture.Create<string>();
 

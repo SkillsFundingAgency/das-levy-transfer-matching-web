@@ -34,13 +34,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private GetSectorResponse _sectorResponse;
         private GetJobRoleResponse _jobRoleResponse;
         private GetLevelResponse _levelResponse;
+        private GetApplicationApprovedResponse _applicationApprovedResponse;
         private string _encodedAccountId;
         private Guid _cacheKey;
         private readonly long _accountId = 1;
         private readonly int _pledgeId = 1;
         private string _encodedPledgeId;
-        private string _userId;
-        private string _userDisplayName;
+        private string _encodedApplicationId;
+        private readonly int _applicationId = 1;
 
         [SetUp]
         public void Setup()
@@ -62,10 +63,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _sectorResponse = new GetSectorResponse {Sectors = _sectors};
             _levelResponse = new GetLevelResponse {Levels = _levels};
             _jobRoleResponse = new GetJobRoleResponse {JobRoles = _jobRoles};
+            _applicationApprovedResponse = _fixture.Create<GetApplicationApprovedResponse>();
            
             _encodedPledgeId = _fixture.Create<string>();
-            _userId = _fixture.Create<string>();
-            _userDisplayName = _fixture.Create<string>();
+            _encodedApplicationId = _fixture.Create<string>();
 
             _pledgeService.Setup(x => x.GetCreate(_accountId)).ReturnsAsync(() => new GetCreateResponse
             {
@@ -78,6 +79,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _pledgeService.Setup(x => x.GetSector(_accountId)).ReturnsAsync(_sectorResponse);
             _pledgeService.Setup(x => x.GetJobRole(_accountId)).ReturnsAsync(_jobRoleResponse);
             _pledgeService.Setup(x => x.GetLevel(_accountId)).ReturnsAsync(_levelResponse);
+            _pledgeService.Setup(x => x.GetApplicationApproved(_accountId, _pledgeId, _applicationId)).ReturnsAsync(_applicationApprovedResponse);
 
             _orchestrator = new PledgeOrchestrator(_cache.Object, _pledgeService.Object, _encodingService.Object, _validatorService.Object, _userService.Object);
         }
@@ -345,6 +347,27 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _encodingService.Verify(x => x.Encode(_pledgeId, EncodingType.PledgeId), Times.Once);
 
             Assert.AreEqual(_encodedPledgeId, result);
+        }
+
+        [Test]
+        public async Task GetApplicationApprovedViewModel_EncodedAccountId_Is_Correct()
+        {
+            var result = await _orchestrator.GetApplicationApprovedViewModel(new ApplicationApprovedRequest { EncodedAccountId = _encodedAccountId, EncodedPledgeId = _encodedPledgeId, EncodedApplicationId = _encodedApplicationId, AccountId = _accountId, PledgeId = _pledgeId, ApplicationId = _applicationId });
+            Assert.AreEqual(_encodedAccountId, result.EncodedAccountId);
+        }
+
+        [Test]
+        public async Task GetApplicationApprovedViewModel_EncodedPledgeId_Has_Value()
+        {
+            var result = await _orchestrator.GetApplicationApprovedViewModel(new ApplicationApprovedRequest { EncodedAccountId = _encodedAccountId, EncodedPledgeId = _encodedPledgeId, EncodedApplicationId = _encodedApplicationId, AccountId = _accountId, PledgeId = _pledgeId, ApplicationId = _applicationId });
+            Assert.AreEqual(_encodedPledgeId, result.EncodedPledgeId);
+        }
+
+        [Test]
+        public async Task GetApplicationApprovedViewModel_EmployerAccountName_Has_Value()
+        {
+            var result = await _orchestrator.GetApplicationApprovedViewModel(new ApplicationApprovedRequest { EncodedAccountId = _encodedAccountId, EncodedPledgeId = _encodedAccountId, EncodedApplicationId = _encodedApplicationId, AccountId = _accountId, PledgeId = _pledgeId, ApplicationId = _applicationId });
+            Assert.AreEqual(_applicationApprovedResponse.EmployerAccountName, result.EmployerAccountName);
         }
     }
 }

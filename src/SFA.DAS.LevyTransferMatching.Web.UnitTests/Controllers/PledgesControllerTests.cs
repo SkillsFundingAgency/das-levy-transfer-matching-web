@@ -245,5 +245,21 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             Assert.AreEqual("Confirmation", actionResult.ActionName);
             Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
         }
+
+        [Test]
+        public async Task GET_ApplicationApproved_Returns_Expected_View_With_Expected_ViewModel()
+        {
+            // Arrange
+            var request = _fixture.Create<ApplicationApprovedRequest>();
+            _orchestrator.Setup(x => x.GetApplicationApprovedViewModel(request)).ReturnsAsync(() => new ApplicationApprovedViewModel());
+
+            // Act
+            var viewResult = await _pledgesController.ApplicationApproved(request) as ViewResult;
+            var applicationApprovedViewModel = viewResult?.Model as ApplicationApprovedViewModel;
+
+            // Assert
+            Assert.NotNull(viewResult);
+            Assert.NotNull(applicationApprovedViewModel);
+        }
     }
 }
