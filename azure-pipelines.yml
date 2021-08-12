@@ -86,7 +86,7 @@ stages:
   variables:
   - group: PreProd Management Resources
   - group: PreProd Shared Resources
-  - group: PP das-levy-transfer-matching-web
+  - group: PreProd das-levy-transfer-matching-web
   jobs:
   - template: pipeline-templates/job/deploy.yml
     parameters:
