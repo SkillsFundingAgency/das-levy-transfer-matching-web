@@ -80,18 +80,16 @@
                 </div>
             </div>
             <div class="govuk-grid-column-one-third">
-                <section class="employer-details side-panel">
+                <section>
                     <partial name="/Views/Shared/_OpportunitySummary.cshtml" for="OpportunitySummaryViewModel"/>
                 </section>
             </div>
-            <div class="govuk-grid-column-full">
-                <div class="govuk-button-group">
-                    <button id="opportunity-criteria-continue" class="govuk-button" data-module="govuk-button">
-                        Continue
-                    </button>
-                    <a href="@Url.Action("Apply", new {Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey})" class="govuk-back-link">Back</a>
-                </div>
-            </div>
+        </div>
+        <div class="govuk-button-group">
+            <button id="opportunity-criteria-continue" class="govuk-button" data-module="govuk-button">
+                Continue
+            </button>
+            <a href="@Url.Action("Apply", new {Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey})" class="govuk-back-link">Back</a>
         </div>
     </form>
 </main>
