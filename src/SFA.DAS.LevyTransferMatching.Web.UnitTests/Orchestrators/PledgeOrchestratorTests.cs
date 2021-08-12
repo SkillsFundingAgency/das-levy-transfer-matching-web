@@ -356,9 +356,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var response = new GetApplicationsResponse()
             {
                 Standard = _fixture.Create<StandardsListItemDto>(),
-                Applications = new List<ApplicationDto>()
+                Applications = new List<GetApplicationsResponse.Application>()
                 {
-                    new ApplicationDto()
+                    new GetApplicationsResponse.Application()
                     {
                         Id = 0,
                         StartDate = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1)

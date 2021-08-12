@@ -11,7 +11,6 @@ using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Location;
-using SFA.DAS.Validation.Extensions;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
@@ -259,13 +258,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             {
                 EncodedAccountId = request.EncodedAccountId,
                 EncodedPledgeId = request.EncodedPledgeId,
-                Applications = result.Applications.Select(app => new ApplicationViewModel
+                Applications = result.Applications?.Select(app => new ApplicationViewModel
                 {
                     EncodedApplicationId = _encodingService.Encode(app.Id, EncodingType.PledgeApplicationId),
                     DasAccountName = app.DasAccountName,
                     Amount = app.Amount,
                     Duration = result.Standard.ApprenticeshipFunding.GetEffectiveFundingLine(app.StartDate).Duration,
-                    CreateDate = app.CreateDate,
+                    CreatedOn = app.CreatedOn,
                     Status = "Awaiting approval"
                 }),
                 Standard = result.Standard

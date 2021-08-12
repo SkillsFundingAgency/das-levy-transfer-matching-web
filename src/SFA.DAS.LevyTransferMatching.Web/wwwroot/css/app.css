@@ -132,3 +132,19 @@
 td[colspan] {
     text-align: center;
 }
+
+th.applicant {
+    width: 250px;
+}
+
+th.tax-year {
+    width: 120px;
+}
+
+th.duration {
+    width: 120px;
+}
+
+th.status {
+    width: 100px;
+}

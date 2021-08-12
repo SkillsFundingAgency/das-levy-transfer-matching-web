@@ -48,24 +48,24 @@
 
                     <div>
 
-                        <table class="govuk-table">
+                        <table class="govuk-table" aria-label="Pledge applications">
                             <thead class="govuk-table__head">
-                                <tr class="govuk-table__row">
-                                    <th scope="col" class="govuk-table__header" width="250px">Applicant</th>
-                                    <th scope="col" class="govuk-table__header" width="120px">
-                                        <div class="small-text">
-                                            Estimated cost @Model.TaxYear
-                                        </div>
-                                    </th>
-                                    <th scope="col" class="govuk-table__header" width="120px">Typical duration</th>
-                                    <th scope="col" class="govuk-table__header">Criteria</th>
-                                    <th scope="col" class="govuk-table__header">Date applied</th>
-                                    <th scope="col" class="govuk-table__header" width="100">Status</th>
-                                </tr>
+                            <tr class="govuk-table__row">
+                                <th scope="col" class="govuk-table__header applicant">Applicant</th>
+                                <th scope="col" class="govuk-table__header tax-year ">
+                                    <div class="small-text">
+                                        Estimated cost @Model.TaxYear
+                                    </div>
+                                </th>
+                                <th scope="col" class="govuk-table__header duration" >Typical duration</th>
+                                <th scope="col" class="govuk-table__header">Criteria</th>
+                                <th scope="col" class="govuk-table__header">Date applied</th>
+                                <th scope="col" class="govuk-table__header .status" >Status</th>
+                            </tr>
                             </thead>
                             <tbody class="govuk-table__body">
                             @{
-                                if (Model.Applications.Any())
+                                if (Model.Applications != null && Model.Applications.Any())
                                 {
                                     foreach (var app in Model.Applications)
                                     {
@@ -83,7 +83,7 @@
                                                     • Level
                                                 </p>
                                             </td>
-                                            <td class="govuk-table__cell">@app.CreateDate.ToShortDateString()</td>
+                                            <td class="govuk-table__cell">@app.CreatedOn.ToShortDateString()</td>
                                             <td class="govuk-table__cell"><strong class="govuk-tag govuk-tag--grey">@app.Status</strong></td>
                                         </tr>
                                     }
