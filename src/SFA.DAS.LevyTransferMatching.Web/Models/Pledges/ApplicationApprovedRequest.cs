@@ -15,7 +15,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         [AutoDecode(nameof(EncodedPledgeId), EncodingType.PledgeId)]
         public int PledgeId { get; set; }
 
-        //[AutoDecode(nameof(EncodedApplicationId), EncodingType.ApplicationId)]
+        [AutoDecode(nameof(EncodedApplicationId), EncodingType.PledgeApplicationId)]
         public int ApplicationId { get; set; }
     }
 }
