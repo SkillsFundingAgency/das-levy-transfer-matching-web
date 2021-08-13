@@ -5,6 +5,7 @@
     ViewData["Title"] = "Application Approved";
 }
 
+<a href="@Url.Action("Applications", "Pledges", new { EncodedAccountId = Model.EncodedAccountId, EncodedPledgeId = Model.EncodedPledgeId })" class="govuk-back-link">Back</a>
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
     <div class="govuk-grid-row">
         <div class="govuk-width-container form-entry">
@@ -36,7 +37,7 @@
                         </strong>
                     </div>
 
-                    <a href="@LinkGenerator.FinanceLink($"accounts/{Model.EncodedAccountId}/transfers")" class="govuk-back-link" )">View other applications</a>
+                    <p><a href="@Url.Action("Applications", "Pledges", new { EncodedAccountId = Model.EncodedAccountId, EncodedPledgeId = Model.EncodedPledgeId })" class="govuk-link govuk-link--no-visited-state">View other applications</a></p>
                 </div>
             </div>
         </div>
