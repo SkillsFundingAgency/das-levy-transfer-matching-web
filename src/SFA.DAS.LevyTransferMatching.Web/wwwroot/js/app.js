@@ -333,16 +333,16 @@ ShowFundingEstimate.prototype.pageLoad = function () {
 ShowFundingEstimate.prototype.setupEvents = function () {
   var that = this
   this.apprenticeshipNumber.onkeyup = function () {
-    that.numberOfApprentices = this.value
+    that.numberOfApprentices = this.value | 0
     that.checkFieldValues()
   }
   this.apprenticeshipDateMonth.onkeyup = function () {
-    that.startMonth = this.value
+    that.startMonth = this.value | 0
     that.dateChange()
     that.checkFieldValues()
   }
   this.apprenticeshipDateYear.onkeyup = function () {
-    that.startYear = this.value
+    that.startYear = this.value | 0
     that.dateChange()
     that.checkFieldValues()
   }
@@ -443,6 +443,8 @@ ShowFundingEstimate.prototype.updateUI = function () {
       appRowMessage.style.display = 'none'
     }
   } else {
+    appRow.classList.remove('govuk-form-group--error')
+    appRowMessage.style.display = 'none'
     panel.style.display = 'none'
   }
 }
