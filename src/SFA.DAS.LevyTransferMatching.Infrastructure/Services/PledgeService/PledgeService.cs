@@ -36,9 +36,14 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
 
         public async Task<GetAmountResponse> GetAmount(string accountId)
         {
-            var response = await _client.GetAsync($"accounts/{accountId}/pledges/create/amount");
-            response.EnsureSuccessStatusCode();
-            return JsonConvert.DeserializeObject<GetAmountResponse>(await response.Content.ReadAsStringAsync());
+            //var response = await _client.GetAsync($"accounts/{accountId}/pledges/create/amount");
+            //response.EnsureSuccessStatusCode();
+            //return JsonConvert.DeserializeObject<GetAmountResponse>(await response.Content.ReadAsStringAsync());
+            return new GetAmountResponse
+            {
+                DasAccountName = "Acme Ltd",
+                RemainingTransferAllowance = 100000M
+            };
         }
 
         public async Task<GetSectorResponse> GetSector(long accountId)
