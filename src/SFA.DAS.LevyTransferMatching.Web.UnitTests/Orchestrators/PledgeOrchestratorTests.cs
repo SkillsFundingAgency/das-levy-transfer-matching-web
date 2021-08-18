@@ -355,18 +355,18 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         {
             var response = new GetApplicationsResponse()
             {
-                Standard = _fixture.Create<StandardsListItemDto>(),
                 Applications = new List<GetApplicationsResponse.Application>()
                 {
                     new GetApplicationsResponse.Application()
                     {
                         Id = 0,
-                        StartDate = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1)
+                        StartDate = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1),
+                        Standard = _fixture.Create<StandardsListItemDto>()
                     }
                 }
             };
 
-            response.Standard.ApprenticeshipFunding = new List<ApprenticeshipFundingDto>()
+            response.Applications.First().Standard.ApprenticeshipFunding = new List<ApprenticeshipFundingDto>()
             {
                 new ApprenticeshipFundingDto()
                 {

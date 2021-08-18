@@ -263,11 +263,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     EncodedApplicationId = _encodingService.Encode(app.Id, EncodingType.PledgeApplicationId),
                     DasAccountName = app.DasAccountName,
                     Amount = app.Amount,
-                    Duration = result.Standard.ApprenticeshipFunding.GetEffectiveFundingLine(app.StartDate).Duration,
+                    Duration = app.Standard.ApprenticeshipFunding.GetEffectiveFundingLine(app.StartDate).Duration,
                     CreatedOn = app.CreatedOn,
                     Status = "Awaiting approval"
-                }),
-                Standard = result.Standard
+                })
             };
         }
     }

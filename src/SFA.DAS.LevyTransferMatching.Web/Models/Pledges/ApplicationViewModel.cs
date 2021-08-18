@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 {
@@ -25,5 +26,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public DateTime CreatedOn { get; set; }
         public int Duration { get; set; }
         public string Status { get; set; } //TODO: For TM-47 this is always Awaiting approval. Will be completed with a later story
+        public StandardsListItemDto Standard { get; set; }
     }
 }

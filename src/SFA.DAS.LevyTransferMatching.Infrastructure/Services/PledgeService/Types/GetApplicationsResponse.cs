@@ -6,7 +6,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Typ
 {
     public class GetApplicationsResponse
     {
-        public StandardsListItemDto Standard { get; set; }
         public IEnumerable<Application> Applications { get; set; }
 
         public class Application
@@ -27,6 +26,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Typ
             public string BusinessWebsite { get; set; }
             public IEnumerable<string> EmailAddresses { get; set; }
             public DateTime CreatedOn { get; set; }
+            public StandardsListItemDto Standard { get; set; }
         }
     }
 }
