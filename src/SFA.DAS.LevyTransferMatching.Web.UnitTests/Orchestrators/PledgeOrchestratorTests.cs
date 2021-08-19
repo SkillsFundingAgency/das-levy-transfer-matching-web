@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Encoding;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService;
@@ -14,6 +16,7 @@ using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Location;
+using GetApplicationsResponse = SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types.GetApplicationsResponse;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 {
@@ -345,6 +348,48 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _encodingService.Verify(x => x.Encode(_pledgeId, EncodingType.PledgeId), Times.Once);
 
             Assert.AreEqual(_encodedPledgeId, result);
+        }
+
+        [Test]
+        public async Task GetApplications_Returns_Valid_ViewModel()
+        {
+            var response = new GetApplicationsResponse()
+            {
+                Applications = new List<GetApplicationsResponse.Application>()
+                {
+                    new GetApplicationsResponse.Application()
+                    {
+                        Id = 0,
+                        StartDate = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1),
+                        Standard = _fixture.Create<StandardsListItemDto>()
+                    }
+                }
+            };
+
+            response.Applications.First().Standard.ApprenticeshipFunding = new List<ApprenticeshipFundingDto>()
+            {
+                new ApprenticeshipFundingDto()
+                {
+                    Duration = 12,
+                    EffectiveFrom = new DateTime(DateTime.UtcNow.AddYears(-1).Year, DateTime.UtcNow.Month, 1),
+                    EffectiveTo = new DateTime(DateTime.UtcNow.AddYears(1).Year, DateTime.UtcNow.Month, 1),
+                    MaxEmployerLevyCap = 100_000
+                }
+            };
+
+            _pledgeService.Setup(x => x.GetApplications(0, 0)).ReturnsAsync(response);
+            _encodingService.Setup(x => x.Encode(0, EncodingType.PledgeApplicationId)).Returns("123");
+
+            var result = await _orchestrator.GetApplications(new ApplicationsRequest() { EncodedAccountId = _encodedAccountId, EncodedPledgeId = _encodedPledgeId});
+
+            Assert.AreEqual(_encodedAccountId, result.EncodedAccountId);
+            Assert.AreEqual(_encodedPledgeId, result.EncodedPledgeId);
+            result.Applications.ToList().ForEach(application =>
+            {
+                Assert.AreEqual("123", application.EncodedApplicationId);
+                Assert.AreEqual("Awaiting approval", application.Status);
+            });
+            
         }
     }
 }

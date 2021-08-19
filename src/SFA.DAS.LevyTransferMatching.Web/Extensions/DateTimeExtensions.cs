@@ -43,5 +43,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Extensions
             return !date.HasValue || date == new DateTime(1900, 1, 1);
         }
 
+        public static string ToLongDateDisplayString(this DateTime date)
+        {
+            return date.ToString("dd/MM/yyyy");
+        }
+
     }
 }
