@@ -58,14 +58,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         }
 
         [Test]
-        public async Task GET_Detail_Returns_Expected_View_With_Expected_ViewModel()
+        public void GET_Detail_Returns_Expected_View_With_Expected_ViewModel()
         {
             // Arrange
             var request = _fixture.Create<DetailRequest>();
-            _orchestrator.Setup(x => x.GetDetailViewModel(request)).ReturnsAsync(() => new DetailViewModel());
+            _orchestrator.Setup(x => x.GetDetailViewModel(request)).Returns(() => new DetailViewModel());
 
             // Act
-            var viewResult = await _pledgesController.Detail(request) as ViewResult;
+            var viewResult = _pledgesController.Detail(request) as ViewResult;
             var detailViewModel = viewResult?.Model as DetailViewModel;
 
             // Assert

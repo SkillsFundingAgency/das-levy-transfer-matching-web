@@ -10,7 +10,6 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Location;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
@@ -59,7 +58,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
-        public async Task<DetailViewModel> GetDetailViewModel(DetailRequest request)
+        public DetailViewModel GetDetailViewModel(DetailRequest request)
         {
             return new DetailViewModel
             {
