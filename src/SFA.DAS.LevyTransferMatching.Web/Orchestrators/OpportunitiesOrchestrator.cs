@@ -79,7 +79,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     .Select(x => new IndexViewModel.Opportunity
                     {
                         Amount = x.Amount,
-                        EmployerName = x.DasAccountName,
+                        EmployerName = x.IsNamePublic? x.DasAccountName : "Opportunity",
                         ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),
                         Sectors = x.Sectors.ToReferenceDataDescriptionList(response.Sectors),
                         JobRoles = x.JobRoles.ToReferenceDataDescriptionList(response.JobRoles),
