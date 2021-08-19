@@ -10,6 +10,7 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Location;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
@@ -36,6 +37,33 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             {
                 EncodedAccountId = encodedAccountId,
                 CacheKey = Guid.NewGuid()
+            };
+        }
+
+        public async Task<PledgesViewModel> GetPledgesViewModel(PledgesRequest request)
+        {
+            var pledgesResponse = await _pledgeService.GetPledges(request.AccountId);
+            var renderCreatePledgesButton = _userService.IsUserChangeAuthorized();
+            
+            return new PledgesViewModel
+            {
+                EncodedAccountId = request.EncodedAccountId,
+                RenderCreatePledgeButton = renderCreatePledgesButton,
+                Pledges = pledgesResponse.Pledges.Select(x => new PledgesViewModel.Pledge 
+                {
+                    ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),
+                    Amount = x.Amount,
+                    RemainingAmount = x.RemainingAmount,
+                    ApplicationCount = x.ApplicationCount
+                })
+            };
+        }
+
+        public async Task<DetailViewModel> GetDetailViewModel(DetailRequest request)
+        {
+            return new DetailViewModel
+            {
+                EncodedPledgeId = request.EncodedPledgeId
             };
         }
 

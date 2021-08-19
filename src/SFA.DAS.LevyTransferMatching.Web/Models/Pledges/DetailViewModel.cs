@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 {
-    public class LocationRequest : BasePledgesRequest
+    public class DetailViewModel : DetailRequest
     {
     }
 }

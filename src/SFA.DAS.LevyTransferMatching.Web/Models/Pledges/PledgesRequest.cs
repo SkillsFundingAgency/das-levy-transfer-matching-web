@@ -1,15 +1,11 @@
 ﻿using System;
-using SFA.DAS.Encoding;
-using SFA.DAS.LevyTransferMatching.Web.Attributes;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 {
-    public abstract class PledgesRequest
+    public class PledgesRequest : BasePledgesRequest
     {
-        public string EncodedAccountId { get; set; }
-        public Guid CacheKey { get; set; }
-
-        [AutoDecode(nameof(EncodedAccountId), EncodingType.AccountId)]
-        public long AccountId { get; set; }
     }
 }

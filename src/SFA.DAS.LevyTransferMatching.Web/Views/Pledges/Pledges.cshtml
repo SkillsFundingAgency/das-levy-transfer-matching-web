@@ -1,0 +1,65 @@
+﻿@using SFA.DAS.LevyTransferMatching.Web.Models.Pledges
+@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.PledgesViewModel
+
+@{
+    ViewData["Title"] = "Pledges";
+}
+
+<div class="govuk-breadcrumbs">
+    <ol class="govuk-breadcrumbs__list">
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" href="@Url.AccountsLink($"accounts/{Model.EncodedAccountId}/teams")">Home</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" href="@Url.FinanceLink($"accounts/{Model.EncodedAccountId}/finance")">Finance</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" href="@Url.FinanceLink($"accounts/{Model.EncodedAccountId}/transfers")">Transfers</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" href="">My transfer pledges</a>
+        </li>
+    </ol>
+</div>
+
+<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
+    <div class="govuk-width-container">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <h1 class="govuk-heading-xl">
+                    My transfer pledges
+                </h1>
+            </div>
+            <div class="govuk-grid-column-two-thirds">
+                <p>You have <strong>@Model.PledgeCount</strong> transfers pledges.</p>
+                <table class="govuk-table govuk-!-margin-bottom-9">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header app-custom-class">Transfer pledge</th>
+                            <th scope="col" class="govuk-table__header govuk-table__header--numeric">Total</th>
+                            <th scope="col" class="govuk-table__header govuk-table__header--numeric">Remaining funds</th>
+                            <th scope="col" class="govuk-table__header govuk-table__header--numeric">Applications</th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        @foreach (var pledge in Model.Pledges)
+                        {
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell"><a href="@Url.Action("Detail", "Pledges", new DetailRequest { EncodedPledgeId = pledge.ReferenceNumber, EncodedAccountId = Model.EncodedAccountId })" class=govuk-link--no-visited-state>@pledge.ReferenceNumber</a></td>
+                                <td class="govuk-table__cell govuk-table__cell--numeric">£@pledge.Amount.ToString("N0")</td>
+                                <td class="govuk-table__cell govuk-table__cell--numeric">£@pledge.RemainingAmount.ToString("N0")</td>
+                                <td class="govuk-table__cell govuk-table__cell--numeric">@pledge.ApplicationCount</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                @if (Model.RenderCreatePledgeButton)
+                {
+                    <div class="govuk-button-group">
+                        <a class="govuk-button" data-module="govuk-button" href="@Url.Action("Inform", "Pledges", new { EncodedAccountId = Model.EncodedAccountId })">Create a transfers pledge</a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</main>

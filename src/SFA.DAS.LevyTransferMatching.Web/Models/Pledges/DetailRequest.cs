@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 {
-    public class LocationRequest : BasePledgesRequest
+    public class DetailRequest
     {
+        public string EncodedPledgeId { get; set; }
+        public string EncodedAccountId { get; set; }
     }
 }

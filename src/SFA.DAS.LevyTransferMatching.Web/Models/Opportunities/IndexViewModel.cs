@@ -21,7 +21,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
             public string JobRoles { get; set; }
             public string Levels { get; set; }
             public string DisplayAmount => Amount.ToString("C0", new CultureInfo("en-GB"));
-            public string DisplayLocations => (Locations != null && Locations.Any()) ? string.Join(", ", Locations) : "All";
+            public string DisplayLocations => Locations.IsComplete() ? string.Join(", ", Locations) : "All";
         }
     }
 }

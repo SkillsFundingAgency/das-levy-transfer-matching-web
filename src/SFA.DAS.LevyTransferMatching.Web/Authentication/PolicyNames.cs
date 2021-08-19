@@ -3,5 +3,6 @@
     public static class PolicyNames
     {
         public const string ManageAccount = "ManageAccount";
+        public const string ViewAccount = "ViewAccount";
     }
 }

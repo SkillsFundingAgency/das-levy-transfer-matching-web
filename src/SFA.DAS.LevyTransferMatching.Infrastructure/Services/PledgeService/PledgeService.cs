@@ -27,6 +27,13 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
             return long.Parse(id);
         }
 
+        public async Task<GetPledgesResponse> GetPledges(long accountId)
+        {
+            var response = await _client.GetAsync($"accounts/{accountId}/pledges");
+            response.EnsureSuccessStatusCode();
+            return JsonConvert.DeserializeObject<GetPledgesResponse>(await response.Content.ReadAsStringAsync());
+        }
+
         public async Task<GetCreateResponse> GetCreate(long accountId)
         {
             var response = await _client.GetAsync($"accounts/{accountId}/pledges/create");

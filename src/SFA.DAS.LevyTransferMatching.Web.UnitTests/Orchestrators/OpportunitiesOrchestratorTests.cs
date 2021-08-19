@@ -75,7 +75,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         [Test]
         public async Task GetIndexViewModel_Opportunities_Are_Populated()
         {
-            string encodedId = _fixture.Create<string>();
+            var encodedId = _fixture.Create<string>();
             _encodingService.Setup(x => x.Encode(It.IsAny<long>(), EncodingType.PledgeId)).Returns(encodedId);
 
             var viewModel = await _orchestrator.GetIndexViewModel();
