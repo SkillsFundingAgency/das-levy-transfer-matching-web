@@ -12,5 +12,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
         Task<GetSectorResponse> GetSector(long accountId);
         Task<GetJobRoleResponse> GetJobRole(long accountId);
         Task<GetLevelResponse> GetLevel(long accountId);
+        Task<GetApplicationsResponse> GetApplications(long accountId, int pledgeId);
     }
 }

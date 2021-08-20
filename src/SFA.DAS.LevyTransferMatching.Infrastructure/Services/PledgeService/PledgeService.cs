@@ -41,9 +41,9 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
             return JsonConvert.DeserializeObject<GetCreateResponse>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<GetAmountResponse> GetAmount(string accountId)
+        public async Task<GetAmountResponse> GetAmount(string encodedAccountId)
         {
-            var response = await _client.GetAsync($"accounts/{accountId}/pledges/create/amount");
+            var response = await _client.GetAsync($"accounts/{encodedAccountId}/pledges/create/amount");
             response.EnsureSuccessStatusCode();
             return JsonConvert.DeserializeObject<GetAmountResponse>(await response.Content.ReadAsStringAsync());
         }
@@ -67,6 +67,14 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
             var response = await _client.GetAsync($"accounts/{accountId}/pledges/create/level");
             response.EnsureSuccessStatusCode();
             return JsonConvert.DeserializeObject<GetLevelResponse>(await response.Content.ReadAsStringAsync());
+        }
+
+        public async Task<GetApplicationsResponse> GetApplications(long accountId, int pledgeId)
+        {
+            var response = await _client.GetAsync($"accounts/{accountId}/pledges/{pledgeId}/applications");
+            response.EnsureSuccessStatusCode();
+
+            return JsonConvert.DeserializeObject<GetApplicationsResponse>(await response.Content.ReadAsStringAsync());
         }
     }
 }
