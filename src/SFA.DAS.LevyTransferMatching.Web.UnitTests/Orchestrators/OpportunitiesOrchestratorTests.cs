@@ -34,10 +34,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private Mock<IEncodingService> _encodingService;
         private Mock<ICacheStorageService> _cacheStorageService;
 
-        private List<ReferenceDataItem> _sectors;
-        private List<ReferenceDataItem> _levels;
-        private List<ReferenceDataItem> _jobRoles;
-
         private List<ReferenceDataItem> _sectorReferenceDataItems;
         private List<ReferenceDataItem> _jobRoleReferenceDataItems;
         private List<ReferenceDataItem> _levelReferenceDataItems;
@@ -56,9 +52,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _encodingService = new Mock<IEncodingService>();
             _cacheStorageService = new Mock<ICacheStorageService>();
 
-            _sectors = _fixture.Create<List<ReferenceDataItem>>();
-            _levels = _fixture.Create<List<ReferenceDataItem>>();
-            _jobRoles = _fixture.Create<List<ReferenceDataItem>>();
             _userId = _fixture.Create<string>();
             _userDisplayName = _fixture.Create<string>();
 
@@ -80,10 +73,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             var viewModel = await _orchestrator.GetIndexViewModel();
 
-            CollectionAssert.AreEqual(_getIndexResponse.Opportunities.Select(x => x.DasAccountName), viewModel.Opportunities.Select(x => x.EmployerName));
+            for (int i = 0; i < _getIndexResponse.Opportunities.Count; i++)
+            {
+                Assert.AreEqual(_getIndexResponse.Opportunities[i].IsNamePublic ? _getIndexResponse.Opportunities[i].DasAccountName : "Opportunity", viewModel.Opportunities[i].EmployerName);
+            }
             CollectionAssert.AreEqual(_getIndexResponse.Opportunities.Select(x => x.Amount), viewModel.Opportunities.Select(x => x.Amount));
             Assert.AreEqual(encodedId, viewModel.Opportunities[0].ReferenceNumber);
-            CollectionAssert.AreEqual(_getIndexResponse.Opportunities.Select(x => x.Locations), viewModel.Opportunities.Select(x => x.Locations));
+            CollectionAssert.AreEqual(_getIndexResponse.Opportunities.Select(x => x.Locations.ToLocationsList()), viewModel.Opportunities.Select(x => x.Locations));
             CollectionAssert.AreEqual(_getIndexResponse.Opportunities.Select(x => x.Sectors.ToReferenceDataDescriptionList(_getIndexResponse.Sectors)), viewModel.Opportunities.Select(x => x.Sectors));
             CollectionAssert.AreEqual(_getIndexResponse.Opportunities.Select(x => x.JobRoles.ToReferenceDataDescriptionList(_getIndexResponse.JobRoles)), viewModel.Opportunities.Select(x => x.JobRoles));
             CollectionAssert.AreEqual(_getIndexResponse.Opportunities.Select(x => x.Levels.ToReferenceDataDescriptionList(_getIndexResponse.Levels, descriptionSource: y => y.ShortDescription)), viewModel.Opportunities.Select(x => x.Levels));
@@ -169,6 +165,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                     opportunity.Sectors,
                     opportunity.JobRoles,
                     opportunity.Levels,
+                    opportunity.Locations,
                     _sectorReferenceDataItems,
                     _jobRoleReferenceDataItems,
                     _levelReferenceDataItems,
@@ -212,6 +209,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                     opportunity.Sectors,
                     opportunity.JobRoles,
                     opportunity.Levels,
+                    opportunity.Locations,
                     _sectorReferenceDataItems,
                     _jobRoleReferenceDataItems,
                     _levelReferenceDataItems,
@@ -267,6 +265,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                     opportunity.Sectors,
                     opportunity.JobRoles,
                     opportunity.Levels,
+                    opportunity.Locations,
                     _sectorReferenceDataItems,
                     _jobRoleReferenceDataItems,
                     _levelReferenceDataItems,
