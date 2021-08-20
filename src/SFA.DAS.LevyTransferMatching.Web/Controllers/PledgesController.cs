@@ -166,5 +166,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
                 ModelState.AddModelError($"Locations[{error.Key}]", error.Value);
             }
         }
+
+        [HttpGet]
+        [Route("{encodedPledgeId}/applications")]
+        public async Task<IActionResult> Applications(ApplicationsRequest request)
+        {
+            var response = await _orchestrator.GetApplications(request);
+
+            return View(response);
+        }
     }
 }
