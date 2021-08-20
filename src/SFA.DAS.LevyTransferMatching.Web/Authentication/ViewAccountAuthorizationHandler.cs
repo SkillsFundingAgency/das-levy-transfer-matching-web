@@ -33,12 +33,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Authentication
 
             if (isAuthorized)
             {
-                _logger.LogInformation($"ManageAccountRequirement met for user [{userId}]");
+                _logger.LogInformation($"ViewAccountRequirement met for user [{userId}]");
                 context.Succeed(requirement);
             }
             else
             {
-                _logger.LogInformation($"ManageAccountRequirement not met for user [{userId}]");
+                _logger.LogInformation($"ViewAccountRequirement not met for user [{userId}]");
             }
         }
 
