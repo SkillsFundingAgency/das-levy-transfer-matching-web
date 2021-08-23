@@ -416,7 +416,7 @@ ShowFundingEstimate.prototype.calculateMonthsDifference = function(futureDate) {
 }
 
 ShowFundingEstimate.prototype.checkFieldValues = function () {
-  if (this.selectedStandardId.length > 0 && this.numberOfApprentices > 0 && this.monthsRemaining > 0) {
+  if (this.selectedStandardId.length > 0 && this.numberOfApprentices > 0 && this.monthsRemaining >= 0) {
     this.showEstimate = true
     this.getEstimate()
   } else {
@@ -427,24 +427,15 @@ ShowFundingEstimate.prototype.checkFieldValues = function () {
 
 ShowFundingEstimate.prototype.updateUI = function () {
   var panel = document.getElementById('panel-estimate');
-  var appRow = document.getElementById('how-many-apprentices');
-  var appRowMessage = document.getElementById('apprentices-error');
-
   if (this.showEstimate) {
     document.getElementById('field-estimate').innerText = this.estimate.toLocaleString()
     panel.style.display = 'block'
     if (!this.hasEnoughFunding) {
       panel.classList.add('app-estimate--not-enough')
-      appRow.classList.add('govuk-form-group--error')
-      appRowMessage.style.display = 'block'
     } else {
       panel.classList.remove('app-estimate--not-enough')
-      appRow.classList.remove('govuk-form-group--error')
-      appRowMessage.style.display = 'none'
     }
   } else {
-    appRow.classList.remove('govuk-form-group--error')
-    appRowMessage.style.display = 'none'
     panel.style.display = 'none'
   }
 }

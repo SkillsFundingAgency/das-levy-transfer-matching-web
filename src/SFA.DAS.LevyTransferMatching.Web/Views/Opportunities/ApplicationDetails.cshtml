@@ -15,16 +15,13 @@
 
                 <partial name="StandardSearch" for="SelectStandardViewModel"/>
 
-                <div class="govuk-form-group" das-highlight-error-for="NumberOfApprentices" error-class="govuk-form-group--error" id="how-many-apprentices">
+                <div class="govuk-form-group" das-highlight-error-for="NumberOfApprentices" error-class="govuk-form-group--error">
                     <label id="NumberOfApprentices" class="govuk-label govuk-label--s" for="opportunity-application-apprentices">How many apprentices do you want to fund?</label>
-                    <span id="apprentices-error" class="govuk-error-message" style="display: none;">
-                        <span class="govuk-visually-hidden">Error:</span> There is not enough funding to support this many apprentices
-                    </span>
                     <span das-validation-for="NumberOfApprentices" class="govuk-error-message"></span>
                     <input id="opportunity-application-apprentices" class="govuk-input govuk-input--width-5" asp-for="NumberOfApprentices" inputmode="numeric" spellcheck="false" pattern="[0-9]*" type="number" aria-describedby="apprentices-error"/>
                 </div>
 
-                <div class="govuk-form-group" das-highlight-error-for="StartDate" error-class="govuk-form-group--error" id="start-date">
+                <div class="govuk-form-group" das-highlight-error-for="StartDate" error-class="govuk-form-group--error">
                     <fieldset class="govuk-fieldset" role="group" aria-describedby="opportunity-application-start-hint">
                         <legend class="govuk-fieldset__legend">
                             <h1 class="govuk-fieldset__heading govuk-label--s">When would you like the apprenticeship training to start by?</h1>
@@ -53,7 +50,7 @@
                     <p class="govuk-heading-xl app-estimate__estimate">£<span id="field-estimate"></span></p>
                 </div>
 
-                <div class="govuk-form-group" das-highlight-error-for="HasTrainingProvider" error-class="govuk-form-group--error" id="has-training-provider">
+                <div class="govuk-form-group" das-highlight-error-for="HasTrainingProvider" error-class="govuk-form-group--error">
                     <fieldset class="govuk-fieldset">
                         <legend class="govuk-fieldset__legend">
                             <strong>Have you found a training provider?</strong>
