@@ -292,7 +292,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                NumberOfApprentices = result.NumberOfApprentices,
                Sector = result.Sector,
                StartBy = result.StartBy,
-               TypeOfJobRole = result.TypeOfJobRole
+               TypeOfJobRole = result.TypeOfJobRole,
+               PledgeJobRoles = result.PledgeJobRoles ?? new List<string>(),
+               PledgeLevels = result.PledgeLevels ?? new List<string>(),
+               PledgeLocations = result.PledgeLocations ?? new List<string>(),
+               PledgeSectors = result.PledgeSectors ?? new List<string>()
             };
         }
     }

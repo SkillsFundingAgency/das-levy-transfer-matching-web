@@ -13,24 +13,44 @@
 </div>
 <section class="employer-details" style="padding-bottom: 1px;">
     <h2 class="govuk-heading-m">Details about the application</h2>
-    <strong class="govuk-tag govuk-tag--green">100% Match</strong>
+    <strong class="govuk-tag govuk-tag--green">@Model.MatchPercentage() Match</strong>
     <p>
-        <span class="icon tick"></span>Location: <strong>@Model.Location</strong><br>
-        <span class="icon tick"></span>Sector:
+        <span class="das-icon-list__icon--tick"></span>Location: <strong>@Model.Location</strong><br>
+        <span class="das-icon-list__icon--tick"></span>Sector:
 
-        <span class="govuk-grid-column-one-quarter">
+        <span>
             @foreach (var sector in Model.Sector)
             {
                 <strong>@sector</strong><br />
             }
         </span>
-        <span class="icon tick"></span>Type of job role: <strong>Bricklayer</strong><br>
-        <span class="icon tick"></span>Level: <strong>2</strong>
+        <span class="das-icon-list__icon--tick"></span>Type of job role: <strong>@Model.TypeOfJobRole</strong><br>
+        <span class="das-icon-list__icon--tick"></span>Level: <strong>@Model.Level</strong>
     </p>
     <p>
-        Apprentices: <strong>2</strong><br>
-        Estimated duration: <strong>30 months</strong><br>
-        Start by: <strong>October 2021</strong><br>
-        Do they have a training provider? <strong>No</strong><br>
+        Apprentices: <strong>@Model.NumberOfApprentices</strong><br>
+        Estimated duration: <strong>@Model.EstimatedDurationMonths</strong><br>
+        Start by: <strong>@Model.StartBy.ToString("dd MMMM yyyy")</strong><br>
+        Do they have a training provider? <strong>@Model.HasTrainingProvider</strong><br>
     </p>
+</section>
+
+<section class="employer-contact-details">
+    <h2 class="govuk-heading-m">Contact details</h2>
+    <p>You can contact @Model.EmployerAccountName if you would like to ask them for more information.</p>
+    <p>
+        <span class="icon contact"></span><strong>@Model.FirstName @Model.LastName</strong><br>
+        
+        @for (int i = 0; i < Model.EmailAddresses.Count(); i++)
+        {
+            <span class="icon email"></span><a href="mailto:@Model.EmailAddresses.ElementAt(i)">@Model.EmailAddresses.ElementAt(i)</a>
+            
+            if (i != 0)
+            {
+                <br>
+            }
+        }
+
+    </p>
+    <p><span class="icon website"></span><a href="http://@Model.BusinessWebsite" target="_blank">@Model.BusinessWebsite</a></p>
 </section>

@@ -20,5 +20,9 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Typ
         public IEnumerable<string> EmailAddresses { get; set; }
         public string BusinessWebsite { get; set; }
         public string EmployerAccountName { get; set; }
+        public List<string> PledgeSectors { get; set; }
+        public List<string> PledgeLevels { get; set; }
+        public List<string> PledgeJobRoles { get; set; }
+        public List<string> PledgeLocations { get; set; }
     }
 }
