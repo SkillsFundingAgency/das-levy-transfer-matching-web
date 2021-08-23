@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService;
@@ -267,6 +269,30 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     CreatedOn = app.CreatedOn,
                     Status = "Awaiting approval"
                 })
+            };
+        }
+
+        public async Task<PledgeApplicationViewModel> GetApplicationForAsync(ApplicationViewRequest request, CancellationToken cancellationToken = default)
+        {
+            var result =
+                await _pledgeService.GetApplicationForAsync(request.AccountId, request.PledgeId, request.ApplicationId);
+
+            return new PledgeApplicationViewModel()
+            {
+               AboutOpportunity = result.AboutOpportunity,
+               BusinessWebsite = result.BusinessWebsite,
+               EmailAddresses = result.EmailAddresses,
+               EmployerAccountName = result.EmployerAccountName,
+               EstimatedDurationMonths = result.EstimatedDurationMonths,
+               FirstName = result.FirstName,
+               HasTrainingProvider = result.HasTrainingProvider,
+               LastName = result.LastName,
+               Level = result.Level,
+               Location = result.Location,
+               NumberOfApprentices = result.NumberOfApprentices,
+               Sector = result.Sector,
+               StartBy = result.StartBy,
+               TypeOfJobRole = result.TypeOfJobRole
             };
         }
     }

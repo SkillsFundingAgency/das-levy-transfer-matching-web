@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 
@@ -21,5 +22,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         Task UpdateCacheItem(LocationPostRequest request);
         Task<string> SubmitPledge(CreatePostRequest request);
         Task<ApplicationsViewModel> GetApplications(ApplicationsRequest request);
+        Task<PledgeApplicationViewModel> GetApplicationForAsync(ApplicationViewRequest request,
+            CancellationToken cancellationToken = default);
     }
 }

@@ -1,0 +1,36 @@
+﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.PledgeApplicationViewModel
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <a href="javascript:history.back()" class="govuk-back-link">Back</a>
+    </div>
+</div>
+<div class="govuk-grid-row title-options">
+    <div class="govuk-grid-column-full">
+        <h1 class="govuk-heading-xl">
+            @Model.EmployerAccountName
+        </h1>
+    </div>
+</div>
+<section class="employer-details" style="padding-bottom: 1px;">
+    <h2 class="govuk-heading-m">Details about the application</h2>
+    <strong class="govuk-tag govuk-tag--green">100% Match</strong>
+    <p>
+        <span class="icon tick"></span>Location: <strong>@Model.Location</strong><br>
+        <span class="icon tick"></span>Sector:
+
+        <span class="govuk-grid-column-one-quarter">
+            @foreach (var sector in Model.Sector)
+            {
+                <strong>@sector</strong><br />
+            }
+        </span>
+        <span class="icon tick"></span>Type of job role: <strong>Bricklayer</strong><br>
+        <span class="icon tick"></span>Level: <strong>2</strong>
+    </p>
+    <p>
+        Apprentices: <strong>2</strong><br>
+        Estimated duration: <strong>30 months</strong><br>
+        Start by: <strong>October 2021</strong><br>
+        Do they have a training provider? <strong>No</strong><br>
+    </p>
+</section>
