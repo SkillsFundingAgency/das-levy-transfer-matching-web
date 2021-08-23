@@ -30,6 +30,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.Extensions
             return descriptions;
         }
 
+        public static string ToLocationsList(this IEnumerable<string> locations)
+        {
+            if (locations.Count() == 0)
+                return All;
+
+            var shortLocationNamesList = locations.Select(x => x.Split(',')[0]);
+            return string.Join(", ", shortLocationNamesList);
+        }
+
         public static bool IsComplete(this string str)
         {
             return !string.IsNullOrEmpty(str) && str != NotEntered;
