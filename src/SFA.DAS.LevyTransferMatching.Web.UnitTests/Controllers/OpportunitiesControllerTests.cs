@@ -123,23 +123,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         }
 
         [Test]
-        public async Task GET_SelectAccount_Redirects_To_Authorized_Apply_Path()
-        {
-            string encodedAccountId = _fixture.Create<string>();
-
-            _orchestrator
-                .Setup(x => x.GetUserEncodedAccountId())
-                .ReturnsAsync(encodedAccountId);
-
-            string encodedPledgeId = _fixture.Create<string>();
-
-            var redirectToActionResult = await _opportunitiesController.SelectAccount(encodedPledgeId) as RedirectToActionResult;
-
-            Assert.IsNotNull(redirectToActionResult);
-            Assert.AreEqual(redirectToActionResult.ActionName, nameof(OpportunitiesController.Apply));
-        }
-
-        [Test]
         public async Task GET_MoreDetails_Returns_Expected_View()
         {
             var request = _fixture.Create<MoreDetailsRequest>();

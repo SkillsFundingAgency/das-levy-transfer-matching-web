@@ -1,11 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
-using System.Collections.Generic;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Security.Claims;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService
 {
@@ -21,14 +17,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService
         }
 
         public string UserId => GetUserClaimAsString(ClaimIdentifierConfiguration.Id);
-
-        public async Task<IEnumerable<UserAccountDto>> GetLoggedInUserAccounts()
-        {
-            var response = await _httpClient.GetAsync($"users/{UserId}/accounts");
-            response.EnsureSuccessStatusCode();
-
-            return JsonConvert.DeserializeObject<IEnumerable<UserAccountDto>>(await response.Content.ReadAsStringAsync());
-        }
 
         public string GetUserId()
         {

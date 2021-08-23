@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using SFA.DAS.LevyTransferMatching.Web.Authentication;
 using SFA.DAS.LevyTransferMatching.Web.Validators;
 using FluentValidation.AspNetCore;
+using System.Linq;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
@@ -57,17 +58,26 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         }
         
         [Authorize]
-        [Route("opportunities/{encodedPledgeId}/apply")]
-        public async Task<IActionResult> SelectAccount(string encodedPledgeId)
+        [Route("opportunities/{encodedOpportunityId}/apply")]
+        public async Task<IActionResult> SelectAccount(SelectAccountRequest selectAccountRequest)
         {
-            var encodedAccountId = await _opportunitiesOrchestrator.GetUserEncodedAccountId();
+            var viewModel = await _opportunitiesOrchestrator.GetSelectAccountViewModel(selectAccountRequest.OpportunityId);
 
-            return RedirectToAction("Apply", new 
-            { 
-                CacheKey = Guid.NewGuid(),
-                EncodedAccountId = encodedAccountId,
-                EncodedPledgeId = encodedPledgeId
-            });
+            var singleAccount = viewModel.Accounts.SingleOrDefault();
+
+            if (singleAccount != null)
+            {
+                return RedirectToAction("Apply", new
+                {
+                    CacheKey = Guid.NewGuid(),
+                    EncodedAccountId = singleAccount.EncodedAccountId,
+                    EncodedPledgeId = selectAccountRequest.EncodedOpportunityId,
+                });
+            }
+            else
+            {
+                return View(viewModel);
+            }
         }
 
 

@@ -1,19 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using SFA.DAS.Encoding;
+using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;
+using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.LevyTransferMatching.Web.Models.Shared;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
-using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
-using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
-using System.Collections.Generic;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
@@ -88,18 +87,22 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
-        public async Task<string> GetUserEncodedAccountId()
+        public async Task<SelectAccountViewModel> GetSelectAccountViewModel(int opportunityId)
         {
-            var userAccounts = await _userService.GetLoggedInUserAccounts();
+            var userId = _userService.GetUserId();
 
-            // TODO: Below is temporary -
-            //       Raised as an issue, and eventually to be replaced with
-            //       an accounts selection screen.
-            var firstEncodedAccountId = userAccounts
-                .Select(x => x.EncodedAccountId)
-                .First();
+            var result = await _opportunitiesService.GetOpportunityApply(opportunityId, userId);
 
-            return firstEncodedAccountId;
+            // TODO: Now filter where the user has 'owner' or 'transactor'
+            //       access to these accounts.
+            return new SelectAccountViewModel()
+            {
+                Accounts = result.Accounts.Select(x => new SelectAccountViewModel.Account()
+                {
+                    EncodedAccountId = x.EncodedAccountId,
+                    Name = x.Name,
+                })
+            };
         }
 
         public async Task<ConfirmationViewModel> GetConfirmationViewModel(ConfirmationRequest request)
