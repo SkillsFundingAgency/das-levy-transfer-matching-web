@@ -11,5 +11,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService
         string GetUserId();
 
         string GetUserDisplayName();
+        bool IsUserChangeAuthorized();
     }
 }

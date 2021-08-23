@@ -13,6 +13,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
                 {
                     policy.Requirements.Add(new ManageAccountRequirement());
                 });
+                options.AddPolicy(PolicyNames.ViewAccount, policy =>
+                {
+                    policy.Requirements.Add(new ViewAccountRequirement());
+                });
             });
 
             return services;

@@ -10,9 +10,8 @@
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-m">Find a business to transfer your levy to</span>
-            <h1 class="govuk-heading-xl">Create a transfers pledge</h1>
-            <p>Create a transfers funding pledge that will be shown online so that businesses can apply to you for funding.</p>
+            <h1 class="govuk-heading-xl">Create a transfer pledge</h1>
+            <p>Create a transfer funding pledge that will be shown online so that businesses can apply to you for funding.</p>
             <p>The amount you choose and the criteria you set will be displayed publicly.</p>
             <p>You can choose whether or not to show your organisation's name publicly.</p>
             <div class="govuk-warning-text">
@@ -93,7 +92,7 @@
                             <span class="das-task-list__task-tag">
                                 @if (Model.AreAllLocationsSelected)
                                 {
-                                    <text>England</text>
+                                    <text>All of England</text>
                                 }
                                 else
                                 {
@@ -171,8 +170,17 @@
             {
                 <form method="post">
                     <div class="govuk-grid-row">
-                        <h2 class="govuk-heading-m">Submit your transfers pledge</h2>
+                        <h2 class="govuk-heading-m">Submit your transfer pledge</h2>
                         <p>I confirm that I want to make the above pledge so I can fund another business's apprenticeship training and assessment with my levy funds.</p>
+                        <div class="govuk-inset-text">
+                            <p>
+                                <strong>Disclaimer:</strong> The information provided by applicants to your pledge will not be checked and verified by the apprenticeship service.
+                            </p>
+                            <p>
+                                Please carry out your own due diligence when deciding whether to offer a
+                                transfer of your levy funds.
+                            </p>
+                        </div>
                         <button class="govuk-button pledge-level-continue" data-module="govuk-button" id="pledge-create-submit">Submit my pledge</button>
                     </div>
                 </form>

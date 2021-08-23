@@ -10,7 +10,7 @@ using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
-    [Authorize(Policy = PolicyNames.ManageAccount)]
+    [Authorize(Policy = PolicyNames.ViewAccount)]
     [Route("accounts/{encodedAccountId}/pledges")]
     public class PledgesController : Controller
     {
@@ -21,6 +21,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             _orchestrator = orchestrator;
         }
 
+        [Route("")]
+        public async Task<IActionResult> Pledges(PledgesRequest request)
+        {
+            var viewModel = await _orchestrator.GetPledgesViewModel(request);
+            return View(viewModel);
+        }
+
+        [Authorize(Policy = PolicyNames.ManageAccount)]
         [Route("create/inform")]
         public IActionResult Inform(string encodedAccountId)
         {
@@ -28,6 +36,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             return View(viewModel);
         }
 
+        [Route("{EncodedPledgeId}/detail")]
+        public IActionResult Detail(DetailRequest request)
+        {
+            var viewModel = _orchestrator.GetDetailViewModel(request);
+            return View(viewModel);
+        }
+
+        [Authorize(Policy = PolicyNames.ManageAccount)]
         [Route("create")]
         public async Task<IActionResult> Create(CreateRequest request)
         {
@@ -35,6 +51,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             return View(viewModel);
         }
 
+        [Authorize(Policy = PolicyNames.ManageAccount)]
         [HttpPost]
         [Route("create")]
         public async Task<IActionResult> Submit(CreatePostRequest request)
@@ -43,6 +60,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             return RedirectToAction("Confirmation", new ConfirmationRequest { EncodedAccountId = request.EncodedAccountId, EncodedPledgeId = pledge });
         }
 
+        [Authorize(Policy = PolicyNames.ManageAccount)]
         [Route("create/amount")]
         public async  Task<IActionResult> Amount(AmountRequest request)
         {
@@ -50,6 +68,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             return View(viewModel);
         }
 
+        [Authorize(Policy = PolicyNames.ManageAccount)]
         [HttpPost]
         [Route("create/amount")]
         public async Task<IActionResult> Amount(AmountPostRequest request)
@@ -58,6 +77,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             return RedirectToAction("Create", new { request.EncodedAccountId, request.CacheKey });
         }
 
+        [Authorize(Policy = PolicyNames.ManageAccount)]
         [Route("create/sector")]
         public async Task<IActionResult> Sector(SectorRequest request)
         {
@@ -65,6 +85,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             return View(viewModel);
         }
 
+        [Authorize(Policy = PolicyNames.ManageAccount)]
         [HttpPost]
         [Route("create/sector")]
         public async Task<IActionResult> Sector(SectorPostRequest request)
@@ -73,6 +94,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             return RedirectToAction("Create", new { request.EncodedAccountId, request.CacheKey });
         }
 
+        [Authorize(Policy = PolicyNames.ManageAccount)]
         [Route("create/job-role")]
         public async Task<IActionResult> JobRole(JobRoleRequest request)
         {
@@ -80,6 +102,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             return View(viewModel);
         }
 
+        [Authorize(Policy = PolicyNames.ManageAccount)]
         [HttpPost]
         [Route("create/job-role")]
         public async Task<IActionResult> JobRole(JobRolePostRequest request)
@@ -88,6 +111,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             return RedirectToAction("Create", new { request.EncodedAccountId, request.CacheKey });
         }
 
+        [Authorize(Policy = PolicyNames.ManageAccount)]
         [Route("create/level")]
         public async Task<IActionResult> Level(LevelRequest request)
         {
@@ -95,6 +119,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             return View(viewModel);
         }
 
+        [Authorize(Policy = PolicyNames.ManageAccount)]
         [HttpPost]
         [Route("create/level")]
         public async Task<IActionResult> Level(LevelPostRequest request)
@@ -103,6 +128,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             return RedirectToAction("Create", new CreateRequest() { EncodedAccountId = request.EncodedAccountId, CacheKey = request.CacheKey });
         }
 
+        [Authorize(Policy = PolicyNames.ManageAccount)]
         [Route("create/location")]
         public async Task<IActionResult> Location(LocationRequest request)
         {
@@ -110,6 +136,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             return View(viewModel);
         }
 
+        [Authorize(Policy = PolicyNames.ManageAccount)]
         [HttpPost]
         [Route("create/location")]
         public async Task<IActionResult> Location(LocationPostRequest request)
@@ -125,6 +152,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             return RedirectToAction("Create", new CreateRequest() { EncodedAccountId = request.EncodedAccountId, CacheKey = request.CacheKey });
         }
 
+        [Authorize(Policy = PolicyNames.ManageAccount)]
         [HttpGet]
         [Route("{EncodedPledgeId}/confirmation")]
         public async Task<IActionResult> Confirmation(ConfirmationRequest request)
