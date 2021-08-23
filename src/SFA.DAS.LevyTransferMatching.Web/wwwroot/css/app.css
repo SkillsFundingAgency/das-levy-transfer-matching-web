@@ -135,23 +135,43 @@
     padding: 20px;
     margin-bottom: 20px;
     animation: fadeIn ease 1s;
-  }
+}
 
-  .app-estimate--not-enough {
+.app-estimate--not-enough {
     background: #d4351c;
-  }
+}
 
-  .app-estimate__heading {
+.app-estimate__heading {
     color: #fff;
     margin-bottom: 5px;
-  }
+}
 
-  .app-estimate__estimate {
+.app-estimate__estimate {
     color: #fff;
     margin: 0;
-  }
+    }
 
-  @keyframes fadeIn {
+@keyframes fadeIn {
     0% {opacity:0;}
     100% {opacity:1;}
-  }
+}
+
+td[colspan] {
+    text-align: center;
+}
+
+th.applicant {
+    width: 250px;
+}
+
+th.tax-year {
+    width: 120px;
+}
+
+th.duration {
+    width: 120px;
+}
+
+th.status {
+    width: 100px;
+}
