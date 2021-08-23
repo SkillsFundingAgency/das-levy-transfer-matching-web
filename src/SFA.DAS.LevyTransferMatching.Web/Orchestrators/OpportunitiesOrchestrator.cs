@@ -49,6 +49,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     response.Opportunity.Sectors,
                     response.Opportunity.JobRoles,
                     response.Opportunity.Levels,
+                    response.Opportunity.Locations,
                     response.Sectors,
                     response.JobRoles,
                     response.Levels,
@@ -71,18 +72,18 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var response = await _opportunitiesService.GetIndex();
 
-            return new IndexViewModel 
+            return new IndexViewModel
             { 
                 Opportunities = response?.Opportunities
                     .Select(x => new IndexViewModel.Opportunity
                     {
                         Amount = x.Amount,
-                        EmployerName = x.DasAccountName,
+                        EmployerName = x.IsNamePublic? x.DasAccountName : "Opportunity",
                         ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),
                         Sectors = x.Sectors.ToReferenceDataDescriptionList(response.Sectors),
                         JobRoles = x.JobRoles.ToReferenceDataDescriptionList(response.JobRoles),
                         Levels = x.Levels.ToReferenceDataDescriptionList(response.Levels, descriptionSource: y => y.ShortDescription),
-                        Locations = x.Locations
+                        Locations = x.Locations.ToLocationsList()
                     }).ToList()
             };
         }
@@ -148,6 +149,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             IEnumerable<string> sectors,
             IEnumerable<string> jobRoles,
             IEnumerable<string> levels,
+            IEnumerable<string> locations,
             IEnumerable<ReferenceDataItem> allSectors,
             IEnumerable<ReferenceDataItem> allJobRoles,
             IEnumerable<ReferenceDataItem> allLevels,
@@ -159,6 +161,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             string sectorList = sectors.ToReferenceDataDescriptionList(allSectors);
             string jobRoleList = jobRoles.ToReferenceDataDescriptionList(allJobRoles);
             string levelList = levels.ToReferenceDataDescriptionList(allLevels, descriptionSource: x => x.ShortDescription);
+            string locationList = locations.ToLocationsList();
 
             DateTime dateTime = _dateTimeService.UtcNow;
 
@@ -169,6 +172,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 JobRoleList = jobRoleList,
                 LevelList = levelList,
                 SectorList = sectorList,
+                LocationList = locationList,
                 YearDescription = dateTime.ToTaxYearDescription(),
             };
         }
@@ -192,6 +196,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                         applyResponseTask.Result.Opportunity.Sectors,
                         applyResponseTask.Result.Opportunity.JobRoles,
                         applyResponseTask.Result.Opportunity.Levels,
+                        applyResponseTask.Result.Opportunity.Locations,
                         applyResponseTask.Result.Sectors,
                         applyResponseTask.Result.JobRoles,
                         applyResponseTask.Result.Levels,
@@ -227,6 +232,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 getContactDetailsResult.Sectors,
                 getContactDetailsResult.JobRoles,
                 getContactDetailsResult.Levels,
+                getContactDetailsResult.Locations,
                 getContactDetailsResult.AllSectors,
                 getContactDetailsResult.AllJobRoles,
                 getContactDetailsResult.AllLevels,
@@ -295,6 +301,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                         moreDetailsResponseTask.Result.Opportunity.Sectors,
                         moreDetailsResponseTask.Result.Opportunity.JobRoles,
                         moreDetailsResponseTask.Result.Opportunity.Levels,
+                        moreDetailsResponseTask.Result.Opportunity.Locations,
                         moreDetailsResponseTask.Result.Sectors,
                         moreDetailsResponseTask.Result.JobRoles,
                         moreDetailsResponseTask.Result.Levels,
@@ -323,6 +330,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                         response.Opportunity.Sectors,
                         response.Opportunity.JobRoles,
                         response.Opportunity.Levels,
+                        response.Opportunity.Locations,
                         response.Sectors,
                         response.JobRoles,
                         response.Levels,
@@ -406,6 +414,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                         applicationDetails.Opportunity.Sectors,
                         applicationDetails.Opportunity.JobRoles,
                         applicationDetails.Opportunity.Levels,
+                        applicationDetails.Opportunity.Locations,
                         applicationDetails.Sectors,
                         applicationDetails.JobRoles,
                         applicationDetails.Levels,
