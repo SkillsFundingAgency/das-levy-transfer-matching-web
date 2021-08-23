@@ -34,6 +34,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
             services.AddTransient<IAccountUsersReadOnlyRepository, AccountUsersReadOnlyRepository>();
 
             services.AddSingleton<IAuthorizationHandler, ManageAccountAuthorizationHandler>();
+            services.AddSingleton<IAuthorizationHandler, ViewAccountAuthorizationHandler>();
 
             services.AddTransient<IEmployerAccountsService, EmployerAccountsService>();
             services.AddTransient<ILocationValidatorService, LocationValidatorService>();

@@ -7,6 +7,7 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
+using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Location;
@@ -36,6 +37,33 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             {
                 EncodedAccountId = encodedAccountId,
                 CacheKey = Guid.NewGuid()
+            };
+        }
+
+        public async Task<PledgesViewModel> GetPledgesViewModel(PledgesRequest request)
+        {
+            var pledgesResponse = await _pledgeService.GetPledges(request.AccountId);
+            var renderCreatePledgesButton = _userService.IsUserChangeAuthorized();
+            
+            return new PledgesViewModel
+            {
+                EncodedAccountId = request.EncodedAccountId,
+                RenderCreatePledgeButton = renderCreatePledgesButton,
+                Pledges = pledgesResponse.Pledges.Select(x => new PledgesViewModel.Pledge 
+                {
+                    ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),
+                    Amount = x.Amount,
+                    RemainingAmount = x.RemainingAmount,
+                    ApplicationCount = x.ApplicationCount
+                })
+            };
+        }
+
+        public DetailViewModel GetDetailViewModel(DetailRequest request)
+        {
+            return new DetailViewModel
+            {
+                EncodedPledgeId = request.EncodedPledgeId
             };
         }
 
@@ -259,6 +287,26 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             {
                 throw new InvalidOperationException("Unable to submit pledge due to null cache value for pledge IsNamePublic");
             }
+        }
+
+        public async Task<ApplicationsViewModel> GetApplications(ApplicationsRequest request)
+        {
+            var result = await _pledgeService.GetApplications(request.AccountId, request.PledgeId);
+
+            return new ApplicationsViewModel
+            {
+                EncodedAccountId = request.EncodedAccountId,
+                EncodedPledgeId = request.EncodedPledgeId,
+                Applications = result.Applications?.Select(app => new ApplicationViewModel
+                {
+                    EncodedApplicationId = _encodingService.Encode(app.Id, EncodingType.PledgeApplicationId),
+                    DasAccountName = app.DasAccountName,
+                    Amount = app.Amount,
+                    Duration = app.Standard.ApprenticeshipFunding.GetEffectiveFundingLine(app.StartDate).Duration,
+                    CreatedOn = app.CreatedOn,
+                    Status = "Awaiting approval"
+                })
+            };
         }
     }
 }

@@ -68,15 +68,18 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         [Test]
         public async Task GetIndexViewModel_Opportunities_Are_Populated()
         {
-            string encodedId = _fixture.Create<string>();
+            var encodedId = _fixture.Create<string>();
             _encodingService.Setup(x => x.Encode(It.IsAny<long>(), EncodingType.PledgeId)).Returns(encodedId);
 
             var viewModel = await _orchestrator.GetIndexViewModel();
 
-            CollectionAssert.AreEqual(_getIndexResponse.Opportunities.Select(x => x.DasAccountName), viewModel.Opportunities.Select(x => x.EmployerName));
+            for (int i = 0; i < _getIndexResponse.Opportunities.Count; i++)
+            {
+                Assert.AreEqual(_getIndexResponse.Opportunities[i].IsNamePublic ? _getIndexResponse.Opportunities[i].DasAccountName : "Opportunity", viewModel.Opportunities[i].EmployerName);
+            }
             CollectionAssert.AreEqual(_getIndexResponse.Opportunities.Select(x => x.Amount), viewModel.Opportunities.Select(x => x.Amount));
             Assert.AreEqual(encodedId, viewModel.Opportunities[0].ReferenceNumber);
-            CollectionAssert.AreEqual(_getIndexResponse.Opportunities.Select(x => x.Locations), viewModel.Opportunities.Select(x => x.Locations));
+            CollectionAssert.AreEqual(_getIndexResponse.Opportunities.Select(x => x.Locations.ToLocationsList()), viewModel.Opportunities.Select(x => x.Locations));
             CollectionAssert.AreEqual(_getIndexResponse.Opportunities.Select(x => x.Sectors.ToReferenceDataDescriptionList(_getIndexResponse.Sectors)), viewModel.Opportunities.Select(x => x.Sectors));
             CollectionAssert.AreEqual(_getIndexResponse.Opportunities.Select(x => x.JobRoles.ToReferenceDataDescriptionList(_getIndexResponse.JobRoles)), viewModel.Opportunities.Select(x => x.JobRoles));
             CollectionAssert.AreEqual(_getIndexResponse.Opportunities.Select(x => x.Levels.ToReferenceDataDescriptionList(_getIndexResponse.Levels, descriptionSource: y => y.ShortDescription)), viewModel.Opportunities.Select(x => x.Levels));
@@ -162,6 +165,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                     opportunity.Sectors,
                     opportunity.JobRoles,
                     opportunity.Levels,
+                    opportunity.Locations,
                     _sectorReferenceDataItems,
                     _jobRoleReferenceDataItems,
                     _levelReferenceDataItems,
@@ -205,6 +209,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                     opportunity.Sectors,
                     opportunity.JobRoles,
                     opportunity.Levels,
+                    opportunity.Locations,
                     _sectorReferenceDataItems,
                     _jobRoleReferenceDataItems,
                     _levelReferenceDataItems,
@@ -236,7 +241,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         }
 
         [Test]
-        public async Task GetOpportunitySummaryViewModel_One_Selected_For_Everything_Tax_Year_Calculated_Successfully()
+        public void GetOpportunitySummaryViewModel_One_Selected_For_Everything_Tax_Year_Calculated_Successfully()
         {
             // Arrange
             string encodedPledgeId = _fixture.Create<string>();
@@ -260,6 +265,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                     opportunity.Sectors,
                     opportunity.JobRoles,
                     opportunity.Levels,
+                    opportunity.Locations,
                     _sectorReferenceDataItems,
                     _jobRoleReferenceDataItems,
                     _levelReferenceDataItems,

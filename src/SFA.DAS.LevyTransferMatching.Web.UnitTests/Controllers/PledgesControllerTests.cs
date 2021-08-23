@@ -42,6 +42,38 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         }
 
         [Test]
+        public async Task GET_Pledges_Returns_Expected_View_With_Expected_ViewModel()
+        {
+            // Arrange
+            var request = _fixture.Create<PledgesRequest>();
+            _orchestrator.Setup(x => x.GetPledgesViewModel(request)).ReturnsAsync(() => new PledgesViewModel());
+
+            // Act
+            var viewResult = await _pledgesController.Pledges(request) as ViewResult;
+            var pledgesViewModel = viewResult?.Model as PledgesViewModel;
+
+            // Assert
+            Assert.NotNull(viewResult);
+            Assert.NotNull(pledgesViewModel);
+        }
+
+        [Test]
+        public void GET_Detail_Returns_Expected_View_With_Expected_ViewModel()
+        {
+            // Arrange
+            var request = _fixture.Create<DetailRequest>();
+            _orchestrator.Setup(x => x.GetDetailViewModel(request)).Returns(() => new DetailViewModel());
+
+            // Act
+            var viewResult = _pledgesController.Detail(request) as ViewResult;
+            var detailViewModel = viewResult?.Model as DetailViewModel;
+
+            // Assert
+            Assert.NotNull(viewResult);
+            Assert.NotNull(detailViewModel);
+        }
+
+        [Test]
         public async Task GET_Create_Returns_Expected_View_With_Expected_ViewModel()
         {
             // Arrange
@@ -244,6 +276,22 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             Assert.NotNull(actionResult);
             Assert.AreEqual("Confirmation", actionResult.ActionName);
             Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
+        }
+
+        [Test]
+        public async Task GET_Applications_Returns_Expected_View_With_Expected_ViewModel()
+        {
+            // Arrange
+            var request = _fixture.Create<ApplicationsRequest>();
+            _orchestrator.Setup(x => x.GetApplications(request)).ReturnsAsync(new ApplicationsViewModel());
+
+            // Act
+            var viewResult = await _pledgesController.Applications(request) as ViewResult;
+            var applicationsViewModel = viewResult?.Model as ApplicationsViewModel;
+
+            // Assert
+            Assert.NotNull(viewResult);
+            Assert.NotNull(applicationsViewModel);
         }
 
         [Test]
