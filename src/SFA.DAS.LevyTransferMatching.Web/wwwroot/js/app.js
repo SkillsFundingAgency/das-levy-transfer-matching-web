@@ -412,11 +412,11 @@ ShowFundingEstimate.prototype.calculateMonthsDifference = function(futureDate) {
   var today = new Date()
   var difference = (futureDate.getTime() - today.getTime()) / 1000;
   difference /= (60 * 60 * 24 * 7 * 4);
-  return Math.round(difference);
+  return Math.round(difference + 1);
 }
 
 ShowFundingEstimate.prototype.checkFieldValues = function () {
-  if (this.selectedStandardId.length > 0 && this.numberOfApprentices > 0 && this.monthsRemaining >= 0) {
+  if (this.selectedStandardId.length > 0 && this.numberOfApprentices > 0 && this.monthsRemaining > 0) {
     this.showEstimate = true
     this.getEstimate()
   } else {
