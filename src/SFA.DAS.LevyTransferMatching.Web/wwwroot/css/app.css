@@ -53,6 +53,7 @@
 
 .app-dl-inline {
     overflow: hidden;
+    margin: 0;
 }
 
 .app-dl-inline__title {
@@ -147,4 +148,51 @@ th.duration {
 
 th.status {
     width: 100px;
+}
+
+
+.app-icon-list {
+    line-height: 1.2em;
+}
+
+.app-icon-list__list-item {
+    position: relative;
+    padding-left: 1.6em;
+}
+
+.app-icon-list__icon {
+    height: .95em;
+    width: .95em;
+    position: absolute;
+    background-size: contain;
+    background-repeat: no-repeat;
+    left: 0;
+    top: .2em;
+    overflow: hidden;
+    text-indent: -9999px;
+}
+
+.app-icon-list__icon--cross {
+    background-image: url("/assets/images/icon-cross--red.svg");
+}
+
+.app-icon-list__icon--tick {
+    background-image: url("/assets/images/icon-tick--green.svg");
+    width: 1.2em;
+}
+
+.app-icon-list__icon--user {
+    background-image: url("/assets/images/icon-user--blue.svg");
+}
+
+.app-icon-list__icon--email {
+    background-image: url("/assets/images/icon-email--blue.svg");
+}
+
+.app-icon-list__icon--phone {
+    background-image: url("/assets/images/icon-phone--blue.svg");
+}
+
+.app-icon-list__icon--website {
+    background-image: url("/assets/images/icon-website--blue.svg");
 }
