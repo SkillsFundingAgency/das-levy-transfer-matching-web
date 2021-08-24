@@ -88,11 +88,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
-        public async Task<SelectAccountViewModel> GetSelectAccountViewModel(int opportunityId)
+        public async Task<SelectAccountViewModel> GetSelectAccountViewModel(SelectAccountRequest request)
         {
             var userId = _userService.GetUserId();
 
-            var result = await _opportunitiesService.GetOpportunityApply(opportunityId, userId);
+            var result = await _opportunitiesService.GetOpportunityApply(request.OpportunityId, userId);
 
             // TODO: Now filter where the user has 'owner' or 'transactor'
             //       access to these accounts.
@@ -102,7 +102,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 {
                     EncodedAccountId = x.EncodedAccountId,
                     Name = x.Name,
-                })
+                }),
+                EncodedOpportunityId = request.EncodedOpportunityId,
             };
         }
 

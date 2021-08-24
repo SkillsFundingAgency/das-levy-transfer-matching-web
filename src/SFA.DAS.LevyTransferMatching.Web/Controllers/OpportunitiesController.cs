@@ -56,14 +56,19 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
                 return RedirectToAction(nameof(Index));
             }
         }
-        
+
+        [HideAccountNavigation(false)]
         [Authorize]
         [Route("opportunities/{encodedOpportunityId}/apply")]
         public async Task<IActionResult> SelectAccount(SelectAccountRequest selectAccountRequest)
         {
-            var viewModel = await _opportunitiesOrchestrator.GetSelectAccountViewModel(selectAccountRequest.OpportunityId);
+            var viewModel = await _opportunitiesOrchestrator.GetSelectAccountViewModel(selectAccountRequest);
 
-            var singleAccount = viewModel.Accounts.SingleOrDefault();
+            SelectAccountViewModel.Account singleAccount = null;
+            if (viewModel.Accounts.Count() == 1)
+            {
+                singleAccount = viewModel.Accounts.Single();
+            }
 
             if (singleAccount != null)
             {

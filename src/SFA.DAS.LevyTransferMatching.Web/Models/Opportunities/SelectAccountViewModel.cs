@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
 {
-    public class SelectAccountViewModel
+    public class SelectAccountViewModel : SelectAccountRequest
     {
         public IEnumerable<Account> Accounts { get; set; }
 
