@@ -7,6 +7,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 {
     public class PledgeApplicationViewModel
     {
+        private int _matchPercentage;
         public string Location { get; set; }
         public IEnumerable<string> Sector { get; set; }
         public string TypeOfJobRole { get; set; }
@@ -28,23 +29,51 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 
         private const int MatchingPercentageShare = 25;
 
+        public bool LocationHasMatched { get; private set; }
+        public bool SectorHasMatched { get; private set; }
+        public bool JobRoleHasMatched { get; private set; }
+        public bool LevelHasMatched { get; private set; }
+
+        public string MatchPercentageCssClass
+        {
+            get
+            {
+                return _matchPercentage switch
+                {
+                    100 => "green",
+                    75 => "yellow",
+                    _ => "red"
+                };
+            }
+        }
+
         public string MatchPercentage()
         {
-            var matchPercentage = CalculateWhetherLocationMatch();
-            matchPercentage += CalculateWhetherSectorMatch();
-            matchPercentage += CalculateTypeOfJobRoleMatch();
+            CalculateMatchPercentage();
 
-            return $"{matchPercentage}%";
+            return $"{_matchPercentage}%";
+        }
+
+        private void CalculateMatchPercentage()
+        {
+            _matchPercentage = 0;
+            _matchPercentage = CalculateWhetherLocationMatch();
+            _matchPercentage += CalculateWhetherSectorMatch();
+            _matchPercentage += CalculateWhetherTypeOfJobRoleMatch();
+            _matchPercentage += CalculateWhetherLevelMatch();
         }
 
         private int CalculateWhetherLocationMatch()
         {
             var locationMatchPercentage = 0;
 
-            if (PledgeLocations.Contains(Location) || !PledgeLocations.Any())
+            if (!PledgeLocations.Contains(Location) && PledgeLocations.Any())
             {
-                locationMatchPercentage = MatchingPercentageShare;
+                return locationMatchPercentage;
             }
+
+            locationMatchPercentage = MatchingPercentageShare;
+            LocationHasMatched = true;
 
             return locationMatchPercentage;
         }
@@ -53,30 +82,98 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         {
             var sectorMatchPercentage = 0;
 
-            foreach (var pledgeSector in PledgeSectors)
+            if (!PledgeSectors.Any())
             {
-                if (Sector.Any(sector => pledgeSector == sector))
+                sectorMatchPercentage = SetSectorMatchPercentageProperties();
+            }
+            else
+            {
+                foreach (var pledgeSector in PledgeSectors)
                 {
-                    sectorMatchPercentage = MatchingPercentageShare;
+                    if (Sector.All(sector => pledgeSector != sector))
+                    {
+                        continue;
+                    }
+
+                    sectorMatchPercentage = SetSectorMatchPercentageProperties();
                 }
             }
-
+            
             return sectorMatchPercentage;
         }
 
-        private int CalculateTypeOfJobRoleMatch()
+        private int CalculateWhetherTypeOfJobRoleMatch()
         {
             var jobRoleMatchPercentage = 0;
 
-            foreach (var pledgeJobRole in PledgeJobRoles)
+            if (!PledgeJobRoles.Any())
             {
-                if (pledgeJobRole == TypeOfJobRole)
+                jobRoleMatchPercentage = SetJobRoleMatchPercentageProperties();
+            }
+            else
+            {
+                foreach (var pledgeJobRole in PledgeJobRoles)
                 {
-                    jobRoleMatchPercentage = MatchingPercentageShare;
+                    if (string.Compare(pledgeJobRole, TypeOfJobRole, StringComparison.OrdinalIgnoreCase) != 0)
+                    {
+                        continue;
+                    }
+
+                    jobRoleMatchPercentage = SetJobRoleMatchPercentageProperties();
                 }
             }
 
             return jobRoleMatchPercentage;
+        }
+
+        private int CalculateWhetherLevelMatch()
+        {
+            var levelMatchPercentage = 0;
+
+            if (!PledgeLevels.Any())
+            {
+                levelMatchPercentage = SetLevelMatchPercentageProperties();
+            }
+            else
+            {
+                foreach (var pledgeLevel in PledgeLevels)
+                {
+                    int.TryParse(pledgeLevel.Substring(pledgeLevel.Length - 1), out var pledgeLevelIntValue);
+
+                    if (pledgeLevelIntValue != Level)
+                    {
+                        continue;
+                    }
+
+                    levelMatchPercentage = SetLevelMatchPercentageProperties();
+                }
+            }
+
+            return levelMatchPercentage;
+        }
+
+        private int SetJobRoleMatchPercentageProperties()
+        {
+            var jobRoleMatchPercentage = MatchingPercentageShare;
+            JobRoleHasMatched = true;
+
+            return jobRoleMatchPercentage;
+        }
+
+        private int SetLevelMatchPercentageProperties()
+        {
+            var levelMatchPercentage = MatchingPercentageShare;
+            LevelHasMatched = true;
+
+            return levelMatchPercentage;
+        }
+
+        private int SetSectorMatchPercentageProperties()
+        {
+            var sectorMatchPercentage = MatchingPercentageShare;
+            SectorHasMatched = true;
+
+            return sectorMatchPercentage;
         }
     }
 }

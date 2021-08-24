@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture;
 using Microsoft.AspNetCore.Mvc;
@@ -292,6 +293,19 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             // Assert
             Assert.NotNull(viewResult);
             Assert.NotNull(applicationsViewModel);
+        }
+
+        [Test]
+        public async Task GET_ViewApplicationAsync_Returns_Expected_ViewModel()
+        {
+            var request = _fixture.Create<ApplicationViewRequest>();
+            _orchestrator.Setup(x => x.GetApplicationForAsync(request, CancellationToken.None)).ReturnsAsync(new PledgeApplicationViewModel());
+
+            var viewResult = await _pledgesController.ViewApplicationAsync(request) as ViewResult;
+            var viewModel = viewResult?.Model as PledgeApplicationViewModel;
+
+            Assert.NotNull(viewResult);
+            Assert.NotNull(viewModel);
         }
     }
 }
