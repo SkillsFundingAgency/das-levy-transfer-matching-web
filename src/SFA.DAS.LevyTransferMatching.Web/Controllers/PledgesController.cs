@@ -184,7 +184,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         {
             var response = await _orchestrator.GetApplicationForAsync(request, cancellationToken);
 
-            return View("~/Views/Pledges/ViewApplicantTransferPledge.cshtml", response);
+
+            if (response != null)
+            {
+                return View("~/Views/Pledges/ViewApplicantTransferPledge.cshtml", response);
+            }
+
+            return NotFound();
         }
     }
 }

@@ -302,29 +302,34 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         public async Task<PledgeApplicationViewModel> GetApplicationForAsync(ApplicationViewRequest request, CancellationToken cancellationToken = default)
         {
             var result =
-                await _pledgeService.GetApplicationForAsync(request.AccountId, request.PledgeId, request.ApplicationId);
+                await _pledgeService.GetApplicationForAsync(request.AccountId, request.PledgeId, request.ApplicationId, cancellationToken);
 
-            return new PledgeApplicationViewModel()
+            if (result != null)
             {
-               AboutOpportunity = result.AboutOpportunity,
-               BusinessWebsite = result.BusinessWebsite,
-               EmailAddresses = result.EmailAddresses,
-               EmployerAccountName = result.EmployerAccountName,
-               EstimatedDurationMonths = result.EstimatedDurationMonths,
-               FirstName = result.FirstName,
-               HasTrainingProvider = result.HasTrainingProvider,
-               LastName = result.LastName,
-               Level = result.Level,
-               Location = result.Location,
-               NumberOfApprentices = result.NumberOfApprentices,
-               Sector = result.Sector,
-               StartBy = result.StartBy,
-               TypeOfJobRole = result.TypeOfJobRole,
-               PledgeJobRoles = result.PledgeJobRoles ?? new List<string>(),
-               PledgeLevels = result.PledgeLevels ?? new List<string>(),
-               PledgeLocations = result.PledgeLocations ?? new List<string>(),
-               PledgeSectors = result.PledgeSectors ?? new List<string>()
-            };
+                return new PledgeApplicationViewModel()
+                {
+                    AboutOpportunity = result.AboutOpportunity,
+                    BusinessWebsite = result.BusinessWebsite,
+                    EmailAddresses = result.EmailAddresses,
+                    EmployerAccountName = result.EmployerAccountName,
+                    EstimatedDurationMonths = result.EstimatedDurationMonths,
+                    FirstName = result.FirstName,
+                    HasTrainingProvider = result.HasTrainingProvider,
+                    LastName = result.LastName,
+                    Level = result.Level,
+                    Location = result.Location,
+                    NumberOfApprentices = result.NumberOfApprentices,
+                    Sector = result.Sector,
+                    StartBy = result.StartBy,
+                    TypeOfJobRole = result.TypeOfJobRole,
+                    PledgeJobRoles = result.PledgeJobRoles ?? new List<string>(),
+                    PledgeLevels = result.PledgeLevels ?? new List<string>(),
+                    PledgeLocations = result.PledgeLocations ?? new List<string>(),
+                    PledgeSectors = result.PledgeSectors ?? new List<string>()
+                };
+            }
+
+            return null;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture;
 using Moq;
@@ -424,7 +425,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         public async Task GetApplicationForAsync_Returns_ValidViewModel()
         {
             var response = _fixture.Create<GetApplicationResponse>();
-            _pledgeService.Setup(o => o.GetApplicationForAsync(0, 0, 0)).ReturnsAsync(response);
+            _pledgeService.Setup(o => o.GetApplicationForAsync(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
             
             var result = await _orchestrator.GetApplicationForAsync(new ApplicationViewRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0});
 
