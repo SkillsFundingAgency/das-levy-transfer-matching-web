@@ -7,8 +7,17 @@
     <div class="govuk-width-container">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
+                <div class="das-notification">
+                    <p class="das-notification__heading">
+                        Coronavirus (COVID-19): to find out how we can support you,
+                        including changes we're making to help your apprentices continue learning,
+                        <a href="https://www.gov.uk/government/publications/coronavirus-covid-19-apprenticeship-programme-response?es_c=7B651DDC6B6986102E8BBB7918A20DDF&amp;es_cl=53BFD9FD1669BCDAEBD12D5CDF1D9AB8&amp;es_id=9d%c2%a3o3C&amp;_ga=2.242957824.303553100.1629716986-725362261.1629716986"
+                           target="_blank" rel="noreferrer noopener" class="govuk-link">read our updated guidance<span class="govuk-visually-hidden"> (opens in new tab)</span></a>.
+                    </p>
+                </div>
+
                 <h1 class="govuk-heading-xl">My accounts</h1>
-                <p>Select the account you want to use to aplply for the transfer funding opportunity</p>
+                <p>Select the account you want to use to apply for the transfer funding opportunity</p>
 
                 <table class="govuk-table">
                     <thead class="govuk-table__head">
@@ -20,10 +29,10 @@
                     <tbody class="govuk-table__body">
                         @foreach (var account in Model.Accounts)
                         {
-                        <tr class="govuk-table__row">
-                            <td class="govuk-table__cell"><a href="@Url.Action("Apply", new { CacheKey = Guid.NewGuid(), EncodedAccountId = account.EncodedAccountId, EncodedPledgeId = Model.EncodedOpportunityId })">@account.Name</a></td>
-                            <td class="govuk-table__cell">Apply for the transfer opportunity</td>
-                        </tr>
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell"><a href="@Url.Action("Apply", new { CacheKey = Guid.NewGuid(), EncodedAccountId = account.EncodedAccountId, EncodedPledgeId = Model.EncodedOpportunityId })">@account.Name</a></td>
+                                <td class="govuk-table__cell">Apply for the transfer opportunity</td>
+                            </tr>
                         }
                     </tbody>
                 </table>
