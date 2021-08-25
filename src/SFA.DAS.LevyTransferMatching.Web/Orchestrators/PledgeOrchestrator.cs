@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
@@ -21,14 +22,16 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         private readonly IEncodingService _encodingService;
         private readonly ILocationValidatorService _validatorService;
         private readonly IUserService _userService;
+        private Infrastructure.Configuration.FeatureToggles _featureToggles;
 
-        public PledgeOrchestrator(ICacheStorageService cacheStorageService, IPledgeService pledgeService, IEncodingService encodingService, ILocationValidatorService validatorService, IUserService userService)
+        public PledgeOrchestrator(ICacheStorageService cacheStorageService, IPledgeService pledgeService, IEncodingService encodingService, ILocationValidatorService validatorService, IUserService userService, Infrastructure.Configuration.FeatureToggles featureToggles)
         {
             _cacheStorageService = cacheStorageService;
             _pledgeService = pledgeService;
             _encodingService = encodingService;
             _validatorService = validatorService;
             _userService = userService;
+            _featureToggles = featureToggles;
         }
 
         public InformViewModel GetInformViewModel(string encodedAccountId)
@@ -49,6 +52,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             {
                 EncodedAccountId = request.EncodedAccountId,
                 RenderCreatePledgeButton = renderCreatePledgesButton,
+                RenderPledgeDetailsLink = _featureToggles.TogglePledgeDetails,
                 Pledges = pledgesResponse.Pledges.Select(x => new PledgesViewModel.Pledge 
                 {
                     ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),
