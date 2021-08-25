@@ -1,4 +1,6 @@
-﻿using System.Net.Http;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
@@ -8,12 +10,10 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService
     public class UserService : IUserService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly HttpClient _httpClient;
 
-        public UserService(IHttpContextAccessor httpContextAccessor, HttpClient httpClient)
+        public UserService(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
-            _httpClient = httpClient;
         }
 
         public string UserId => GetUserClaimAsString(ClaimIdentifierConfiguration.Id);
@@ -28,6 +28,11 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService
             return GetUserClaimAsString(ClaimIdentifierConfiguration.DisplayName);
         }
 
+        public IEnumerable<long> GetUserAccountIds()
+        {
+            return GetUserClaimsAsLongs(ClaimIdentifierConfiguration.Account);
+        }
+
         private bool IsUserAuthenticated()
         {
             return _httpContextAccessor.HttpContext.User.Identity.IsAuthenticated;
@@ -37,9 +42,22 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService
         {
             var claimsIdentity = (ClaimsIdentity)_httpContextAccessor.HttpContext.User.Identity;
             var claim = claimsIdentity.FindFirst(key);
+
             var exists = claim != null;
 
             value = exists ? claim.Value : null;
+
+            return exists;
+        }
+
+        private bool TryGetUserClaimValues(string key, out IEnumerable<string> values)
+        {
+            var claimsIdentity = (ClaimsIdentity)_httpContextAccessor.HttpContext.User.Identity;
+            var claims = claimsIdentity.FindAll(key);
+
+            var exists = claims != null;
+
+            values = exists ? claims.Select(x => x.Value) : null;
 
             return exists;
         }
@@ -49,6 +67,15 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService
             if (IsUserAuthenticated() && TryGetUserClaimValue(claim, out var value))
             {
                 return value;
+            }
+            return null;
+        }
+
+        private IEnumerable<long> GetUserClaimsAsLongs(string claim)
+        {
+            if (IsUserAuthenticated() && TryGetUserClaimValues(claim, out var values))
+            {
+                return values.Select(long.Parse);
             }
             return null;
         }

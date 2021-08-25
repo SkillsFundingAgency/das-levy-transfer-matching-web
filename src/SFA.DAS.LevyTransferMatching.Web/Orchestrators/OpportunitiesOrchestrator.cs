@@ -92,17 +92,29 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var userId = _userService.GetUserId();
 
+            // Get the (unencoded) account IDs the user has owner/transactor
+            // access to (from the claims)
+            var ownerTransactorAccounts = _userService.GetUserAccountIds();
+
+            // Get the full detail of accounts, that the user has access to
             var result = await _opportunitiesService.GetOpportunityApply(request.OpportunityId, userId);
 
-            // TODO: Now filter where the user has 'owner' or 'transactor'
-            //       access to these accounts.
+            var filteredAccounts = result.Accounts
+                .Where((x) =>
+                {
+                    var accountId = _encodingService.Decode(x.EncodedAccountId, EncodingType.AccountId);
+
+                    return ownerTransactorAccounts.Contains(accountId);
+                });
+
             return new SelectAccountViewModel()
             {
-                Accounts = result.Accounts.Select(x => new SelectAccountViewModel.Account()
-                {
-                    EncodedAccountId = x.EncodedAccountId,
-                    Name = x.Name,
-                }),
+                Accounts = filteredAccounts
+                    .Select(x => new SelectAccountViewModel.Account()
+                    {
+                        EncodedAccountId = x.EncodedAccountId,
+                        Name = x.Name,
+                    }),
                 EncodedOpportunityId = request.EncodedOpportunityId,
             };
         }
