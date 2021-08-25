@@ -28,6 +28,11 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService
             return GetUserClaimAsString(ClaimIdentifierConfiguration.DisplayName);
         }
 
+        public bool IsUserChangeAuthorized()
+        {
+            return TryGetUserClaimValue(ClaimIdentifierConfiguration.AccountOwner, out _) || TryGetUserClaimValue(ClaimIdentifierConfiguration.AccountTransactor, out _);
+        }
+
         public IEnumerable<long> GetUserAccountIds()
         {
             return GetUserClaimsAsLongs(ClaimIdentifierConfiguration.Account);

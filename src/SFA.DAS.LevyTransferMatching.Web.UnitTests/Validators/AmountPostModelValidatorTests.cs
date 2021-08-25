@@ -74,7 +74,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators
 
             //Assert
             result.ShouldHaveValidationErrorFor(x => x.IsNamePublic)
-                .WithErrorMessage("Tell us whether you want to remain anonymous");
+                .WithErrorMessage("You need to select whether or not you want your pledge to show your organisation’s name publicly");
         }
 
         [TestCase(true)]

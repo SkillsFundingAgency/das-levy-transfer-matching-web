@@ -13,16 +13,16 @@
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds">
                     <div class="govuk-panel govuk-panel--confirmation pledge-approved">
-                        <h1 class="govuk-panel__title">Your pledge has been created as pledge number @Model.EncodedPledgeId</h1>
+                        <h1 class="govuk-panel__title">Your pledge has been created as pledge @Model.EncodedPledgeId</h1>
                     </div>
 
                     <h2 class="govuk-heading-m">What happens next</h2>
 
-                    <p>Your pledge is now public and can be <a href="@Url.Action("index", "Opportunities")">viewed online</a>.</p>
+                    <p>Your pledge is now public and can be <a href="@Url.Action("Detail", "Opportunities", new { EncodedPledgeId = Model.EncodedPledgeId })">viewed online</a>.</p>
 
                     <p>You can share your pledge link with organisations you work with to promote your pledge.</p>
 
-                    <p>You'll receive notifications when an employer applies for your funding transfer.</p>
+                    <p>You'll receive notifications when a business applies for your funding transfer.</p>
 
                     <p>You can then:</p>
 
@@ -31,8 +31,10 @@
                         <li>accept applications</li>
                         <li>reject applications</li>
                     </ul>
-
-                    <a href="@LinkGenerator.FinanceLink($"accounts/{Model.EncodedAccountId}/transfers")" class="govuk-back-link" )">Back to Transfers</a>
+                    <p>
+                        <a href="@Url.Action("Pledges", "Pledges", new { EncodedAccountId = Model.EncodedAccountId })" class="govuk-link govuk-link--no-visited-state">View your pledges</a>
+                    </p>
+                    <a href="@LinkGenerator.FinanceLink($"accounts/{Model.EncodedAccountId}/transfers")" class="govuk-back-link" )">Back to transfers</a>
                 </div>
             </div>
         </div>

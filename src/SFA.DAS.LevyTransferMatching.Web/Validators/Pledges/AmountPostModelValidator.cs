@@ -14,7 +14,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Pledges
                 .LessThanOrEqualTo(m => int.Parse(m.RemainingTransferAllowance, NumberStyles.AllowThousands)).WithMessage(m => $"Enter a number between 1 and { m.RemainingTransferAllowance }");
 
             RuleFor(x => x.IsNamePublic)
-                .NotNull().WithMessage("Tell us whether you want to remain anonymous");
+                .NotNull().WithMessage("You need to select whether or not you want your pledge to show your organisation’s name publicly");
         }
 
         int? StringToNullableInt(string value) => int.TryParse(value, NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out int val) ? (int?)val : null;

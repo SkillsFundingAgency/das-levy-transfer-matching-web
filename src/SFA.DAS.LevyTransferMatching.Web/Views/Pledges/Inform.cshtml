@@ -10,7 +10,7 @@
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-xl">Find a business to transfer your levy to by creating a transfers pledge</h1>
+            <h1 class="govuk-heading-xl">Pledge and transfer your levy funds</h1>
             <p>To help you find another business to transfer your levy funding to, you can:</p>
             <ol class="govuk-list govuk-list--number">
                 <li>Set the criteria of how you want to spend your levy</li>
@@ -22,8 +22,8 @@
                 <br />
             </p>
             <div class="govuk-button-group">
-                <a class="govuk-button" data-module="govuk-button" href="@Url.Action("Create", "Pledges", new CreateRequest { EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey }, true)">Continue</a>
-                <a class="govuk-link" href="@Url.FinanceLink($"accounts/{Model.EncodedAccountId}/transfers")">Cancel</a>
+                <a class="govuk-button" data-module="govuk-button" href="@Url.Action("Create", "Pledges", new CreateRequest { EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey }, true)">Start</a>
+                <a class="govuk-link" href="@Url.FinanceLink($"accounts/{Model.EncodedAccountId}/transfers")">Cancel pledge</a>
             </div>
         </div>
     </div>
