@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture;
 using Moq;
@@ -13,10 +14,12 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
+using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Location;
 using GetApplicationsResponse = SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types.GetApplicationsResponse;
+using SectorRequest = SFA.DAS.LevyTransferMatching.Web.Models.Pledges.SectorRequest;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 {
@@ -434,6 +437,17 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                 Assert.AreEqual("Awaiting approval", application.Status);
             });
             
+        }
+
+        [Test]
+        public async Task GetApplicationForAsync_Returns_ValidViewModel()
+        {
+            var response = _fixture.Create<GetApplicationResponse>();
+            _pledgeService.Setup(o => o.GetApplicationForAsync(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
+            
+            var result = await _orchestrator.GetApplicationForAsync(new ApplicationViewRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0});
+
+            Assert.IsFalse(string.IsNullOrWhiteSpace(result.TypeOfJobRole));
         }
     }
 }

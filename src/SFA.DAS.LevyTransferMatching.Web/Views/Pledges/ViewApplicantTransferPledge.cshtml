@@ -1,0 +1,79 @@
+﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.PledgeApplicationViewModel
+@{
+    var matchPercentage = Model.MatchPercentage();
+    var locationCssClass = Model.LocationHasMatched ? "app-icon-list__icon--tick" : "";
+    var sectorCssClass = Model.SectorHasMatched ? "app-icon-list__icon--tick" : "";
+    var levelCssClass = Model.LevelHasMatched ? "app-icon-list__icon--tick" : "";
+    var jobRoleCssClass = Model.JobRoleHasMatched ? "app-icon-list__icon--tick" : "";
+}
+    <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
+        <div class="govuk-grid-row title-options">
+            <div class="govuk-grid-column-full">
+                <h1 class="govuk-heading-xl">
+                    @Model.EmployerAccountName
+                </h1>
+            </div>
+        </div>
+        <div class="das-highlight">
+            <h2 class="govuk-heading-m">Details about the application</h2>
+            <p><strong class="govuk-tag govuk-tag--@Model.MatchPercentageCssClass">@matchPercentage Match</strong></p>
+           
+            <ul class="govuk-list app-icon-list">
+                <li class="app-icon-list__list-item">
+                    <span class="app-icon-list__icon @locationCssClass">No match on </span>Location: <strong>@Model.Location</strong>
+                </li>
+                <li class="app-icon-list__list-item">
+                    <span class="app-icon-list__icon @sectorCssClass">No match on </span>Sector: 
+                    @foreach (var sector in Model.Sector)
+                    {
+                        <strong>@sector</strong>
+                    }
+
+                </li>
+                <li class="app-icon-list__list-item">
+                    <span class="app-icon-list__icon" @jobRoleCssClass>No match on </span>Type of job role: <strong>@Model.TypeOfJobRole</strong>
+                </li>
+                <li class="app-icon-list__list-item">
+                    <span class="app-icon-list__icon @levelCssClass">Match for: </span>Level: <strong>@Model.Level</strong>
+                </li>
+            </ul>
+            <dl class="govuk-body app-dl-inline">
+                <dt class="app-dl-inline__title">Apprentices</dt>
+                <dd class="app-dl-inline__definition">@Model.NumberOfApprentices</dd>
+                <dt class="app-dl-inline__title">Estimated duration</dt>
+                <dd class="app-dl-inline__definition">@Model.EstimatedDurationMonths</dd>
+                <dt class="app-dl-inline__title">Start by</dt>
+                <dd class="app-dl-inline__definition">@Model.StartBy.ToString("dd MMMMM yyyy")</dd>
+                <dt class="app-dl-inline__title">Do they have a training provider</dt>
+                <dd class="app-dl-inline__definition">@Model.HasTrainingProvider</dd>
+            </dl>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(Model.AboutOpportunity))
+        {
+            <div class="das-highlight">
+                <h2 class="govuk-heading-m">About their apprenticeship opportunity</h2>
+                <p>@Model.AboutOpportunity</p>
+            </div>
+        }
+
+        <div class="das-highlight">
+            <h2 class="govuk-heading-m">Contact details</h2>
+            <p>You can contact @Model.EmployerAccountName if you would like to ask them for more information.</p>
+            <ul class="govuk-list app-icon-list">
+                <li class="app-icon-list__list-item">
+                    <span class="app-icon-list__icon app-icon-list__icon--user">Name: </span> <strong>@Model.FirstName @Model.LastName</strong>
+                </li>
+                @foreach (var email in Model.EmailAddresses)
+                {
+                    <li class="app-icon-list__list-item">
+                        <span class="app-icon-list__icon app-icon-list__icon--email">Email address: </span> <a href="mailto:@email" class="govuk-link">@email</a>
+                    </li>
+                }
+
+                <li class="app-icon-list__list-item">
+                    <span class="app-icon-list__icon app-icon-list__icon--website">Website: </span> <a href="http://@Model.BusinessWebsite" class="govuk-link">@Model.BusinessWebsite</a>
+                </li>
+            </ul>
+        </div>
+</main>
