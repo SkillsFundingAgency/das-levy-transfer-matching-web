@@ -30,6 +30,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 		private Mock<IEncodingService> _encodingService;
         private Mock<ILocationValidatorService> _validatorService;
         private Mock<IUserService> _userService;
+        private Infrastructure.Configuration.FeatureToggles _featureToggles;
         private List<ReferenceDataItem> _sectors;
         private List<ReferenceDataItem> _levels;
         private List<ReferenceDataItem> _jobRoles;
@@ -58,6 +59,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _encodingService = new Mock<IEncodingService>();
             _validatorService = new Mock<ILocationValidatorService>();
             _userService = new Mock<IUserService>();
+
+            _featureToggles = new Infrastructure.Configuration.FeatureToggles{ TogglePledgeDetails = true};
 
             _sectors = _fixture.Create<List<ReferenceDataItem>>();
             _levels = _fixture.Create<List<ReferenceDataItem>>();
@@ -89,7 +92,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             _userService.Setup(x => x.IsUserChangeAuthorized()).Returns(true);
 
-            _orchestrator = new PledgeOrchestrator(_cache.Object, _pledgeService.Object, _encodingService.Object, _validatorService.Object, _userService.Object);
+            _orchestrator = new PledgeOrchestrator(_cache.Object, _pledgeService.Object, _encodingService.Object, _validatorService.Object, _userService.Object, _featureToggles);
         }
 
         [Test]
@@ -125,6 +128,21 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         {
             var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest { EncodedAccountId = _encodedAccountId, AccountId = _accountId });
             Assert.NotNull(result.Pledges);
+        }
+
+        [Test]
+        public async Task GetPledgesViewModel_Details_Link_Is_Rendered_When_Toggled_On()
+        {
+            var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest { EncodedAccountId = _encodedAccountId, AccountId = _accountId });
+            Assert.IsTrue(result.RenderPledgeDetailsLink);
+        }
+
+        [Test]
+        public async Task GetPledgesViewModel_Details_Link_Is_Not_Rendered_When_Toggled_Off()
+        {
+            _featureToggles.TogglePledgeDetails = false;
+            var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest { EncodedAccountId = _encodedAccountId, AccountId = _accountId });
+            Assert.IsFalse(result.RenderPledgeDetailsLink);
         }
 
         [Test]
