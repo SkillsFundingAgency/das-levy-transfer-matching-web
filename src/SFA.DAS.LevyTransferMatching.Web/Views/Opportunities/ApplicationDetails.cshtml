@@ -7,7 +7,7 @@
 <a href="@Url.Action("Apply", new {Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey})" class="govuk-back-link">Back</a>
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
     <partial name="_ValidationSummary" />
-    <form method="post" class="validate-auto-complete">
+    <form method="post" class="validate-auto-complete" novalidate>
         <span class="govuk-caption-m">Search and apply for pledges in England</span>
         <h1 class="govuk-heading-xl">Apprenticeship training</h1>
         <div class="govuk-grid-row">
