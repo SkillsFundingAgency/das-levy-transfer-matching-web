@@ -453,10 +453,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         }
 
         [Test]
-        public async Task GetApplicationApprovedViewModel_EmployerAccountName_Has_Value()
+        public async Task GetApplicationApprovedViewModel_DasAccountName_Has_Value()
         {
             var result = await _orchestrator.GetApplicationApprovedViewModel(new ApplicationApprovedRequest { EncodedAccountId = _encodedAccountId, EncodedPledgeId = _encodedAccountId, EncodedApplicationId = _encodedApplicationId, AccountId = _accountId, PledgeId = _pledgeId, ApplicationId = _applicationId });
-            Assert.AreEqual(_applicationApprovedResponse.EmployerAccountName, result.EmployerAccountName);
+            Assert.AreEqual(_applicationApprovedResponse.DasAccountName, result.DasAccountName);
         }
     }
 }
