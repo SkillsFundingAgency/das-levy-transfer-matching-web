@@ -241,6 +241,50 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         }
 
         [Test]
+        public async Task GetSelectAccountViewModel_UserHasVaryingAccountAccess_ReturnsFilteredAccounts()
+        {
+            // Arrange
+            var userId = _fixture.Create<string>();
+            _userService
+                .Setup(x => x.GetUserId())
+                .Returns(userId);
+
+            // The list of accounts that the user has access to, across all
+            // levels of access.
+            var accountIds = _fixture.CreateMany<long>(3).ToArray();
+            
+            // The list of accounts that the user has access to with
+            // Owner/Transactor privilages (a subset of the above)
+            var userAccessAccountIds = accountIds.Take(2).ToArray();
+
+            _userService
+                .Setup(x => x.GetUserAccountIds())
+                .Returns(userAccessAccountIds);
+
+            // Account IDs come from EAS encoded by default - so we need to
+            // "decode"
+            var idStack = new Stack<long>(accountIds);
+            _encodingService
+                .Setup(x => x.Decode(It.IsAny<string>(), It.Is<EncodingType>(y => y == EncodingType.AccountId)))
+                .Returns(idStack.Pop);
+
+            var selectAccountRequest = _fixture.Create<SelectAccountRequest>();
+            var getOpportunityApplyResponse = _fixture
+                .Create<GetOpportunityApplyResponse>();
+
+            _opportunitiesService
+                .Setup(x => x.GetOpportunityApply(It.Is<int>(y => y == selectAccountRequest.OpportunityId), It.Is<string>(y => y == userId)))
+                .ReturnsAsync(getOpportunityApplyResponse);
+
+            // Act
+            var viewModel = await _orchestrator.GetSelectAccountViewModel(selectAccountRequest);
+
+            // Assert
+            Assert.AreEqual(2, viewModel.Accounts.Count());
+            Assert.AreEqual(selectAccountRequest.EncodedOpportunityId, viewModel.EncodedOpportunityId);
+        }
+
+        [Test]
         public void GetOpportunitySummaryViewModel_One_Selected_For_Everything_Tax_Year_Calculated_Successfully()
         {
             // Arrange

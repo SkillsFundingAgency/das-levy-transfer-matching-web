@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
