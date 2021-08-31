@@ -1,5 +1,4 @@
-﻿@using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
-@model SFA.DAS.LevyTransferMatching.Web.Models.Opportunities.ApplicationDetailsViewModel
+﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Opportunities.ApplicationDetailsViewModel
 @inject SFA.DAS.EmployerUrlHelper.ILinkGenerator LinkGenerator
 @{
     ViewData["Title"] = "Apprenticeship Training";
@@ -18,7 +17,7 @@
                 <div class="govuk-form-group" das-highlight-error-for="NumberOfApprentices" error-class="govuk-form-group--error">
                     <label id="NumberOfApprentices" class="govuk-label govuk-label--s" for="opportunity-application-apprentices">How many apprentices do you want to fund?</label>
                     <span das-validation-for="NumberOfApprentices" class="govuk-error-message"></span>
-                    <input id="opportunity-application-apprentices" class="govuk-input govuk-input--width-5" asp-for="NumberOfApprentices" inputmode="numeric" spellcheck="false" pattern="[0-9]*" type="number" aria-describedby="apprentices-error"/>
+                    <input id="opportunity-application-apprentices" class="govuk-input govuk-input--width-5" asp-for="NumberOfApprentices" inputmode="numeric" spellcheck="false" type="text" aria-describedby="apprentices-error" maxlength="3"/>
                 </div>
 
                 <div class="govuk-form-group" das-highlight-error-for="StartDate" error-class="govuk-form-group--error">
