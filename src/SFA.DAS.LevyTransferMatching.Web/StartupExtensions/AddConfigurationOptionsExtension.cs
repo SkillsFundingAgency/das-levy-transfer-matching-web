@@ -25,6 +25,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
             
             services.Configure<CosmosDbConfiguration>(configuration.GetSection("CosmosDb"));
             services.AddSingleton(cfg => cfg.GetService<IOptions<CosmosDbConfiguration>>().Value);
+
+            services.Configure<Infrastructure.Configuration.FeatureToggles>(configuration.GetSection("FeatureToggles"));
+            services.AddSingleton(cfg => cfg.GetService<IOptions<Infrastructure.Configuration.FeatureToggles>>().Value);
         }
     }
 }
