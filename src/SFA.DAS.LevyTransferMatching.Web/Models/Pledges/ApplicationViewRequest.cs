@@ -7,7 +7,7 @@ using SFA.DAS.LevyTransferMatching.Web.Attributes;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 {
-    public class ApplicationViewRequest : ApplicationsRequest
+    public class ApplicationRequest : ApplicationsRequest
     {
         [AutoDecode(nameof(EncodedApplicationId), EncodingType.PledgeApplicationId)]
         public int ApplicationId { get; set; }

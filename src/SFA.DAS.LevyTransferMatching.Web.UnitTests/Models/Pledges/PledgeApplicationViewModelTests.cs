@@ -20,7 +20,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Pledges
         [Test]
         public void MatchPercentage_WhenGivenAllMatchingInputsThen_Returns100Percent()
         {
-            var viewModel = _fixture.Create<PledgeApplicationViewModel>();
+            var viewModel = _fixture.Create<ApplicationViewModel>();
             viewModel.Location = LOCATION;
             viewModel.PledgeLocations = viewModel.PledgeLocations.Append(LOCATION);
             viewModel.Sector = new List<string>
@@ -28,7 +28,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Pledges
                 SECTOR
             };
             viewModel.PledgeSectors = viewModel.PledgeSectors.Append(SECTOR);
-            viewModel.TypeOfJobRole = JOBROLE;
+            viewModel.JobRole = JOBROLE;
             viewModel.PledgeJobRoles = viewModel.PledgeJobRoles.Append(JOBROLE);
             viewModel.Level = 7;
             viewModel.PledgeLevels = viewModel.PledgeLevels.Append(LEVEL);
@@ -43,13 +43,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Pledges
         [Test]
         public void MatchPercentage_WhenGivenNoMatchingLocationThen_Returns75Percent()
         {
-            var viewModel = _fixture.Create<PledgeApplicationViewModel>();
+            var viewModel = _fixture.Create<ApplicationViewModel>();
             viewModel.Sector = new List<string>
             {
                 SECTOR
             };
             viewModel.PledgeSectors = viewModel.PledgeSectors.Append(SECTOR);
-            viewModel.TypeOfJobRole = JOBROLE;
+            viewModel.JobRole = JOBROLE;
             viewModel.PledgeJobRoles = viewModel.PledgeJobRoles.Append(JOBROLE);
             viewModel.Level = 7;
             viewModel.PledgeLevels = viewModel.PledgeLevels.Append(LEVEL);
@@ -61,8 +61,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Pledges
         [Test]
         public void MatchPercentage_WhenGivenNoMatchingLocationAndSectorsThen_Returns50Percent()
         {
-            var viewModel = _fixture.Create<PledgeApplicationViewModel>();
-            viewModel.TypeOfJobRole = JOBROLE;
+            var viewModel = _fixture.Create<ApplicationViewModel>();
+            viewModel.JobRole = JOBROLE;
             viewModel.PledgeJobRoles = viewModel.PledgeJobRoles.Append(JOBROLE);
             viewModel.Level = 7;
             viewModel.PledgeLevels = viewModel.PledgeLevels.Append(LEVEL);
@@ -74,7 +74,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Pledges
         [Test]
         public void MatchPercentage_WhenGivenNoMatchingLocationAndSectorsAndJobRoleThen_Returns25Percent()
         {
-            var viewModel = _fixture.Create<PledgeApplicationViewModel>();
+            var viewModel = _fixture.Create<ApplicationViewModel>();
             viewModel.Level = 7;
             viewModel.PledgeLevels = viewModel.PledgeLevels.Append(LEVEL);
 
@@ -85,7 +85,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Pledges
         [Test]
         public void MatchPercentage_WhenGivenNoMatchingLocationAndSectorsAndJobRoleAndLevelThen_Returns0Percent()
         {
-            var viewModel = _fixture.Create<PledgeApplicationViewModel>();
+            var viewModel = _fixture.Create<ApplicationViewModel>();
 
             viewModel.MatchPercentage().ShouldCompare("0%");
             Assert.IsFalse(viewModel.LevelHasMatched);
@@ -94,7 +94,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Pledges
         [Test]
         public void MatchPercentage_WhenPledgeSectorsIsEmpty_ThenDefaultsToAMatch()
         {
-            var viewModel = _fixture.Create<PledgeApplicationViewModel>();
+            var viewModel = _fixture.Create<ApplicationViewModel>();
 
             viewModel.PledgeSectors = new List<string>();
 
@@ -106,7 +106,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Pledges
         [Test]
         public void MatchPercentage_WhenPledgeJobRolesIsEmpty_ThenDefaultsToAMatch()
         {
-            var viewModel = _fixture.Create<PledgeApplicationViewModel>();
+            var viewModel = _fixture.Create<ApplicationViewModel>();
 
             viewModel.PledgeJobRoles = new List<string>();
 
@@ -118,7 +118,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Pledges
         [Test]
         public void MatchPercentage_WhenPledgeLocationsIsEmpty_ThenDefaultsToAMatch()
         {
-            var viewModel = _fixture.Create<PledgeApplicationViewModel>();
+            var viewModel = _fixture.Create<ApplicationViewModel>();
 
             viewModel.PledgeLocations = new List<string>();
 
@@ -130,7 +130,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Pledges
         [Test]
         public void MatchPercentage_WhenPledgeLevelsIsEmpty_ThenDefaultsToAMatch()
         {
-            var viewModel = _fixture.Create<PledgeApplicationViewModel>();
+            var viewModel = _fixture.Create<ApplicationViewModel>();
 
             viewModel.PledgeLevels = new List<string>();
 

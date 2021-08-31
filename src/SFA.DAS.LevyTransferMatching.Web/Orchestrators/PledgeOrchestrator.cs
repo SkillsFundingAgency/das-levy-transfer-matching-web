@@ -305,14 +305,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
-        public async Task<PledgeApplicationViewModel> GetApplicationForAsync(ApplicationViewRequest request, CancellationToken cancellationToken = default)
+        public async Task<ApplicationViewModel> GetApplicationForAsync(ApplicationRequest request, CancellationToken cancellationToken = default)
         {
             var result =
-                await _pledgeService.GetApplicationForAsync(request.AccountId, request.PledgeId, request.ApplicationId, cancellationToken);
+                await _pledgeService.GetApplication(request.AccountId, request.PledgeId, request.ApplicationId, cancellationToken);
 
             if (result != null)
             {
-                return new PledgeApplicationViewModel()
+                return new ApplicationViewModel()
                 {
                     AboutOpportunity = result.AboutOpportunity,
                     BusinessWebsite = result.BusinessWebsite,
@@ -325,9 +325,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     Level = result.Level,
                     Location = result.Location,
                     NumberOfApprentices = result.NumberOfApprentices,
-                    Sector = result.Sector,
+                    Sectors = result.Sector,
                     StartBy = result.StartBy,
-                    TypeOfJobRole = result.TypeOfJobRole,
+                    JobRole = result.TypeOfJobRole,
                     PledgeJobRoles = result.PledgeJobRoles ?? new List<string>(),
                     PledgeLevels = result.PledgeLevels ?? new List<string>(),
                     PledgeLocations = result.PledgeLocations ?? new List<string>(),

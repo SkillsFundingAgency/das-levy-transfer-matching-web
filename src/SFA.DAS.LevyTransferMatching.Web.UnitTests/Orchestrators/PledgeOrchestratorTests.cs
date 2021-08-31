@@ -18,6 +18,7 @@ using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Location;
+using ApplicationRequest = SFA.DAS.LevyTransferMatching.Web.Models.Pledges.ApplicationRequest;
 using GetApplicationsResponse = SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types.GetApplicationsResponse;
 using SectorRequest = SFA.DAS.LevyTransferMatching.Web.Models.Pledges.SectorRequest;
 
@@ -443,11 +444,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         public async Task GetApplicationForAsync_Returns_ValidViewModel()
         {
             var response = _fixture.Create<GetApplicationResponse>();
-            _pledgeService.Setup(o => o.GetApplicationForAsync(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
+            _pledgeService.Setup(o => o.GetApplication(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
             
-            var result = await _orchestrator.GetApplicationForAsync(new ApplicationViewRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0});
+            var result = await _orchestrator.GetApplicationForAsync(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0});
 
-            Assert.IsFalse(string.IsNullOrWhiteSpace(result.TypeOfJobRole));
+            Assert.IsFalse(string.IsNullOrWhiteSpace(result.JobRole));
         }
     }
 }
