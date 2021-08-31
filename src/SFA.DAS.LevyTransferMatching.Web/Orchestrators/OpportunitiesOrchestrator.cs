@@ -127,6 +127,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 NumberOfApprentices = cacheItem.NumberOfApprentices.Value,
                 StartDate = cacheItem.StartDate.Value,
                 HasTrainingProvider = cacheItem.HasTrainingProvider.Value,
+                Amount = cacheItem.Amount,
                 Sectors = cacheItem.Sectors,
                 Postcode = cacheItem.Postcode ?? string.Empty,
                 FirstName = cacheItem.FirstName ?? string.Empty,
