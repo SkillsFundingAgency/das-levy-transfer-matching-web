@@ -49,7 +49,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         {
             if (detailPostRequest.HasConfirmed.Value)
             {
-                return RedirectToAction(nameof(SelectAccount), new { detailPostRequest.EncodedPledgeId });
+                return RedirectToAction(nameof(SelectAccount), new { EncodedOpportunityId = detailPostRequest.EncodedPledgeId });
             }
             else
             {

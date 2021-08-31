@@ -34,7 +34,12 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService
 
         public IEnumerable<long> GetUserAccountIds()
         {
-            return GetUserClaimsAsLongs(ClaimIdentifierConfiguration.Account);
+            var ownerAccountIds = GetUserClaimsAsLongs(ClaimIdentifierConfiguration.AccountOwner);
+            var transactorAccountIds = GetUserClaimsAsLongs(ClaimIdentifierConfiguration.AccountTransactor);
+
+            var ids = ownerAccountIds.Concat(transactorAccountIds).Distinct();
+
+            return ids;
         }
 
         private bool IsUserAuthenticated()
