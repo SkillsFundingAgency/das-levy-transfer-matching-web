@@ -395,8 +395,15 @@ ShowFundingEstimate.prototype.getEstimate = function () {
     if (xhr.readyState === 4) {
       try {
         var response = JSON.parse(xhr.responseText)
-        that.estimate = parseInt(response.amount)
-        that.hasEnoughFunding = response.hasEnoughFunding
+        var estimate = parseInt(response.amount)
+        if (isNaN(estimate)) {
+          that.estimate = 0
+          that.showEstimate = false
+        } else {
+          that.estimate = estimate
+          that.hasEnoughFunding = response.hasEnoughFunding
+          that.showEstimate = true
+        }
         that.updateUI()
       } catch (e) {
         that.showEstimate = false
