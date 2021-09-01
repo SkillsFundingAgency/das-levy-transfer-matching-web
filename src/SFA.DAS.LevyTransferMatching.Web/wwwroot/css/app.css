@@ -129,6 +129,33 @@
     white-space: pre-wrap;
 }
 
+.app-estimate {
+    display: none;
+    background: #1d70b8;
+    padding: 20px;
+    margin-bottom: 20px;
+    animation: fadeIn ease 1s;
+}
+
+.app-estimate--not-enough {
+    background: #d4351c;
+}
+
+.app-estimate__heading {
+    color: #fff;
+    margin-bottom: 5px;
+}
+
+.app-estimate__estimate {
+    color: #fff;
+    margin: 0;
+    }
+
+@keyframes fadeIn {
+    0% {opacity:0;}
+    100% {opacity:1;}
+}
+
 td[colspan] {
     text-align: center;
 }

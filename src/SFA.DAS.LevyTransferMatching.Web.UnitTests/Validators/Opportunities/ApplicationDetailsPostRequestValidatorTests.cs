@@ -69,7 +69,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
         public async Task Validator_Returns_False_For_Zero_NumberOfApprentices()
         {
             var request = CreateApplicationDetailsPostRequest();
-            request.NumberOfApprentices = 0;
+            request.NumberOfApprentices = "0";
             _service.Setup(x => x.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId)).ReturnsAsync(CreateApplicationDetailsResponse());
 
             var result = (await _validator.ValidateAsync(request));
@@ -82,7 +82,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
         public async Task Validator_Returns_False_For_Negative_NumberOfApprentices()
         {
             var request = CreateApplicationDetailsPostRequest();
-            request.NumberOfApprentices = -1;
+            request.NumberOfApprentices = "-1";
             _service.Setup(x => x.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId)).ReturnsAsync(CreateApplicationDetailsResponse());
 
             var result = (await _validator.ValidateAsync(request));
@@ -149,7 +149,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
                 SelectedStandardId = _fixture.Create<string>(),
                 Year = DateTime.UtcNow.Year,
                 Month = DateTime.UtcNow.Month,
-                NumberOfApprentices = 1,
+                NumberOfApprentices = "1",
                 PledgeId = 1,
                 HasTrainingProvider = true,
                 CacheKey = _fixture.Create<Guid>(),

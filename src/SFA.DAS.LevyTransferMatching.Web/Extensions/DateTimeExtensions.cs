@@ -24,8 +24,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.Extensions
 
         public static DateTime FinancialYearEnd(this DateTime dateTime)
         {
-            return dateTime.Month >= 4 ? new DateTime(dateTime.Year + 1, 4, 30) : new DateTime(dateTime.Year, 4, 30);
-        }        
+            return dateTime.Month >= 4 ? new DateTime(dateTime.Year + 1, 4, 5) : new DateTime(dateTime.Year, 4, 5);
+        }
+
+        public static DateTime EndOfMarchOfFinancialYear(this DateTime dateTime)
+        {
+            return dateTime.Month >= 4 ? new DateTime(dateTime.Year + 1, 3, 31) : new DateTime(dateTime.Year, 3, 31);
+        }
 
         public static string ToShortDisplayString(this DateTime dateTime)
         {
