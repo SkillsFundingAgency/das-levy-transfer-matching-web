@@ -54,9 +54,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Extensions
         {
             var matchPercentage = 0;
 
-            if (!pledgeListToCompare.Any())
+            if (pledgeListToCompare == null || !pledgeListToCompare.Any())
             {
-                matchPercentage = percentageMatchIsWorth;
+                return percentageMatchIsWorth;
             }
 
             if (pledgeListToCompare.Contains(valueToCompare))
@@ -71,24 +71,22 @@ namespace SFA.DAS.LevyTransferMatching.Web.Extensions
         {
             var levelMatchPercentage = 0;
 
-            if (!pledgeListToCompare.Any())
+            if (pledgeListToCompare == null || !pledgeListToCompare.Any())
             {
-                levelMatchPercentage = percentageMatchIsWorth;
+                return percentageMatchIsWorth;
             }
-            else
+
+            foreach (var pledgeLevel in pledgeListToCompare)
             {
-                foreach (var pledgeLevel in pledgeListToCompare)
+                int.TryParse(pledgeLevel.Substring(pledgeLevel.Length - 1), out var pledgeLevelIntValue);
+
+                if (pledgeLevelIntValue != valueToCompare)
                 {
-                    int.TryParse(pledgeLevel.Substring(pledgeLevel.Length - 1), out var pledgeLevelIntValue);
-
-                    if (pledgeLevelIntValue != valueToCompare)
-                    {
-                        continue;
-                    }
-
-                    levelMatchPercentage = percentageMatchIsWorth;
-                    break;
+                    continue;
                 }
+
+                levelMatchPercentage = percentageMatchIsWorth;
+                break;
             }
 
             return levelMatchPercentage;
@@ -98,16 +96,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Extensions
         {
             var sectorMatchPercentage = 0;
 
-            if (!pledgeListToCompare.Any())
+            if (pledgeListToCompare == null || !pledgeListToCompare.Any())
+            {
+                return percentageMatchIsWorth;
+            }
+
+            if (pledgeListToCompare.Any(pledgeSector => valueToCompare.Any(sector => pledgeSector == sector)))
             {
                 sectorMatchPercentage = percentageMatchIsWorth;
-            }
-            else
-            {
-                if (pledgeListToCompare.Any(pledgeSector => valueToCompare.Any(sector => pledgeSector == sector)))
-                {
-                    sectorMatchPercentage = percentageMatchIsWorth;
-                }
             }
 
             return sectorMatchPercentage;

@@ -5,6 +5,7 @@ using System.Text;
 using AutoFixture;
 using KellermanSoftware.CompareNetObjects;
 using NUnit.Framework;
+using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Pledges
@@ -16,23 +17,39 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Pledges
         private const string JOBROLE = "Type ofjob role";
         private const string LEVEL = "Level7";
         private readonly Fixture _fixture = new Fixture();
-        
+
         [Test]
         public void MatchPercentage_WhenGivenAllMatchingInputsThen_Returns100Percent()
         {
-            var viewModel = _fixture.Create<ApplicationViewModel>();
-            viewModel.Location = LOCATION;
-            viewModel.PledgeLocations = viewModel.PledgeLocations.Append(LOCATION);
-            viewModel.Sectors = new List<string>
-            {
-                SECTOR
-            };
-            viewModel.PledgeSectors = viewModel.PledgeSectors.Append(SECTOR);
-            viewModel.JobRole = JOBROLE;
-            viewModel.PledgeJobRoles = viewModel.PledgeJobRoles.Append(JOBROLE);
-            viewModel.Level = 7;
-            viewModel.PledgeLevels = viewModel.PledgeLevels.Append(LEVEL);
-
+            var viewModel = new ApplicationViewModel(
+                new List<string> { SECTOR },
+                new List<ReferenceDataItem> {
+                    new ReferenceDataItem
+                    {
+                        Id = SECTOR,
+                        Description = SECTOR,
+                        ShortDescription = SECTOR
+                    }
+                },
+                new List<string>
+                {
+                    SECTOR
+                },
+                new List<string>
+                {
+                    JOBROLE
+                },
+                new List<string>
+                {
+                    LEVEL
+                }, new List<string>
+                {
+                    LOCATION
+                }, 
+                LOCATION, 
+                JOBROLE, 
+                7);
+            
             viewModel.MatchPercentage.ShouldCompare("100%");
             Assert.IsTrue(viewModel.JobRoleHasMatched);
             Assert.IsTrue(viewModel.LevelHasMatched);
@@ -43,17 +60,40 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Pledges
         [Test]
         public void MatchPercentage_WhenGivenNoMatchingLocationThen_Returns75Percent()
         {
-            var viewModel = _fixture.Create<ApplicationViewModel>();
+            var viewModel = new ApplicationViewModel(
+                new List<string> { SECTOR },
+                new List<ReferenceDataItem> {
+                    new ReferenceDataItem
+                    {
+                        Id = SECTOR,
+                        Description = SECTOR,
+                        ShortDescription = SECTOR
+                    }
+                },
+                new List<string>
+                {
+                    SECTOR
+                },
+                new List<string>
+                {
+                    JOBROLE
+                },
+                new List<string>
+                {
+                    LEVEL
+                }, new List<string>
+                {
+                    "NoMatch"
+                },
+                LOCATION,
+                JOBROLE,
+                7);
+
             viewModel.Sectors = new List<string>
             {
                 SECTOR
             };
-            viewModel.PledgeSectors = viewModel.PledgeSectors.Append(SECTOR);
-            viewModel.JobRole = JOBROLE;
-            viewModel.PledgeJobRoles = viewModel.PledgeJobRoles.Append(JOBROLE);
-            viewModel.Level = 7;
-            viewModel.PledgeLevels = viewModel.PledgeLevels.Append(LEVEL);
-
+         
             viewModel.MatchPercentage.ShouldCompare("75%");
             Assert.IsFalse(viewModel.LocationHasMatched);
         }
@@ -61,12 +101,35 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Pledges
         [Test]
         public void MatchPercentage_WhenGivenNoMatchingLocationAndSectorsThen_Returns50Percent()
         {
-            var viewModel = _fixture.Create<ApplicationViewModel>();
-            viewModel.JobRole = JOBROLE;
-            viewModel.PledgeJobRoles = viewModel.PledgeJobRoles.Append(JOBROLE);
-            viewModel.Level = 7;
-            viewModel.PledgeLevels = viewModel.PledgeLevels.Append(LEVEL);
-
+            var viewModel = new ApplicationViewModel(
+                new List<string> { SECTOR },
+                new List<ReferenceDataItem> {
+                    new ReferenceDataItem
+                    {
+                        Id = SECTOR,
+                        Description = SECTOR,
+                        ShortDescription = SECTOR
+                    }
+                },
+                new List<string>
+                {
+                    "NoMatch"
+                },
+                new List<string>
+                {
+                    JOBROLE
+                },
+                new List<string>
+                {
+                    LEVEL
+                }, new List<string>
+                {
+                    "NoMatch"
+                },
+                LOCATION,
+                JOBROLE,
+                7);
+          
             viewModel.MatchPercentage.ShouldCompare("50%");
             Assert.IsFalse(viewModel.SectorHasMatched);
         }
@@ -74,10 +137,35 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Pledges
         [Test]
         public void MatchPercentage_WhenGivenNoMatchingLocationAndSectorsAndJobRoleThen_Returns25Percent()
         {
-            var viewModel = _fixture.Create<ApplicationViewModel>();
-            viewModel.Level = 7;
-            viewModel.PledgeLevels = viewModel.PledgeLevels.Append(LEVEL);
-
+            var viewModel = new ApplicationViewModel(
+                new List<string> { SECTOR },
+                new List<ReferenceDataItem> {
+                    new ReferenceDataItem
+                    {
+                        Id = SECTOR,
+                        Description = SECTOR,
+                        ShortDescription = SECTOR
+                    }
+                },
+                new List<string>
+                {
+                    "NoMatch"
+                },
+                new List<string>
+                {
+                    "NoMatch"
+                },
+                new List<string>
+                {
+                    LEVEL
+                }, new List<string>
+                {
+                    "NoMatch"
+                },
+                LOCATION,
+                JOBROLE,
+                7);
+            
             viewModel.MatchPercentage.ShouldCompare("25%");
             Assert.IsFalse(viewModel.JobRoleHasMatched);
         }
@@ -94,47 +182,137 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Pledges
         [Test]
         public void MatchPercentage_WhenPledgeSectorsIsEmpty_ThenDefaultsToAMatch()
         {
-            var viewModel = _fixture.Create<ApplicationViewModel>();
-
-            viewModel.PledgeSectors = new List<string>();
+            var viewModel = new ApplicationViewModel(
+                new List<string> { SECTOR },
+                new List<ReferenceDataItem> {
+                    new ReferenceDataItem
+                    {
+                        Id = SECTOR,
+                        Description = SECTOR,
+                        ShortDescription = SECTOR
+                    }
+                },
+                new List<string>(),
+            new List<string>
+                {
+                    "NoMatch"
+                },
+                new List<string>
+                {
+                    "NoMatch"
+                }, new List<string>
+                {
+                    "NoMatch"
+                },
+                LOCATION,
+                JOBROLE,
+                7);
 
             var matchPercentage = viewModel.MatchPercentage;
 
             Assert.IsTrue(viewModel.SectorHasMatched);
+            Assert.AreEqual("25%", matchPercentage);
         }
 
         [Test]
         public void MatchPercentage_WhenPledgeJobRolesIsEmpty_ThenDefaultsToAMatch()
         {
-            var viewModel = _fixture.Create<ApplicationViewModel>();
-
-            viewModel.PledgeJobRoles = new List<string>();
+            var viewModel = new ApplicationViewModel(
+                new List<string> { SECTOR },
+                new List<ReferenceDataItem> {
+                    new ReferenceDataItem
+                    {
+                        Id = SECTOR,
+                        Description = SECTOR,
+                        ShortDescription = SECTOR
+                    }
+                },
+                new List<string> {
+                    "NoMatch"
+                },
+                new List<string>(),
+                new List<string>()  {
+                    "NoMatch"
+                }
+                , new List<string>
+                {
+                    "NoMatch"
+                },
+                LOCATION,
+                JOBROLE,
+                7);
 
             var matchPercentage = viewModel.MatchPercentage;
 
             Assert.IsTrue(viewModel.JobRoleHasMatched);
+            Assert.AreEqual("25%", matchPercentage);
         }
 
         [Test]
         public void MatchPercentage_WhenPledgeLocationsIsEmpty_ThenDefaultsToAMatch()
         {
-            var viewModel = _fixture.Create<ApplicationViewModel>();
-
-            viewModel.PledgeLocations = new List<string>();
+            var viewModel = new ApplicationViewModel(
+                new List<string> { SECTOR },
+                new List<ReferenceDataItem> {
+                    new ReferenceDataItem
+                    {
+                        Id = SECTOR,
+                        Description = SECTOR,
+                        ShortDescription = SECTOR
+                    }
+                },
+                new List<string> {
+                    "NoMatch"
+                },
+                new List<string>{
+                    "NoMatch"
+                },
+                new List<string>()  {
+                    "NoMatch"
+                }
+                , new List<string>(),
+                LOCATION,
+                JOBROLE,
+                7);
 
             var matchPercentage = viewModel.MatchPercentage;
+
             Assert.IsTrue(viewModel.LocationHasMatched);
+            Assert.AreEqual("25%", matchPercentage);
         }
 
         [Test]
         public void MatchPercentage_WhenPledgeLevelsIsEmpty_ThenDefaultsToAMatch()
         {
-            var viewModel = _fixture.Create<ApplicationViewModel>();
-
-            viewModel.PledgeLevels = new List<string>();
+            var viewModel = new ApplicationViewModel(
+                new List<string> { SECTOR },
+                new List<ReferenceDataItem> {
+                    new ReferenceDataItem
+                    {
+                        Id = SECTOR,
+                        Description = SECTOR,
+                        ShortDescription = SECTOR
+                    }
+                },
+                new List<string> {
+                    "NoMatch"
+                },
+                new List<string>{
+                    "NoMatch"
+                },
+                new List<string>(),
+                new List<string>
+                {
+                    "NoMatch"
+                },
+                LOCATION,
+                JOBROLE,
+                7);
 
             var matchPercentage = viewModel.MatchPercentage;
+            
             Assert.IsTrue(viewModel.LevelHasMatched);
+            Assert.AreEqual("25%", matchPercentage);
         }
     }
 }

@@ -15,10 +15,20 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         {
             
         }
-        public ApplicationViewModel(IEnumerable<string> sectors, IEnumerable<ReferenceDataItem> allSectors)
+        public ApplicationViewModel(IEnumerable<string> sectors, IEnumerable<ReferenceDataItem> allSectors, IEnumerable<string> pledgeSectors, 
+            IEnumerable<string> pledgeJobRoles, IEnumerable<string> pledgeLevels, IEnumerable<string> pledgeLocations, string location, string jobRole, int level)
         {
             _displaySectors = sectors.ToReferenceDataDescriptionList(allSectors);
             Sectors = sectors;
+            Location = location;
+            JobRole = jobRole;
+            Level = level;
+
+            _locationMatchPercentage = pledgeLocations.CheckForMatchPercentage(Location);
+            _sectorMatchedPercentage = pledgeSectors.CheckForMatchPercentage(Sectors);
+            _jobRoleMatchPercentage = pledgeJobRoles.CheckForMatchPercentage(JobRole);
+            _levelsMatchedPercentage = pledgeLevels.CheckForMatchPercentage(Level);
+
         }
 
         private int _locationMatchPercentage;
@@ -55,28 +65,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public DateTime StartBy { get; set; }
         public string AboutOpportunity { get; set; }
         public string EmployerAccountName { get; set; }
-        public IEnumerable<string> PledgeSectors { get; set; }
-        public IEnumerable<string> PledgeLevels { get; set; }
-        public IEnumerable<string> PledgeJobRoles { get; set; }
-        public IEnumerable<string> PledgeLocations { get; set; }
         public bool LocationHasMatched => _locationMatchPercentage > 0;
         public bool SectorHasMatched => _sectorMatchedPercentage > 0;
         public bool JobRoleHasMatched => _jobRoleMatchPercentage > 0;
         public bool LevelHasMatched => _levelsMatchedPercentage > 0;
         public string MatchPercentageCssClass => (_locationMatchPercentage + _sectorMatchedPercentage + _jobRoleMatchPercentage + _levelsMatchedPercentage).MatchPercentageCssClass();
 
-        public string MatchPercentage
-        {
-            get
-            {
-                _locationMatchPercentage = PledgeLocations.CheckForMatchPercentage(Location);
-                _sectorMatchedPercentage = PledgeSectors.CheckForMatchPercentage(Sectors);
-                _jobRoleMatchPercentage = PledgeJobRoles.CheckForMatchPercentage(JobRole);
-                _levelsMatchedPercentage = PledgeLevels.CheckForMatchPercentage(Level);
-
-                return $"{_locationMatchPercentage + _sectorMatchedPercentage + _jobRoleMatchPercentage + _levelsMatchedPercentage}%";
-            }
-        }
+        public string MatchPercentage => $"{_locationMatchPercentage + _sectorMatchedPercentage + _jobRoleMatchPercentage + _levelsMatchedPercentage}%";
 
         public string LocationCssClass => LocationHasMatched.ToTickCssClass();
         public string SectorCssClass => SectorHasMatched.ToTickCssClass();

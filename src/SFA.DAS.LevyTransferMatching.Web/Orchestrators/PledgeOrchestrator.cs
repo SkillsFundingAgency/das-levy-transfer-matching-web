@@ -312,7 +312,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             if (result != null)
             {
-                return new ApplicationViewModel(result.Sector, result.AllSectors)
+                return new ApplicationViewModel(result.Sector, result.AllSectors, result.PledgeSectors, result.PledgeJobRoles, result.PledgeLevels, result.PledgeLocations,
+                    result.Location, result.TypeOfJobRole, result.Level)
                 {
                     AboutOpportunity = result.AboutOpportunity,
                     BusinessWebsite = result.BusinessWebsite,
@@ -322,15 +323,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     FirstName = result.FirstName,
                     HasTrainingProvider = result.HasTrainingProvider,
                     LastName = result.LastName,
-                    Level = result.Level,
-                    Location = result.Location,
                     NumberOfApprentices = result.NumberOfApprentices,
-                    StartBy = result.StartBy,
-                    JobRole = result.TypeOfJobRole,
-                    PledgeJobRoles = result.PledgeJobRoles ?? new List<string>(),
-                    PledgeLevels = result.PledgeLevels ?? new List<string>(),
-                    PledgeLocations = result.PledgeLocations ?? new List<string>(),
-                    PledgeSectors = result.PledgeSectors ?? new List<string>()
+                    StartBy = result.StartBy
                 };
             }
 
