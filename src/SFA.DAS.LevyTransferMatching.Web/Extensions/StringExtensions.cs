@@ -50,82 +50,67 @@ namespace SFA.DAS.LevyTransferMatching.Web.Extensions
             return list != null && list.Any();
         }
 
-        public static int CalculateWhetherLocationMatch(this IEnumerable<string> pledgeLocations, string location)
+        public static int CheckForMatchPercentage(this IEnumerable<string> pledgeListToCompare, string valueToCompare, int percentageMatchIsWorth = 25)
         {
-            var locationMatchPercentage = 0;
+            var matchPercentage = 0;
 
-            if (!pledgeLocations.Contains(location) && pledgeLocations.Any())
+            if (!pledgeListToCompare.Any())
             {
-                return locationMatchPercentage;
+                matchPercentage = percentageMatchIsWorth;
             }
 
-            locationMatchPercentage = ApplicationViewModel.MatchingPercentageShare;
+            if (pledgeListToCompare.Contains(valueToCompare))
+            {
+                matchPercentage = percentageMatchIsWorth;
+            }
 
-            return locationMatchPercentage;
+            return matchPercentage;
         }
-
-        public static int CalculateWhetherSectorMatch(this IEnumerable<string> pledgeSectors, IEnumerable<string> sector)
-        {
-            var sectorMatchPercentage = 0;
-
-            if (!pledgeSectors.Any())
-            {
-                sectorMatchPercentage = ApplicationViewModel.MatchingPercentageShare;
-            }
-            else
-            {
-                if (pledgeSectors.Any(pledgeSector => !sector.All(sector => pledgeSector != sector)))
-                {
-                    sectorMatchPercentage = ApplicationViewModel.MatchingPercentageShare;
-                }
-            }
-
-            return sectorMatchPercentage;
-        }
-
-        public static int CalculateWhetherJobRoleMatch(this IEnumerable<string> pledgeJobRoles, string jobRole)
-        {
-            var jobRoleMatchPercentage = 0;
-
-            if (!pledgeJobRoles.Any())
-            {
-                jobRoleMatchPercentage = ApplicationViewModel.MatchingPercentageShare;
-            }
-            else
-            {
-                if (pledgeJobRoles.Any(pledgeJobRole => string.Compare(pledgeJobRole, jobRole, StringComparison.OrdinalIgnoreCase) == 0))
-                {
-                    jobRoleMatchPercentage = ApplicationViewModel.MatchingPercentageShare;
-                }
-            }
-
-            return jobRoleMatchPercentage;
-        }
-
-        public static int CalculateWhetherLevelMatch(this IEnumerable<string> pledgeLevels, int level)
+        
+        public static int CheckForMatchPercentage(this IEnumerable<string> pledgeListToCompare, int valueToCompare, int percentageMatchIsWorth = 25)
         {
             var levelMatchPercentage = 0;
 
-            if (!pledgeLevels.Any())
+            if (!pledgeListToCompare.Any())
             {
-                levelMatchPercentage = ApplicationViewModel.MatchingPercentageShare;
+                levelMatchPercentage = percentageMatchIsWorth;
             }
             else
             {
-                foreach (var pledgeLevel in pledgeLevels)
+                foreach (var pledgeLevel in pledgeListToCompare)
                 {
                     int.TryParse(pledgeLevel.Substring(pledgeLevel.Length - 1), out var pledgeLevelIntValue);
 
-                    if (pledgeLevelIntValue != level)
+                    if (pledgeLevelIntValue != valueToCompare)
                     {
                         continue;
                     }
 
-                    levelMatchPercentage = ApplicationViewModel.MatchingPercentageShare;
+                    levelMatchPercentage = percentageMatchIsWorth;
+                    break;
                 }
             }
 
             return levelMatchPercentage;
+        }
+
+        public static int CheckForMatchPercentage(this IEnumerable<string> pledgeListToCompare, IEnumerable<string> valueToCompare, int percentageMatchIsWorth = 25)
+        {
+            var sectorMatchPercentage = 0;
+
+            if (!pledgeListToCompare.Any())
+            {
+                sectorMatchPercentage = percentageMatchIsWorth;
+            }
+            else
+            {
+                if (pledgeListToCompare.Any(pledgeSector => valueToCompare.Any(sector => pledgeSector == sector)))
+                {
+                    sectorMatchPercentage = percentageMatchIsWorth;
+                }
+            }
+
+            return sectorMatchPercentage;
         }
     }
 }

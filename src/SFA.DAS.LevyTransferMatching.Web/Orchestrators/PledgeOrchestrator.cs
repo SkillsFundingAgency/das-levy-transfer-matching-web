@@ -312,7 +312,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             if (result != null)
             {
-                return new ApplicationViewModel()
+                return new ApplicationViewModel(result.Sector, result.AllSectors)
                 {
                     AboutOpportunity = result.AboutOpportunity,
                     BusinessWebsite = result.BusinessWebsite,
@@ -325,7 +325,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     Level = result.Level,
                     Location = result.Location,
                     NumberOfApprentices = result.NumberOfApprentices,
-                    Sectors = result.Sector,
                     StartBy = result.StartBy,
                     JobRole = result.TypeOfJobRole,
                     PledgeJobRoles = result.PledgeJobRoles ?? new List<string>(),

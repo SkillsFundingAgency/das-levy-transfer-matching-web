@@ -9,7 +9,7 @@ using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Pledges
 {
-    public class PledgeApplicationViewModelTests
+    public class ApplicationViewModelTests
     {
         private const string LOCATION = "location";
         private const string SECTOR = "Sector";
@@ -23,7 +23,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Pledges
             var viewModel = _fixture.Create<ApplicationViewModel>();
             viewModel.Location = LOCATION;
             viewModel.PledgeLocations = viewModel.PledgeLocations.Append(LOCATION);
-            viewModel.Sector = new List<string>
+            viewModel.Sectors = new List<string>
             {
                 SECTOR
             };
@@ -33,7 +33,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Pledges
             viewModel.Level = 7;
             viewModel.PledgeLevels = viewModel.PledgeLevels.Append(LEVEL);
 
-            viewModel.MatchPercentage().ShouldCompare("100%");
+            viewModel.MatchPercentage.ShouldCompare("100%");
             Assert.IsTrue(viewModel.JobRoleHasMatched);
             Assert.IsTrue(viewModel.LevelHasMatched);
             Assert.IsTrue(viewModel.LocationHasMatched);
@@ -44,7 +44,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Pledges
         public void MatchPercentage_WhenGivenNoMatchingLocationThen_Returns75Percent()
         {
             var viewModel = _fixture.Create<ApplicationViewModel>();
-            viewModel.Sector = new List<string>
+            viewModel.Sectors = new List<string>
             {
                 SECTOR
             };
@@ -54,7 +54,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Pledges
             viewModel.Level = 7;
             viewModel.PledgeLevels = viewModel.PledgeLevels.Append(LEVEL);
 
-            viewModel.MatchPercentage().ShouldCompare("75%");
+            viewModel.MatchPercentage.ShouldCompare("75%");
             Assert.IsFalse(viewModel.LocationHasMatched);
         }
 
@@ -67,7 +67,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Pledges
             viewModel.Level = 7;
             viewModel.PledgeLevels = viewModel.PledgeLevels.Append(LEVEL);
 
-            viewModel.MatchPercentage().ShouldCompare("50%");
+            viewModel.MatchPercentage.ShouldCompare("50%");
             Assert.IsFalse(viewModel.SectorHasMatched);
         }
 
@@ -78,7 +78,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Pledges
             viewModel.Level = 7;
             viewModel.PledgeLevels = viewModel.PledgeLevels.Append(LEVEL);
 
-            viewModel.MatchPercentage().ShouldCompare("25%");
+            viewModel.MatchPercentage.ShouldCompare("25%");
             Assert.IsFalse(viewModel.JobRoleHasMatched);
         }
 
@@ -87,7 +87,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Pledges
         {
             var viewModel = _fixture.Create<ApplicationViewModel>();
 
-            viewModel.MatchPercentage().ShouldCompare("0%");
+            viewModel.MatchPercentage.ShouldCompare("0%");
             Assert.IsFalse(viewModel.LevelHasMatched);
         }
 
@@ -98,7 +98,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Pledges
 
             viewModel.PledgeSectors = new List<string>();
 
-            viewModel.MatchPercentage();
+            var matchPercentage = viewModel.MatchPercentage;
 
             Assert.IsTrue(viewModel.SectorHasMatched);
         }
@@ -110,7 +110,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Pledges
 
             viewModel.PledgeJobRoles = new List<string>();
 
-            viewModel.MatchPercentage();
+            var matchPercentage = viewModel.MatchPercentage;
 
             Assert.IsTrue(viewModel.JobRoleHasMatched);
         }
@@ -122,8 +122,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Pledges
 
             viewModel.PledgeLocations = new List<string>();
 
-            viewModel.MatchPercentage();
-
+            var matchPercentage = viewModel.MatchPercentage;
             Assert.IsTrue(viewModel.LocationHasMatched);
         }
 
@@ -134,8 +133,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Pledges
 
             viewModel.PledgeLevels = new List<string>();
 
-            viewModel.MatchPercentage();
-
+            var matchPercentage = viewModel.MatchPercentage;
             Assert.IsTrue(viewModel.LevelHasMatched);
         }
     }

@@ -1,4 +1,5 @@
-﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.ApplicationViewModel
+﻿@using SFA.DAS.LevyTransferMatching.Web.Extensions
+@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.ApplicationViewModel
 
     <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
         <div class="govuk-grid-row title-options">
@@ -17,12 +18,7 @@
                     <span class="app-icon-list__icon @Model.LocationCssClass">No match on </span>Location: <strong>@Model.Location</strong>
                 </li>
                 <li class="app-icon-list__list-item">
-                    <span class="app-icon-list__icon @Model.SectorCssClass">No match on </span>Sector: 
-                    @foreach (var sector in Model.Sectors)
-                    {
-                        <strong>@sector</strong>
-                    }
-
+                    <span class="app-icon-list__icon @Model.SectorCssClass">No match on </span>Sector: <strong>@Model.DisplaySectors</strong>
                 </li>
                 <li class="app-icon-list__list-item">
                     <span class="app-icon-list__icon" @Model.JobRoleCssClass>No match on </span>Type of job role: <strong>@Model.JobRole</strong>
@@ -35,11 +31,11 @@
                 <dt class="app-dl-inline__title">Apprentices</dt>
                 <dd class="app-dl-inline__definition">@Model.NumberOfApprentices</dd>
                 <dt class="app-dl-inline__title">Estimated duration</dt>
-                <dd class="app-dl-inline__definition">@Model.EstimatedDurationMonths</dd>
+                <dd class="app-dl-inline__definition">@Model.EstimatedDurationMonths months</dd>
                 <dt class="app-dl-inline__title">Start by</dt>
                 <dd class="app-dl-inline__definition">@Model.StartBy.ToString("dd MMMMM yyyy")</dd>
                 <dt class="app-dl-inline__title">Do they have a training provider</dt>
-                <dd class="app-dl-inline__definition">@Model.HasTrainingProvider</dd>
+                <dd class="app-dl-inline__definition">@Model.HasTrainingProvider.ToYesNo()</dd>
             </dl>
         </div>
 

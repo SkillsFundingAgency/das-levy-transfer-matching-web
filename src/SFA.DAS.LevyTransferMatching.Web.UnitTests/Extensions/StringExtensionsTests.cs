@@ -100,5 +100,60 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
         {
             Assert.IsFalse(string.Empty.IsComplete());
         }
+
+        [TestCase(true, "item", "item", 25, 25)]
+        [TestCase(true, "pledgeListItem", "item", 25, 0)]
+        [TestCase(false, "pledgeListItem", "item", 25, 25)]
+        public void CheckForMatchPercentage_GivenInput_ReturnsExpectedOutput(bool addListItems, string pledgeListItemValue, string itemToCompareValue, int percentageToAssign, int expectedPercentage)
+        {
+            var pledgeList = new List<string>();
+
+            if (addListItems)
+            {
+                pledgeList.Add(pledgeListItemValue);
+            }
+
+            var actual = pledgeList.CheckForMatchPercentage(itemToCompareValue, percentageToAssign);
+
+            Assert.AreEqual(expectedPercentage, actual);
+        }
+
+        [TestCase(true, "Level2", 2, 25, 25)]
+        [TestCase(true, "pledgeListItem", 4, 25, 0)]
+        [TestCase(false, "pledgeListItem", 0, 25, 25)]
+        public void CheckForMatchPercentage_GivenInput_ReturnsExpectedOutput(bool addListItems, string pledgeListItemValue, int itemToCompareValue, int percentageToAssign, int expectedPercentage)
+        {
+            var pledgeList = new List<string>();
+
+            if (addListItems)
+            {
+                pledgeList.Add(pledgeListItemValue);
+            }
+
+            var actual = pledgeList.CheckForMatchPercentage(itemToCompareValue, percentageToAssign);
+
+            Assert.AreEqual(expectedPercentage, actual);
+        }
+
+        [TestCase(true, "ValueMatches", "ValueMatches", 25, 25)]
+        [TestCase(true, "ValueMatches", "ValueDoesntMatch", 25, 0)]
+        [TestCase(false, "pledgeListItem", "Value", 25, 25)]
+        public void CheckForMatchPercentage_GivenInputIsAList_ReturnsExpectedOutput(bool addListItems, string pledgeListItemValue, string itemToCompareValue, int percentageToAssign, int expectedPercentage)
+        {
+            var pledgeList = new List<string>();
+            var compareList = new List<string>
+            {
+                itemToCompareValue
+            };
+
+            if (addListItems)
+            {
+                pledgeList.Add(pledgeListItemValue);
+            }
+
+            var actual = pledgeList.CheckForMatchPercentage(compareList, percentageToAssign);
+
+            Assert.AreEqual(expectedPercentage, actual);
+        }
     }
 }

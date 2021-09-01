@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
+using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using StructureMap.Query;
 
@@ -10,6 +11,23 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 {
     public class ApplicationViewModel
     {
+        public ApplicationViewModel()
+        {
+            
+        }
+        public ApplicationViewModel(IEnumerable<string> sectors, IEnumerable<ReferenceDataItem> allSectors)
+        {
+            _displaySectors = sectors.ToReferenceDataDescriptionList(allSectors);
+            Sectors = sectors;
+        }
+
+        private int _locationMatchPercentage;
+        private int _sectorMatchedPercentage;
+        private int _jobRoleMatchPercentage;
+        private int _levelsMatchedPercentage;
+        private readonly string _displaySectors;
+
+        public string DisplaySectors => _displaySectors;
         public string EncodedApplicationId { get; set; }
         public string DasAccountName { get; set; }
         public int PledgeId { get; set; }
@@ -30,10 +48,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public int Duration { get; set; }
         public string Status { get; set; } //TODO: For TM-47 this is always Awaiting approval. Will be completed with a later story
         public StandardsListItemDto Standard { get; set; }
-        private int _locationMatchPercentage;
-        private int _sectorMatchedPercentage;
-        private int _jobRoleMatchPercentage;
-        private int _levelsMatchedPercentage;
         public string Location { get; set; }
         public string JobRole { get; set; }
         public int Level { get; set; }
@@ -45,7 +59,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public IEnumerable<string> PledgeLevels { get; set; }
         public IEnumerable<string> PledgeJobRoles { get; set; }
         public IEnumerable<string> PledgeLocations { get; set; }
-        public const int MatchingPercentageShare = 25;
         public bool LocationHasMatched => _locationMatchPercentage > 0;
         public bool SectorHasMatched => _sectorMatchedPercentage > 0;
         public bool JobRoleHasMatched => _jobRoleMatchPercentage > 0;
@@ -56,7 +69,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         {
             get
             {
-                CalculateMatchPercentage();
+                _locationMatchPercentage = PledgeLocations.CheckForMatchPercentage(Location);
+                _sectorMatchedPercentage = PledgeSectors.CheckForMatchPercentage(Sectors);
+                _jobRoleMatchPercentage = PledgeJobRoles.CheckForMatchPercentage(JobRole);
+                _levelsMatchedPercentage = PledgeLevels.CheckForMatchPercentage(Level);
 
                 return $"{_locationMatchPercentage + _sectorMatchedPercentage + _jobRoleMatchPercentage + _levelsMatchedPercentage}%";
             }
@@ -67,12 +83,5 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public string LevelCssClass => LevelHasMatched.ToTickCssClass();
         public string JobRoleCssClass => JobRoleHasMatched.ToTickCssClass();
 
-        private void CalculateMatchPercentage()
-        {
-            _locationMatchPercentage = PledgeLocations.CalculateWhetherLocationMatch(Location);
-            _sectorMatchedPercentage = PledgeSectors.CalculateWhetherSectorMatch(Sectors);
-            _jobRoleMatchPercentage = PledgeJobRoles.CalculateWhetherJobRoleMatch(JobRole);
-            _levelsMatchedPercentage = PledgeLevels.CalculateWhetherLevelMatch(Level);
-        }
     }
 }
