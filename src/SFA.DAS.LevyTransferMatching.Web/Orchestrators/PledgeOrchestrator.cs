@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
@@ -23,8 +24,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         private readonly ILocationValidatorService _validatorService;
         private readonly IUserService _userService;
         private Infrastructure.Configuration.FeatureToggles _featureToggles;
+        private readonly IDateTimeService _dateTimeService;
 
-        public PledgeOrchestrator(ICacheStorageService cacheStorageService, IPledgeService pledgeService, IEncodingService encodingService, ILocationValidatorService validatorService, IUserService userService, Infrastructure.Configuration.FeatureToggles featureToggles)
+        public PledgeOrchestrator(ICacheStorageService cacheStorageService, IPledgeService pledgeService, IEncodingService encodingService, ILocationValidatorService validatorService, IUserService userService, Infrastructure.Configuration.FeatureToggles featureToggles, IDateTimeService dateTimeService)
         {
             _cacheStorageService = cacheStorageService;
             _pledgeService = pledgeService;
@@ -32,6 +34,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             _validatorService = validatorService;
             _userService = userService;
             _featureToggles = featureToggles;
+            _dateTimeService = dateTimeService;
         }
 
         public InformViewModel GetInformViewModel(string encodedAccountId)
@@ -327,11 +330,34 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     PledgeJobRoles = result.PledgeJobRoles ?? new List<string>(),
                     PledgeLevels = result.PledgeLevels ?? new List<string>(),
                     PledgeLocations = result.PledgeLocations ?? new List<string>(),
-                    PledgeSectors = result.PledgeSectors ?? new List<string>()
+                    PledgeSectors = result.PledgeSectors ?? new List<string>(),
+                    Affordability = GetAffordabilityViewModel(result.PledgeRemainingAmount, result.NumberOfApprentices, result.MaxFunding, result.EstimatedDurationMonths, result.StartBy)
                 };
             }
 
             return null;
+        }
+
+        public PledgeApplicationViewModel.AffordabilityViewModel GetAffordabilityViewModel(int remainingAmount, int numberOfApprentices, int maxFunding, int estimatedDurationMonths, DateTime startDate)
+        {
+            int remainingFunds = remainingAmount;
+
+            var net = maxFunding - (maxFunding * 0.2);
+            var monthlyCost = net / estimatedDurationMonths;
+            var estimatedCostThisYear = monthlyCost * startDate.MonthsTillFinancialYearEnd();
+
+            var remainingFundsIfApproved = remainingFunds - estimatedCostThisYear;
+
+            var estimatedCostOverDuration = maxFunding * numberOfApprentices * estimatedDurationMonths;
+
+            return new PledgeApplicationViewModel.AffordabilityViewModel
+            {
+                RemainingFunds = remainingFunds.ToCurrencyString(),
+                EstimatedCostThisYear = estimatedCostThisYear.ToCurrencyString(),
+                RemainingFundsIfApproved = remainingFundsIfApproved.ToCurrencyString(),
+                EstimatedCostOverDuration = estimatedCostOverDuration.ToCurrencyString(),
+                YearDescription = _dateTimeService.UtcNow.ToTaxYearDescription()
+            };
         }
     }
 }

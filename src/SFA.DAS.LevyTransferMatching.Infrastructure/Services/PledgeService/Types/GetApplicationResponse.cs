@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -12,6 +13,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Typ
         public int Level { get; set; }
         public int NumberOfApprentices { get; set; }
         public int EstimatedDurationMonths { get; set; }
+        public int MaxFunding { get; set; }
         public DateTime StartBy { get; set; }
         public bool HasTrainingProvider { get; set; }
         public string AboutOpportunity { get; set; }
@@ -24,5 +26,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Typ
         public List<string> PledgeLevels { get; set; }
         public List<string> PledgeJobRoles { get; set; }
         public List<string> PledgeLocations { get; set; }
+        public int PledgeRemainingAmount { get; set; }
     }
 }

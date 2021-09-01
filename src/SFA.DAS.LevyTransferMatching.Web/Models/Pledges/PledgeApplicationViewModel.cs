@@ -33,6 +33,17 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public bool SectorHasMatched { get; private set; }
         public bool JobRoleHasMatched { get; private set; }
         public bool LevelHasMatched { get; private set; }
+        public AffordabilityViewModel Affordability { get; set; }
+
+
+        public class AffordabilityViewModel
+        {
+            public string RemainingFunds { get; set; }
+            public string EstimatedCostThisYear { get; set; }
+            public string RemainingFundsIfApproved { get; set; }
+            public string EstimatedCostOverDuration { get; set; }
+            public string YearDescription { get; set; }
+        }
 
         public string MatchPercentageCssClass
         {
