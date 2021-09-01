@@ -30,6 +30,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 		private Mock<IEncodingService> _encodingService;
         private Mock<ILocationValidatorService> _validatorService;
         private Mock<IUserService> _userService;
+        private Infrastructure.Configuration.FeatureToggles _featureToggles;
         private List<ReferenceDataItem> _sectors;
         private List<ReferenceDataItem> _levels;
         private List<ReferenceDataItem> _jobRoles;
@@ -37,6 +38,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private GetSectorResponse _sectorResponse;
         private GetJobRoleResponse _jobRoleResponse;
         private GetLevelResponse _levelResponse;
+        private GetPledgesResponse _pledgesResponse;
         private string _encodedAccountId;
         private Guid _cacheKey;
         private readonly long _accountId = 1;
@@ -57,6 +59,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _validatorService = new Mock<ILocationValidatorService>();
             _userService = new Mock<IUserService>();
 
+            _featureToggles = new Infrastructure.Configuration.FeatureToggles{ TogglePledgeDetails = true};
+
             _sectors = _fixture.Create<List<ReferenceDataItem>>();
             _levels = _fixture.Create<List<ReferenceDataItem>>();
             _jobRoles = _fixture.Create<List<ReferenceDataItem>>();
@@ -65,11 +69,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _sectorResponse = new GetSectorResponse {Sectors = _sectors};
             _levelResponse = new GetLevelResponse {Levels = _levels};
             _jobRoleResponse = new GetJobRoleResponse {JobRoles = _jobRoles};
+            _pledgesResponse = _fixture.Create<GetPledgesResponse>();
            
             _encodedPledgeId = _fixture.Create<string>();
             _userId = _fixture.Create<string>();
             _userDisplayName = _fixture.Create<string>();
 
+            _pledgeService.Setup(x => x.GetPledges(_accountId)).ReturnsAsync(_pledgesResponse);
             _pledgeService.Setup(x => x.GetCreate(_accountId)).ReturnsAsync(() => new GetCreateResponse
             {
                 Sectors = _sectors,
@@ -82,7 +88,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _pledgeService.Setup(x => x.GetJobRole(_accountId)).ReturnsAsync(_jobRoleResponse);
             _pledgeService.Setup(x => x.GetLevel(_accountId)).ReturnsAsync(_levelResponse);
 
-            _orchestrator = new PledgeOrchestrator(_cache.Object, _pledgeService.Object, _encodingService.Object, _validatorService.Object, _userService.Object);
+            _userService.Setup(x => x.IsUserChangeAuthorized()).Returns(true);
+
+            _orchestrator = new PledgeOrchestrator(_cache.Object, _pledgeService.Object, _encodingService.Object, _validatorService.Object, _userService.Object, _featureToggles);
         }
 
         [Test]
@@ -97,6 +105,42 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         {
             var result = _orchestrator.GetInformViewModel(_encodedAccountId);
             Assert.AreNotEqual(Guid.Empty, result.CacheKey);
+        }
+
+        [Test]
+        public async Task GetPledgesViewModel_EncodedId_Is_Correct()
+        {
+            var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest { EncodedAccountId = _encodedAccountId, AccountId = _accountId });
+            Assert.AreEqual(_encodedAccountId, result.EncodedAccountId);
+        }
+
+        [Test]
+        public async Task GetPledgesViewModel_RenderCreatePledgeButton_Is_True_When_Authorized()
+        {
+            var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest { EncodedAccountId = _encodedAccountId, AccountId = _accountId });
+            Assert.IsTrue(result.RenderCreatePledgeButton);
+        }
+
+        [Test]
+        public async Task GetPledgesViewModel_Pledges_Is_Populated()
+        {
+            var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest { EncodedAccountId = _encodedAccountId, AccountId = _accountId });
+            Assert.NotNull(result.Pledges);
+        }
+
+        [Test]
+        public async Task GetPledgesViewModel_Details_Link_Is_Rendered_When_Toggled_On()
+        {
+            var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest { EncodedAccountId = _encodedAccountId, AccountId = _accountId });
+            Assert.IsTrue(result.RenderPledgeDetailsLink);
+        }
+
+        [Test]
+        public async Task GetPledgesViewModel_Details_Link_Is_Not_Rendered_When_Toggled_Off()
+        {
+            _featureToggles.TogglePledgeDetails = false;
+            var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest { EncodedAccountId = _encodedAccountId, AccountId = _accountId });
+            Assert.IsFalse(result.RenderPledgeDetailsLink);
         }
 
         [Test]

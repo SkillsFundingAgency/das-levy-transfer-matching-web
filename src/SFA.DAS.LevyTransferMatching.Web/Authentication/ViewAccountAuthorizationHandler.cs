@@ -1,21 +1,21 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
 using SFA.DAS.LevyTransferMatching.Web.Authorization;
+using System;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Authentication
 {
-    public class ManageAccountAuthorizationHandler : AuthorizationHandler<ManageAccountRequirement>
+    public class ViewAccountAuthorizationHandler : AuthorizationHandler<ViewAccountRequirement>
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<ManageAccountAuthorizationHandler> _logger;
         private readonly IEncodingService _encodingService;
 
-        public ManageAccountAuthorizationHandler(IHttpContextAccessor httpContextAccessor,
+        public ViewAccountAuthorizationHandler(IHttpContextAccessor httpContextAccessor,
             ILogger<ManageAccountAuthorizationHandler> logger,
             IEncodingService encodingService)
         {
@@ -24,7 +24,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Authentication
             _encodingService = encodingService;
         }
 
-        protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, ManageAccountRequirement requirement)
+        protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, ViewAccountRequirement requirement)
         {
             var isAuthorized = await IsEmployerAuthorized(context);
 
@@ -33,12 +33,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Authentication
 
             if (isAuthorized)
             {
-                _logger.LogInformation($"ManageAccountRequirement met for user [{userId}]");
+                _logger.LogInformation($"ViewAccountRequirement met for user [{userId}]");
                 context.Succeed(requirement);
             }
             else
             {
-                _logger.LogInformation($"ManageAccountRequirement not met for user [{userId}]");
+                _logger.LogInformation($"ViewAccountRequirement not met for user [{userId}]");
             }
         }
 
@@ -53,7 +53,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Authentication
                 _httpContextAccessor.HttpContext.Request.RouteValues[RouteValueKeys.EncodedAccountId].ToString();
 
             var decodedAccountId = _encodingService.Decode(accountIdFromUrl, EncodingType.AccountId);
-            
+
             var userIdClaim = context.User.FindFirst(c => c.Type.Equals(ClaimIdentifierConfiguration.Id));
             if (userIdClaim?.Value == null)
             {
@@ -66,7 +66,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Authentication
             }
 
             var accountClaim = context.User.FindFirst(c =>
-                (c.Type.Equals(ClaimIdentifierConfiguration.AccountOwner) ||
+                (c.Type.Equals(ClaimIdentifierConfiguration.AccountViewer) ||
+                c.Type.Equals(ClaimIdentifierConfiguration.AccountOwner) ||
                 c.Type.Equals(ClaimIdentifierConfiguration.AccountTransactor)) &&
                 c.Value.Equals(decodedAccountId.ToString(), StringComparison.InvariantCultureIgnoreCase)
             );

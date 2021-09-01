@@ -83,13 +83,36 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
 
             if (Guid.TryParse(userId, out Guid userRef))
             {
-                var roles = new HashSet<UserRole> { UserRole.Owner, UserRole.Transactor };
-                var userAccounts = await accountsService.GetUserAccounts(userRef, roles, CancellationToken.None);
+                var ownerRole = new HashSet<UserRole> { UserRole.Owner, UserRole.Transactor };
+                var ownerUserAccounts = await accountsService.GetUserAccounts(userRef, ownerRole, CancellationToken.None);
 
-                foreach (var userAccount in userAccounts)
+                foreach (var userAccount in ownerUserAccounts)
                 {
-                    logger.LogInformation($"Adding claim for account {userAccount} for user {userId}");
-                    var claim = new Claim(ClaimIdentifierConfiguration.Account, userAccount.ToString());
+
+                    logger.LogInformation($"Adding owner claim for account {userAccount} for user {userId}");
+                    var claim = new Claim(ClaimIdentifierConfiguration.AccountOwner, userAccount.ToString());
+                    ctx.Principal.Identities.First().AddClaim(claim);
+                }
+
+                var transactorRole = new HashSet<UserRole> { UserRole.Transactor };
+                var transactorUserAccounts = await accountsService.GetUserAccounts(userRef, transactorRole, CancellationToken.None);
+
+                foreach (var userAccount in transactorUserAccounts)
+                {
+
+                    logger.LogInformation($"Adding transactor claim for account {userAccount} for user {userId}");
+                    var claim = new Claim(ClaimIdentifierConfiguration.AccountTransactor, userAccount.ToString());
+                    ctx.Principal.Identities.First().AddClaim(claim);
+                }
+
+                var viewerRole = new HashSet<UserRole> { UserRole.Viewer };
+                var viewerUserAccounts = await accountsService.GetUserAccounts(userRef, viewerRole, CancellationToken.None);
+
+                foreach (var userAccount in viewerUserAccounts)
+                {
+
+                    logger.LogInformation($"Adding viewer claim for account {userAccount} for user {userId}");
+                    var claim = new Claim(ClaimIdentifierConfiguration.AccountViewer, userAccount.ToString());
                     ctx.Principal.Identities.First().AddClaim(claim);
                 }
             }
