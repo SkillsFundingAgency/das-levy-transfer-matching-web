@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types
 {
-    public class GetOpportunityApplyResponse
+    public class GetSelectAccountResponse
     {
         public IEnumerable<Account> Accounts { get; set; }
 

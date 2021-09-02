@@ -270,10 +270,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             var selectAccountRequest = _fixture.Create<SelectAccountRequest>();
             var getOpportunityApplyResponse = _fixture
-                .Create<GetOpportunityApplyResponse>();
+                .Create<GetSelectAccountResponse>();
 
             _opportunitiesService
-                .Setup(x => x.GetOpportunityApply(It.Is<int>(y => y == selectAccountRequest.OpportunityId), It.Is<string>(y => y == userId)))
+                .Setup(x => x.GetSelectAccount(It.Is<int>(y => y == selectAccountRequest.OpportunityId), It.Is<string>(y => y == userId)))
                 .ReturnsAsync(getOpportunityApplyResponse);
 
             // Act

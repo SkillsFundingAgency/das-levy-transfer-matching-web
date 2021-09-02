@@ -95,7 +95,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             var ownerTransactorAccounts = _userService.GetUserOwnerTransactorAccountIds();
 
             // Get the full detail of accounts, that the user has access to
-            var result = await _opportunitiesService.GetOpportunityApply(request.OpportunityId, userId);
+            var result = await _opportunitiesService.GetSelectAccount(request.OpportunityId, userId);
 
             var filteredAccounts = result.Accounts
                 .Where((x) =>
