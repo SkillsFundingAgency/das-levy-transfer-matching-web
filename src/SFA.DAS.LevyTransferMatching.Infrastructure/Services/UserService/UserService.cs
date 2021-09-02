@@ -32,7 +32,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService
             return TryGetUserClaimValue(ClaimIdentifierConfiguration.AccountOwner, out _) || TryGetUserClaimValue(ClaimIdentifierConfiguration.AccountTransactor, out _);
         }
 
-        public IEnumerable<long> GetUserAccountIds()
+        public IEnumerable<long> GetUserOwnerTransactorAccountIds()
         {
             var ownerAccountIds = GetUserClaimsAsLongs(ClaimIdentifierConfiguration.AccountOwner);
             var transactorAccountIds = GetUserClaimsAsLongs(ClaimIdentifierConfiguration.AccountTransactor);

@@ -258,7 +258,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var userAccessAccountIds = accountIds.Take(2).ToArray();
 
             _userService
-                .Setup(x => x.GetUserAccountIds())
+                .Setup(x => x.GetUserOwnerTransactorAccountIds())
                 .Returns(userAccessAccountIds);
 
             // Account IDs come from EAS encoded by default - so we need to

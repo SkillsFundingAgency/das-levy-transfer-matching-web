@@ -34,7 +34,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.UnitTests.Services
         }
 
         [Test]
-        public void GetUserAccountIds_UserAuthenticatedAndAccountClaimsPresent_ReturnsParsedList()
+        public void GetUserOwnerTransactorAccountIds_UserAuthenticatedAndAccountClaimsPresent_ReturnsParsedList()
         {
             // Arrange
             var expectedAccountIds = _fixture.CreateMany<long>();
@@ -51,14 +51,14 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.UnitTests.Services
                 .Returns(accountClaims);
 
             // Act
-            var actualAccountIds = _userService.GetUserAccountIds();
+            var actualAccountIds = _userService.GetUserOwnerTransactorAccountIds();
 
             // Assert
             CollectionAssert.AreEqual(expectedAccountIds, actualAccountIds);
         }
 
         [Test]
-        public void GetUserAccountIds_UserNotAuthenticated_ReturnsNull()
+        public void GetUserOwnerTransactorAccountIds_UserNotAuthenticated_ReturnsNull()
         {
             // Arrange
             _mockClaimsIdentity
@@ -66,14 +66,14 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.UnitTests.Services
                 .Returns(false);
 
             // Act
-            var actualAccountIds = _userService.GetUserAccountIds();
+            var actualAccountIds = _userService.GetUserOwnerTransactorAccountIds();
 
             // Assert
             Assert.IsNull(actualAccountIds);
         }
 
         [Test]
-        public void GetUserAccountIds_UserAuthenticatedAndAccountClaimsNotPresent_ReturnsNull()
+        public void GetUserOwnerTransactorAccountIds_UserAuthenticatedAndAccountClaimsNotPresent_ReturnsNull()
         {
             // Arrange
             _mockClaimsIdentity
@@ -87,7 +87,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.UnitTests.Services
                 .Returns(claims);
 
             // Act
-            var actualAccountIds = _userService.GetUserAccountIds();
+            var actualAccountIds = _userService.GetUserOwnerTransactorAccountIds();
 
             // Assert
             Assert.IsNull(actualAccountIds);

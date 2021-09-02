@@ -10,6 +10,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService
 
         bool IsUserChangeAuthorized();
 
-        IEnumerable<long> GetUserAccountIds();
+        IEnumerable<long> GetUserOwnerTransactorAccountIds();
     }
 }
