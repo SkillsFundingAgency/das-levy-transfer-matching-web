@@ -598,6 +598,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                                           r.NumberOfApprentices == cacheItem.NumberOfApprentices.Value &&
                                           r.StartDate == cacheItem.StartDate &&
                                           r.HasTrainingProvider == cacheItem.HasTrainingProvider.Value &&
+                                          r.Amount == cacheItem.Amount &&
                                           r.Sectors.Equals(cacheItem.Sectors) &&
                                           r.Postcode == cacheItem.Postcode &&
                                           r.FirstName == cacheItem.FirstName &&

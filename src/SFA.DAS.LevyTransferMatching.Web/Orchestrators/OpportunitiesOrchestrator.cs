@@ -141,6 +141,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 NumberOfApprentices = cacheItem.NumberOfApprentices.Value,
                 StartDate = cacheItem.StartDate.Value,
                 HasTrainingProvider = cacheItem.HasTrainingProvider.Value,
+                Amount = cacheItem.Amount,
                 Sectors = cacheItem.Sectors,
                 Postcode = cacheItem.Postcode ?? string.Empty,
                 FirstName = cacheItem.FirstName ?? string.Empty,
@@ -369,7 +370,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             cacheItem.JobRole = request.SelectedStandardTitle;
             cacheItem.StandardId = request.SelectedStandardId;
-            cacheItem.NumberOfApprentices = request.NumberOfApprentices.Value;
+            cacheItem.NumberOfApprentices = request.ParsedNumberOfApprentices;
             cacheItem.StartDate = request.StartDate;
             cacheItem.HasTrainingProvider = request.HasTrainingProvider.Value;
             cacheItem.Amount = amount;
@@ -458,7 +459,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             {
                 StartDate = request.StartDate.Value,
                 SelectedStandardId = request.SelectedStandardId,
-                NumberOfApprentices = request.NumberOfApprentices.Value,
+                NumberOfApprentices = request.ParsedNumberOfApprentices.Value,
                 PledgeId = request.PledgeId
             }, applicationDetails)).Amount;
 

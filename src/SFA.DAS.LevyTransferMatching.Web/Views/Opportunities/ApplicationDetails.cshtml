@@ -1,5 +1,4 @@
-﻿@using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
-@model SFA.DAS.LevyTransferMatching.Web.Models.Opportunities.ApplicationDetailsViewModel
+﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Opportunities.ApplicationDetailsViewModel
 @inject SFA.DAS.EmployerUrlHelper.ILinkGenerator LinkGenerator
 @{
     ViewData["Title"] = "Apprenticeship Training";
@@ -7,31 +6,21 @@
 <a href="@Url.Action("Apply", new {Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey})" class="govuk-back-link">Back</a>
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
     <partial name="_ValidationSummary" />
-    <form method="post" class="validate-auto-complete">
-
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-full">
-
-                <span class="govuk-caption-m">Search and apply for pledges in England</span>
-                <h1 class="govuk-heading-xl">Apprenticeship training</h1>
-
-            </div>
-        </div>
+    <form method="post" class="validate-auto-complete" novalidate>
+        <span class="govuk-caption-m">Search and apply for pledges in England</span>
+        <h1 class="govuk-heading-xl">Apprenticeship training</h1>
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
 
                 <partial name="StandardSearch" for="SelectStandardViewModel"/>
 
-                <div class="govuk-form-group" das-highlight-error-for="NumberOfApprentices" error-class="govuk-form-group--error" id="how-many-apprentices">
+                <div class="govuk-form-group" das-highlight-error-for="NumberOfApprentices" error-class="govuk-form-group--error">
                     <label id="NumberOfApprentices" class="govuk-label govuk-label--s" for="opportunity-application-apprentices">How many apprentices do you want to fund?</label>
-                    <span id="apprentices-error" class="govuk-error-message" style="display: none;">
-                        <span class="govuk-visually-hidden">Error:</span> There is not enough funding to support this many apprentices
-                    </span>
                     <span das-validation-for="NumberOfApprentices" class="govuk-error-message"></span>
-                    <input id="opportunity-application-apprentices" class="govuk-input govuk-input--width-5" asp-for="NumberOfApprentices" inputmode="numeric" spellcheck="false" pattern="[0-9]*" type="number" aria-describedby="apprentices-error"/>
+                    <input id="opportunity-application-apprentices" class="govuk-input govuk-input--width-5" asp-for="NumberOfApprentices" inputmode="numeric" spellcheck="false" type="text" aria-describedby="apprentices-error" maxlength="3"/>
                 </div>
 
-                <div class="govuk-form-group" das-highlight-error-for="StartDate" error-class="govuk-form-group--error" id="start-date">
+                <div class="govuk-form-group" das-highlight-error-for="StartDate" error-class="govuk-form-group--error">
                     <fieldset class="govuk-fieldset" role="group" aria-describedby="opportunity-application-start-hint">
                         <legend class="govuk-fieldset__legend">
                             <h1 class="govuk-fieldset__heading govuk-label--s">When would you like the apprenticeship training to start by?</h1>
@@ -55,7 +44,12 @@
                     </fieldset>
                 </div>
 
-                <div class="govuk-form-group" das-highlight-error-for="HasTrainingProvider" error-class="govuk-form-group--error" id="has-training-provider">
+                <div class="app-estimate" id="panel-estimate">
+                    <p class="govuk-heading-s app-estimate__heading">In 2021/22 your apprenticeship training will cost:</p>
+                    <p class="govuk-heading-xl app-estimate__estimate">£<span id="field-estimate"></span></p>
+                </div>
+
+                <div class="govuk-form-group" das-highlight-error-for="HasTrainingProvider" error-class="govuk-form-group--error">
                     <fieldset class="govuk-fieldset">
                         <legend class="govuk-fieldset__legend">
                             <strong>Have you found a training provider?</strong>
@@ -80,18 +74,16 @@
                 </div>
             </div>
             <div class="govuk-grid-column-one-third">
-                <section class="employer-details side-panel">
+                <section>
                     <partial name="/Views/Shared/_OpportunitySummary.cshtml" for="OpportunitySummaryViewModel"/>
                 </section>
             </div>
-            <div class="govuk-grid-column-full">
-                <div class="govuk-button-group">
-                    <button id="opportunity-criteria-continue" class="govuk-button" data-module="govuk-button">
-                        Continue
-                    </button>
-                    <a href="@Url.Action("Apply", new {Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey})" class="govuk-back-link">Back</a>
-                </div>
-            </div>
+        </div>
+        <div class="govuk-button-group">
+            <button id="opportunity-criteria-continue" class="govuk-button" data-module="govuk-button">
+                Continue
+            </button>
+            <a href="@Url.Action("Apply", new {Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey})" class="govuk-back-link">Back</a>
         </div>
     </form>
 </main>

@@ -14,6 +14,7 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
 using SFA.DAS.LevyTransferMatching.Web.Attributes;
 using SFA.DAS.LevyTransferMatching.Web.FeatureToggles;
 using SFA.DAS.LevyTransferMatching.Web.ModelBinders;
+using SFA.DAS.LevyTransferMatching.Web.Models.Shared;
 using SFA.DAS.LevyTransferMatching.Web.StartupExtensions;
 using SFA.DAS.Validation.Mvc.Extensions;
 
