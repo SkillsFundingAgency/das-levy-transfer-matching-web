@@ -59,7 +59,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
         [HideAccountNavigation(false)]
         [Authorize]
-        [Route("opportunities/{encodedOpportunityId}/apply")]
+        [Route("opportunities/{encodedOpportunityId}/select-account")]
         public async Task<IActionResult> SelectAccount(SelectAccountRequest selectAccountRequest)
         {
             var viewModel = await _opportunitiesOrchestrator.GetSelectAccountViewModel(selectAccountRequest);
