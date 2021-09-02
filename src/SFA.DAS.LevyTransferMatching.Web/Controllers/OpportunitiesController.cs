@@ -64,25 +64,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         {
             var viewModel = await _opportunitiesOrchestrator.GetSelectAccountViewModel(selectAccountRequest);
 
-            SelectAccountViewModel.Account singleAccount = null;
-            if (viewModel.Accounts.Count() == 1)
-            {
-                singleAccount = viewModel.Accounts.Single();
-            }
+            if (viewModel.Accounts.Count() != 1) return View(viewModel);
 
-            if (singleAccount != null)
+            return RedirectToAction("Apply", new
             {
-                return RedirectToAction("Apply", new
-                {
-                    CacheKey = Guid.NewGuid(),
-                    EncodedAccountId = singleAccount.EncodedAccountId,
-                    EncodedPledgeId = selectAccountRequest.EncodedOpportunityId,
-                });
-            }
-            else
-            {
-                return View(viewModel);
-            }
+                CacheKey = Guid.NewGuid(),
+                EncodedAccountId = viewModel.Accounts.Single().EncodedAccountId,
+                EncodedPledgeId = selectAccountRequest.EncodedOpportunityId,
+            });
         }
 
 
