@@ -92,8 +92,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var userId = _userService.GetUserId();
 
-            // Get the (unencoded) account IDs the user has owner/transactor
-            // access to (from the claims)
             var ownerTransactorAccounts = _userService.GetUserOwnerTransactorAccountIds();
 
             // Get the full detail of accounts, that the user has access to
