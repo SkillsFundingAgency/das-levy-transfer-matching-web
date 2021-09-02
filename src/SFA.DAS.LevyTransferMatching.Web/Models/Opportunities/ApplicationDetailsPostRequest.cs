@@ -12,7 +12,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
         [AutoDecode("EncodedAccountId", Encoding.EncodingType.AccountId)]
         public int AccountId { get; set; }
 
-        public int? NumberOfApprentices { get; set; }
+        public string NumberOfApprentices { get; set; }
+        public int? ParsedNumberOfApprentices => int.TryParse(NumberOfApprentices, out var result) ? result : default(int?);
         public DateTime? StartDate
         {
             get 
