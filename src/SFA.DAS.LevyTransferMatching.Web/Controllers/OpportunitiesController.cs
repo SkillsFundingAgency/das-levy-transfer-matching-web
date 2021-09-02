@@ -57,7 +57,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             }
         }
 
-        [HideAccountNavigation(false)]
+        [HideAccountNavigation(false, hideNavigationLinks: true)]
         [Authorize]
         [Route("opportunities/{encodedOpportunityId}/select-account")]
         public async Task<IActionResult> SelectAccount(SelectAccountRequest selectAccountRequest)

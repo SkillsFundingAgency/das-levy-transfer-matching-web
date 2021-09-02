@@ -6,6 +6,7 @@
     var footerModel = new FooterModel { AccountId = accountId, UsePrivacyV2 = true };
 
     var hideHeader = (bool) ViewData[ViewDataKeys.HideAccountNavigation];
+    var hideNavigationLinks = !(bool) ViewData[ViewDataKeys.ShowNav];
 }
 
 <!DOCTYPE html>
@@ -42,7 +43,7 @@
     @*<partial name="_CookieBanner" />*@
 
     <partial name="_Header" />
-    @if (accountId != null && !hideHeader)
+    @if ((accountId != null && !hideHeader) || (!hideHeader && hideNavigationLinks))
     {
         <partial name="_Menu" model="@accountId" />
     }
