@@ -182,7 +182,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         public async Task<IActionResult> Application(ApplicationRequest request,
             CancellationToken cancellationToken = default)
         {
-            var response = await _orchestrator.GetApplicationForAsync(request, cancellationToken);
+            var response = await _orchestrator.GetApplicationViewModel(request, cancellationToken);
 
 
             if (response != null)

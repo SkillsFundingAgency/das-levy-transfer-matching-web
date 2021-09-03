@@ -293,7 +293,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             {
                 EncodedAccountId = request.EncodedAccountId,
                 EncodedPledgeId = request.EncodedPledgeId,
-                Applications = result.Applications?.Select(app => new ApplicationViewModel
+                Applications = result.Applications?.Select(app => new GetApplicationViewModel
                 {
                     EncodedApplicationId = _encodingService.Encode(app.Id, EncodingType.PledgeApplicationId),
                     DasAccountName = app.DasAccountName,
@@ -305,15 +305,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
-        public async Task<ApplicationViewModel> GetApplicationForAsync(ApplicationRequest request, CancellationToken cancellationToken = default)
+        public async Task<GetApplicationViewModel> GetApplicationViewModel(ApplicationRequest request, CancellationToken cancellationToken = default)
         {
             var result =
                 await _pledgeService.GetApplication(request.AccountId, request.PledgeId, request.ApplicationId, cancellationToken);
 
             if (result != null)
             {
-                return new ApplicationViewModel(result.Sector, result.AllSectors, result.PledgeSectors, result.PledgeJobRoles, result.PledgeLevels, result.PledgeLocations,
-                    result.Location, result.TypeOfJobRole, result.Level)
+                return new GetApplicationViewModel
                 {
                     AboutOpportunity = result.AboutOpportunity,
                     BusinessWebsite = result.BusinessWebsite,
@@ -324,7 +323,16 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     HasTrainingProvider = result.HasTrainingProvider,
                     LastName = result.LastName,
                     NumberOfApprentices = result.NumberOfApprentices,
-                    StartBy = result.StartBy
+                    StartBy = result.StartBy,
+                    Sectors = result.Sector,
+                    AllSectors = result.AllSectors,
+                    PledgeSectors = result.PledgeSectors,
+                    PledgeJobRoles = result.PledgeJobRoles,
+                    PledgeLevels = result.PledgeLevels,
+                    PledgeLocations = result.PledgeLocations,
+                    Location = result.Location,
+                    JobRole = result.TypeOfJobRole,
+                    Level = result.Level
                 };
             }
 

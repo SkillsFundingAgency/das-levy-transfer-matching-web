@@ -446,7 +446,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var response = _fixture.Create<GetApplicationResponse>();
             _pledgeService.Setup(o => o.GetApplication(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
             
-            var result = await _orchestrator.GetApplicationForAsync(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0});
+            var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0});
 
             Assert.IsFalse(string.IsNullOrWhiteSpace(result.JobRole));
         }

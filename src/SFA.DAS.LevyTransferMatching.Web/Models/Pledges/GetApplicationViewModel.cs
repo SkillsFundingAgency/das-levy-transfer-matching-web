@@ -9,33 +9,27 @@ using StructureMap.Query;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 {
-    public class ApplicationViewModel
+    public class GetApplicationViewModel
     {
-        public ApplicationViewModel()
+        public GetApplicationViewModel()
         {
             
         }
-        public ApplicationViewModel(IEnumerable<string> sectors, IEnumerable<ReferenceDataItem> allSectors, IEnumerable<string> pledgeSectors, 
-            IEnumerable<string> pledgeJobRoles, IEnumerable<string> pledgeLevels, IEnumerable<string> pledgeLocations, string location, string jobRole, int level)
+
+        public void SetupModel()
         {
-            _displaySectors = sectors.ToReferenceDataDescriptionList(allSectors);
-            Sectors = sectors;
-            Location = location;
-            JobRole = jobRole;
-            Level = level;
-
-            _locationMatchPercentage = pledgeLocations.CheckForMatchPercentage(Location);
-            _sectorMatchedPercentage = pledgeSectors.CheckForMatchPercentage(Sectors);
-            _jobRoleMatchPercentage = pledgeJobRoles.CheckForMatchPercentage(JobRole);
-            _levelsMatchedPercentage = pledgeLevels.CheckForMatchPercentage(Level);
-
+            _displaySectors = Sectors.ToReferenceDataDescriptionList(AllSectors);
+            _locationMatchPercentage = PledgeLocations.CheckForMatchPercentage(Location);
+            _sectorMatchedPercentage = PledgeSectors.CheckForMatchPercentage(Sectors);
+            _jobRoleMatchPercentage = PledgeJobRoles.CheckForMatchPercentage(JobRole);
+            _levelsMatchedPercentage = PledgeLevels.CheckForMatchPercentage(Level);
         }
 
         private int _locationMatchPercentage;
         private int _sectorMatchedPercentage;
         private int _jobRoleMatchPercentage;
         private int _levelsMatchedPercentage;
-        private readonly string _displaySectors;
+        private string _displaySectors;
 
         public string DisplaySectors => _displaySectors;
         public string EncodedApplicationId { get; set; }
@@ -77,6 +71,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public string SectorCssClass => SectorHasMatched.ToTickCssClass();
         public string LevelCssClass => LevelHasMatched.ToTickCssClass();
         public string JobRoleCssClass => JobRoleHasMatched.ToTickCssClass();
-
+        public IEnumerable<ReferenceDataItem> AllSectors { get; set; }
+        public List<string> PledgeSectors { get; set; }
+        public List<string> PledgeJobRoles { get; set; }
+        public List<string> PledgeLevels { get; set; }
+        public List<string> PledgeLocations { get; set; }
     }
 }

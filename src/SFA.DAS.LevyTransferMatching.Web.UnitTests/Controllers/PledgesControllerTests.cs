@@ -299,10 +299,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         public async Task GET_Application_Returns_Expected_ViewModel()
         {
             var request = _fixture.Create<ApplicationRequest>();
-            _orchestrator.Setup(x => x.GetApplicationForAsync(request, CancellationToken.None)).ReturnsAsync(new ApplicationViewModel());
+            _orchestrator.Setup(x => x.GetApplicationViewModel(request, CancellationToken.None)).ReturnsAsync(new GetApplicationViewModel());
 
             var viewResult = await _pledgesController.Application(request) as ViewResult;
-            var viewModel = viewResult?.Model as ApplicationViewModel;
+            var viewModel = viewResult?.Model as GetApplicationViewModel;
 
             Assert.NotNull(viewResult);
             Assert.NotNull(viewModel);

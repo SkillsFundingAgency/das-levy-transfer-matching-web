@@ -1,6 +1,8 @@
 ﻿@using SFA.DAS.LevyTransferMatching.Web.Extensions
-@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.ApplicationViewModel
-
+@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.GetApplicationViewModel
+@{
+    Model.SetupModel();
+}
     <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
         <div class="govuk-grid-row title-options">
             <div class="govuk-grid-column-full">
@@ -60,10 +62,12 @@
                         <span class="app-icon-list__icon app-icon-list__icon--email">Email address: </span> <a href="mailto:@email" class="govuk-link">@email</a>
                     </li>
                 }
-
-                <li class="app-icon-list__list-item">
-                    <span class="app-icon-list__icon app-icon-list__icon--website">Website: </span> <a href="http://@Model.BusinessWebsite" class="govuk-link">@Model.BusinessWebsite</a>
-                </li>
+                @if (!string.IsNullOrWhiteSpace(Model.BusinessWebsite))
+                 {
+                     <li class="app-icon-list__list-item">
+                         <span class="app-icon-list__icon app-icon-list__icon--website">Website: </span> <a href="http://@Model.BusinessWebsite" class="govuk-link">@Model.BusinessWebsite</a>
+                     </li>
+                 }
             </ul>
         </div>
 </main>

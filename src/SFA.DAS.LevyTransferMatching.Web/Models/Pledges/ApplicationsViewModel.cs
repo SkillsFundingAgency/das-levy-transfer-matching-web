@@ -10,6 +10,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public string EncodedAccountId { get; set; }
         public string TaxYear => DateTime.UtcNow.ToTaxYearDescription();
         public string EncodedPledgeId { get; set; }
-        public IEnumerable<ApplicationViewModel> Applications { get; set; }
+        public IEnumerable<GetApplicationViewModel> Applications { get; set; }
     }
 }
