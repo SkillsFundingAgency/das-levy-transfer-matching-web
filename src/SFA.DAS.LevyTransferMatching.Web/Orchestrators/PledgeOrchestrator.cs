@@ -56,7 +56,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             {
                 EncodedAccountId = request.EncodedAccountId,
                 RenderCreatePledgeButton = renderCreatePledgesButton,
-                RenderPledgeDetailsLink = _featureToggles.TogglePledgeDetails,
                 Pledges = pledgesResponse.Pledges.Select(x => new PledgesViewModel.Pledge 
                 {
                     ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),

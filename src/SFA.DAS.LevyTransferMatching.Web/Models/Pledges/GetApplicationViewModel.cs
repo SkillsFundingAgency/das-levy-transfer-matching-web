@@ -19,16 +19,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public void SetupModel()
         {
             _displaySectors = Sectors.ToReferenceDataDescriptionList(AllSectors);
-            _locationMatchPercentage = PledgeLocations.CheckForMatchPercentage(Location);
-            _sectorMatchedPercentage = PledgeSectors.CheckForMatchPercentage(Sectors);
-            _jobRoleMatchPercentage = PledgeJobRoles.CheckForMatchPercentage(JobRole);
-            _levelsMatchedPercentage = PledgeLevels.CheckForMatchPercentage(Level);
+           
         }
 
-        private int _locationMatchPercentage;
-        private int _sectorMatchedPercentage;
-        private int _jobRoleMatchPercentage;
-        private int _levelsMatchedPercentage;
         private string _displaySectors;
 
         public string DisplaySectors => _displaySectors;
@@ -59,18 +52,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public DateTime StartBy { get; set; }
         public string AboutOpportunity { get; set; }
         public string EmployerAccountName { get; set; }
-        public bool LocationHasMatched => _locationMatchPercentage > 0;
-        public bool SectorHasMatched => _sectorMatchedPercentage > 0;
-        public bool JobRoleHasMatched => _jobRoleMatchPercentage > 0;
-        public bool LevelHasMatched => _levelsMatchedPercentage > 0;
-        public string MatchPercentageCssClass => (_locationMatchPercentage + _sectorMatchedPercentage + _jobRoleMatchPercentage + _levelsMatchedPercentage).MatchPercentageCssClass();
-
-        public string MatchPercentage => $"{_locationMatchPercentage + _sectorMatchedPercentage + _jobRoleMatchPercentage + _levelsMatchedPercentage}%";
-
-        public string LocationCssClass => LocationHasMatched.ToTickCssClass();
-        public string SectorCssClass => SectorHasMatched.ToTickCssClass();
-        public string LevelCssClass => LevelHasMatched.ToTickCssClass();
-        public string JobRoleCssClass => JobRoleHasMatched.ToTickCssClass();
         public IEnumerable<ReferenceDataItem> AllSectors { get; set; }
         public List<string> PledgeSectors { get; set; }
         public List<string> PledgeJobRoles { get; set; }

@@ -63,7 +63,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _validatorService = new Mock<ILocationValidatorService>();
             _userService = new Mock<IUserService>();
 
-            _featureToggles = new Infrastructure.Configuration.FeatureToggles{ TogglePledgeDetails = true};
+            _featureToggles = new Infrastructure.Configuration.FeatureToggles();
 
             _sectors = _fixture.Create<List<ReferenceDataItem>>();
             _levels = _fixture.Create<List<ReferenceDataItem>>();
@@ -130,21 +130,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         {
             var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest { EncodedAccountId = _encodedAccountId, AccountId = _accountId });
             Assert.NotNull(result.Pledges);
-        }
-
-        [Test]
-        public async Task GetPledgesViewModel_Details_Link_Is_Rendered_When_Toggled_On()
-        {
-            var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest { EncodedAccountId = _encodedAccountId, AccountId = _accountId });
-            Assert.IsTrue(result.RenderPledgeDetailsLink);
-        }
-
-        [Test]
-        public async Task GetPledgesViewModel_Details_Link_Is_Not_Rendered_When_Toggled_Off()
-        {
-            _featureToggles.TogglePledgeDetails = false;
-            var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest { EncodedAccountId = _encodedAccountId, AccountId = _accountId });
-            Assert.IsFalse(result.RenderPledgeDetailsLink);
         }
 
         [Test]
