@@ -344,19 +344,17 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         public GetApplicationViewModel.AffordabilityViewModel GetAffordabilityViewModel(int remainingAmount, int numberOfApprentices, int maxFunding, int estimatedDurationMonths, DateTime startDate)
         {
-            int remainingFunds = remainingAmount;
-
             var netCost = maxFunding - (maxFunding * 0.2);
             var monthlyCost = netCost / estimatedDurationMonths;
             var estimatedCostThisYear = monthlyCost * startDate.MonthsTillFinancialYearEnd();
 
-            var remainingFundsIfApproved = remainingFunds - estimatedCostThisYear;
+            var remainingFundsIfApproved = remainingAmount - estimatedCostThisYear;
 
             var estimatedCostOverDuration = maxFunding * numberOfApprentices * estimatedDurationMonths;
 
             return new GetApplicationViewModel.AffordabilityViewModel
             {
-                RemainingFunds = remainingFunds.ToCurrencyString(),
+                RemainingFunds = remainingAmount.ToCurrencyString(),
                 EstimatedCostThisYear = estimatedCostThisYear.ToCurrencyString(),
                 RemainingFundsIfApproved = remainingFundsIfApproved.ToCurrencyString(),
                 EstimatedCostOverDuration = estimatedCostOverDuration.ToCurrencyString(),

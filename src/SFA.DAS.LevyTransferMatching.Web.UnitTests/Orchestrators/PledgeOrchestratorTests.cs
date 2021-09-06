@@ -14,6 +14,7 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
+using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
@@ -437,6 +438,31 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0});
 
             Assert.IsFalse(string.IsNullOrWhiteSpace(result.JobRole));
+        }
+
+        [Test]
+        public void GetAffordabilityViewModel_Returns_Correct_Values()
+        {
+            var remainingAmount = _fixture.Create<int>();
+            var numberOfApprentices = _fixture.Create<int>();
+            var maxFunding = _fixture.Create<int>();
+            var estimatedDurationMonths = _fixture.Create<int>();
+            var startDate = _fixture.Create<DateTime>();
+
+            var netCost = maxFunding - (maxFunding * 0.2);
+            var monthlyCost = netCost / estimatedDurationMonths;
+
+            var expectedEstimatedCostThisYear = monthlyCost * startDate.MonthsTillFinancialYearEnd();
+            var expectedRemainingFundsIfApproved = remainingAmount - expectedEstimatedCostThisYear;
+            var expectedEstimatedCostOverDuration = maxFunding * numberOfApprentices * estimatedDurationMonths;
+
+            var viewModel = _orchestrator.GetAffordabilityViewModel(remainingAmount, numberOfApprentices, maxFunding, estimatedDurationMonths, startDate);
+
+            Assert.AreEqual(remainingAmount.ToCurrencyString(), viewModel.RemainingFunds);
+            Assert.AreEqual(expectedEstimatedCostThisYear.ToCurrencyString(), viewModel.EstimatedCostThisYear);
+            Assert.AreEqual(expectedRemainingFundsIfApproved.ToCurrencyString(), viewModel.RemainingFundsIfApproved);
+            Assert.AreEqual(expectedEstimatedCostOverDuration.ToCurrencyString(), viewModel.EstimatedCostOverDuration);
+            Assert.AreEqual(_dateTimeService.Object.UtcNow.ToTaxYearDescription(), viewModel.YearDescription);
         }
     }
 }
