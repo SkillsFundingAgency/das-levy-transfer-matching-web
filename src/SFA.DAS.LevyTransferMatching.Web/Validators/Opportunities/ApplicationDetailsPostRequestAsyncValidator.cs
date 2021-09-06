@@ -33,14 +33,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities
                 .Cascade(CascadeMode.Stop)
                 .NotNull().WithMessage("You must enter the number of apprentices")
                 .NotEmpty().WithMessage("You must enter the number of apprentices")
-                .GreaterThan(0).WithMessage("You must enter the number of apprentices")
+                .Must((request, s) => request.ParsedNumberOfApprentices.HasValue && request.ParsedNumberOfApprentices.Value > 0)
+                .WithMessage("You must enter the number of apprentices")
                 .MustAsync(async (model, numberOfApprentices, cancellation) =>
                 {
-                    if (!model.StartDate.HasValue)
-                    {
-                        return false;
-                    }
-
                     var result = await opportunitiesService.GetApplicationDetails(model.AccountId, model.PledgeId, model.SelectedStandardId);
                     var selectedStandard = result.Standards.First();
 
@@ -51,8 +47,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities
 
                     return result.Opportunity.RemainingAmount >= selectedStandard.ApprenticeshipFunding
                             .GetEffectiveFundingLine(model.StartDate.Value)
-                            .CalcFundingForDate(numberOfApprentices, model.StartDate.Value);
+                            .CalcFundingForDate(model.ParsedNumberOfApprentices, model.StartDate.Value);
                 })
+                .When(x => x.StartDate.HasValue && x.StartDate >= new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1) && x.StartDate <= DateTime.Now.FinancialYearEnd())
                 .WithMessage(NumApprenticesError)
             ;
 

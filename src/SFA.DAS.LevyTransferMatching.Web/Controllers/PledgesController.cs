@@ -179,10 +179,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
         [HttpGet]
         [Route("{encodedPledgeId}/applications/{encodedApplicationId}")]
-        public async Task<IActionResult> ViewApplicationAsync(ApplicationViewRequest request,
+        public async Task<IActionResult> Application(ApplicationRequest request,
             CancellationToken cancellationToken = default)
         {
-            var response = await _orchestrator.GetApplicationForAsync(request, cancellationToken);
+            var response = await _orchestrator.GetApplicationViewModel(request, cancellationToken);
 
 
             if (response != null)

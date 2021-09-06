@@ -18,6 +18,7 @@ using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Location;
+using ApplicationRequest = SFA.DAS.LevyTransferMatching.Web.Models.Pledges.ApplicationRequest;
 using GetApplicationsResponse = SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types.GetApplicationsResponse;
 using SectorRequest = SFA.DAS.LevyTransferMatching.Web.Models.Pledges.SectorRequest;
 
@@ -65,7 +66,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _dateTimeService = new Mock<IDateTimeService>();
             _dateTimeService.Setup(x => x.UtcNow).Returns(DateTime.UtcNow);
 
-            _featureToggles = new Infrastructure.Configuration.FeatureToggles{ TogglePledgeDetails = true};
+            _featureToggles = new Infrastructure.Configuration.FeatureToggles();
 
             _sectors = _fixture.Create<List<ReferenceDataItem>>();
             _levels = _fixture.Create<List<ReferenceDataItem>>();
@@ -132,21 +133,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         {
             var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest { EncodedAccountId = _encodedAccountId, AccountId = _accountId });
             Assert.NotNull(result.Pledges);
-        }
-
-        [Test]
-        public async Task GetPledgesViewModel_Details_Link_Is_Rendered_When_Toggled_On()
-        {
-            var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest { EncodedAccountId = _encodedAccountId, AccountId = _accountId });
-            Assert.IsTrue(result.RenderPledgeDetailsLink);
-        }
-
-        [Test]
-        public async Task GetPledgesViewModel_Details_Link_Is_Not_Rendered_When_Toggled_Off()
-        {
-            _featureToggles.TogglePledgeDetails = false;
-            var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest { EncodedAccountId = _encodedAccountId, AccountId = _accountId });
-            Assert.IsFalse(result.RenderPledgeDetailsLink);
         }
 
         [Test]
@@ -446,11 +432,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         public async Task GetApplicationForAsync_Returns_ValidViewModel()
         {
             var response = _fixture.Create<GetApplicationResponse>();
-            _pledgeService.Setup(o => o.GetApplicationForAsync(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
+            _pledgeService.Setup(o => o.GetApplication(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
             
-            var result = await _orchestrator.GetApplicationForAsync(new ApplicationViewRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0});
+            var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0});
 
-            Assert.IsFalse(string.IsNullOrWhiteSpace(result.TypeOfJobRole));
+            Assert.IsFalse(string.IsNullOrWhiteSpace(result.JobRole));
         }
     }
 }

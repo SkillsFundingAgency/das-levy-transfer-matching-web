@@ -42,30 +42,32 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
         [Test]
         public void GetEffectiveFundingLine_Returns_Historical_Line()
         {
+            var now = new DateTime(2021,08, 30);
+
             var sut = new List<ApprenticeshipFundingDto>()
             {
                 new ApprenticeshipFundingDto()
                 {
                     Duration = 12,
                     MaxEmployerLevyCap = 9_000,
-                    EffectiveFrom = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.AddMonths(1).Month, 1),
+                    EffectiveFrom = new DateTime(now.Year, now.AddMonths(1).Month, 1),
                     EffectiveTo = null
                 },
                 new ApprenticeshipFundingDto()
                 {
                     Duration = 15,
                     MaxEmployerLevyCap = 12_000,
-                    EffectiveFrom = new DateTime(DateTime.UtcNow.AddYears(-2).Year, DateTime.UtcNow.AddMonths(-1).Month, 1),
-                    EffectiveTo = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 30)
+                    EffectiveFrom = new DateTime(now.AddYears(-2).Year, now.AddMonths(-1).Month, 1),
+                    EffectiveTo = new DateTime(now.Year, now.Month, 30)
                 }
             }.AsEnumerable();
 
-            var result = sut.GetEffectiveFundingLine(DateTime.UtcNow.Date);
+            var result = sut.GetEffectiveFundingLine(now.Date);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(15, result.Duration);
-            Assert.AreEqual(new DateTime(DateTime.UtcNow.AddYears(-2).Year, DateTime.UtcNow.AddMonths(-1).Month, 1), result.EffectiveFrom);
-            Assert.AreEqual(new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 30), result.EffectiveTo);
+            Assert.AreEqual(new DateTime(now.AddYears(-2).Year, now.AddMonths(-1).Month, 1), result.EffectiveFrom);
+            Assert.AreEqual(new DateTime(now.Year, now.Month, 30), result.EffectiveTo);
             Assert.AreEqual(12_000, result.MaxEmployerLevyCap);
         }
 

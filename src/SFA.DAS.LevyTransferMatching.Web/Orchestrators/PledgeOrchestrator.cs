@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
@@ -55,7 +59,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             {
                 EncodedAccountId = request.EncodedAccountId,
                 RenderCreatePledgeButton = renderCreatePledgesButton,
-                RenderPledgeDetailsLink = _featureToggles.TogglePledgeDetails,
                 Pledges = pledgesResponse.Pledges.Select(x => new PledgesViewModel.Pledge 
                 {
                     ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),
@@ -196,7 +199,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
 
-            cacheItem.Amount = Int32.Parse(request.Amount);
+            cacheItem.Amount = int.Parse(request.Amount, NumberStyles.AllowThousands, CultureInfo.InvariantCulture);
             cacheItem.IsNamePublic = request.IsNamePublic.Value;
             cacheItem.DasAccountName = request.DasAccountName;
 
@@ -292,7 +295,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             {
                 EncodedAccountId = request.EncodedAccountId,
                 EncodedPledgeId = request.EncodedPledgeId,
-                Applications = result.Applications?.Select(app => new ApplicationViewModel
+                Applications = result.Applications?.Select(app => new GetApplicationViewModel
                 {
                     EncodedApplicationId = _encodingService.Encode(app.Id, EncodingType.PledgeApplicationId),
                     DasAccountName = app.DasAccountName,
@@ -304,14 +307,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
-        public async Task<PledgeApplicationViewModel> GetApplicationForAsync(ApplicationViewRequest request, CancellationToken cancellationToken = default)
+        public async Task<GetApplicationViewModel> GetApplicationViewModel(ApplicationRequest request, CancellationToken cancellationToken = default)
         {
             var result =
-                await _pledgeService.GetApplicationForAsync(request.AccountId, request.PledgeId, request.ApplicationId, cancellationToken);
+                await _pledgeService.GetApplication(request.AccountId, request.PledgeId, request.ApplicationId, cancellationToken);
 
             if (result != null)
             {
-                return new PledgeApplicationViewModel()
+                return new GetApplicationViewModel
                 {
                     AboutOpportunity = result.AboutOpportunity,
                     BusinessWebsite = result.BusinessWebsite,
@@ -321,16 +324,17 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     FirstName = result.FirstName,
                     HasTrainingProvider = result.HasTrainingProvider,
                     LastName = result.LastName,
-                    Level = result.Level,
-                    Location = result.Location,
                     NumberOfApprentices = result.NumberOfApprentices,
-                    Sector = result.Sector,
                     StartBy = result.StartBy,
-                    TypeOfJobRole = result.TypeOfJobRole,
-                    PledgeJobRoles = result.PledgeJobRoles ?? new List<string>(),
-                    PledgeLevels = result.PledgeLevels ?? new List<string>(),
-                    PledgeLocations = result.PledgeLocations ?? new List<string>(),
-                    PledgeSectors = result.PledgeSectors ?? new List<string>(),
+                    Sectors = result.Sector,
+                    AllSectors = result.AllSectors,
+                    PledgeSectors = result.PledgeSectors,
+                    PledgeJobRoles = result.PledgeJobRoles,
+                    PledgeLevels = result.PledgeLevels,
+                    PledgeLocations = result.PledgeLocations,
+                    Location = result.Location,
+                    JobRole = result.TypeOfJobRole,
+                    Level = result.Level,
                     Affordability = GetAffordabilityViewModel(result.PledgeRemainingAmount, result.NumberOfApprentices, result.MaxFunding, result.EstimatedDurationMonths, result.StartBy)
                 };
             }
@@ -338,19 +342,19 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             return null;
         }
 
-        public PledgeApplicationViewModel.AffordabilityViewModel GetAffordabilityViewModel(int remainingAmount, int numberOfApprentices, int maxFunding, int estimatedDurationMonths, DateTime startDate)
+        public GetApplicationViewModel.AffordabilityViewModel GetAffordabilityViewModel(int remainingAmount, int numberOfApprentices, int maxFunding, int estimatedDurationMonths, DateTime startDate)
         {
             int remainingFunds = remainingAmount;
 
-            var net = maxFunding - (maxFunding * 0.2);
-            var monthlyCost = net / estimatedDurationMonths;
+            var netCost = maxFunding - (maxFunding * 0.2);
+            var monthlyCost = netCost / estimatedDurationMonths;
             var estimatedCostThisYear = monthlyCost * startDate.MonthsTillFinancialYearEnd();
 
             var remainingFundsIfApproved = remainingFunds - estimatedCostThisYear;
 
             var estimatedCostOverDuration = maxFunding * numberOfApprentices * estimatedDurationMonths;
 
-            return new PledgeApplicationViewModel.AffordabilityViewModel
+            return new GetApplicationViewModel.AffordabilityViewModel
             {
                 RemainingFunds = remainingFunds.ToCurrencyString(),
                 EstimatedCostThisYear = estimatedCostThisYear.ToCurrencyString(),
