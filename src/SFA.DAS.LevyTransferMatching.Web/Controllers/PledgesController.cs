@@ -187,7 +187,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
             if (response != null)
             {
-                return View("~/Views/Pledges/ViewApplicantTransferPledge.cshtml", response);
+                return View(response);
             }
 
             return NotFound();

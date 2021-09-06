@@ -24,7 +24,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         Task UpdateCacheItem(LocationPostRequest request);
         Task<string> SubmitPledge(CreatePostRequest request);
         Task<ApplicationsViewModel> GetApplications(ApplicationsRequest request);
-        Task<GetApplicationViewModel> GetApplicationViewModel(ApplicationRequest request,
+        Task<ApplicationViewModel> GetApplicationViewModel(ApplicationRequest request,
             CancellationToken cancellationToken = default);
     }
 }

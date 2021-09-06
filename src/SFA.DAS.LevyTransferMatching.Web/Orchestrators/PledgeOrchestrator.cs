@@ -51,12 +51,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var pledgesResponse = await _pledgeService.GetPledges(request.AccountId);
             var renderCreatePledgesButton = _userService.IsUserChangeAuthorized();
-            
+
             return new PledgesViewModel
             {
                 EncodedAccountId = request.EncodedAccountId,
                 RenderCreatePledgeButton = renderCreatePledgesButton,
-                Pledges = pledgesResponse.Pledges.Select(x => new PledgesViewModel.Pledge 
+                Pledges = pledgesResponse.Pledges.Select(x => new PledgesViewModel.Pledge
                 {
                     ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),
                     Amount = x.Amount,
@@ -186,7 +186,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 Locations = cacheItem.Locations?.ToList()
             };
         }
-        
+
         public async Task<Dictionary<int, string>> ValidateLocations(LocationPostRequest request)
         {
             return await _validatorService.ValidateLocations(request);
@@ -292,7 +292,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             {
                 EncodedAccountId = request.EncodedAccountId,
                 EncodedPledgeId = request.EncodedPledgeId,
-                Applications = result.Applications?.Select(app => new GetApplicationViewModel
+                Applications = result.Applications?.Select(app => new ApplicationViewModel
                 {
                     EncodedApplicationId = _encodingService.Encode(app.Id, EncodingType.PledgeApplicationId),
                     DasAccountName = app.DasAccountName,
@@ -304,14 +304,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
-        public async Task<GetApplicationViewModel> GetApplicationViewModel(ApplicationRequest request, CancellationToken cancellationToken = default)
+        public async Task<ApplicationViewModel> GetApplicationViewModel(ApplicationRequest request, CancellationToken cancellationToken = default)
         {
             var result =
                 await _pledgeService.GetApplication(request.AccountId, request.PledgeId, request.ApplicationId, cancellationToken);
 
             if (result != null)
             {
-                return new GetApplicationViewModel
+                return new ApplicationViewModel
                 {
                     AboutOpportunity = result.AboutOpportunity,
                     BusinessWebsite = result.BusinessWebsite,
@@ -331,7 +331,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     PledgeLocations = result.PledgeLocations,
                     Location = result.Location,
                     JobRole = result.TypeOfJobRole,
-                    Level = result.Level
+                    Level = result.Level,
+                    DisplaySectors = result.Sector.ToReferenceDataDescriptionList(result.AllSectors)
                 };
             }
 
