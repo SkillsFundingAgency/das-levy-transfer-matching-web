@@ -9,5 +9,6 @@
         public string LevelList { get; set; }
         public string LocationList { get; set; }
         public string YearDescription { get; set; }
+        public bool IsNamePublic { get; set; }
     }
 }

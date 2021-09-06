@@ -14,7 +14,16 @@
             <span class="govuk-caption-m">Find a business to fund training for your apprentices</span>
             <h1 class="govuk-heading-xl">Add contact details</h1>
 
-            <p>Add your contact details so they can be shared with <strong class="pledge-name-answer main-title">@Model.DasAccountName</strong>.</p>
+            @if (Model.OpportunitySummaryViewModel.IsNamePublic)
+            {
+                <p>Add your contact details so they can be shared with <strong class="pledge-name-answer main-title">@Model.DasAccountName</strong>.</p>
+            }
+            else
+            {
+                <p>Add your contact details</p>
+            }
+
+
 
             <p>They may contact you with follow-up questions about your application.</p>
 
@@ -35,7 +44,7 @@
                             <input class="govuk-input" id="LastName" name="LastName" type="text" asp-for="LastName" das-highlight-error-for="LastName" error-class="govuk-input--error" maxlength="25">
                         </div>
 
-                        
+
                         <div class="govuk-form-group govuk-!-margin-bottom-3" das-highlight-error-for="EmailAddress" error-class="govuk-form-group--error">
                             <label class="govuk-label" for="EmailAddress">Email address</label>
                             <span class="govuk-error-message">@Html.ValidationMessageFor(x => x.EmailAddress)</span>
@@ -54,7 +63,7 @@
                                 </div>
                             }
                         </fieldset>
-                        
+
 
                         <div class="govuk-form-group">
                             <label class="govuk-label" for="BusinessWebsite">Business website (if you have one)</label>
