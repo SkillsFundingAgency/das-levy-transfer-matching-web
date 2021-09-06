@@ -172,7 +172,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 SectorList = sectorList,
                 LocationList = locationList,
                 YearDescription = dateTime.ToTaxYearDescription(),
-                IsNamePublic = isNamePublic
             };
         }
 
@@ -260,7 +259,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 AdditionalEmailAddresses = additionalEmailAddresses.ToArray(),
                 BusinessWebsite = cacheItem.BusinessWebsite,
                 DasAccountName = getContactDetailsResult.DasAccountName,
-                OpportunitySummaryViewModel = opportunitySummaryViewModel
+                OpportunitySummaryViewModel = opportunitySummaryViewModel,
             };
 
             return viewModel;
