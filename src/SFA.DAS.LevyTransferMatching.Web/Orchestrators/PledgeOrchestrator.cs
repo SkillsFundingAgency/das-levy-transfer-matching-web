@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -205,7 +206,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
 
-            cacheItem.Amount = Int32.Parse(request.Amount);
+            cacheItem.Amount = int.Parse(request.Amount, NumberStyles.AllowThousands, CultureInfo.InvariantCulture);
             cacheItem.IsNamePublic = request.IsNamePublic.Value;
             cacheItem.DasAccountName = request.DasAccountName;
 

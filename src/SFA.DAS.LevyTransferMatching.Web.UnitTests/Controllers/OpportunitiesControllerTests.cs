@@ -280,7 +280,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
                 HasTrainingProvider = true,
                 Month = DateTime.Now.Month,
                 Year = DateTime.Now.Year,
-                NumberOfApprentices = 1,
+                NumberOfApprentices = "1",
                 PledgeId = 1,
                 SelectedStandardId = selectedStandardId,
                 SelectedStandardTitle = "Test Standard Title"
@@ -348,7 +348,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
                 HasTrainingProvider = true,
                 Month = DateTime.Now.Month,
                 Year = DateTime.Now.Year,
-                NumberOfApprentices = 1,
+                NumberOfApprentices = "1",
                 PledgeId = 1,
                 SelectedStandardId = selectedStandardId,
                 SelectedStandardTitle = "Test Standard Title"
