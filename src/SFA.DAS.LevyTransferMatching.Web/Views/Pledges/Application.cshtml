@@ -1,88 +1,89 @@
 ﻿@using SFA.DAS.LevyTransferMatching.Web.Extensions
 @model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.ApplicationViewModel
 
-<a href="javascript:history.back()" class="govuk-back-link">Back</a>
-    <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
-        <div class="govuk-grid-row title-options">
-            <div class="govuk-grid-column-full">
-                <h1 class="govuk-heading-xl">
-                    @Model.EmployerAccountName
-                </h1>
-            </div>
+<a href="@Url.Action("Applications", "Pledges", new { encodedAccountId = ViewContext.RouteData.Values["encodedAccountId"], EncodedPledgeId = ViewContext.RouteData.Values["EncodedPledgeId"]})" class="govuk-back-link">Back to my transfer applications</a>
+
+<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
+    <div class="govuk-grid-row title-options">
+        <div class="govuk-grid-column-full">
+            <h1 class="govuk-heading-xl">
+                @Model.EmployerAccountName
+            </h1>
         </div>
-        <div class="das-highlight">
-            <h2 class="govuk-heading-m">Details about the application</h2>
-            @*
-        commenting out the styles as they have been removed as part of TM-98, however the design was done by James so it's production ready and when picked up in a later task can be easily handled
-            *@
-            @*<p><strong class="govuk-tag govuk-tag--@Model.MatchPercentageCssClass">@Model.MatchPercentage Match</strong></p>
+    </div>
+    <div class="das-highlight">
+        <h2 class="govuk-heading-m">Details about the application</h2>
+        @*
+            commenting out the styles as they have been removed as part of TM-98, however the design was done by James so it's production ready and when picked up in a later task can be easily handled
+        *@
+        @*<p><strong class="govuk-tag govuk-tag--@Model.MatchPercentageCssClass">@Model.MatchPercentage Match</strong></p>
 
-        <ul class="govuk-list app-icon-list">
-            <li class="app-icon-list__list-item">
-                <span class="app-icon-list__icon @Model.LocationCssClass">No match on </span>Location: <strong>@Model.Location</strong>
-            </li>
-            <li class="app-icon-list__list-item">
-                <span class="app-icon-list__icon @Model.SectorCssClass">No match on </span>Sector: <strong>@Model.DisplaySectors</strong>
-            </li>
-            <li class="app-icon-list__list-item">
-                <span class="app-icon-list__icon" @Model.JobRoleCssClass>No match on </span>Type of job role: <strong>@Model.JobRole</strong>
-            </li>
-            <li class="app-icon-list__list-item">
-                <span class="app-icon-list__icon @Model.LevelCssClass">Match for: </span>Level: <strong>@Model.Level</strong>
-            </li>
-        </ul>
-            *@
-            
-            <dl class="govuk-body app-dl-inline">
-                <dt class="app-dl-inline__title">Location</dt>
-                <dd class="app-dl-inline__definition"><strong>@Model.Location</strong></dd>
-                <dt class="app-dl-inline__title">Sector</dt>
-                <dd class="app-dl-inline__definition"><strong>@Model.DisplaySectors</strong></dd>
-                <dt class="app-dl-inline__title">Type of job role</dt>
-                <dd class="app-dl-inline__definition"><strong>@Model.JobRole</strong></dd>
-                <dt class="app-dl-inline__title">Level</dt>
-                <dd class="app-dl-inline__definition"><strong>@Model.Level</strong></dd>
-            </dl>
-            <br/>
-            <dl class="govuk-body app-dl-inline">
-                <dt class="app-dl-inline__title">Apprentices</dt>
-                <dd class="app-dl-inline__definition">@Model.NumberOfApprentices</dd>
-                <dt class="app-dl-inline__title">Estimated duration</dt>
-                <dd class="app-dl-inline__definition">@Model.EstimatedDurationMonths months</dd>
-                <dt class="app-dl-inline__title">Start by</dt>
-                <dd class="app-dl-inline__definition">@Model.StartBy.ToString("MMMMM yyyy")</dd>
-                <dt class="app-dl-inline__title">Do they have a training provider</dt>
-                <dd class="app-dl-inline__definition">@Model.HasTrainingProvider.ToYesNo()</dd>
-            </dl>
-        </div>
-
-        @if (!string.IsNullOrWhiteSpace(Model.AboutOpportunity))
-        {
-            <div class="das-highlight">
-                <h2 class="govuk-heading-m">About their apprenticeship opportunity</h2>
-                <p>@Model.AboutOpportunity</p>
-            </div>
-        }
-
-        <div class="das-highlight">
-            <h2 class="govuk-heading-m">Contact details</h2>
-            <p>You can contact @Model.EmployerAccountName if you would like to ask them for more information.</p>
             <ul class="govuk-list app-icon-list">
                 <li class="app-icon-list__list-item">
-                    <span class="app-icon-list__icon app-icon-list__icon--user">Name: </span> <strong>@Model.FirstName @Model.LastName</strong>
+                    <span class="app-icon-list__icon @Model.LocationCssClass">No match on </span>Location: <strong>@Model.Location</strong>
                 </li>
-                @foreach (var email in Model.EmailAddresses)
-                {
-                    <li class="app-icon-list__list-item">
-                        <span class="app-icon-list__icon app-icon-list__icon--email">Email address: </span> <a href="mailto:@email" class="govuk-link">@email</a>
-                    </li>
-                }
-                @if (!string.IsNullOrWhiteSpace(Model.BusinessWebsite))
-                 {
-                     <li class="app-icon-list__list-item">
-                         <span class="app-icon-list__icon app-icon-list__icon--website">Website: </span> <a href="http://@Model.BusinessWebsite" class="govuk-link">@Model.BusinessWebsite</a>
-                     </li>
-                 }
+                <li class="app-icon-list__list-item">
+                    <span class="app-icon-list__icon @Model.SectorCssClass">No match on </span>Sector: <strong>@Model.DisplaySectors</strong>
+                </li>
+                <li class="app-icon-list__list-item">
+                    <span class="app-icon-list__icon" @Model.JobRoleCssClass>No match on </span>Type of job role: <strong>@Model.JobRole</strong>
+                </li>
+                <li class="app-icon-list__list-item">
+                    <span class="app-icon-list__icon @Model.LevelCssClass">Match for: </span>Level: <strong>@Model.Level</strong>
+                </li>
             </ul>
+        *@
+
+        <dl class="govuk-body app-dl-inline">
+            <dt class="app-dl-inline__title">Location</dt>
+            <dd class="app-dl-inline__definition"><strong>@Model.Location</strong></dd>
+            <dt class="app-dl-inline__title">Sector</dt>
+            <dd class="app-dl-inline__definition"><strong>@Model.DisplaySectors</strong></dd>
+            <dt class="app-dl-inline__title">Type of job role</dt>
+            <dd class="app-dl-inline__definition"><strong>@Model.JobRole</strong></dd>
+            <dt class="app-dl-inline__title">Level</dt>
+            <dd class="app-dl-inline__definition"><strong>@Model.Level</strong></dd>
+        </dl>
+        <br />
+        <dl class="govuk-body app-dl-inline">
+            <dt class="app-dl-inline__title">Apprentices</dt>
+            <dd class="app-dl-inline__definition">@Model.NumberOfApprentices</dd>
+            <dt class="app-dl-inline__title">Estimated duration</dt>
+            <dd class="app-dl-inline__definition">@Model.EstimatedDurationMonths months</dd>
+            <dt class="app-dl-inline__title">Start by</dt>
+            <dd class="app-dl-inline__definition">@Model.StartBy.ToString("MMMMM yyyy")</dd>
+            <dt class="app-dl-inline__title">Do they have a training provider</dt>
+            <dd class="app-dl-inline__definition">@Model.HasTrainingProvider.ToYesNo()</dd>
+        </dl>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Model.AboutOpportunity))
+    {
+        <div class="das-highlight">
+            <h2 class="govuk-heading-m">About their apprenticeship opportunity</h2>
+            <p>@Model.AboutOpportunity</p>
         </div>
+    }
+
+    <div class="das-highlight">
+        <h2 class="govuk-heading-m">Contact details</h2>
+        <p>You can contact @Model.EmployerAccountName if you would like to ask them for more information.</p>
+        <ul class="govuk-list app-icon-list">
+            <li class="app-icon-list__list-item">
+                <span class="app-icon-list__icon app-icon-list__icon--user">Name: </span> <strong>@Model.FirstName @Model.LastName</strong>
+            </li>
+            @foreach (var email in Model.EmailAddresses)
+            {
+                <li class="app-icon-list__list-item">
+                    <span class="app-icon-list__icon app-icon-list__icon--email">Email address: </span> <a href="mailto:@email" class="govuk-link">@email</a>
+                </li>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.BusinessWebsite))
+            {
+                <li class="app-icon-list__list-item">
+                    <span class="app-icon-list__icon app-icon-list__icon--website">Website: </span> <a href="http://@Model.BusinessWebsite" class="govuk-link">@Model.BusinessWebsite</a>
+                </li>
+            }
+        </ul>
+    </div>
 </main>
