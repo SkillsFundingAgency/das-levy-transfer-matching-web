@@ -6,7 +6,7 @@
 
 <a href="@Url.Action("Apply", "Opportunities", new { encodedAccountId = Model.EncodedAccountId, EncodedPledgeId = Model.EncodedPledgeId, cacheKey = Model.CacheKey })" class="govuk-back-link">Back</a>
 
-<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
+<main class="govuk-main-wrapper" id="main-content" role="main">
     <partial name="_ValidationSummary" />
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
@@ -63,7 +63,7 @@
 
                         <div class="govuk-button-group">
                             <button class="govuk-button" data-module="govuk-button" id="application-contact-details">Continue</button>
-                            <a href="@Url.Action("Apply", "Opportunities", new { encodedAccountId = Model.EncodedAccountId, EncodedPledgeId = Model.EncodedPledgeId, cacheKey = Model.CacheKey })" class="govuk-link govuk-link--no-visited-state govuk-link-secondary govuk-back-link">Back</a>
+                            <a href="@Url.Action("Apply", "Opportunities", new { encodedAccountId = Model.EncodedAccountId, EncodedPledgeId = Model.EncodedPledgeId, cacheKey = Model.CacheKey })" class="govuk-back-link">Back</a>
                         </div>
 
                     </form>
