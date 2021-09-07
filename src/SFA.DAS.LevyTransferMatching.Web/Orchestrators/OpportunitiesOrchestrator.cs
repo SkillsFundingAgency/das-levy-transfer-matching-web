@@ -228,6 +228,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 ContactName = string.IsNullOrWhiteSpace(contactName) ? "-" : contactName,
                 EmailAddresses = applicationTask.Result.EmailAddresses,
                 WebsiteUrl = string.IsNullOrEmpty(applicationTask.Result.BusinessWebsite) ? "-" : applicationTask.Result.BusinessWebsite,
+                AccessToMultipleAccounts = request.AccessToMultipleAccounts,
             };
         }
 
