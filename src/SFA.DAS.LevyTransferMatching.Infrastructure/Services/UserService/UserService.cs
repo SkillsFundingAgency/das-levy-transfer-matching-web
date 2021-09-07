@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
@@ -34,8 +35,13 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService
 
         public IEnumerable<long> GetUserOwnerTransactorAccountIds()
         {
-            var ownerAccountIds = GetUserClaimsAsLongs(ClaimIdentifierConfiguration.AccountOwner);
-            var transactorAccountIds = GetUserClaimsAsLongs(ClaimIdentifierConfiguration.AccountTransactor);
+            var ownerAccountIds = GetUserClaimsAsLongs(ClaimIdentifierConfiguration.AccountOwner) ?? Array.Empty<long>();
+            var transactorAccountIds = GetUserClaimsAsLongs(ClaimIdentifierConfiguration.AccountTransactor) ?? Array.Empty<long>();
+
+            if (ownerAccountIds.Count() <= 0 && transactorAccountIds.Count() <= 0)
+            {
+                return null;
+            }
 
             var ids = ownerAccountIds.Concat(transactorAccountIds).Distinct();
 
