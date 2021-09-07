@@ -38,7 +38,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService
             var ownerAccountIds = GetUserClaimsAsLongs(ClaimIdentifierConfiguration.AccountOwner) ?? Array.Empty<long>();
             var transactorAccountIds = GetUserClaimsAsLongs(ClaimIdentifierConfiguration.AccountTransactor) ?? Array.Empty<long>();
 
-            if (ownerAccountIds.Count() <= 0 && transactorAccountIds.Count() <= 0)
+            if (!ownerAccountIds.Any() && !transactorAccountIds.Any())
             {
                 return null;
             }
