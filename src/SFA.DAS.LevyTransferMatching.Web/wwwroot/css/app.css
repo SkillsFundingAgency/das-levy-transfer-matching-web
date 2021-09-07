@@ -24,6 +24,11 @@
     font-size: 36px;
     margin: 0 0 -5px;
 }
+@media (min-width: 40.0625em) {
+    .app-task-list {
+        min-width: none;
+    }
+}
 
 .app-task-list__group-header-hint {
     margin: 5px 0;
