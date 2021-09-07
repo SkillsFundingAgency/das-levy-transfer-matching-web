@@ -332,27 +332,22 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     Location = result.Location,
                     JobRole = result.TypeOfJobRole,
                     Level = result.Level,
-                    Affordability = GetAffordabilityViewModel(result.PledgeRemainingAmount, result.NumberOfApprentices, result.MaxFunding, result.EstimatedDurationMonths, result.StartBy)
+                    Affordability = GetAffordabilityViewModel(result.Amount, result.PledgeRemainingAmount, result.NumberOfApprentices, result.MaxFunding, result.EstimatedDurationMonths, result.StartBy)
                 };
             }
 
             return null;
         }
 
-        public GetApplicationViewModel.AffordabilityViewModel GetAffordabilityViewModel(int remainingAmount, int numberOfApprentices, int maxFunding, int estimatedDurationMonths, DateTime startDate)
+        public GetApplicationViewModel.AffordabilityViewModel GetAffordabilityViewModel(int amount, int remainingAmount, int numberOfApprentices, int maxFunding, int estimatedDurationMonths, DateTime startDate)
         {
-            var netCost = maxFunding - (maxFunding * 0.2);
-            var monthlyCost = netCost / estimatedDurationMonths;
-            var estimatedCostThisYear = monthlyCost * startDate.MonthsTillFinancialYearEnd();
-
-            var remainingFundsIfApproved = remainingAmount - estimatedCostThisYear;
-
-            var estimatedCostOverDuration = maxFunding * numberOfApprentices * estimatedDurationMonths;
+            var remainingFundsIfApproved = remainingAmount - amount;
+            var estimatedCostOverDuration = maxFunding * numberOfApprentices;
 
             return new GetApplicationViewModel.AffordabilityViewModel
             {
                 RemainingFunds = remainingAmount.ToCurrencyString(),
-                EstimatedCostThisYear = estimatedCostThisYear.ToCurrencyString(),
+                EstimatedCostThisYear = amount.ToCurrencyString(),
                 RemainingFundsIfApproved = remainingFundsIfApproved.ToCurrencyString(),
                 EstimatedCostOverDuration = estimatedCostOverDuration.ToCurrencyString(),
                 YearDescription = _dateTimeService.UtcNow.ToTaxYearDescription()

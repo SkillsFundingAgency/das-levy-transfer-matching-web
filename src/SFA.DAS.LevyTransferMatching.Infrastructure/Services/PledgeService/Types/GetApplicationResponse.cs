@@ -1,7 +1,5 @@
-﻿using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types
@@ -28,6 +26,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Typ
         public List<string> PledgeJobRoles { get; set; }
         public List<string> PledgeLocations { get; set; }
         public int PledgeRemainingAmount { get; set; }
+        public int Amount { get; set; }
         public IEnumerable<ReferenceDataItem> AllJobRoles { get; set; }
         public IEnumerable<ReferenceDataItem> AllSectors { get; set; }
         public IEnumerable<ReferenceDataItem> AllLevels { get; set; }
