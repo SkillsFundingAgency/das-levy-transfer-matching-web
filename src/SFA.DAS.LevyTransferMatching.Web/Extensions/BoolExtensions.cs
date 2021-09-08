@@ -6,5 +6,15 @@
         {
             return value.HasValue ? value.Value ? "Yes" : "No" : "-";
         }
+
+        public static string ToTickCssClass(this bool hasMatched)
+        {
+            return hasMatched ? "app-icon-list__icon--tick" : "";
+        }
+
+        public static string ToYesNo(this bool value)
+        {
+            return value ? "Yes" : "No";
+        }
     }
 }

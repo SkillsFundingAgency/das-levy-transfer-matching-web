@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture;
 using Microsoft.AspNetCore.Mvc;
@@ -295,6 +296,19 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         }
 
         [Test]
+        public async Task GET_Application_Returns_Expected_ViewModel()
+        {
+            var request = _fixture.Create<ApplicationRequest>();
+            _orchestrator.Setup(x => x.GetApplicationViewModel(request, CancellationToken.None)).ReturnsAsync(new ApplicationViewModel());
+
+            var viewResult = await _pledgesController.Application(request) as ViewResult;
+            var viewModel = viewResult?.Model as ApplicationViewModel;
+
+            Assert.NotNull(viewResult);
+            Assert.NotNull(viewModel);
+        }
+		
+		[Test]
         public async Task GET_ApplicationApproved_Returns_Expected_View_With_Expected_ViewModel()
         {
             // Arrange
