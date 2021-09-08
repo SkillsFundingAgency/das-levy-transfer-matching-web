@@ -47,7 +47,7 @@
                                 </a>
                             </span>
                             <span class="das-task-list__task-tag">
-                                <text>@Model.JobRole</text>
+                                @Model.JobRole
                             </span>
                         </li>
                         <li class="das-task-list__item">
@@ -57,7 +57,7 @@
                                 </a>
                             </span>
                             <span class="das-task-list__task-tag">
-                                <text>@Model.NumberOfApprentices</text>
+                                @Model.NumberOfApprentices
                             </span>
                         </li>
                         <li class="das-task-list__item">
@@ -67,7 +67,7 @@
                                 </a>
                             </span>
                             <span class="das-task-list__task-tag">
-                                <text>@Model.StartBy</text>
+                                @Model.StartBy
                             </span>
                         </li>
                         <li class="das-task-list__item">
@@ -77,7 +77,7 @@
                                 </a>
                             </span>
                             <span class="das-task-list__task-tag">
-                                <text>@Model.HaveTrainingProvider</text>
+                                @Model.HaveTrainingProvider
                             </span>
                         </li>
                     </ul>
@@ -110,11 +110,11 @@
                             <span class="das-task-list__task-tag">
                                 @if (Model.Sectors != null)
                                 {
-                                    <unordered-list asp-for="Sectors" source="@Model.SectorOptions" class="govuk-list das-!-text-align-right"></unordered-list>
+                                    <unordered-list asp-for="Sectors" source="@Model.SectorOptions" class="govuk-list das-!-text-align-right--from-tablet govuk-!-margin-bottom-0"></unordered-list>
                                 }
                                 else
                                 {
-                                    <text>-</text>
+                                    <span>-</span>
                                 }
                             </span>
                         </li>
@@ -125,7 +125,7 @@
                                 </a>
                             </span>
                             <span class="das-task-list__task-tag">
-                                <text>@Model.Location</text>
+                                @Model.Location
                             </span>
                         </li>
                     </ul>
@@ -180,7 +180,7 @@
                                 </a>
                             </span>
                             <span class="das-task-list__task-tag">
-                                <text>@Model.ContactName</text>
+                                @Model.ContactName
                             </span>
                         </li>
                         <li class="das-task-list__item">
@@ -192,7 +192,7 @@
                             <span class="das-task-list__task-tag">
                                 @if (Model.EmailAddresses.Count() > 0)
                                 {
-                                    <ul class="govuk-list das-!-text-align-right">
+                                    <ul class="govuk-list das-!-text-align-right--from-tablet govuk-!-margin-bottom-0">
                                         @foreach (var emailAddress in Model.EmailAddresses)
                                         {
                                             <li>@emailAddress</li>
@@ -201,7 +201,7 @@
                                 }
                                 else
                                 {
-                                    <text>-</text>
+                                    <span>-</span>
                                 }
                             </span>
                         </li>
@@ -212,7 +212,7 @@
                                 </a>
                             </span>
                             <span class="das-task-list__task-tag">
-                                <text>@Model.WebsiteUrl</text>
+                                @Model.WebsiteUrl
                             </span>
                         </li>
                     </ul>

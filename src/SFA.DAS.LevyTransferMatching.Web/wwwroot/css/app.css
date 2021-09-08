@@ -47,7 +47,14 @@
 
     .app-task-list__group-header-tag {
         float: right;
+        margin-bottom: 0;
     }
+}
+
+/* Overwrite the style in the CDN */
+
+.das-task-list__task-tag {
+    display: block;
 }
 
 .app-checkboxes__select-all {
