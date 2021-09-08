@@ -432,7 +432,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         }
 
         [Test]
-        public async Task GetApplicationForAsync_Returns_ValidViewModel()
+        public async Task GetApplication_Returns_ValidViewModel()
         {
             var response = _fixture.Create<GetApplicationResponse>();
             _pledgeService.Setup(o => o.GetApplication(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
@@ -440,6 +440,22 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0});
 
             Assert.IsFalse(string.IsNullOrWhiteSpace(result.JobRole));
+        }
+
+
+        [TestCase(100, 0, true)]
+        [TestCase(100, 100, true)]
+        [TestCase(100, 101, false)]
+        public async Task GetApplication_AllowApproval_If_Application_Is_Affordable(int remainingPledgeAmount, int applicationAmount, bool expectAllowApproval)
+        {
+            var response = _fixture.Create<GetApplicationResponse>();
+            response.PledgeRemainingAmount = remainingPledgeAmount;
+            response.Amount = applicationAmount;
+            _pledgeService.Setup(o => o.GetApplication(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
+
+            var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
+
+            Assert.AreEqual(expectAllowApproval, result.AllowApproval);
         }
 
         [Test]

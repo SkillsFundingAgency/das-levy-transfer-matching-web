@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -192,8 +193,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
             return NotFound();
         }
-		
-		[HttpGet]
+
+        [HttpPost]
+        [Route("{encodedPledgeId}/applications/{encodedApplicationId}")]
+        public async Task<IActionResult> Application(ApplicationPostRequest request, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        [HttpGet]
         [Route("{encodedPledgeId}/applications/{encodedApplicationId}/approved")]
         public async Task<IActionResult> ApplicationApproved(ApplicationApprovedRequest request)
         {

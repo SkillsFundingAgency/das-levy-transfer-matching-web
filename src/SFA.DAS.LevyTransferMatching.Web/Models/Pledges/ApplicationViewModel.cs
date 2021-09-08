@@ -5,7 +5,7 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 {
-    public class ApplicationViewModel
+    public class ApplicationViewModel : ApplicationPostRequest
     {
         public string DisplaySectors { get; set; }
         public string EncodedApplicationId { get; set; }
@@ -36,6 +36,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public List<string> PledgeLevels { get; set; }
         public List<string> PledgeLocations { get; set; }
         public AffordabilityViewModel Affordability { get; set; }
+
+        public bool AllowApproval { get; set; }
 
         public class AffordabilityViewModel
         {

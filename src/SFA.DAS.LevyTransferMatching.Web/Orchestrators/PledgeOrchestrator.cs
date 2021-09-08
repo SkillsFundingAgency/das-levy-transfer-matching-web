@@ -345,7 +345,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     JobRole = result.TypeOfJobRole,
                     Level = result.Level,
                     DisplaySectors = result.Sector.ToReferenceDataDescriptionList(result.AllSectors),
-                    Affordability = GetAffordabilityViewModel(result.Amount, result.PledgeRemainingAmount, result.NumberOfApprentices, result.MaxFunding, result.EstimatedDurationMonths, result.StartBy)
+                    Affordability = GetAffordabilityViewModel(result.Amount, result.PledgeRemainingAmount, result.NumberOfApprentices, result.MaxFunding, result.EstimatedDurationMonths, result.StartBy),
+                    AllowApproval = result.Amount <= result.PledgeRemainingAmount
                 };
             }
 
