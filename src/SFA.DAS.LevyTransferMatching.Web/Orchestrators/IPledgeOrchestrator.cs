@@ -27,5 +27,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         Task<ApplicationsViewModel> GetApplications(ApplicationsRequest request);
         Task<ApplicationViewModel> GetApplicationViewModel(ApplicationRequest request,
             CancellationToken cancellationToken = default);
+
+        Task SetApplicationOutcome(ApplicationPostRequest request);
     }
 }

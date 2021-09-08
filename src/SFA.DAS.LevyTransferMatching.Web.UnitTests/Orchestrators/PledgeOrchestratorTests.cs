@@ -53,6 +53,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private string _encodedPledgeId;
         private string _encodedApplicationId;
         private readonly int _applicationId = 1;
+        private string _userId;
+        private string _userDisplayName;
 
         [SetUp]
         public void Setup()
@@ -98,7 +100,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _pledgeService.Setup(x => x.GetLevel(_accountId)).ReturnsAsync(_levelResponse);
             _pledgeService.Setup(x => x.GetApplicationApproved(_accountId, _pledgeId, _applicationId)).ReturnsAsync(_applicationApprovedResponse);
 
+            _userId = _fixture.Create<string>();
+            _userDisplayName = _fixture.Create<string>();
             _userService.Setup(x => x.IsUserChangeAuthorized()).Returns(true);
+            _userService.Setup(x => x.GetUserId()).Returns(_userId);
+            _userService.Setup(x => x.GetUserDisplayName()).Returns(_userDisplayName);
 
             _orchestrator = new PledgeOrchestrator(_cache.Object, _pledgeService.Object, _encodingService.Object, _validatorService.Object, _userService.Object, _featureToggles, _dateTimeService.Object);
         }
@@ -456,6 +462,25 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
 
             Assert.AreEqual(expectAllowApproval, result.AllowApproval);
+        }
+
+        [Test]
+        public async Task SetApplicationOutcome_Sets_Outcome_Of_Application()
+        {
+            var request = _fixture.Create<ApplicationPostRequest>();
+
+            await _orchestrator.SetApplicationOutcome(request);
+
+            _pledgeService.Verify(x => x.SetApplicationOutcome(request.AccountId,
+                request.ApplicationId,
+                request.PledgeId,
+                It.Is<SetApplicationOutcomeRequest>(r =>
+                    r.UserId == _userId &&
+                    r.UserDisplayName == _userDisplayName &&
+                    r.Outcome == (request.SelectedAction == ApplicationPostRequest.ApprovalAction.Approve
+                        ? SetApplicationOutcomeRequest.ApplicationOutcome.Approve
+                        : SetApplicationOutcomeRequest.ApplicationOutcome.Reject)
+                    )));
         }
 
         [Test]

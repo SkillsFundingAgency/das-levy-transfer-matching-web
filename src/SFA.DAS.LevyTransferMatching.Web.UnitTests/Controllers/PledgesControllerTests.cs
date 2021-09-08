@@ -307,8 +307,22 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             Assert.NotNull(viewResult);
             Assert.NotNull(viewModel);
         }
-		
-		[Test]
+
+
+        [Test]
+        public async Task POST_Application_Approval_Redirects_To_ApplicationApproved()
+        {
+            var request = _fixture.Create<ApplicationPostRequest>();
+            request.SelectedAction = ApplicationPostRequest.Outcome.Approve;
+            _orchestrator.Setup(x => x.SetApplicationOutcome(It.Is<ApplicationPostRequest>(r => r.AccountId == request.AccountId && r.ApplicationId == request.ApplicationId && r.PledgeId == request.PledgeId))).Returns(Task.CompletedTask);
+
+            var redirectResult = await _pledgesController.Application(request) as RedirectToActionResult;
+
+            Assert.NotNull(redirectResult);
+            Assert.AreEqual("ApplicationApproved", redirectResult.ActionName);
+        }
+
+        [Test]
         public async Task GET_ApplicationApproved_Returns_Expected_View_With_Expected_ViewModel()
         {
             // Arrange

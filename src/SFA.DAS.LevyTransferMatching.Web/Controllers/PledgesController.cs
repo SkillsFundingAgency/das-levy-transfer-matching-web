@@ -196,8 +196,16 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
         [HttpPost]
         [Route("{encodedPledgeId}/applications/{encodedApplicationId}")]
-        public async Task<IActionResult> Application(ApplicationPostRequest request, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> Application(ApplicationPostRequest request)
         {
+            await _orchestrator.SetApplicationOutcome(request);
+
+            if (request.SelectedAction == ApplicationPostRequest.ApprovalAction.Approve)
+            {
+                return RedirectToAction("ApplicationApproved", new { request.EncodedAccountId, request.EncodedPledgeId, request.EncodedApplicationId });
+            }
+            
+            //Implementation of Rejection to follow
             throw new NotImplementedException();
         }
 

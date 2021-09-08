@@ -346,11 +346,25 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     Level = result.Level,
                     DisplaySectors = result.Sector.ToReferenceDataDescriptionList(result.AllSectors),
                     Affordability = GetAffordabilityViewModel(result.Amount, result.PledgeRemainingAmount, result.NumberOfApprentices, result.MaxFunding, result.EstimatedDurationMonths, result.StartBy),
-                    AllowApproval = result.Amount <= result.PledgeRemainingAmount
+                    AllowApproval = result.Amount <= result.PledgeRemainingAmount //todo: status
                 };
             }
 
             return null;
+        }
+
+        public async Task SetApplicationOutcome(ApplicationPostRequest request)
+        {
+            var outcomeRequest = new SetApplicationOutcomeRequest
+            {
+                UserId = _userService.GetUserId(),
+                UserDisplayName = _userService.GetUserDisplayName(),
+                Outcome = request.SelectedAction == ApplicationPostRequest.ApprovalAction.Approve
+                    ? SetApplicationOutcomeRequest.ApplicationOutcome.Approve
+                    : SetApplicationOutcomeRequest.ApplicationOutcome.Reject
+            };
+
+            await _pledgeService.SetApplicationOutcome(request.AccountId, request.ApplicationId, request.PledgeId, outcomeRequest);
         }
 
         public ApplicationViewModel.AffordabilityViewModel GetAffordabilityViewModel(int amount, int remainingAmount, int numberOfApprentices, int maxFunding, int estimatedDurationMonths, DateTime startDate)

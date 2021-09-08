@@ -96,8 +96,15 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
 
             return applicationResponse;
         }
-		
-		public async Task<GetApplicationApprovedResponse> GetApplicationApproved(long accountId, int pledgeId, int applicationId)
+
+        public async Task SetApplicationOutcome(long accountId, int applicationId, int pledgeId, SetApplicationOutcomeRequest outcomeRequest)
+        {
+            var json = JsonConvert.SerializeObject(outcomeRequest, new StringEnumConverter());
+            var response = await _client.PostAsync($"accounts/{accountId}/pledges/{pledgeId}/applications/{applicationId}", new StringContent(json, System.Text.Encoding.UTF8, "application/json"));
+            response.EnsureSuccessStatusCode();
+        }
+
+        public async Task<GetApplicationApprovedResponse> GetApplicationApproved(long accountId, int pledgeId, int applicationId)
         {
             var response = await _client.GetAsync($"accounts/{accountId}/pledges/{pledgeId}/applications/{applicationId}/approved");
             response.EnsureSuccessStatusCode();
