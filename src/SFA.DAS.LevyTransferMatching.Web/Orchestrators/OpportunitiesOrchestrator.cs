@@ -416,7 +416,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                         applicationDetails.Sectors,
                         applicationDetails.JobRoles,
                         applicationDetails.Levels,
-                        applicationDetails.Opportunity.Amount,
+                        applicationDetails.Opportunity.RemainingAmount,
                         applicationDetails.Opportunity.IsNamePublic,
                         applicationDetails.Opportunity.DasAccountName,
                         request.EncodedPledgeId
