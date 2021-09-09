@@ -46,14 +46,7 @@
                         {
                             <tr class="govuk-table__row">
                                 <td class="govuk-table__cell">
-                                    @if (Model.RenderPledgeDetailsLink)
-                                    {
-                                        <a href="@Url.Action("Detail", "Pledges", new DetailRequest {EncodedPledgeId = pledge.ReferenceNumber, EncodedAccountId = Model.EncodedAccountId})" class=govuk-link--no-visited-state>@pledge.ReferenceNumber</a>
-                                    }
-                                    else
-                                    {
-                                        @pledge.ReferenceNumber
-                                    }
+                                    <a href="pledges/@pledge.ReferenceNumber/applications" class=govuk-link--no-visited-state>@pledge.ReferenceNumber</a>
                                 </td>
                                 <td class="govuk-table__cell govuk-table__cell--numeric">£@pledge.Amount.ToString("N0")</td>
                                 <td class="govuk-table__cell govuk-table__cell--numeric">£@pledge.RemainingAmount.ToString("N0")</td>
