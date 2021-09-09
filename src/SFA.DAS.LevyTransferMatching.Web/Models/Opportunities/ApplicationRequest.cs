@@ -11,5 +11,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
 
         [AutoDecode(nameof(EncodedAccountId), Encoding.EncodingType.AccountId)]
         public long AccountId { get; set; }
+        public bool AccessToMultipleAccounts { get; set; }
     }
 }

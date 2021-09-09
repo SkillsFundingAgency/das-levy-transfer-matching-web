@@ -4,6 +4,9 @@ using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService;
@@ -48,13 +51,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var pledgesResponse = await _pledgeService.GetPledges(request.AccountId);
             var renderCreatePledgesButton = _userService.IsUserChangeAuthorized();
-            
+
             return new PledgesViewModel
             {
                 EncodedAccountId = request.EncodedAccountId,
                 RenderCreatePledgeButton = renderCreatePledgesButton,
-                RenderPledgeDetailsLink = _featureToggles.TogglePledgeDetails,
-                Pledges = pledgesResponse.Pledges.Select(x => new PledgesViewModel.Pledge 
+                Pledges = pledgesResponse.Pledges.Select(x => new PledgesViewModel.Pledge
                 {
                     ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),
                     Amount = x.Amount,
@@ -186,7 +188,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 Locations = cacheItem.Locations?.ToList()
             };
         }
-        
+
         public async Task<Dictionary<int, string>> ValidateLocations(LocationPostRequest request)
         {
             return await _validatorService.ValidateLocations(request);
@@ -302,6 +304,41 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     Status = "Awaiting approval"
                 })
             };
+        }
+
+        public async Task<ApplicationViewModel> GetApplicationViewModel(ApplicationRequest request, CancellationToken cancellationToken = default)
+        {
+            var result =
+                await _pledgeService.GetApplication(request.AccountId, request.PledgeId, request.ApplicationId, cancellationToken);
+
+            if (result != null)
+            {
+                return new ApplicationViewModel
+                {
+                    AboutOpportunity = result.AboutOpportunity,
+                    BusinessWebsite = result.BusinessWebsite,
+                    EmailAddresses = result.EmailAddresses,
+                    EmployerAccountName = result.EmployerAccountName,
+                    EstimatedDurationMonths = result.EstimatedDurationMonths,
+                    FirstName = result.FirstName,
+                    HasTrainingProvider = result.HasTrainingProvider,
+                    LastName = result.LastName,
+                    NumberOfApprentices = result.NumberOfApprentices,
+                    StartBy = result.StartBy,
+                    Sectors = result.Sector,
+                    AllSectors = result.AllSectors,
+                    PledgeSectors = result.PledgeSectors,
+                    PledgeJobRoles = result.PledgeJobRoles,
+                    PledgeLevels = result.PledgeLevels,
+                    PledgeLocations = result.PledgeLocations,
+                    Location = result.Location,
+                    JobRole = result.TypeOfJobRole,
+                    Level = result.Level,
+                    DisplaySectors = result.Sector.ToReferenceDataDescriptionList(result.AllSectors)
+                };
+            }
+
+            return null;
         }
     }
 }
