@@ -48,6 +48,12 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService
             return ids;
         }
 
+        public bool IsOwnerOrTransactor(long accountId)
+        {
+            var ownerTransactorAccountIds = GetUserOwnerTransactorAccountIds();
+            return ownerTransactorAccountIds != null && ownerTransactorAccountIds.Contains(accountId);
+        }
+
         private bool IsUserAuthenticated()
         {
             return _httpContextAccessor.HttpContext.User.Identity.IsAuthenticated;

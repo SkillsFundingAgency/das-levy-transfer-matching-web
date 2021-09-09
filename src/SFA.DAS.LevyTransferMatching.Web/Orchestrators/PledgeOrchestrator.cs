@@ -322,7 +322,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             var result =
                 await _pledgeService.GetApplication(request.AccountId, request.PledgeId, request.ApplicationId, cancellationToken);
 
-            //todo: get whether owner or transactor
+            var isOwnerOrTransactor = _userService.IsOwnerOrTransactor(request.AccountId);
 
             if (result != null)
             {
@@ -350,7 +350,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     DisplaySectors = result.Sector.ToReferenceDataDescriptionList(result.AllSectors),
                     Affordability = GetAffordabilityViewModel(result.Amount, result.PledgeRemainingAmount, result.NumberOfApprentices, result.MaxFunding, result.EstimatedDurationMonths, result.StartBy),
                     ShowAffordabilityPanel = result.Status == ApplicationStatus.Pending,
-                    AllowApproval = result.Status == ApplicationStatus.Pending && result.Amount <= result.PledgeRemainingAmount
+                    AllowApproval = result.Status == ApplicationStatus.Pending && result.Amount <= result.PledgeRemainingAmount && isOwnerOrTransactor
                 };
             }
 

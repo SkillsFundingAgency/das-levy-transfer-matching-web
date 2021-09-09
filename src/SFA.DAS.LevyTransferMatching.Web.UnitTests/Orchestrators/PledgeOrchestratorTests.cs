@@ -106,6 +106,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _userService.Setup(x => x.IsUserChangeAuthorized()).Returns(true);
             _userService.Setup(x => x.GetUserId()).Returns(_userId);
             _userService.Setup(x => x.GetUserDisplayName()).Returns(_userDisplayName);
+            _userService.Setup(x => x.IsOwnerOrTransactor(0)).Returns(true);
 
             _orchestrator = new PledgeOrchestrator(_cache.Object, _pledgeService.Object, _encodingService.Object, _validatorService.Object, _userService.Object, _featureToggles, _dateTimeService.Object);
         }
@@ -496,6 +497,22 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             response.Amount = 1;
             response.Status = status;
             _pledgeService.Setup(o => o.GetApplication(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
+
+            var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
+
+            Assert.IsFalse(result.AllowApproval);
+        }
+
+        [Test]
+        public async Task GetApplication_DisallowApproval_If_Application_Is_User_Is_Not_Owner_Or_Transactor_Of_Account()
+        {
+            var response = _fixture.Create<GetApplicationResponse>();
+            response.PledgeRemainingAmount = 1000;
+            response.Amount = 1;
+            response.Status = ApplicationStatus.Pending;
+            _pledgeService.Setup(o => o.GetApplication(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
+
+            _userService.Setup(x => x.IsOwnerOrTransactor(0)).Returns(false);
 
             var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
 
