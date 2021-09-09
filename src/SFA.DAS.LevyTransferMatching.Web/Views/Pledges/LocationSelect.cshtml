@@ -1,0 +1,37 @@
+﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.LocationSelectViewModel
+@{
+    ViewData["Title"] = "Select Location";
+}
+
+<a href="@Url.Action("Location", "Pledges", new { Model.EncodedAccountId, Model.CacheKey })" class="govuk-back-link">Back</a>
+<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
+    <partial name="_ValidationSummary" />
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">There are multiple locations based on your selected locations</h1>
+            <form method="post" id="select-location-form">
+
+                @foreach (var validLocationGroup in Model.MultipleValidLocations)
+                {
+                <div class="govuk-form-group">
+                    <fieldset class="govuk-fieldset" id="location-group-@validLocationGroup.Key">
+                        <legend class="govuk-fieldset__legend">Please select the correct location</legend>
+                        <div class="govuk-radios">
+                            @foreach (var validLocation in validLocationGroup.Value)
+                            {
+                            <div class="govuk-radios__item">
+                                <input class="govuk-radios__input" id="location_duplicate_one" name="location_duplicate_2" type="radio" value="@validLocation">
+                                <label class="govuk-label govuk-radios__label" for="location_duplicate_one">@validLocation</label>
+                            </div>
+                            }
+                        </div>
+                    </fieldset>
+                </div>
+                }
+
+                <a class="govuk-button confirm-error-message_2" data-module="govuk-button">Continue</a>
+                <a href="@Url.Action("Location", "Pledges", new { Model.EncodedAccountId, Model.CacheKey })" class="govuk-link govuk-link-secondary govuk-link--no-visited-state govuk-back-link">Back</a>
+            </form>
+        </div>
+    </div>
+</main>

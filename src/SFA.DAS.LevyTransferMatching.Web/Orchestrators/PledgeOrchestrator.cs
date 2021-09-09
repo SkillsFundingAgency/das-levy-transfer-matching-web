@@ -184,10 +184,26 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 Locations = cacheItem.Locations?.ToList()
             };
         }
-        
-        public async Task<Dictionary<int, string>> ValidateLocations(LocationPostRequest request)
+
+        public async Task<LocationSelectViewModel> GetLocationSelectViewModel(LocationSelectRequest request)
         {
-            return await _validatorService.ValidateLocations(request);
+            var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
+
+            return new LocationSelectViewModel()
+            {
+                CacheKey = request.CacheKey,
+                EncodedAccountId = request.EncodedAccountId,
+                MultipleValidLocations = cacheItem.MultipleValidLocations,
+            };
+        }
+
+        public async Task<Dictionary<int, string>> ValidateLocations(LocationPostRequest request, IDictionary<int, IEnumerable<string>> multipleValidLocations)
+        {
+            var errors = await _validatorService.ValidateLocations(request, multipleValidLocations);
+
+            await UpdateCacheItem(request.CacheKey, multipleValidLocations);
+
+            return errors;
         }
 
         public async Task UpdateCacheItem(AmountPostRequest request)
@@ -233,6 +249,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
 
             cacheItem.Locations = request.Locations;
+
+            await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
+        }
+
+        public async Task UpdateCacheItem(Guid cacheKey, IDictionary<int, IEnumerable<string>> multipleValidLocations)
+        {
+            var cacheItem = await RetrievePledgeCacheItem(cacheKey);
+
+            cacheItem.MultipleValidLocations = multipleValidLocations;
 
             await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
         }

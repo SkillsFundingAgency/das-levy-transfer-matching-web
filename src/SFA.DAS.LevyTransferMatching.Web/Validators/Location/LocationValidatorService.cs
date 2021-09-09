@@ -1,8 +1,9 @@
-﻿using SFA.DAS.LevyTransferMatching.Infrastructure.Services.LocationService;
-using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.LocationService;
+using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Validators.Location
 {
@@ -15,31 +16,44 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Location
             _locationService = locationService;
         }
 
-        public async Task<Dictionary<int, string>> ValidateLocations(LocationPostRequest request)
+        public async Task<Dictionary<int, string>> ValidateLocations(LocationPostRequest request, IDictionary<int, IEnumerable<string>> multipleValidResults)
         {
             var errors = new Dictionary<int, string>();
 
-            await CheckLocationsExist(errors, request.Locations);
+            await CheckLocationsExist(errors, request.Locations, multipleValidResults);
             CheckForDuplicates(errors, request.Locations);
 
             return errors;
         }
 
-        private async Task CheckLocationsExist(Dictionary<int, string> errors, List<string> locations)
+        private async Task CheckLocationsExist(Dictionary<int, string> errors, List<string> locations, IDictionary<int, IEnumerable<string>> multipleValidResults)
         {
             for (int i = 0; i < locations.Count; i++)
             {
                 if (locations[i] != null)
                 {
-                    var locationsDto = await _locationService.GetLocationInformation(locations[i]);
-                    if (locationsDto?.Name == null)
+                    var possibleLocations = await _locationService.GetLocations(locations[i]);
+
+                    if (!possibleLocations.Names.Any())
                     {
+                        // There's no results - create an error
                         if (!errors.ContainsKey(i))
-                            errors.Add(i, $"No locations could be found for { locations[i] }");
+                            errors.Add(i, $"Check the spelling of your location");
+                    }
+                    else if (possibleLocations.Names.Count() == 1)
+                    {
+                        // There's exactly one result - update the Locations
+                        // list, and return no error
+                        var locationInformation = await _locationService.GetLocationInformation(locations[i]);
+
+                        locations[i] = locationInformation.Name;
                     }
                     else
                     {
-                        locations[i] = locationsDto.Name;
+                        // There's multiple (valid) results to select from for
+                        // this location search term -
+                        // Bubble these up
+                        multipleValidResults.Add(i, possibleLocations.Names);
                     }
                 }
             }
