@@ -35,5 +35,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public List<string> PledgeJobRoles { get; set; }
         public List<string> PledgeLevels { get; set; }
         public List<string> PledgeLocations { get; set; }
+        public AffordabilityViewModel Affordability { get; set; }
+
+        public class AffordabilityViewModel
+        {
+            public string RemainingFunds { get; set; }
+            public string EstimatedCostThisYear { get; set; }
+            public string RemainingFundsIfApproved { get; set; }
+            public string EstimatedCostOverDuration { get; set; }
+            public string YearDescription { get; set; }
+        }
     }
 }
