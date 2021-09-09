@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using SFA.DAS.LevyTransferMatching.Web.Authentication;
 using SFA.DAS.LevyTransferMatching.Web.Validators;
 using FluentValidation.AspNetCore;
+using System.Linq;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
@@ -48,25 +49,28 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         {
             if (detailPostRequest.HasConfirmed.Value)
             {
-                return RedirectToAction(nameof(SelectAccount), new { detailPostRequest.EncodedPledgeId });
+                return RedirectToAction(nameof(SelectAccount), new { EncodedOpportunityId = detailPostRequest.EncodedPledgeId });
             }
             else
             {
                 return RedirectToAction(nameof(Index));
             }
         }
-        
-        [Authorize]
-        [Route("opportunities/{encodedPledgeId}/apply")]
-        public async Task<IActionResult> SelectAccount(string encodedPledgeId)
-        {
-            var encodedAccountId = await _opportunitiesOrchestrator.GetUserEncodedAccountId();
 
-            return RedirectToAction("Apply", new 
-            { 
+        [HideAccountNavigation(false, hideNavigationLinks: true)]
+        [Authorize]
+        [Route("opportunities/{encodedOpportunityId}/select-account")]
+        public async Task<IActionResult> SelectAccount(SelectAccountRequest selectAccountRequest)
+        {
+            var viewModel = await _opportunitiesOrchestrator.GetSelectAccountViewModel(selectAccountRequest);
+
+            if (viewModel.Accounts.Count() != 1) return View(viewModel);
+
+            return RedirectToAction("Apply", new
+            {
                 CacheKey = Guid.NewGuid(),
-                EncodedAccountId = encodedAccountId,
-                EncodedPledgeId = encodedPledgeId
+                EncodedAccountId = viewModel.Accounts.Single().EncodedAccountId,
+                EncodedPledgeId = selectAccountRequest.EncodedOpportunityId,
             });
         }
 

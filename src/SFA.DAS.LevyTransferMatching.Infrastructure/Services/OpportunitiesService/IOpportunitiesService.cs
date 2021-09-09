@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
+﻿using System.Threading.Tasks;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService
@@ -17,5 +15,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
 		Task<GetConfirmationResponse> GetConfirmation(long accountId, int opportunityId);
         Task<ApplyResponse> PostApplication(long accountId, int opportunityId, ApplyRequest request);
         Task<GetDetailResponse> GetDetail(int opportunityId);
+        Task<GetSelectAccountResponse> GetSelectAccount(int opportunityId, string userId);
     }
 }

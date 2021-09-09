@@ -1,34 +1,22 @@
-﻿using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
+﻿using System;
 using System.Collections.Generic;
-using System.Net.Http;
+using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService
 {
     public class UserService : IUserService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly HttpClient _httpClient;
 
-        public UserService(IHttpContextAccessor httpContextAccessor, HttpClient httpClient)
+        public UserService(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
-            _httpClient = httpClient;
         }
 
         public string UserId => GetUserClaimAsString(ClaimIdentifierConfiguration.Id);
-
-        public async Task<IEnumerable<UserAccountDto>> GetLoggedInUserAccounts()
-        {
-            var response = await _httpClient.GetAsync($"users/{UserId}/accounts");
-            response.EnsureSuccessStatusCode();
-
-            return JsonConvert.DeserializeObject<IEnumerable<UserAccountDto>>(await response.Content.ReadAsStringAsync());
-        }
 
         public string GetUserId()
         {
@@ -45,6 +33,21 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService
             return TryGetUserClaimValue(ClaimIdentifierConfiguration.AccountOwner, out _) || TryGetUserClaimValue(ClaimIdentifierConfiguration.AccountTransactor, out _);
         }
 
+        public IEnumerable<long> GetUserOwnerTransactorAccountIds()
+        {
+            var ownerAccountIds = GetUserClaimsAsLongs(ClaimIdentifierConfiguration.AccountOwner) ?? Array.Empty<long>();
+            var transactorAccountIds = GetUserClaimsAsLongs(ClaimIdentifierConfiguration.AccountTransactor) ?? Array.Empty<long>();
+
+            if (!ownerAccountIds.Any() && !transactorAccountIds.Any())
+            {
+                return null;
+            }
+
+            var ids = ownerAccountIds.Concat(transactorAccountIds).Distinct();
+
+            return ids;
+        }
+
         private bool IsUserAuthenticated()
         {
             return _httpContextAccessor.HttpContext.User.Identity.IsAuthenticated;
@@ -54,9 +57,22 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService
         {
             var claimsIdentity = (ClaimsIdentity)_httpContextAccessor.HttpContext.User.Identity;
             var claim = claimsIdentity.FindFirst(key);
+
             var exists = claim != null;
 
             value = exists ? claim.Value : null;
+
+            return exists;
+        }
+
+        private bool TryGetUserClaimValues(string key, out IEnumerable<string> values)
+        {
+            var claimsIdentity = (ClaimsIdentity)_httpContextAccessor.HttpContext.User.Identity;
+            var claims = claimsIdentity.FindAll(key);
+
+            var exists = claims != null;
+
+            values = exists ? claims.Select(x => x.Value) : null;
 
             return exists;
         }
@@ -66,6 +82,15 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService
             if (IsUserAuthenticated() && TryGetUserClaimValue(claim, out var value))
             {
                 return value;
+            }
+            return null;
+        }
+
+        private IEnumerable<long> GetUserClaimsAsLongs(string claim)
+        {
+            if (IsUserAuthenticated() && TryGetUserClaimValues(claim, out var values))
+            {
+                return values.Select(long.Parse);
             }
             return null;
         }

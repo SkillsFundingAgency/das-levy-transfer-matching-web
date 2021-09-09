@@ -1,19 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using SFA.DAS.Encoding;
+using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;
+using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.LevyTransferMatching.Web.Models.Shared;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
-using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
-using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
-using System.Collections.Generic;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
@@ -89,18 +88,33 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
-        public async Task<string> GetUserEncodedAccountId()
+        public async Task<SelectAccountViewModel> GetSelectAccountViewModel(SelectAccountRequest request)
         {
-            var userAccounts = await _userService.GetLoggedInUserAccounts();
+            var userId = _userService.GetUserId();
 
-            // TODO: Below is temporary -
-            //       Raised as an issue, and eventually to be replaced with
-            //       an accounts selection screen.
-            var firstEncodedAccountId = userAccounts
-                .Select(x => x.EncodedAccountId)
-                .First();
+            var ownerTransactorAccounts = _userService.GetUserOwnerTransactorAccountIds();
 
-            return firstEncodedAccountId;
+            // Get the full detail of accounts, that the user has access to
+            var result = await _opportunitiesService.GetSelectAccount(request.OpportunityId, userId);
+
+            var filteredAccounts = result.Accounts
+                .Where((x) =>
+                {
+                    var accountId = _encodingService.Decode(x.EncodedAccountId, EncodingType.AccountId);
+
+                    return ownerTransactorAccounts.Contains(accountId);
+                });
+
+            return new SelectAccountViewModel()
+            {
+                Accounts = filteredAccounts
+                    .Select(x => new SelectAccountViewModel.Account()
+                    {
+                        EncodedAccountId = x.EncodedAccountId,
+                        Name = x.Name,
+                    }),
+                EncodedOpportunityId = request.EncodedOpportunityId,
+            };
         }
 
         public async Task<ConfirmationViewModel> GetConfirmationViewModel(ConfirmationRequest request)
@@ -215,6 +229,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 ContactName = string.IsNullOrWhiteSpace(contactName) ? "-" : contactName,
                 EmailAddresses = applicationTask.Result.EmailAddresses,
                 WebsiteUrl = string.IsNullOrEmpty(applicationTask.Result.BusinessWebsite) ? "-" : applicationTask.Result.BusinessWebsite,
+                AccessToMultipleAccounts = request.AccessToMultipleAccounts,
             };
         }
 
