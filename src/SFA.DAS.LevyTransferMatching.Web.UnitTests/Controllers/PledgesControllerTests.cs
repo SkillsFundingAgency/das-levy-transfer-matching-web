@@ -313,7 +313,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         public async Task POST_Application_Approval_Redirects_To_ApplicationApproved()
         {
             var request = _fixture.Create<ApplicationPostRequest>();
-            request.SelectedAction = ApplicationPostRequest.Outcome.Approve;
+            request.SelectedAction = ApplicationPostRequest.ApprovalAction.Approve;
             _orchestrator.Setup(x => x.SetApplicationOutcome(It.Is<ApplicationPostRequest>(r => r.AccountId == request.AccountId && r.ApplicationId == request.ApplicationId && r.PledgeId == request.PledgeId))).Returns(Task.CompletedTask);
 
             var redirectResult = await _pledgesController.Application(request) as RedirectToActionResult;

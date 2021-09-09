@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
 using SFA.DAS.Encoding;
+using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService;
@@ -311,7 +312,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     Amount = app.Amount,
                     Duration = app.Standard.ApprenticeshipFunding.GetEffectiveFundingLine(app.StartDate).Duration,
                     CreatedOn = app.CreatedOn,
-                    Status = "Awaiting approval"
+                    Status = app.Status
                 })
             };
         }
@@ -320,6 +321,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var result =
                 await _pledgeService.GetApplication(request.AccountId, request.PledgeId, request.ApplicationId, cancellationToken);
+
+            //todo: get whether owner or transactor
 
             if (result != null)
             {
@@ -346,7 +349,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     Level = result.Level,
                     DisplaySectors = result.Sector.ToReferenceDataDescriptionList(result.AllSectors),
                     Affordability = GetAffordabilityViewModel(result.Amount, result.PledgeRemainingAmount, result.NumberOfApprentices, result.MaxFunding, result.EstimatedDurationMonths, result.StartBy),
-                    AllowApproval = result.Amount <= result.PledgeRemainingAmount //todo: status
+                    ShowAffordabilityPanel = result.Status == ApplicationStatus.Pending,
+                    AllowApproval = result.Status == ApplicationStatus.Pending && result.Amount <= result.PledgeRemainingAmount
                 };
             }
 

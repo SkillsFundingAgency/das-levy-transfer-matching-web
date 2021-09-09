@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
@@ -22,7 +23,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public IEnumerable<string> EmailAddresses { get; set; }
         public DateTime CreatedOn { get; set; }
         public int Duration { get; set; }
-        public string Status { get; set; } //TODO: For TM-47 this is always Awaiting approval. Will be completed with a later story
+        public ApplicationStatus Status { get; set; }
         public string Location { get; set; }
         public string JobRole { get; set; }
         public int Level { get; set; }
@@ -38,6 +39,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public AffordabilityViewModel Affordability { get; set; }
 
         public bool AllowApproval { get; set; }
+        public bool ShowAffordabilityPanel { get; set; }
 
         public class AffordabilityViewModel
         {

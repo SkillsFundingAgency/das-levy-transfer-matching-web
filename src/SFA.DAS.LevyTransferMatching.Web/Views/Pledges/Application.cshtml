@@ -69,32 +69,35 @@
             <p>@Model.AboutOpportunity</p>
         </div>
     }
+    
+    @if (Model.ShowAffordabilityPanel)
+    {
+        <div class="das-highlight">
+            <h1 class="govuk-heading-m">Can I afford to fund this training?</h1>
+            <p>Estimated cost over @Model.EstimatedDurationMonths months: <strong>@Model.Affordability.EstimatedCostOverDuration</strong></p>
 
-    <div class="das-highlight">
-        <h1 class="govuk-heading-m">Can I afford to fund this training?</h1>
-        <p>Estimated cost over @Model.EstimatedDurationMonths months: <strong>@Model.Affordability.EstimatedCostOverDuration</strong></p>
+            <p>
+                <strong>For @Model.Affordability.YearDescription:</strong>
+                <br/>
+                Pledge funds remaining this year: <strong>@Model.Affordability.RemainingFunds</strong>
+                <br/>
+                Estimated costs this year: <strong>@Model.Affordability.EstimatedCostThisYear</strong>
+            </p>
 
-        <p>
-            <strong>For @Model.Affordability.YearDescription:</strong>
-            <br />
-            Pledge funds remaining this year: <strong>@Model.Affordability.RemainingFunds</strong>
-            <br />
-            Estimated costs this year: <strong>@Model.Affordability.EstimatedCostThisYear</strong>
-        </p>
-
-        <p>Pledge funds remaining if application is approved: <strong>@Model.Affordability.RemainingFundsIfApproved</strong></p>
-        <details class="govuk-details" data-module="govuk-details">
-            <summary class="govuk-details__summary">
-                <span class="govuk-details__summary-text">
-                    What is estimated cost?
-                </span>
-            </summary>
-            <div class="govuk-details__text">
-                <p>The estimated total cost of training is based on the funding band maximum.</p>
-                <p>The estimated cost of training for this financial year is based on the funding band maximum, the planned start date of training and the 20% EPA payment made at the end of training.</p>
-            </div>
-        </details>
-    </div>
+            <p>Pledge funds remaining if application is approved: <strong>@Model.Affordability.RemainingFundsIfApproved</strong></p>
+            <details class="govuk-details" data-module="govuk-details">
+                <summary class="govuk-details__summary">
+                    <span class="govuk-details__summary-text">
+                        What is estimated cost?
+                    </span>
+                </summary>
+                <div class="govuk-details__text">
+                    <p>The estimated total cost of training is based on the funding band maximum.</p>
+                    <p>The estimated cost of training for this financial year is based on the funding band maximum, the planned start date of training and the 20% EPA payment made at the end of training.</p>
+                </div>
+            </details>
+        </div>
+    }
 
     <div class="das-highlight">
         <h2 class="govuk-heading-m">Contact details</h2>
