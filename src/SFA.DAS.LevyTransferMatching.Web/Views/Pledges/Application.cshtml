@@ -107,9 +107,12 @@
             @if (!string.IsNullOrWhiteSpace(Model.BusinessWebsite))
             {
                 <li class="app-icon-list__list-item">
-                    <span class="app-icon-list__icon app-icon-list__icon--website">Website: </span> <a href="http://@Model.BusinessWebsite" class="govuk-link">@Model.BusinessWebsite</a>
+                    <span class="app-icon-list__icon app-icon-list__icon--website">Website: </span> <a target="_blank" href="@Model.BusinessWebsite" class="govuk-link" rel="noreferrer noopener">@Model.BusinessWebsite (opens in new tab)</a>
                 </li>
             }
         </ul>
+        <div class="govuk-inset-text govuk-!-margin-bottom-0">
+            The Apprenticeship Service is not responsible for the content of external sites.
+        </div>
     </div>
 </main>
