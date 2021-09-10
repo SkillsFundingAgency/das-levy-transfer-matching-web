@@ -5,57 +5,49 @@
 }
 
 <a href="@Url.Action("index")" class="govuk-back-link">Back</a>
-
-<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
+<main class="govuk-main-wrapper" id="main-content" role="main">
     <partial name="_ValidationSummary" />
-    <div class="govuk-width-container form-entry" id="transfers-hub">
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <span class="govuk-caption-m">Find a business to fund training for your apprentices</span>
-                <h1 class="govuk-heading-xl">Transfer fund details for @(Model.IsNamePublic ? Model.EmployerName : "opportunity") (@Model.EncodedPledgeId)</h1>
-
-                <h2 class="govuk-heading-m">Details of the opportunity</h2>
-                <partial name="_OpportunitySummary" for="OpportunitySummaryView" />
-
-                <form method="post" id="apply-application-form">
-
-                    <div class="govuk-form-group" das-highlight-error-for="HasConfirmed" error-class="govuk-form-group--error" id="HasConfirmed">
-                        <fieldset class="govuk-fieldset">
-                            <legend class="govuk-fieldset__legend">
-                                <h1 class="govuk-fieldset__heading govuk-label--s">Would you like to apply for the transfer funds?</h1>
-                            </legend>
-                            <span das-validation-for="HasConfirmed" class="govuk-error-message"></span>
-                            <div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios">
-                                <div class="govuk-radios__item">
-                                    <input class="govuk-radios__input" id="apply-pledge-funds-yes" asp-for="HasConfirmed" value="true" type="radio" data-aria-controls="conditional-apply-pledge-funds-yes" das-highlight-error-for="HasConfirmed" error-class="govuk-textarea--error">
-                                    <label class="govuk-label govuk-radios__label" for="apply-pledge-funds-yes">Yes, apply for transfer funds</label>
-                                </div>
-                                <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-apply-pledge-funds-yes">
-                                    <div class="govuk-form-group">
-                                        <div class="govuk-warning-text">
-                                            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                                            <strong class="govuk-warning-text__text">
-                                                <span class="govuk-warning-text__assistive">Warning</span>
-                                                You'll need an apprenticeship service account to apply to be considered for funding
-                                            </strong>
-                                        </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-m">Find a business to fund training for your apprentices</span>
+            <h1 class="govuk-heading-xl">Transfer fund details for @(Model.IsNamePublic ? Model.EmployerName : "opportunity") (@Model.EncodedPledgeId)</h1>
+            <h2 class="govuk-heading-m">Details of the opportunity</h2>
+            <partial name="_OpportunitySummary" for="OpportunitySummaryView" />
+            <form method="post">
+                <div class="govuk-form-group" das-highlight-error-for="HasConfirmed" error-class="govuk-form-group--error" id="HasConfirmed">
+                    <fieldset class="govuk-fieldset">
+                        <legend class="govuk-fieldset__legend">
+                            <h1 class="govuk-fieldset__heading govuk-label--s">Would you like to apply for the transfer funds?</h1>
+                        </legend>
+                        <span das-validation-for="HasConfirmed" class="govuk-error-message"></span>
+                        <div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios">
+                            <div class="govuk-radios__item">
+                                <input class="govuk-radios__input" id="apply-pledge-funds-yes" asp-for="HasConfirmed" value="true" type="radio" data-aria-controls="conditional-apply-pledge-funds-yes" das-highlight-error-for="HasConfirmed" error-class="govuk-textarea--error">
+                                <label class="govuk-label govuk-radios__label" for="apply-pledge-funds-yes">Yes, apply for transfer funds</label>
+                            </div>
+                            <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-apply-pledge-funds-yes">
+                                <div class="govuk-form-group">
+                                    <div class="govuk-warning-text">
+                                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                                        <strong class="govuk-warning-text__text">
+                                            <span class="govuk-warning-text__assistive">Warning</span>
+                                            You'll need an apprenticeship service account to apply to be considered for funding
+                                        </strong>
                                     </div>
                                 </div>
-                                <div class="govuk-radios__item">
-                                    <input class="govuk-radios__input" id="apply-pledge-funds-no" asp-for="HasConfirmed" value="false" type="radio" das-highlight-error-for="HasConfirmed" error-class="govuk-textarea--error">
-                                    <label class="govuk-label govuk-radios__label" for="apply-pledge-funds-no">No</label>
-                                </div>
                             </div>
-                        </fieldset>
-                    </div>
-
+                            <div class="govuk-radios__item">
+                                <input class="govuk-radios__input" id="apply-pledge-funds-no" asp-for="HasConfirmed" value="false" type="radio" das-highlight-error-for="HasConfirmed" error-class="govuk-textarea--error">
+                                <label class="govuk-label govuk-radios__label" for="apply-pledge-funds-no">No</label>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="govuk-button-group">
                     <button class="govuk-button" data-module="govuk-button" id="apply-application-continue">Continue</button>
-
-                    <a href="@Url.Action("Index")" class="govuk-link govuk-link-secondary govuk-link--no-visited-state govuk-back-link">Back</a>
-
-                </form>
-
-            </div>
+                    <a href="@Url.Action("Index")" class="govuk-back-link">Back</a>
+                </div>
+            </form>
         </div>
     </div>
 </main>
