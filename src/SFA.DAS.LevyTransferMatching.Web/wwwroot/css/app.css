@@ -26,7 +26,7 @@
 }
 @media (min-width: 40.0625em) {
     .app-task-list {
-        min-width: none;
+        min-width: 0;
     }
 }
 
