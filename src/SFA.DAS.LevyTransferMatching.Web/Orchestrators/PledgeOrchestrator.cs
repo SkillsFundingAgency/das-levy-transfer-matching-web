@@ -316,7 +316,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 return new ApplicationViewModel
                 {
                     AboutOpportunity = result.AboutOpportunity,
-                    BusinessWebsite = result.BusinessWebsite,
+                    BusinessWebsite = GetUrlWithPrefix(result.BusinessWebsite),
                     EmailAddresses = result.EmailAddresses,
                     EmployerAccountName = result.EmployerAccountName,
                     EstimatedDurationMonths = result.EstimatedDurationMonths,
@@ -340,6 +340,18 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             }
 
             return null;
+        }
+
+        private string GetUrlWithPrefix(string url)
+        {
+            if (string.IsNullOrWhiteSpace(url)) return url;
+
+            if(url.StartsWith("http://") || url.StartsWith("https://"))
+            {
+                return url;
+            }
+
+            return $"http://{url}";
         }
 
         public ApplicationViewModel.AffordabilityViewModel GetAffordabilityViewModel(int amount, int remainingAmount, int numberOfApprentices, int maxFunding, int estimatedDurationMonths, DateTime startDate)
