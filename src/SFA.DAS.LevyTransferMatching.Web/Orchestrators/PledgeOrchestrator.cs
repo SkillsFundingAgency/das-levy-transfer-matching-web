@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Threading;
 using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
@@ -24,8 +25,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         private readonly ILocationValidatorService _validatorService;
         private readonly IUserService _userService;
         private Infrastructure.Configuration.FeatureToggles _featureToggles;
+        private readonly IDateTimeService _dateTimeService;
 
-        public PledgeOrchestrator(ICacheStorageService cacheStorageService, IPledgeService pledgeService, IEncodingService encodingService, ILocationValidatorService validatorService, IUserService userService, Infrastructure.Configuration.FeatureToggles featureToggles)
+        public PledgeOrchestrator(ICacheStorageService cacheStorageService, IPledgeService pledgeService, IEncodingService encodingService, ILocationValidatorService validatorService, IUserService userService, Infrastructure.Configuration.FeatureToggles featureToggles, IDateTimeService dateTimeService)
         {
             _cacheStorageService = cacheStorageService;
             _pledgeService = pledgeService;
@@ -33,6 +35,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             _validatorService = validatorService;
             _userService = userService;
             _featureToggles = featureToggles;
+            _dateTimeService = dateTimeService;
         }
 
         public InformViewModel GetInformViewModel(string encodedAccountId)
@@ -48,13 +51,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var pledgesResponse = await _pledgeService.GetPledges(request.AccountId);
             var renderCreatePledgesButton = _userService.IsUserChangeAuthorized();
-            
+
             return new PledgesViewModel
             {
                 EncodedAccountId = request.EncodedAccountId,
                 RenderCreatePledgeButton = renderCreatePledgesButton,
-                RenderPledgeDetailsLink = _featureToggles.TogglePledgeDetails,
-                Pledges = pledgesResponse.Pledges.Select(x => new PledgesViewModel.Pledge 
+                Pledges = pledgesResponse.Pledges.Select(x => new PledgesViewModel.Pledge
                 {
                     ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),
                     Amount = x.Amount,
@@ -144,7 +146,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 EncodedAccountId = request.EncodedAccountId,
                 CacheKey = request.CacheKey,
                 JobRoles = cacheItemTask.Result.JobRoles,
-                JobRoleOptions = jobRolesTask.Result.JobRoles.ToList()
+                Sectors = cacheItemTask.Result.Sectors,
+                JobRoleOptions = jobRolesTask.Result.JobRoles.ToList(),
+                SectorOptions = jobRolesTask.Result.Sectors.ToList()
             };
         }
 
@@ -325,6 +329,57 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     CreatedOn = app.CreatedOn,
                     Status = "Awaiting approval"
                 })
+            };
+        }
+
+        public async Task<ApplicationViewModel> GetApplicationViewModel(ApplicationRequest request, CancellationToken cancellationToken = default)
+        {
+            var result =
+                await _pledgeService.GetApplication(request.AccountId, request.PledgeId, request.ApplicationId, cancellationToken);
+
+            if (result != null)
+            {
+                return new ApplicationViewModel
+                {
+                    AboutOpportunity = result.AboutOpportunity,
+                    BusinessWebsite = result.BusinessWebsite,
+                    EmailAddresses = result.EmailAddresses,
+                    EmployerAccountName = result.EmployerAccountName,
+                    EstimatedDurationMonths = result.EstimatedDurationMonths,
+                    FirstName = result.FirstName,
+                    HasTrainingProvider = result.HasTrainingProvider,
+                    LastName = result.LastName,
+                    NumberOfApprentices = result.NumberOfApprentices,
+                    StartBy = result.StartBy,
+                    Sectors = result.Sector,
+                    AllSectors = result.AllSectors,
+                    PledgeSectors = result.PledgeSectors,
+                    PledgeJobRoles = result.PledgeJobRoles,
+                    PledgeLevels = result.PledgeLevels,
+                    PledgeLocations = result.PledgeLocations,
+                    Location = result.Location,
+                    JobRole = result.TypeOfJobRole,
+                    Level = result.Level,
+                    DisplaySectors = result.Sector.ToReferenceDataDescriptionList(result.AllSectors),
+                    Affordability = GetAffordabilityViewModel(result.Amount, result.PledgeRemainingAmount, result.NumberOfApprentices, result.MaxFunding, result.EstimatedDurationMonths, result.StartBy)
+                };
+            }
+
+            return null;
+        }
+
+        public ApplicationViewModel.AffordabilityViewModel GetAffordabilityViewModel(int amount, int remainingAmount, int numberOfApprentices, int maxFunding, int estimatedDurationMonths, DateTime startDate)
+        {
+            var remainingFundsIfApproved = remainingAmount - amount;
+            var estimatedCostOverDuration = maxFunding * numberOfApprentices;
+
+            return new ApplicationViewModel.AffordabilityViewModel
+            {
+                RemainingFunds = remainingAmount.ToCurrencyString(),
+                EstimatedCostThisYear = amount.ToCurrencyString(),
+                RemainingFundsIfApproved = remainingFundsIfApproved.ToCurrencyString(),
+                EstimatedCostOverDuration = estimatedCostOverDuration.ToCurrencyString(),
+                YearDescription = _dateTimeService.UtcNow.ToTaxYearDescription()
             };
         }
 

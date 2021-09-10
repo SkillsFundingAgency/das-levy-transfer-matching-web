@@ -123,20 +123,83 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         }
 
         [Test]
-        public async Task GET_SelectAccount_Redirects_To_Authorized_Apply_Path()
+        public async Task GET_SelectAccount_AccountsReturnedEqualsOne_ReturnsRedirectToApply()
         {
-            string encodedAccountId = _fixture.Create<string>();
+            var selectAccountRequest = _fixture.Create<SelectAccountRequest>();
+            var viewModel = _fixture
+                .Build<SelectAccountViewModel>()
+                .With(x => x.Accounts, _fixture.CreateMany<SelectAccountViewModel.Account>(1))
+                .Create();
 
             _orchestrator
-                .Setup(x => x.GetUserEncodedAccountId())
-                .ReturnsAsync(encodedAccountId);
+                .Setup(x => x.GetSelectAccountViewModel(It.Is<SelectAccountRequest>(y => y == selectAccountRequest)))
+                .ReturnsAsync(viewModel);
 
             string encodedPledgeId = _fixture.Create<string>();
 
-            var redirectToActionResult = await _opportunitiesController.SelectAccount(encodedPledgeId) as RedirectToActionResult;
+            var actionResult = await _opportunitiesController.SelectAccount(selectAccountRequest);
+            var redirectToActionResult = actionResult as RedirectToActionResult;
 
+            Assert.IsNotNull(actionResult);
             Assert.IsNotNull(redirectToActionResult);
+            
             Assert.AreEqual(redirectToActionResult.ActionName, nameof(OpportunitiesController.Apply));
+        }
+
+        [Test]
+        public async Task GET_SelectAccount_AccountsReturnedMoreThanOne_ReturnsViewWithAccounts()
+        {
+            var selectAccountRequest = _fixture.Create<SelectAccountRequest>();
+            var expectedViewModel = _fixture
+                .Build<SelectAccountViewModel>()
+                .With(x => x.Accounts, _fixture.CreateMany<SelectAccountViewModel.Account>())
+                .Create();
+
+            _orchestrator
+                .Setup(x => x.GetSelectAccountViewModel(It.Is<SelectAccountRequest>(y => y == selectAccountRequest)))
+                .ReturnsAsync(expectedViewModel);
+
+            string encodedPledgeId = _fixture.Create<string>();
+
+            var actionResult = await _opportunitiesController.SelectAccount(selectAccountRequest);
+            var viewResult = actionResult as ViewResult;
+            object model = viewResult.Model;
+            var actualViewModel = model as SelectAccountViewModel;
+
+            Assert.IsNotNull(actionResult);
+            Assert.IsNotNull(viewResult);
+            Assert.IsNotNull(model);
+            Assert.IsNotNull(actualViewModel);
+
+            Assert.AreEqual(expectedViewModel, actualViewModel);
+        }
+
+        [Test]
+        public async Task GET_SelectAccount_NoAccountsReturned_ReturnsEmptyView()
+        {
+            var selectAccountRequest = _fixture.Create<SelectAccountRequest>();
+            var expectedViewModel = _fixture
+                .Build<SelectAccountViewModel>()
+                .With(x => x.Accounts, _fixture.CreateMany<SelectAccountViewModel.Account>(0))
+                .Create();
+
+            _orchestrator
+                .Setup(x => x.GetSelectAccountViewModel(It.Is<SelectAccountRequest>(y => y == selectAccountRequest)))
+                .ReturnsAsync(expectedViewModel);
+
+            string encodedPledgeId = _fixture.Create<string>();
+
+            var actionResult = await _opportunitiesController.SelectAccount(selectAccountRequest);
+            var viewResult = actionResult as ViewResult;
+            object model = viewResult.Model;
+            var actualViewModel = model as SelectAccountViewModel;
+
+            Assert.IsNotNull(actionResult);
+            Assert.IsNotNull(viewResult);
+            Assert.IsNotNull(model);
+            Assert.IsNotNull(actualViewModel);
+
+            Assert.AreEqual(expectedViewModel, actualViewModel);
         }
 
         [Test]

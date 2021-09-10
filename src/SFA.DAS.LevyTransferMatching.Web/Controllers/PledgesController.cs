@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using SFA.DAS.LevyTransferMatching.Web.Authentication;
@@ -206,6 +207,22 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             var response = await _orchestrator.GetApplications(request);
 
             return View(response);
+        }
+
+        [HttpGet]
+        [Route("{encodedPledgeId}/applications/{encodedApplicationId}")]
+        public async Task<IActionResult> Application(ApplicationRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            var response = await _orchestrator.GetApplicationViewModel(request, cancellationToken);
+
+
+            if (response != null)
+            {
+                return View(response);
+            }
+
+            return NotFound();
         }
     }
 }
