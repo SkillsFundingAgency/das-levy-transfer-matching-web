@@ -218,18 +218,18 @@
                     </ul>
                 </li>
             </ol>
-            <div class="govuk-grid-column-full">
-                @if (Model.IsComplete)
-                {
-                    <form method="post">
-                        <div class="govuk-grid-row">
-                            <h2 class="govuk-heading-m">Submit your transfers application</h2>
-                            <p>I confirm that I want to make the above application so I can receive funding from another business for apprenticeship training.</p>
-                            <button class="govuk-button" data-module="govuk-button" id="opportunity-apply-submit">Submit my application</button>
-                        </div>
-                    </form>
-                }
-            </div>
+    
+            @if (Model.IsComplete)
+            {
+                <form method="post">
+                    <div class="govuk-grid-row">
+                        <h2 class="govuk-heading-m">Submit your transfers application</h2>
+                        <p>I confirm that I want to make the above application so I can receive funding from another business for apprenticeship training.</p>
+                        <button class="govuk-button" data-module="govuk-button" id="opportunity-apply-submit">Submit my application</button>
+                    </div>
+                </form>
+            }
+
         </div>
         <div class="govuk-grid-column-one-third">
             <section class="employer-details side-panel">
