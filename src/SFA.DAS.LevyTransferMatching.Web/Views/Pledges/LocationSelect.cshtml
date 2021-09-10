@@ -18,11 +18,12 @@
                             <legend class="govuk-fieldset__legend">Please select the correct location</legend>
                             <div class="govuk-radios">
 
+                                @{ var i = 0; } 
                                 @foreach (var validLocation in validLocationGroup.Value)
                                 {
                                     <div class="govuk-radios__item">
-                                        <input class="govuk-radios__input" id="@($"SelectedValidLocations_{validLocationGroup.Key}_")" name="@($"SelectedValidLocations[{validLocationGroup.Key}]")" asp-for="SelectedValidLocations[validLocationGroup.Key]" type="radio" value="@validLocation">
-                                        <label class="govuk-label govuk-radios__label" for="@($"SelectedValidLocations[{validLocationGroup.Key}]")">@validLocation</label>
+                                        <input class="govuk-radios__input" id="@($"valid-location-{validLocationGroup.Key}-{i}")" name="@($"SelectedValidLocations[{validLocationGroup.Key}]")" asp-for="SelectedValidLocations[validLocationGroup.Key]" type="radio" value="@validLocation">
+                                        <label class="govuk-label govuk-radios__label" for="@($"valid-location-{validLocationGroup.Key}-{i++}")">@validLocation</label>
                                     </div>
                                 }
 
