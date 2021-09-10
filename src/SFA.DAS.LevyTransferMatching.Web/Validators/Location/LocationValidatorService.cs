@@ -34,13 +34,19 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Location
                 {
                     var possibleLocations = await _locationService.GetLocations(locations[i]);
 
-                    // TODO: Fix bug, where completely valid name is provided
-                    //       and possibleLocations = 0
                     if (!possibleLocations.Names.Any())
                     {
-                        // There's no results - create an error
-                        if (!errors.ContainsKey(i))
-                            errors.Add(i, $"Check the spelling of your location");
+                        // Either there's a spelling mistake, or this is a
+                        // valid location provided by the typeahead -
+                        // GetLocations will not return valid entries.
+                        var locationInformation = await _locationService.GetLocationInformation(locations[i]);
+
+                        if (string.IsNullOrEmpty(locationInformation?.Name))
+                        {
+                            // This isn't valid.
+                            if (!errors.ContainsKey(i))
+                                errors.Add(i, $"Check the spelling of your location");
+                        }
                     }
                     else if (possibleLocations.Names.Count() == 1)
                     {
