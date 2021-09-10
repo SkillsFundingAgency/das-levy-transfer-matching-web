@@ -345,6 +345,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         private string GetUrlWithPrefix(string url)
         {
+            if (string.IsNullOrWhiteSpace(url)) return url;
+
             if(url.StartsWith("http://") || url.StartsWith("https://"))
             {
                 return url;

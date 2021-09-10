@@ -111,8 +111,11 @@
                 </li>
             }
         </ul>
-        <div class="govuk-inset-text govuk-!-margin-bottom-0">
-            The Apprenticeship Service is not responsible for the content of external sites.
-        </div>
+        @if (!string.IsNullOrWhiteSpace(Model.BusinessWebsite))
+        {
+            <div class="govuk-inset-text govuk-!-margin-bottom-0">
+                The Apprenticeship Service is not responsible for the content of external sites.
+            </div>
+        }
     </div>
 </main>

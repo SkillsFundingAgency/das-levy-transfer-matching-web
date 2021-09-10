@@ -463,6 +463,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         [TestCase("www.contoso.com", "http://www.contoso.com")]
         [TestCase("http://www.contoso.com", "http://www.contoso.com")]
         [TestCase("https://www.contoso.com", "https://www.contoso.com")]
+        [TestCase("", "")]
+        [TestCase(null, null)]
         public async Task GetApplication_Adds_Url_Prefix_If_Missing(string url, string expectedUrl)
         {
             var response = _fixture.Create<GetApplicationResponse>();
