@@ -6,7 +6,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 {
     public class JobRoleViewModel : JobRolePostRequest
     {
+        public List<string> Sectors { get; set; }
         public List<ReferenceDataItem> JobRoleOptions { get; set; }
-        public bool AreAllJobRolesSelected => JobRoles == null || !JobRoles.Any() || JobRoles.Count == JobRoleOptions.Count;
+        public List<ReferenceDataItem> SectorOptions { get; set; }
+        public bool AreAllSectorsSelected => Sectors == null || !Sectors.Any() || Sectors.Count == SectorOptions.Count;
     }
 }

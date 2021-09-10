@@ -76,7 +76,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _amountResponse = _fixture.Create<GetAmountResponse>();
             _sectorResponse = new GetSectorResponse {Sectors = _sectors};
             _levelResponse = new GetLevelResponse {Levels = _levels};
-            _jobRoleResponse = new GetJobRoleResponse {JobRoles = _jobRoles};
+            _jobRoleResponse = new GetJobRoleResponse {JobRoles = _jobRoles, Sectors = _sectors};
             _pledgesResponse = _fixture.Create<GetPledgesResponse>();
            
             _encodedPledgeId = _fixture.Create<string>();
@@ -317,6 +317,26 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             var result = await _orchestrator.GetJobRoleViewModel(new JobRoleRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
             Assert.AreEqual(cacheItem.JobRoles, result.JobRoles);
+        }
+
+        [Test]
+        public async Task GetJobRoleViewModel_SectorOptions_Are_Populated()
+        {
+            var result = await _orchestrator.GetJobRoleViewModel(new JobRoleRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
+            Assert.AreEqual(_sectors, result.SectorOptions);
+        }
+
+        [Test]
+        public async Task GetJobRoleViewModel_Sectors_Is_Correct()
+        {
+            var cacheItem = _fixture.Build<CreatePledgeCacheItem>()
+                    .With(x => x.Sectors, new List<string> { "Business" })
+                    .Create();
+
+            _cache.Setup(x => x.RetrieveFromCache<CreatePledgeCacheItem>(_cacheKey.ToString())).ReturnsAsync(cacheItem);
+
+            var result = await _orchestrator.GetJobRoleViewModel(new JobRoleRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
+            Assert.AreEqual(cacheItem.Sectors, result.Sectors);
         }
 
         [Test]
