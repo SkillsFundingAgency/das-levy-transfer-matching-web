@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Security.Policy;
 using System.Threading.Tasks;
 using System.Threading;
 using SFA.DAS.Encoding;
