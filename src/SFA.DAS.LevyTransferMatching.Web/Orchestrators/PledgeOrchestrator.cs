@@ -193,7 +193,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             {
                 CacheKey = request.CacheKey,
                 EncodedAccountId = request.EncodedAccountId,
-                MultipleValidLocations = cacheItem.MultipleValidLocations,
+                AvailableValidLocations = cacheItem.MultipleValidLocations,
+                SelectedValidLocations = cacheItem.MultipleValidLocations.ToDictionary(x => x.Key, x => string.Empty),
             };
         }
 
@@ -325,6 +326,18 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     Status = "Awaiting approval"
                 })
             };
+        }
+
+        public async Task UpdateCacheItem(LocationSelectPostRequest request)
+        {
+            var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
+
+            foreach (var selectedValidLocation in request.SelectedValidLocations)
+            {
+                cacheItem.Locations[selectedValidLocation.Key] = selectedValidLocation.Value;
+            }
+
+            await _cacheStorageService.SaveToCache(request.CacheKey.ToString(), cacheItem, 1);
         }
     }
 }

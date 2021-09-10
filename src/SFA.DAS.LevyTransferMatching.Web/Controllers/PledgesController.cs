@@ -173,6 +173,16 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             return View(viewModel);
         }
 
+        [Authorize]
+        [Route("create/location/select")]
+        [HttpPost]
+        public async Task<IActionResult> LocationSelect(LocationSelectPostRequest request)
+        {
+            await _orchestrator.UpdateCacheItem(request);
+
+            return RedirectToAction("Create", new CreateRequest() { EncodedAccountId = request.EncodedAccountId, CacheKey = request.CacheKey });
+        }
+
         [Authorize(Policy = PolicyNames.ManageAccount)]
         [HttpGet]
         [Route("{EncodedPledgeId}/confirmation")]

@@ -34,6 +34,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Location
                 {
                     var possibleLocations = await _locationService.GetLocations(locations[i]);
 
+                    // TODO: Fix bug, where completely valid name is provided
+                    //       and possibleLocations = 0
                     if (!possibleLocations.Names.Any())
                     {
                         // There's no results - create an error
