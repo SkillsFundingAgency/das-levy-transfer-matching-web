@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture;
 using Moq;
@@ -9,14 +10,18 @@ using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
+using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Location;
+using ApplicationRequest = SFA.DAS.LevyTransferMatching.Web.Models.Pledges.ApplicationRequest;
 using GetApplicationsResponse = SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types.GetApplicationsResponse;
+using SectorRequest = SFA.DAS.LevyTransferMatching.Web.Models.Pledges.SectorRequest;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 {
@@ -30,6 +35,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 		private Mock<IEncodingService> _encodingService;
         private Mock<ILocationValidatorService> _validatorService;
         private Mock<IUserService> _userService;
+        private Mock<IDateTimeService> _dateTimeService;
         private Infrastructure.Configuration.FeatureToggles _featureToggles;
         private List<ReferenceDataItem> _sectors;
         private List<ReferenceDataItem> _levels;
@@ -58,8 +64,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _encodingService = new Mock<IEncodingService>();
             _validatorService = new Mock<ILocationValidatorService>();
             _userService = new Mock<IUserService>();
+            _dateTimeService = new Mock<IDateTimeService>();
+            _dateTimeService.Setup(x => x.UtcNow).Returns(DateTime.UtcNow);
 
-            _featureToggles = new Infrastructure.Configuration.FeatureToggles{ TogglePledgeDetails = true};
+            _featureToggles = new Infrastructure.Configuration.FeatureToggles();
 
             _sectors = _fixture.Create<List<ReferenceDataItem>>();
             _levels = _fixture.Create<List<ReferenceDataItem>>();
@@ -68,7 +76,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _amountResponse = _fixture.Create<GetAmountResponse>();
             _sectorResponse = new GetSectorResponse {Sectors = _sectors};
             _levelResponse = new GetLevelResponse {Levels = _levels};
-            _jobRoleResponse = new GetJobRoleResponse {JobRoles = _jobRoles};
+            _jobRoleResponse = new GetJobRoleResponse {JobRoles = _jobRoles, Sectors = _sectors};
             _pledgesResponse = _fixture.Create<GetPledgesResponse>();
            
             _encodedPledgeId = _fixture.Create<string>();
@@ -90,7 +98,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             _userService.Setup(x => x.IsUserChangeAuthorized()).Returns(true);
 
-            _orchestrator = new PledgeOrchestrator(_cache.Object, _pledgeService.Object, _encodingService.Object, _validatorService.Object, _userService.Object, _featureToggles);
+            _orchestrator = new PledgeOrchestrator(_cache.Object, _pledgeService.Object, _encodingService.Object, _validatorService.Object, _userService.Object, _featureToggles, _dateTimeService.Object);
         }
 
         [Test]
@@ -126,21 +134,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         {
             var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest { EncodedAccountId = _encodedAccountId, AccountId = _accountId });
             Assert.NotNull(result.Pledges);
-        }
-
-        [Test]
-        public async Task GetPledgesViewModel_Details_Link_Is_Rendered_When_Toggled_On()
-        {
-            var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest { EncodedAccountId = _encodedAccountId, AccountId = _accountId });
-            Assert.IsTrue(result.RenderPledgeDetailsLink);
-        }
-
-        [Test]
-        public async Task GetPledgesViewModel_Details_Link_Is_Not_Rendered_When_Toggled_Off()
-        {
-            _featureToggles.TogglePledgeDetails = false;
-            var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest { EncodedAccountId = _encodedAccountId, AccountId = _accountId });
-            Assert.IsFalse(result.RenderPledgeDetailsLink);
         }
 
         [Test]
@@ -327,6 +320,26 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         }
 
         [Test]
+        public async Task GetJobRoleViewModel_SectorOptions_Are_Populated()
+        {
+            var result = await _orchestrator.GetJobRoleViewModel(new JobRoleRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
+            Assert.AreEqual(_sectors, result.SectorOptions);
+        }
+
+        [Test]
+        public async Task GetJobRoleViewModel_Sectors_Is_Correct()
+        {
+            var cacheItem = _fixture.Build<CreatePledgeCacheItem>()
+                    .With(x => x.Sectors, new List<string> { "Business" })
+                    .Create();
+
+            _cache.Setup(x => x.RetrieveFromCache<CreatePledgeCacheItem>(_cacheKey.ToString())).ReturnsAsync(cacheItem);
+
+            var result = await _orchestrator.GetJobRoleViewModel(new JobRoleRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
+            Assert.AreEqual(cacheItem.Sectors, result.Sectors);
+        }
+
+        [Test]
         public async Task GetLevelViewModel_EncodedId_Is_Correct()
         {
             var result = await _orchestrator.GetLevelViewModel(new LevelRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
@@ -434,6 +447,39 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                 Assert.AreEqual("Awaiting approval", application.Status);
             });
             
+        }
+
+        [Test]
+        public async Task GetApplicationForAsync_Returns_ValidViewModel()
+        {
+            var response = _fixture.Create<GetApplicationResponse>();
+            _pledgeService.Setup(o => o.GetApplication(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
+            
+            var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0});
+
+            Assert.IsFalse(string.IsNullOrWhiteSpace(result.JobRole));
+        }
+
+        [Test]
+        public void GetAffordabilityViewModel_Returns_Correct_Values()
+        {
+            var amount = _fixture.Create<int>();
+            var remainingAmount = _fixture.Create<int>();
+            var numberOfApprentices = _fixture.Create<int>();
+            var maxFunding = _fixture.Create<int>();
+            var estimatedDurationMonths = _fixture.Create<int>();
+            var startDate = _fixture.Create<DateTime>();
+
+            var expectedRemainingFundsIfApproved = remainingAmount - amount;
+            var expectedEstimatedCostOverDuration = maxFunding * numberOfApprentices;
+
+            var viewModel = _orchestrator.GetAffordabilityViewModel(amount, remainingAmount, numberOfApprentices, maxFunding, estimatedDurationMonths, startDate);
+
+            Assert.AreEqual(remainingAmount.ToCurrencyString(), viewModel.RemainingFunds);
+            Assert.AreEqual(amount.ToCurrencyString(), viewModel.EstimatedCostThisYear);
+            Assert.AreEqual(expectedRemainingFundsIfApproved.ToCurrencyString(), viewModel.RemainingFundsIfApproved);
+            Assert.AreEqual(expectedEstimatedCostOverDuration.ToCurrencyString(), viewModel.EstimatedCostOverDuration);
+            Assert.AreEqual(_dateTimeService.Object.UtcNow.ToTaxYearDescription(), viewModel.YearDescription);
         }
     }
 }

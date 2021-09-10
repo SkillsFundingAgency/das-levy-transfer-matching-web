@@ -1,16 +1,15 @@
-﻿using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService
 {
     public interface IUserService
     {
-        Task<IEnumerable<UserAccountDto>> GetLoggedInUserAccounts();
-
         string GetUserId();
 
         string GetUserDisplayName();
+
         bool IsUserChangeAuthorized();
+
+        IEnumerable<long> GetUserOwnerTransactorAccountIds();
     }
 }

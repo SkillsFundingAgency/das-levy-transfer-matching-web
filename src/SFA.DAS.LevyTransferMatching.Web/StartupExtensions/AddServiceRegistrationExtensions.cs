@@ -42,13 +42,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
             services.AddTransient<IPledgeOrchestrator, PledgeOrchestrator>();
             services.AddTransient<IOpportunitiesOrchestrator, OpportunitiesOrchestrator>();
             services.AddTransient<ILocationOrchestrator, LocationOrchestrator>();
+            services.AddTransient<IUserService>((s) => new UserService(s.GetService<IHttpContextAccessor>()));
 
             services.AddSingleton<IDateTimeService, DateTimeService>();
 
             services.AddClient<IAccountsService>((c, s) => new AccountsService(c));
             services.AddClient<IPledgeService>((c, s) => new PledgeService(c));
             services.AddClient<IOpportunitiesService>((c, s) => new OpportunitiesService(c));
-            services.AddClient<IUserService>((c, s) => new UserService(s.GetService<IHttpContextAccessor>(), c));
             services.AddClient<ILocationService>((c, s) => new LocationService(c));
         }
 

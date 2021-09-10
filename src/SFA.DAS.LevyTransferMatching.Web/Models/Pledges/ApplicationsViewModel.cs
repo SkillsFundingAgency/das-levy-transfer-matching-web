@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges

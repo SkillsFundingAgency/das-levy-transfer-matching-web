@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
@@ -13,5 +14,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
         Task<GetJobRoleResponse> GetJobRole(long accountId);
         Task<GetLevelResponse> GetLevel(long accountId);
         Task<GetApplicationsResponse> GetApplications(long accountId, int pledgeId);
+        Task<GetApplicationResponse> GetApplication(long accountId, int pledgeId, int applicationId, CancellationToken cancellationToken = default);
     }
 }
