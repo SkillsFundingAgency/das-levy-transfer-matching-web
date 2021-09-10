@@ -147,7 +147,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 EncodedAccountId = request.EncodedAccountId,
                 CacheKey = request.CacheKey,
                 JobRoles = cacheItemTask.Result.JobRoles,
-                JobRoleOptions = jobRolesTask.Result.JobRoles.ToList()
+                Sectors = cacheItemTask.Result.Sectors,
+                JobRoleOptions = jobRolesTask.Result.JobRoles.ToList(),
+                SectorOptions = jobRolesTask.Result.Sectors.ToList()
             };
         }
 

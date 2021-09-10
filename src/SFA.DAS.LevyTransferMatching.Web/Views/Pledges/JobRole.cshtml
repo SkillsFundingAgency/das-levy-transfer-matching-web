@@ -12,17 +12,17 @@
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-xl">Choose the types of job role you'd like to fund</h1>
 
-            <div class="das-highlight">
+            <div class="das-highlight govuk-!-padding-bottom-2">
                 <p><strong>The current sectors you'd like to support are:</strong></p>
-                @if (Model.AreAllJobRolesSelected)
+                @if (Model.AreAllSectorsSelected)
                 {
                     <ul class="govuk-list govuk-list--bullet">
-                        <li>All apprenticeship job roles</li>
+                        <li>All sectors and industries</li>
                     </ul>
                 }
                 else
                 {
-                    <unordered-list asp-for="JobRoles" source="@Model.JobRoleOptions" class="govuk-list govuk-list--bullet"></unordered-list>
+                    <unordered-list asp-for="Sectors" source="@Model.SectorOptions" class="govuk-list govuk-list--bullet"></unordered-list>
                 }
             </div>
 

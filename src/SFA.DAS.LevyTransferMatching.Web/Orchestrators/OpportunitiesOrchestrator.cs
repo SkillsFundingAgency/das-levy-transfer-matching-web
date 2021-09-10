@@ -186,6 +186,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 SectorList = sectorList,
                 LocationList = locationList,
                 YearDescription = dateTime.ToTaxYearDescription(),
+                IsNamePublic = isNamePublic
             };
         }
 
