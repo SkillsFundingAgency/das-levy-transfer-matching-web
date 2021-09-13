@@ -193,12 +193,24 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
 
+            var locationSelectionGroups = cacheItem.MultipleValidLocations
+                .Select(x => new LocationSelectPostRequest.LocationSelectionGroup()
+                {
+                    Index = x.Key,
+                    LocationSelectionItems = x.Value
+                        .Select(y => new LocationSelectPostRequest.LocationSelectionGroup.LocationSelectionItem()
+                        {
+                            Value = y,
+                        })
+                        .ToArray()
+                })
+                .ToArray();
+
             return new LocationSelectViewModel()
             {
                 CacheKey = request.CacheKey,
                 EncodedAccountId = request.EncodedAccountId,
-                AvailableValidLocations = cacheItem.MultipleValidLocations,
-                SelectedValidLocations = cacheItem.MultipleValidLocations.ToDictionary(x => x.Key, x => string.Empty),
+                LocationSelectionGroups = locationSelectionGroups,
             };
         }
 
@@ -387,11 +399,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
 
-            foreach (var selectedValidLocation in request.SelectedValidLocations)
+            foreach (var locationSelectionGroup in request.LocationSelectionGroups)
             {
-                cacheItem.Locations[selectedValidLocation.Key] = selectedValidLocation.Value;
+                cacheItem.Locations[locationSelectionGroup.Index] = locationSelectionGroup.SelectedValue;
             }
-
+            
             await _cacheStorageService.SaveToCache(request.CacheKey.ToString(), cacheItem, 1);
         }
     }

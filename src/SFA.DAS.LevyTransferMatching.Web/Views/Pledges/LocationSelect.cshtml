@@ -11,19 +11,29 @@
             <h1 class="govuk-heading-xl">There are multiple locations based on your selected locations</h1>
             <form method="post" id="select-location-form">
 
-                @foreach (var validLocationGroup in Model.AvailableValidLocations)
+                @for (int i = 0; i < Model.LocationSelectionGroups.Length; i++)
                 {
-                    <div class="govuk-form-group">
-                        <fieldset class="govuk-fieldset" id="location-group-@validLocationGroup.Key">
+                    <input type="hidden" asp-for="LocationSelectionGroups[i].Index" />
+
+                    <div class="govuk-form-group" error-class="govuk-form-group--error" das-highlight-error-for="LocationSelectionGroups[i]">
+                        <fieldset class="govuk-fieldset" id="@($"LocationSelectionGroups_{i}_")">
                             <legend class="govuk-fieldset__legend">Please select the correct location</legend>
+                            <span class="govuk-error-message">@Html.ValidationMessageFor(x => Model.LocationSelectionGroups[i])</span>
                             <div class="govuk-radios">
 
-                                @{ var i = 0; } 
-                                @foreach (var validLocation in validLocationGroup.Value)
+                                @for (int j = 0; j < Model.LocationSelectionGroups[i].LocationSelectionItems.Length; j++) 
                                 {
                                     <div class="govuk-radios__item">
-                                        <input class="govuk-radios__input" id="@($"valid-location-{validLocationGroup.Key}-{i}")" name="@($"SelectedValidLocations[{validLocationGroup.Key}]")" asp-for="SelectedValidLocations[validLocationGroup.Key]" type="radio" value="@validLocation">
-                                        <label class="govuk-label govuk-radios__label" for="@($"valid-location-{validLocationGroup.Key}-{i++}")">@validLocation</label>
+                                        <input
+                                            class="govuk-radios__input"
+                                            id="@($"LocationSelectionGroups_{i}__LocationSelectionItems_{j}_")"
+                                            asp-for="LocationSelectionGroups[i].SelectedValue" 
+                                            type="radio"
+                                            value="@Model.LocationSelectionGroups[i].LocationSelectionItems[j].Value"
+                                            das-highlight-error-for="LocationSelectionGroups[i].LocationSelectionItems[j]"
+                                            error-class="govuk-textarea--error"
+                                            checked="@Model.LocationSelectionGroups[i].LocationSelectionItems[j].Selected">
+                                        <label class="govuk-label govuk-radios__label" asp-for="LocationSelectionGroups[i].LocationSelectionItems[j]">@Model.LocationSelectionGroups[i].LocationSelectionItems[j].Value</label>
                                     </div>
                                 }
 
@@ -32,12 +42,12 @@
                     </div>
                 }
 
-            <div class="govuk-button-group">
-                <button id="submit-selected-locations" class="govuk-button" data-module="govuk-button">
-                    Continue
-                </button>
-                <a href="@Url.Action("Location", "Pledges", new { Model.EncodedAccountId, Model.CacheKey })" class="govuk-link govuk-link-secondary govuk-link--no-visited-state govuk-back-link">Back</a>
-            </div>
+                <div class="govuk-button-group">
+                    <button id="submit-selected-locations" class="govuk-button" data-module="govuk-button">
+                        Continue
+                    </button>
+                    <a href="@Url.Action("Location", "Pledges", new { Model.EncodedAccountId, Model.CacheKey })" class="govuk-link govuk-link-secondary govuk-link--no-visited-state govuk-back-link">Back</a>
+                </div>
             </form>
         </div>
     </div>

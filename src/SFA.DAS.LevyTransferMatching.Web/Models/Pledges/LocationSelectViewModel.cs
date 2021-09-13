@@ -1,9 +1,6 @@
-﻿using System.Collections.Generic;
-
-namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
+﻿namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 {
     public class LocationSelectViewModel : LocationSelectPostRequest
     {
-        public IDictionary<int, IEnumerable<string>> AvailableValidLocations { get; set; }
     }
 }
