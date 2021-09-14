@@ -129,13 +129,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators
 
             // Assert
             CollectionAssert.Contains(result.Keys, 0);
-            Assert.AreEqual(result[0], "Check the spelling of your location");
+            Assert.AreEqual("Check the spelling of your location", result[0]);
 
             CollectionAssert.Contains(result.Keys, 1);
-            Assert.AreEqual(result[1], "Duplicates of the same location are not allowed");
+            Assert.AreEqual("Duplicates of the same location are not allowed", result[1]);
 
             CollectionAssert.Contains(result.Keys, 2);
-            Assert.AreEqual(result[2], "Duplicates of the same location are not allowed");
+            Assert.AreEqual("Duplicates of the same location are not allowed", result[2]);
         }
     }
 }

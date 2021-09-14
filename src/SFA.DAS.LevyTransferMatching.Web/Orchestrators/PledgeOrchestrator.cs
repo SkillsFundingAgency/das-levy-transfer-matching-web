@@ -292,6 +292,18 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
         }
 
+        public async Task UpdateCacheItem(LocationSelectPostRequest request)
+        {
+            var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
+
+            foreach (var locationSelectionGroup in request.LocationSelectionGroups)
+            {
+                cacheItem.Locations[locationSelectionGroup.Index] = locationSelectionGroup.SelectedValue;
+            }
+
+            await _cacheStorageService.SaveToCache(request.CacheKey.ToString(), cacheItem, 1);
+        }
+
         public async Task<LevelViewModel> GetLevelViewModel(LevelRequest request)
         {
             var cacheItemTask = RetrievePledgeCacheItem(request.CacheKey);
@@ -436,18 +448,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 EstimatedCostOverDuration = estimatedCostOverDuration.ToCurrencyString(),
                 YearDescription = _dateTimeService.UtcNow.ToTaxYearDescription()
             };
-        }
-
-        public async Task UpdateCacheItem(LocationSelectPostRequest request)
-        {
-            var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
-
-            foreach (var locationSelectionGroup in request.LocationSelectionGroups)
-            {
-                cacheItem.Locations[locationSelectionGroup.Index] = locationSelectionGroup.SelectedValue;
-            }
-            
-            await _cacheStorageService.SaveToCache(request.CacheKey.ToString(), cacheItem, 1);
         }
     }
 }
