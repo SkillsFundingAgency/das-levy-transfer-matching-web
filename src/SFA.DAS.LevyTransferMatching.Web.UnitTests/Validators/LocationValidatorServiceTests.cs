@@ -1,15 +1,12 @@
-﻿using Moq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Moq;
 using NUnit.Framework;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.LocationService;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
-using SFA.DAS.LevyTransferMatching.Web.Validators;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Location;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators
 {
@@ -47,7 +44,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators
             validatorService = new LocationValidatorService(locationService.Object);
 
             //Act
-            var errorsResult = await validatorService.ValidateLocations(locationPostRequest);
+            var errorsResult = await validatorService.ValidateLocations(locationPostRequest, It.IsAny<IDictionary<int, IEnumerable<string>>>());
 
             //Assert
             Assert.That(!errorsResult.Any());
@@ -75,7 +72,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators
             validatorService = new LocationValidatorService(locationService.Object);
 
             //Act
-            var errorsResult = await validatorService.ValidateLocations(locationPostRequest);
+            var errorsResult = await validatorService.ValidateLocations(locationPostRequest, It.IsAny<IDictionary<int, IEnumerable<string>>>());
 
             //Assert
             Assert.That(errorsResult.Any());
@@ -100,7 +97,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators
             validatorService = new LocationValidatorService(locationService.Object);
 
             //Act
-            var errorsResult = await validatorService.ValidateLocations(locationPostRequest);
+            var errorsResult = await validatorService.ValidateLocations(locationPostRequest, It.IsAny<IDictionary<int, IEnumerable<string>>>());
 
             //Assert
             Assert.That(errorsResult.Any());

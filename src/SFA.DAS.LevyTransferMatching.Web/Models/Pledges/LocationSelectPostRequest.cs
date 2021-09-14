@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
+﻿namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 {
     public class LocationSelectPostRequest : LocationSelectRequest
     {
@@ -8,14 +6,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 
         public class LocationSelectionGroup
         {
-            public int Index
-            {
-                get;
-                set;
-            }
-
+            public int Index { get; set; }
             public string SelectedValue { get; set; }
-
             public LocationSelectionItem[] LocationSelectionItems { get; set; }
 
             public class LocationSelectionItem

@@ -481,5 +481,98 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             Assert.AreEqual(expectedEstimatedCostOverDuration.ToCurrencyString(), viewModel.EstimatedCostOverDuration);
             Assert.AreEqual(_dateTimeService.Object.UtcNow.ToTaxYearDescription(), viewModel.YearDescription);
         }
+
+        [Test]
+        public async Task ValidateLocations_Returns_No_Errors_But_Caches_MultipleValidLocations()
+        {
+            // Arrange
+            var request = _fixture.Create<LocationPostRequest>();
+            var multipleValidLocations = new Dictionary<int, IEnumerable<string>>();
+            IDictionary<int, IEnumerable<string>> cachedMultipleValidLocations = null;
+
+            Action<LocationPostRequest, IDictionary<int, IEnumerable<string>>> validateLocationsCallback =
+                (x, y) =>
+                {
+                    var locations = _fixture.CreateMany<KeyValuePair<int, IEnumerable<string>>>();
+
+                    foreach (var location in locations)
+                    {
+                        y.Add(location);
+                    }
+                };
+            _validatorService
+                .Setup(x => x.ValidateLocations(It.Is<LocationPostRequest>(y => y == request), It.Is<IDictionary<int, IEnumerable<string>>>(y => y == multipleValidLocations)))
+                .Callback(validateLocationsCallback)
+                .ReturnsAsync(new Dictionary<int, string>());
+
+            var cacheItem = _fixture
+                .Build<CreatePledgeCacheItem>()
+                .With(x => x.MultipleValidLocations, (IDictionary<int, IEnumerable<string>>)null)
+                .Create();
+
+            _cache
+                .Setup(x => x.RetrieveFromCache<CreatePledgeCacheItem>(It.Is<string>(y => y == request.CacheKey.ToString())))
+                .ReturnsAsync(cacheItem);
+
+            Action<string, CreatePledgeCacheItem, int> saveToCacheCallback =
+                (x, y, z) =>
+                {
+                    cachedMultipleValidLocations = y.MultipleValidLocations;
+                };
+            _cache
+                .Setup(x => x.SaveToCache(It.Is<string>(y => y == cacheItem.Key.ToString()), It.Is<CreatePledgeCacheItem>(y => y == cacheItem), It.Is<int>(y => y == 1)))
+                .Callback(saveToCacheCallback);
+
+            // Act
+            var result = await _orchestrator.ValidateLocations(request, multipleValidLocations);
+
+            // Assert
+            Assert.AreEqual(multipleValidLocations, cachedMultipleValidLocations);
+        }
+
+        [Test]
+        public async Task ValidateLocations_Returns_Errors()
+        {
+            // Arrange
+            var request = _fixture.Create<LocationPostRequest>();
+            var multipleValidLocations = new Dictionary<int, IEnumerable<string>>();
+
+            var errors = _fixture.Create<Dictionary<int, string>>();
+            _validatorService
+                .Setup(x => x.ValidateLocations(It.Is<LocationPostRequest>(y => y == request), It.Is<IDictionary<int, IEnumerable<string>>>(y => y == multipleValidLocations)))
+                .ReturnsAsync(errors);
+
+            // Act
+            var result = await _orchestrator.ValidateLocations(request, multipleValidLocations);
+
+            // Assert
+            Assert.AreEqual(errors, result);
+        }
+
+        [Test]
+        public async Task GetLocationSelectViewModel_Returns_ViewModel()
+        {
+            // Arrange
+            var request = _fixture.Create<LocationSelectRequest>();
+
+            var cacheItem = _fixture.Create<CreatePledgeCacheItem>();
+
+            _cache
+                .Setup(x => x.RetrieveFromCache<CreatePledgeCacheItem>(It.Is<string>(y => y == request.CacheKey.ToString())))
+                .ReturnsAsync(cacheItem);
+
+            // Act
+            var result = await _orchestrator.GetLocationSelectViewModel(request);
+
+            // Assert
+            foreach (var locationSelectionGroup in result.LocationSelectionGroups)
+            {
+                CollectionAssert.Contains(cacheItem.MultipleValidLocations.Keys, locationSelectionGroup.Index);
+
+                var locationNames = locationSelectionGroup.LocationSelectionItems.Select(x => x.Value);
+
+                CollectionAssert.AreEqual(cacheItem.MultipleValidLocations[locationSelectionGroup.Index], locationNames);
+            }
+        }
     }
 }
