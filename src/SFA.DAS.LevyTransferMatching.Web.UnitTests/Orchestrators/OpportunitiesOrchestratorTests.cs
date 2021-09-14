@@ -500,7 +500,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             Assert.AreEqual(DateTime.Now.FinancialYearEnd().Year, result.MaxYear);
             Assert.AreEqual(cacheItem.HasTrainingProvider, result.HasTrainingProvider);
             Assert.IsNotNull(result.OpportunitySummaryViewModel);
-            Assert.AreEqual(applicationDetailsResponse.Opportunity.Amount, result.OpportunitySummaryViewModel.Amount);
+            Assert.AreEqual(applicationDetailsResponse.Opportunity.RemainingAmount, result.OpportunitySummaryViewModel.Amount);
             Assert.AreEqual(result.OpportunitySummaryViewModel.SectorList, applicationDetailsResponse.Opportunity.Sectors.ToReferenceDataDescriptionList(applicationDetailsResponse.Sectors));
             Assert.AreEqual(result.OpportunitySummaryViewModel.JobRoleList, applicationDetailsResponse.Opportunity.JobRoles.ToReferenceDataDescriptionList(applicationDetailsResponse.JobRoles));
             Assert.AreEqual(result.OpportunitySummaryViewModel.LevelList, applicationDetailsResponse.Opportunity.Levels.ToReferenceDataDescriptionList(applicationDetailsResponse.Levels, x => x.ShortDescription));

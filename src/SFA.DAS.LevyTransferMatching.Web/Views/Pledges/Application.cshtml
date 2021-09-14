@@ -1,9 +1,14 @@
 ﻿@using SFA.DAS.LevyTransferMatching.Web.Extensions
 @model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.ApplicationViewModel
+@{
+    var approve = SFA.DAS.LevyTransferMatching.Web.Models.Pledges.ApplicationPostRequest.ApprovalAction.Approve;
+    var reject = SFA.DAS.LevyTransferMatching.Web.Models.Pledges.ApplicationPostRequest.ApprovalAction.Reject;
+}
 
 <a href="@Url.Action("Applications", "Pledges", new { encodedAccountId = ViewContext.RouteData.Values["encodedAccountId"], EncodedPledgeId = ViewContext.RouteData.Values["EncodedPledgeId"]})" class="govuk-back-link">Back to my transfer applications</a>
 
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
+    <partial name="_ValidationSummary" />
     <div class="govuk-grid-row title-options">
         <div class="govuk-grid-column-full">
             <h1 class="govuk-heading-xl">
@@ -64,32 +69,35 @@
             <p>@Model.AboutOpportunity</p>
         </div>
     }
+    
+    @if (Model.ShowAffordabilityPanel)
+    {
+        <div class="das-highlight">
+            <h1 class="govuk-heading-m">Can I afford to fund this training?</h1>
+            <p>Estimated cost over @Model.EstimatedDurationMonths months: <strong>@Model.Affordability.EstimatedCostOverDuration</strong></p>
 
-    <div class="das-highlight">
-        <h1 class="govuk-heading-m">Can I afford to fund this training?</h1>
-        <p>Estimated cost over @Model.EstimatedDurationMonths months: <strong>@Model.Affordability.EstimatedCostOverDuration</strong></p>
+            <p>
+                <strong>For @Model.Affordability.YearDescription:</strong>
+                <br/>
+                Pledge funds remaining this year: <strong>@Model.Affordability.RemainingFunds</strong>
+                <br/>
+                Estimated costs this year: <strong>@Model.Affordability.EstimatedCostThisYear</strong>
+            </p>
 
-        <p>
-            <strong>For @Model.Affordability.YearDescription:</strong>
-            <br />
-            Pledge funds remaining this year: <strong>@Model.Affordability.RemainingFunds</strong>
-            <br />
-            Estimated costs this year: <strong>@Model.Affordability.EstimatedCostThisYear</strong>
-        </p>
-
-        <p>Pledge funds remaining if application is approved: <strong>@Model.Affordability.RemainingFundsIfApproved</strong></p>
-        <details class="govuk-details" data-module="govuk-details">
-            <summary class="govuk-details__summary">
-                <span class="govuk-details__summary-text">
-                    What is estimated cost?
-                </span>
-            </summary>
-            <div class="govuk-details__text">
-                <p>The estimated total cost of training is based on the funding band maximum.</p>
-                <p>The estimated cost of training for this financial year is based on the funding band maximum, the planned start date of training and the 20% EPA payment made at the end of training.</p>
-            </div>
-        </details>
-    </div>
+            <p>Pledge funds remaining if application is approved: <strong>@Model.Affordability.RemainingFundsIfApproved</strong></p>
+            <details class="govuk-details" data-module="govuk-details">
+                <summary class="govuk-details__summary">
+                    <span class="govuk-details__summary-text">
+                        What is estimated cost?
+                    </span>
+                </summary>
+                <div class="govuk-details__text">
+                    <p>The estimated total cost of training is based on the funding band maximum.</p>
+                    <p>The estimated cost of training for this financial year is based on the funding band maximum, the planned start date of training and the 20% EPA payment made at the end of training.</p>
+                </div>
+            </details>
+        </div>
+    }
 
     <div class="das-highlight">
         <h2 class="govuk-heading-m">Contact details</h2>
@@ -107,9 +115,49 @@
             @if (!string.IsNullOrWhiteSpace(Model.BusinessWebsite))
             {
                 <li class="app-icon-list__list-item">
-                    <span class="app-icon-list__icon app-icon-list__icon--website">Website: </span> <a href="http://@Model.BusinessWebsite" class="govuk-link">@Model.BusinessWebsite</a>
+                    <span class="app-icon-list__icon app-icon-list__icon--website">Website: </span> <a target="_blank" href="@Model.BusinessWebsite" class="govuk-link" rel="noreferrer noopener">@Model.BusinessWebsite (opens in new tab)</a>
                 </li>
             }
         </ul>
+        @if (!string.IsNullOrWhiteSpace(Model.BusinessWebsite))
+        {
+            <div class="govuk-inset-text govuk-!-margin-bottom-0">
+                The Apprenticeship Service is not responsible for the content of external sites.
+            </div>
+        }
     </div>
+
+    @if (Model.AllowApproval)
+    {
+        <form method="post">
+            <div class="govuk-form-group" das-highlight-error-for="SelectedAction" error-class="govuk-form-group--error">
+                <fieldset class="govuk-fieldset">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                        What would you like to do with this application?
+                    </legend>
+                    <span das-validation-for="SelectedAction" class="govuk-error-message"></span>
+                    <div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios">
+                        <div class="govuk-radios__item">
+                            <input class="govuk-radios__input" id="SelectedAction" name="SelectedAction" asp-for="SelectedAction" type="radio" value="@approve" das-highlight-error-for="SelectedAction" error-class="govuk-textarea--error" data-aria-controls="approval-content" />
+                            <label class="govuk-label govuk-radios__label" for="SelectedAction">
+                                Approve the application
+                            </label>
+                        </div>
+                        <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="approval-content">
+                            <p><strong>Disclaimer:</strong> The information provided by @Model.EmployerAccountName in their application for this pledge has not been checked and verified by the apprenticeship service.<br/>Please carry out your own due diligence when deciding whether to offer a transfer of your levy funds.</p>
+                        </div>
+                        @*<div class="govuk-radios__item">
+                            <input class="govuk-radios__input" id="SelectedAction-2" name="SelectedAction" asp-for="SelectedAction" type="radio" value="@reject" das-highlight-error-for="SelectedAction" error-class="govuk-textarea--error" />
+                            <label class="govuk-label govuk-radios__label" for="SelectedAction-2">
+                                Reject the application
+                            </label>
+                        </div>*@
+                    </div>
+                </fieldset>
+            </div>
+            <div class="govuk-button-group">
+                <button class="govuk-button" data-module="govuk-button" type="submit">Continue</button>
+            </div>
+        </form>
+    }
 </main>

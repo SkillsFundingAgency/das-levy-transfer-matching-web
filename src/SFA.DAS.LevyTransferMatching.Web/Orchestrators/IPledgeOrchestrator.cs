@@ -15,6 +15,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         Task<SectorViewModel> GetSectorViewModel(SectorRequest request);
         Task<JobRoleViewModel> GetJobRoleViewModel(JobRoleRequest request);
         Task<LocationViewModel> GetLocationViewModel(LocationRequest request);
+        Task<ApplicationApprovedViewModel> GetApplicationApprovedViewModel(ApplicationApprovedRequest request);
         Task<Dictionary<int, string>> ValidateLocations(LocationPostRequest request, IDictionary<int, IEnumerable<string>> multipleValidLocations);
         Task UpdateCacheItem(AmountPostRequest request);
         Task UpdateCacheItem(SectorPostRequest request);
@@ -27,6 +28,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         Task<ApplicationsViewModel> GetApplications(ApplicationsRequest request);
         Task<ApplicationViewModel> GetApplicationViewModel(ApplicationRequest request,
             CancellationToken cancellationToken = default);
+
+        Task SetApplicationOutcome(ApplicationPostRequest request);
         Task<LocationSelectViewModel> GetLocationSelectViewModel(LocationSelectRequest request);
     }
 }

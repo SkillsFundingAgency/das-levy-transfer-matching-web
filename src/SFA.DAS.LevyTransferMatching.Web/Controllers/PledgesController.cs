@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -223,6 +224,29 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             }
 
             return NotFound();
+        }
+
+        [HttpPost]
+        [Route("{encodedPledgeId}/applications/{encodedApplicationId}")]
+        public async Task<IActionResult> Application(ApplicationPostRequest request)
+        {
+            await _orchestrator.SetApplicationOutcome(request);
+
+            if (request.SelectedAction == ApplicationPostRequest.ApprovalAction.Approve)
+            {
+                return RedirectToAction("ApplicationApproved", new { request.EncodedAccountId, request.EncodedPledgeId, request.EncodedApplicationId });
+            }
+            
+            //Implementation of Rejection to follow
+            throw new NotImplementedException();
+        }
+
+        [HttpGet]
+        [Route("{encodedPledgeId}/applications/{encodedApplicationId}/approved")]
+        public async Task<IActionResult> ApplicationApproved(ApplicationApprovedRequest request)
+        {
+            var viewModel = await _orchestrator.GetApplicationApprovedViewModel(request);
+            return View(viewModel);
         }
     }
 }

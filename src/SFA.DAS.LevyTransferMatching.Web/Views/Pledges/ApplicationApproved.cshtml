@@ -1,0 +1,45 @@
+﻿@using SFA.DAS.LevyTransferMatching.Web.Models.Pledges
+@inject SFA.DAS.EmployerUrlHelper.ILinkGenerator LinkGenerator
+@model ApplicationApprovedViewModel
+@{
+    ViewData["Title"] = "Application Approved";
+}
+
+<a href="@Url.Action("Applications", "Pledges", new { EncodedAccountId = Model.EncodedAccountId, EncodedPledgeId = Model.EncodedPledgeId })" class="govuk-back-link">Back</a>
+<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
+    <div class="govuk-grid-row">
+        <div class="govuk-width-container form-entry">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    <div class="govuk-panel govuk-panel--confirmation pledge-approved">
+                        <h1 class="govuk-panel__title">Application approved</h1>
+                        <div class="govuk-panel__body">
+                            <strong>You approved the @Model.DasAccountName application</strong>
+                        </div>
+                    </div>
+
+                    <h2 class="govuk-heading-m">What happens next</h2>
+
+                    <p>We've let them know, so they can accept your funding pledge.</p>
+
+                    <p>You'll receive notifications when <strong>@Model.DasAccountName</strong>:</p>
+
+                    <ul class="govuk-list govuk-list--bullet">
+                        <li>accepts your pledge</li>
+                        <li>adds apprentices to their account</li>
+                    </ul>
+
+                    <div class="govuk-warning-text">
+                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                        <strong class="govuk-warning-text__text">
+                            <span class="govuk-warning-text__assistive">Warning</span>
+                            You'll need to approve the transfer when @Model.DasAccountName adds apprentices details to their account.
+                        </strong>
+                    </div>
+
+                    <p><a href="@Url.Action("Applications", "Pledges", new { EncodedAccountId = Model.EncodedAccountId, EncodedPledgeId = Model.EncodedPledgeId })" class="govuk-link govuk-link--no-visited-state">View other applications</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

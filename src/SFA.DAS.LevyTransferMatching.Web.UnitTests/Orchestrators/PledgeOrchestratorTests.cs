@@ -7,6 +7,7 @@ using AutoFixture;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Encoding;
+using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
@@ -45,11 +46,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private GetJobRoleResponse _jobRoleResponse;
         private GetLevelResponse _levelResponse;
         private GetPledgesResponse _pledgesResponse;
+        private GetApplicationApprovedResponse _applicationApprovedResponse;
         private string _encodedAccountId;
         private Guid _cacheKey;
         private readonly long _accountId = 1;
         private readonly int _pledgeId = 1;
         private string _encodedPledgeId;
+        private string _encodedApplicationId;
+        private readonly int _applicationId = 1;
         private string _userId;
         private string _userDisplayName;
 
@@ -78,10 +82,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _levelResponse = new GetLevelResponse {Levels = _levels};
             _jobRoleResponse = new GetJobRoleResponse {JobRoles = _jobRoles, Sectors = _sectors};
             _pledgesResponse = _fixture.Create<GetPledgesResponse>();
+            _applicationApprovedResponse = _fixture.Create<GetApplicationApprovedResponse>();
            
             _encodedPledgeId = _fixture.Create<string>();
-            _userId = _fixture.Create<string>();
-            _userDisplayName = _fixture.Create<string>();
+            _encodedApplicationId = _fixture.Create<string>();
 
             _pledgeService.Setup(x => x.GetPledges(_accountId)).ReturnsAsync(_pledgesResponse);
             _pledgeService.Setup(x => x.GetCreate(_accountId)).ReturnsAsync(() => new GetCreateResponse
@@ -95,8 +99,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _pledgeService.Setup(x => x.GetSector(_accountId)).ReturnsAsync(_sectorResponse);
             _pledgeService.Setup(x => x.GetJobRole(_accountId)).ReturnsAsync(_jobRoleResponse);
             _pledgeService.Setup(x => x.GetLevel(_accountId)).ReturnsAsync(_levelResponse);
+            _pledgeService.Setup(x => x.GetApplicationApproved(_accountId, _pledgeId, _applicationId)).ReturnsAsync(_applicationApprovedResponse);
 
+            _userId = _fixture.Create<string>();
+            _userDisplayName = _fixture.Create<string>();
             _userService.Setup(x => x.IsUserChangeAuthorized()).Returns(true);
+            _userService.Setup(x => x.GetUserId()).Returns(_userId);
+            _userService.Setup(x => x.GetUserDisplayName()).Returns(_userDisplayName);
+            _userService.Setup(x => x.IsOwnerOrTransactor(0)).Returns(true);
 
             _orchestrator = new PledgeOrchestrator(_cache.Object, _pledgeService.Object, _encodingService.Object, _validatorService.Object, _userService.Object, _featureToggles, _dateTimeService.Object);
         }
@@ -418,7 +428,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                     {
                         Id = 0,
                         StartDate = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1),
-                        Standard = _fixture.Create<StandardsListItemDto>()
+                        Standard = _fixture.Create<StandardsListItemDto>(),
+                        Status = ApplicationStatus.Pending
                     }
                 }
             };
@@ -444,21 +455,125 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             result.Applications.ToList().ForEach(application =>
             {
                 Assert.AreEqual("123", application.EncodedApplicationId);
-                Assert.AreEqual("Awaiting approval", application.Status);
+                Assert.AreEqual(ApplicationStatus.Pending, application.Status);
             });
             
         }
 
         [Test]
-        public async Task GetApplicationForAsync_Returns_ValidViewModel()
+        public async Task GetApplication_Returns_ValidViewModel()
         {
             var response = _fixture.Create<GetApplicationResponse>();
+            response.PledgeRemainingAmount = 1000;
+            response.Amount = 1;
+            response.Status = ApplicationStatus.Pending;
+
             _pledgeService.Setup(o => o.GetApplication(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
             
             var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0});
 
             Assert.IsFalse(string.IsNullOrWhiteSpace(result.JobRole));
+            Assert.IsTrue(result.AllowApproval);
+            Assert.IsTrue(result.ShowAffordabilityPanel);
         }
+
+        [TestCase(ApplicationStatus.Approved)]
+        public async Task GetApplication_Hide_AffordabilityPanel_If_Not_PendingOutcome(ApplicationStatus status)
+        {
+            var response = _fixture.Create<GetApplicationResponse>();
+            response.PledgeRemainingAmount = 1000;
+            response.Amount = 1;
+            response.Status = status;
+
+            _pledgeService.Setup(o => o.GetApplication(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
+
+            var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
+
+            Assert.IsFalse(result.ShowAffordabilityPanel);
+        }
+
+        [TestCase(100, 0, true)]
+        [TestCase(100, 100, true)]
+        [TestCase(100, 101, false)]
+        public async Task GetApplication_AllowApproval_If_Application_Is_Affordable(int remainingPledgeAmount, int applicationAmount, bool expectAllowApproval)
+        {
+            var response = _fixture.Create<GetApplicationResponse>();
+            response.PledgeRemainingAmount = remainingPledgeAmount;
+            response.Amount = applicationAmount;
+            response.Status = ApplicationStatus.Pending;
+            _pledgeService.Setup(o => o.GetApplication(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
+
+            var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
+
+            Assert.AreEqual(expectAllowApproval, result.AllowApproval);
+        }
+
+
+        [TestCase(ApplicationStatus.Approved)]
+        public async Task GetApplication_DisallowApproval_If_Application_Is_Not_Pending_Outcome(ApplicationStatus status)
+        {
+            var response = _fixture.Create<GetApplicationResponse>();
+            response.PledgeRemainingAmount = 1000;
+            response.Amount = 1;
+            response.Status = status;
+            _pledgeService.Setup(o => o.GetApplication(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
+
+            var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
+
+            Assert.IsFalse(result.AllowApproval);
+        }
+
+        [Test]
+        public async Task GetApplication_DisallowApproval_If_Application_Is_User_Is_Not_Owner_Or_Transactor_Of_Account()
+        {
+            var response = _fixture.Create<GetApplicationResponse>();
+            response.PledgeRemainingAmount = 1000;
+            response.Amount = 1;
+            response.Status = ApplicationStatus.Pending;
+            _pledgeService.Setup(o => o.GetApplication(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
+
+            _userService.Setup(x => x.IsOwnerOrTransactor(0)).Returns(false);
+
+            var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
+
+            Assert.IsFalse(result.AllowApproval);
+        }
+
+        [Test]
+        public async Task SetApplicationOutcome_Sets_Outcome_Of_Application()
+        {
+            var request = _fixture.Create<ApplicationPostRequest>();
+
+            await _orchestrator.SetApplicationOutcome(request);
+
+            _pledgeService.Verify(x => x.SetApplicationOutcome(request.AccountId,
+                request.ApplicationId,
+                request.PledgeId,
+                It.Is<SetApplicationOutcomeRequest>(r =>
+                    r.UserId == _userId &&
+                    r.UserDisplayName == _userDisplayName &&
+                    r.Outcome == (request.SelectedAction == ApplicationPostRequest.ApprovalAction.Approve
+                        ? SetApplicationOutcomeRequest.ApplicationOutcome.Approve
+                        : SetApplicationOutcomeRequest.ApplicationOutcome.Reject)
+                    )));
+        }
+
+        [TestCase("www.contoso.com", "http://www.contoso.com")]
+        [TestCase("http://www.contoso.com", "http://www.contoso.com")]
+        [TestCase("https://www.contoso.com", "https://www.contoso.com")]
+        [TestCase("", "")]
+        [TestCase(null, null)]
+        public async Task GetApplication_Adds_Url_Prefix_If_Missing(string url, string expectedUrl)
+        {
+            var response = _fixture.Create<GetApplicationResponse>();
+            response.BusinessWebsite = url;
+            _pledgeService.Setup(o => o.GetApplication(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
+
+            var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
+
+            Assert.AreEqual(expectedUrl, result.BusinessWebsite);
+        }
+
 
         [Test]
         public void GetAffordabilityViewModel_Returns_Correct_Values()
@@ -573,6 +688,27 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
                 CollectionAssert.AreEqual(cacheItem.MultipleValidLocations[locationSelectionGroup.Index], locationNames);
             }
+        }
+		
+		[Test]
+        public async Task GetApplicationApprovedViewModel_EncodedAccountId_Is_Correct()
+        {
+            var result = await _orchestrator.GetApplicationApprovedViewModel(new ApplicationApprovedRequest { EncodedAccountId = _encodedAccountId, EncodedPledgeId = _encodedPledgeId, EncodedApplicationId = _encodedApplicationId, AccountId = _accountId, PledgeId = _pledgeId, ApplicationId = _applicationId });
+            Assert.AreEqual(_encodedAccountId, result.EncodedAccountId);
+        }
+
+        [Test]
+        public async Task GetApplicationApprovedViewModel_EncodedPledgeId_Has_Value()
+        {
+            var result = await _orchestrator.GetApplicationApprovedViewModel(new ApplicationApprovedRequest { EncodedAccountId = _encodedAccountId, EncodedPledgeId = _encodedPledgeId, EncodedApplicationId = _encodedApplicationId, AccountId = _accountId, PledgeId = _pledgeId, ApplicationId = _applicationId });
+            Assert.AreEqual(_encodedPledgeId, result.EncodedPledgeId);
+        }
+
+        [Test]
+        public async Task GetApplicationApprovedViewModel_DasAccountName_Has_Value()
+        {
+            var result = await _orchestrator.GetApplicationApprovedViewModel(new ApplicationApprovedRequest { EncodedAccountId = _encodedAccountId, EncodedPledgeId = _encodedAccountId, EncodedApplicationId = _encodedApplicationId, AccountId = _accountId, PledgeId = _pledgeId, ApplicationId = _applicationId });
+            Assert.AreEqual(_applicationApprovedResponse.DasAccountName, result.DasAccountName);
         }
     }
 }
