@@ -20,7 +20,7 @@
                     <span class="govuk-warning-text__assistive">Warning</span> All your details will be passed to the employer who owns the transfer funding.
                 </strong>
             </div>
-            <ol class="das-task-list">
+            <ol class="das-task-list app-task-list">
                 <li>
                     <div class="govuk-grid-row app-task-list__group-header">
                         <div class="govuk-grid-column-two-thirds">
@@ -47,7 +47,7 @@
                                 </a>
                             </span>
                             <span class="das-task-list__task-tag">
-                                <text>@Model.JobRole</text>
+                                @Model.JobRole
                             </span>
                         </li>
                         <li class="das-task-list__item">
@@ -57,7 +57,7 @@
                                 </a>
                             </span>
                             <span class="das-task-list__task-tag">
-                                <text>@Model.NumberOfApprentices</text>
+                                @Model.NumberOfApprentices
                             </span>
                         </li>
                         <li class="das-task-list__item">
@@ -67,7 +67,7 @@
                                 </a>
                             </span>
                             <span class="das-task-list__task-tag">
-                                <text>@Model.StartBy</text>
+                                @Model.StartBy
                             </span>
                         </li>
                         <li class="das-task-list__item">
@@ -77,7 +77,7 @@
                                 </a>
                             </span>
                             <span class="das-task-list__task-tag">
-                                <text>@Model.HaveTrainingProvider</text>
+                                @Model.HaveTrainingProvider
                             </span>
                         </li>
                     </ul>
@@ -110,11 +110,11 @@
                             <span class="das-task-list__task-tag">
                                 @if (Model.Sectors != null)
                                 {
-                                    <unordered-list asp-for="Sectors" source="@Model.SectorOptions" class="govuk-list das-!-text-align-right"></unordered-list>
+                                    <unordered-list asp-for="Sectors" source="@Model.SectorOptions" class="govuk-list das-!-text-align-right--from-tablet govuk-!-margin-bottom-0"></unordered-list>
                                 }
                                 else
                                 {
-                                    <text>-</text>
+                                    <span>-</span>
                                 }
                             </span>
                         </li>
@@ -125,7 +125,7 @@
                                 </a>
                             </span>
                             <span class="das-task-list__task-tag">
-                                <text>@Model.Location</text>
+                                @Model.Location
                             </span>
                         </li>
                     </ul>
@@ -180,7 +180,7 @@
                                 </a>
                             </span>
                             <span class="das-task-list__task-tag">
-                                <text>@Model.ContactName</text>
+                                @Model.ContactName
                             </span>
                         </li>
                         <li class="das-task-list__item">
@@ -192,7 +192,7 @@
                             <span class="das-task-list__task-tag">
                                 @if (Model.EmailAddresses.Count() > 0)
                                 {
-                                    <ul class="govuk-list das-!-text-align-right">
+                                    <ul class="govuk-list das-!-text-align-right--from-tablet govuk-!-margin-bottom-0">
                                         @foreach (var emailAddress in Model.EmailAddresses)
                                         {
                                             <li>@emailAddress</li>
@@ -201,7 +201,7 @@
                                 }
                                 else
                                 {
-                                    <text>-</text>
+                                    <span>-</span>
                                 }
                             </span>
                         </li>
@@ -212,24 +212,24 @@
                                 </a>
                             </span>
                             <span class="das-task-list__task-tag">
-                                <text>@Model.WebsiteUrl</text>
+                                @Model.WebsiteUrl
                             </span>
                         </li>
                     </ul>
                 </li>
             </ol>
-            <div class="govuk-grid-column-full">
-                @if (Model.IsComplete)
-                {
-                    <form method="post">
-                        <div class="govuk-grid-row">
-                            <h2 class="govuk-heading-m">Submit your transfers application</h2>
-                            <p>I confirm that I want to make the above application so I can receive funding from another business for apprenticeship training.</p>
-                            <button class="govuk-button" data-module="govuk-button" id="opportunity-apply-submit">Submit my application</button>
-                        </div>
-                    </form>
-                }
-            </div>
+    
+            @if (Model.IsComplete)
+            {
+                <form method="post">
+                    <div class="govuk-grid-row">
+                        <h2 class="govuk-heading-m">Submit your transfers application</h2>
+                        <p>I confirm that I want to make the above application so I can receive funding from another business for apprenticeship training.</p>
+                        <button class="govuk-button" data-module="govuk-button" id="opportunity-apply-submit">Submit my application</button>
+                    </div>
+                </form>
+            }
+
         </div>
         <div class="govuk-grid-column-one-third">
             <section class="employer-details side-panel">

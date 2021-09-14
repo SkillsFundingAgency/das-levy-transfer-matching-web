@@ -558,6 +558,23 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                     )));
         }
 
+        [TestCase("www.contoso.com", "http://www.contoso.com")]
+        [TestCase("http://www.contoso.com", "http://www.contoso.com")]
+        [TestCase("https://www.contoso.com", "https://www.contoso.com")]
+        [TestCase("", "")]
+        [TestCase(null, null)]
+        public async Task GetApplication_Adds_Url_Prefix_If_Missing(string url, string expectedUrl)
+        {
+            var response = _fixture.Create<GetApplicationResponse>();
+            response.BusinessWebsite = url;
+            _pledgeService.Setup(o => o.GetApplication(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
+
+            var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
+
+            Assert.AreEqual(expectedUrl, result.BusinessWebsite);
+        }
+
+
         [Test]
         public void GetAffordabilityViewModel_Returns_Correct_Values()
         {
