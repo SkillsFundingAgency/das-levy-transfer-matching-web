@@ -307,5 +307,35 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             Assert.NotNull(viewResult);
             Assert.NotNull(viewModel);
         }
+
+
+        [Test]
+        public async Task POST_Application_Approval_Redirects_To_ApplicationApproved()
+        {
+            var request = _fixture.Create<ApplicationPostRequest>();
+            request.SelectedAction = ApplicationPostRequest.ApprovalAction.Approve;
+            _orchestrator.Setup(x => x.SetApplicationOutcome(It.Is<ApplicationPostRequest>(r => r.AccountId == request.AccountId && r.ApplicationId == request.ApplicationId && r.PledgeId == request.PledgeId))).Returns(Task.CompletedTask);
+
+            var redirectResult = await _pledgesController.Application(request) as RedirectToActionResult;
+
+            Assert.NotNull(redirectResult);
+            Assert.AreEqual("ApplicationApproved", redirectResult.ActionName);
+        }
+
+        [Test]
+        public async Task GET_ApplicationApproved_Returns_Expected_View_With_Expected_ViewModel()
+        {
+            // Arrange
+            var request = _fixture.Create<ApplicationApprovedRequest>();
+            _orchestrator.Setup(x => x.GetApplicationApprovedViewModel(request)).ReturnsAsync(() => new ApplicationApprovedViewModel());
+
+            // Act
+            var viewResult = await _pledgesController.ApplicationApproved(request) as ViewResult;
+            var applicationApprovedViewModel = viewResult?.Model as ApplicationApprovedViewModel;
+
+            // Assert
+            Assert.NotNull(viewResult);
+            Assert.NotNull(applicationApprovedViewModel);
+        }
     }
 }

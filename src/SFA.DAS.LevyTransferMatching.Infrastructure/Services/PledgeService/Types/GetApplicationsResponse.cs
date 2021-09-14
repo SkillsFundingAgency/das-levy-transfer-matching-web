@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types
@@ -27,6 +28,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Typ
             public IEnumerable<string> EmailAddresses { get; set; }
             public DateTime CreatedOn { get; set; }
             public StandardsListItemDto Standard { get; set; }
+            public ApplicationStatus Status { get; set; }
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
 using SFA.DAS.Encoding;
+using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService;
@@ -189,6 +190,18 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
+        public async Task<ApplicationApprovedViewModel> GetApplicationApprovedViewModel(ApplicationApprovedRequest request)
+        {
+            var response = await _pledgeService.GetApplicationApproved(request.AccountId, request.PledgeId, request.ApplicationId);
+
+            return new ApplicationApprovedViewModel
+            {
+                EncodedAccountId = request.EncodedAccountId,
+                EncodedPledgeId = request.EncodedPledgeId,
+                DasAccountName = response.DasAccountName
+            };
+        }
+        
         public async Task<Dictionary<int, string>> ValidateLocations(LocationPostRequest request)
         {
             return await _validatorService.ValidateLocations(request);
@@ -301,7 +314,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     Amount = app.Amount,
                     Duration = app.Standard.ApprenticeshipFunding.GetEffectiveFundingLine(app.StartDate).Duration,
                     CreatedOn = app.CreatedOn,
-                    Status = "Awaiting approval"
+                    Status = app.Status
                 })
             };
         }
@@ -310,6 +323,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var result =
                 await _pledgeService.GetApplication(request.AccountId, request.PledgeId, request.ApplicationId, cancellationToken);
+
+            var isOwnerOrTransactor = _userService.IsOwnerOrTransactor(request.AccountId);
 
             if (result != null)
             {
@@ -335,11 +350,27 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     JobRole = result.TypeOfJobRole,
                     Level = result.Level,
                     DisplaySectors = result.Sector.ToReferenceDataDescriptionList(result.AllSectors),
-                    Affordability = GetAffordabilityViewModel(result.Amount, result.PledgeRemainingAmount, result.NumberOfApprentices, result.MaxFunding, result.EstimatedDurationMonths, result.StartBy)
+                    Affordability = GetAffordabilityViewModel(result.Amount, result.PledgeRemainingAmount, result.NumberOfApprentices, result.MaxFunding, result.EstimatedDurationMonths, result.StartBy),
+                    ShowAffordabilityPanel = result.Status == ApplicationStatus.Pending,
+                    AllowApproval = result.Status == ApplicationStatus.Pending && result.Amount <= result.PledgeRemainingAmount && isOwnerOrTransactor
                 };
             }
 
             return null;
+        }
+
+        public async Task SetApplicationOutcome(ApplicationPostRequest request)
+        {
+            var outcomeRequest = new SetApplicationOutcomeRequest
+            {
+                UserId = _userService.GetUserId(),
+                UserDisplayName = _userService.GetUserDisplayName(),
+                Outcome = request.SelectedAction == ApplicationPostRequest.ApprovalAction.Approve
+                    ? SetApplicationOutcomeRequest.ApplicationOutcome.Approve
+                    : SetApplicationOutcomeRequest.ApplicationOutcome.Reject
+            };
+
+            await _pledgeService.SetApplicationOutcome(request.AccountId, request.ApplicationId, request.PledgeId, outcomeRequest);
         }
 
         private string GetUrlWithPrefix(string url)

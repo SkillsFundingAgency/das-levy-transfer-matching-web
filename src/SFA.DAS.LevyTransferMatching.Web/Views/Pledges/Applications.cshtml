@@ -1,4 +1,5 @@
-﻿@using SFA.DAS.LevyTransferMatching.Web.Extensions
+﻿@using SFA.DAS.LevyTransferMatching.Domain.Extensions
+@using SFA.DAS.LevyTransferMatching.Web.Extensions
 @model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.ApplicationsViewModel
 @inject SFA.DAS.EmployerUrlHelper.ILinkGenerator LinkGenerator
 @{
@@ -85,7 +86,7 @@
                                                 </p>
                                             </td>
                                             <td class="govuk-table__cell">@app.CreatedOn.ToLongDateDisplayString()</td>
-                                            <td class="govuk-table__cell"><strong class="govuk-tag govuk-tag--grey">@app.Status</strong></td>
+                                            <td class="govuk-table__cell"><strong class="@app.Status.GetCssClassForSender()">@app.Status.GetLabelForSender()</strong></td>
                                         </tr>
                                     }
                                 }
