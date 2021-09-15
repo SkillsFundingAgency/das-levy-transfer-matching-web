@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.LocationService;
@@ -20,54 +19,54 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Location
         {
             var errors = new Dictionary<int, string>();
 
-            await CheckLocationsExist(errors, request.Locations, multipleValidResults);
-            CheckForDuplicates(errors, request.Locations);
+            await CheckLocationsExist(request.Locations, errors, multipleValidResults);
+            CheckForDuplicateLocations(errors, request.Locations);
 
             return errors;
         }
 
-        private async Task CheckLocationsExist(Dictionary<int, string> errors, List<string> locations, IDictionary<int, IEnumerable<string>> multipleValidResults)
+        private async Task CheckLocationsExist(List<string> locations, Dictionary<int, string> errors, IDictionary<int, IEnumerable<string>> multipleValidResults)
         {
             for (int i = 0; i < locations.Count; i++)
             {
                 if (locations[i] != null)
                 {
-                    var possibleLocations = await _locationService.GetLocations(locations[i]);
-
-                    if (!possibleLocations.Names.Any())
-                    {
-                        // Either there's a spelling mistake, or this is a
-                        // valid location provided by the typeahead -
-                        // GetLocations will not return valid entries.
-                        var locationInformation = await _locationService.GetLocationInformation(locations[i]);
-
-                        if (string.IsNullOrEmpty(locationInformation?.Name))
-                        {
-                            // This isn't valid.
-                            if (!errors.ContainsKey(i))
-                                errors.Add(i, $"Check the spelling of your location");
-                        }
-                    }
-                    else if (possibleLocations.Names.Count() == 1)
-                    {
-                        // There's exactly one result - update the Locations
-                        // list, and return no error
-                        var locationInformation = await _locationService.GetLocationInformation(locations[i]);
-
-                        locations[i] = locationInformation.Name;
-                    }
-                    else
-                    {
-                        // There's multiple (valid) results to select from for
-                        // this location search term -
-                        // Bubble these up
-                        multipleValidResults.Add(i, possibleLocations.Names);
-                    }
+                    await CheckLocationExists(locations, errors, multipleValidResults, i);
                 }
             }
         }
 
-        private void CheckForDuplicates(Dictionary<int, string> errors, List<string> locations)
+        private async Task CheckLocationExists(List<string> locations, Dictionary<int, string> errors, IDictionary<int, IEnumerable<string>> multipleValidResults, int i)
+        {
+            var locationSuggestions = await _locationService.GetLocations(locations[i]);
+
+            if (!locationSuggestions.Names.Any())
+            {
+                await CheckIfValidLocationSuggestion(errors, locations, i);
+            }
+            else if (locationSuggestions.Names.Count() == 1)
+            {
+                var locationInformation = await _locationService.GetLocationInformation(locations[i]);
+
+                locations[i] = locationInformation.Name;
+            }
+            else
+            {
+                multipleValidResults.Add(i, locationSuggestions.Names);
+            }
+        }
+
+        private async Task CheckIfValidLocationSuggestion(Dictionary<int, string> errors, List<string> locations, int index)
+        {
+            var locationInformation = await _locationService.GetLocationInformation(locations[index]);
+
+            if (string.IsNullOrEmpty(locationInformation?.Name))
+            {
+                errors.Add(index, $"Check the spelling of your location");
+            }
+        }
+
+        private void CheckForDuplicateLocations(Dictionary<int, string> errors, List<string> locations)
         {
             for (int i = 0; i < locations.Count; i++)
             {
