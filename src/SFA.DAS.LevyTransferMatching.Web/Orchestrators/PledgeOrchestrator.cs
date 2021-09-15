@@ -20,6 +20,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
     public class PledgeOrchestrator : IPledgeOrchestrator
     {
+        private const string LocationSelectionCacheItemPrefix = "LocationSelectionCacheItem";
+
         private readonly ICacheStorageService _cacheStorageService;
         private readonly IPledgeService _pledgeService;
         private readonly IEncodingService _encodingService;
@@ -204,7 +206,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         
         public async Task<LocationSelectViewModel> GetLocationSelectViewModel(LocationSelectRequest request)
         {
-            var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
+            var cacheItem = await RetrieveLocationSelectionCacheItem(request.CacheKey);
 
             var locationSelectionGroups = cacheItem.MultipleValidLocations
                 .Select(x => new LocationSelectPostRequest.LocationSelectionGroup()
@@ -285,11 +287,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         public async Task UpdateCacheItem(Guid cacheKey, IDictionary<int, IEnumerable<string>> multipleValidLocations)
         {
-            var cacheItem = await RetrievePledgeCacheItem(cacheKey);
+            var cacheItem = await RetrieveLocationSelectionCacheItem(cacheKey);
 
             cacheItem.MultipleValidLocations = multipleValidLocations;
 
-            await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
+            await _cacheStorageService.SaveToCache($"{LocationSelectionCacheItemPrefix}_{cacheItem.Key}", cacheItem, 1);
         }
 
         public async Task UpdateCacheItem(LocationSelectPostRequest request)
@@ -328,6 +330,19 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             {
                 result = new CreatePledgeCacheItem(key);
                 await _cacheStorageService.SaveToCache(key.ToString(), result, 1);
+            }
+
+            return result;
+        }
+
+        private async Task<LocationSelectionCacheItem> RetrieveLocationSelectionCacheItem(Guid key)
+        {
+            var result = await _cacheStorageService.RetrieveFromCache<LocationSelectionCacheItem>($"{LocationSelectionCacheItemPrefix}_{key}");
+
+            if (result == null)
+            {
+                result = new LocationSelectionCacheItem(key);
+                await _cacheStorageService.SaveToCache($"{LocationSelectionCacheItemPrefix}_{key}", result, 1);
             }
 
             return result;

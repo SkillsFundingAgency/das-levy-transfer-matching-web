@@ -621,21 +621,21 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                 .ReturnsAsync(new Dictionary<int, string>());
 
             var cacheItem = _fixture
-                .Build<CreatePledgeCacheItem>()
+                .Build<LocationSelectionCacheItem>()
                 .With(x => x.MultipleValidLocations, (IDictionary<int, IEnumerable<string>>)null)
                 .Create();
 
             _cache
-                .Setup(x => x.RetrieveFromCache<CreatePledgeCacheItem>(It.Is<string>(y => y == request.CacheKey.ToString())))
+                .Setup(x => x.RetrieveFromCache<LocationSelectionCacheItem>(It.Is<string>(y => y == $"LocationSelectionCacheItem_{request.CacheKey}")))
                 .ReturnsAsync(cacheItem);
 
-            Action<string, CreatePledgeCacheItem, int> saveToCacheCallback =
+            Action<string, LocationSelectionCacheItem, int> saveToCacheCallback =
                 (x, y, z) =>
                 {
                     cachedMultipleValidLocations = y.MultipleValidLocations;
                 };
             _cache
-                .Setup(x => x.SaveToCache(It.Is<string>(y => y == cacheItem.Key.ToString()), It.Is<CreatePledgeCacheItem>(y => y == cacheItem), It.Is<int>(y => y == 1)))
+                .Setup(x => x.SaveToCache(It.Is<string>(y => y == $"LocationSelectionCacheItem_{cacheItem.Key}"), It.Is<LocationSelectionCacheItem>(y => y == cacheItem), It.Is<int>(y => y == 1)))
                 .Callback(saveToCacheCallback);
 
             // Act
@@ -670,10 +670,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             // Arrange
             var request = _fixture.Create<LocationSelectRequest>();
 
-            var cacheItem = _fixture.Create<CreatePledgeCacheItem>();
+            var cacheItem = _fixture.Create<LocationSelectionCacheItem>();
 
             _cache
-                .Setup(x => x.RetrieveFromCache<CreatePledgeCacheItem>(It.Is<string>(y => y == request.CacheKey.ToString())))
+                .Setup(x => x.RetrieveFromCache<LocationSelectionCacheItem>(It.Is<string>(y => y == $"LocationSelectionCacheItem_{request.CacheKey}")))
                 .ReturnsAsync(cacheItem);
 
             // Act
