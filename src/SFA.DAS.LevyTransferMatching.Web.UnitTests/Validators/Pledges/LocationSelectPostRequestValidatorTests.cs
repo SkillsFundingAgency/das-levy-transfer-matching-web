@@ -25,7 +25,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Pledges
 
             var result = _locationSelectPostRequestValidator.TestValidate(request);
 
-            result.ShouldNotHaveValidationErrorFor(x => x.LocationSelectionGroups);
+            result.ShouldNotHaveValidationErrorFor(x => x.SelectValidLocationGroups);
         }
 
         [Test]
@@ -33,11 +33,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Pledges
         {
             var request = _fixture.Create<LocationSelectPostRequest>();
 
-            request.LocationSelectionGroups[1].SelectedValue = null;
+            request.SelectValidLocationGroups[1].SelectedValue = null;
 
             var result = _locationSelectPostRequestValidator.TestValidate(request);
 
-            result.ShouldHaveValidationErrorFor(x => x.LocationSelectionGroups).WithErrorMessage("Please select a location");
+            result.ShouldHaveValidationErrorFor(x => x.SelectValidLocationGroups).WithErrorMessage("Please select a location");
         }
     }
 }

@@ -2,15 +2,15 @@
 {
     public class LocationSelectPostRequest : LocationSelectRequest
     {
-        public LocationSelectionGroup[] LocationSelectionGroups { get; set; }
+        public SelectValidLocationGroup[] SelectValidLocationGroups { get; set; }
 
-        public class LocationSelectionGroup
+        public class SelectValidLocationGroup
         {
             public int Index { get; set; }
             public string SelectedValue { get; set; }
-            public LocationSelectionItem[] LocationSelectionItems { get; set; }
+            public ValidLocationItem[] ValidLocationItems { get; set; }
 
-            public class LocationSelectionItem
+            public class ValidLocationItem
             {
                 public string Value { get; set; }
                 public bool Selected { get; set; }

@@ -208,26 +208,31 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var cacheItem = await RetrieveLocationSelectionCacheItem(request.CacheKey);
 
-            var locationSelectionGroups = cacheItem.MultipleValidLocations
-                .Select(x => new LocationSelectPostRequest.LocationSelectionGroup()
-                {
-                    Index = x.Key,
-                    LocationSelectionItems = x.Value
-                        .Select(y => new LocationSelectPostRequest.LocationSelectionGroup.LocationSelectionItem()
-                        {
-                            Value = y,
-                        })
-                        .ToArray()
-                })
+            var selectValidLocationGroups = cacheItem.MultipleValidLocations
+                .Select(MapValidLocationGroup)
                 .ToArray();
 
             return new LocationSelectViewModel()
             {
                 CacheKey = request.CacheKey,
                 EncodedAccountId = request.EncodedAccountId,
-                LocationSelectionGroups = locationSelectionGroups,
+                SelectValidLocationGroups = selectValidLocationGroups,
             };
         }
+
+        private LocationSelectPostRequest.SelectValidLocationGroup MapValidLocationGroup(KeyValuePair<int, IEnumerable<string>> kvp)
+        {
+            return new LocationSelectPostRequest.SelectValidLocationGroup()
+            {
+                Index = kvp.Key,
+                ValidLocationItems = kvp.Value
+                    .Select(y => new LocationSelectPostRequest.SelectValidLocationGroup.ValidLocationItem()
+                    {
+                        Value = y,
+                    })
+                    .ToArray()
+            };
+        } 
 
         public async Task<Dictionary<int, string>> ValidateLocations(LocationPostRequest request, IDictionary<int, IEnumerable<string>> multipleValidLocations)
         {
@@ -298,7 +303,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
 
-            foreach (var locationSelectionGroup in request.LocationSelectionGroups)
+            foreach (var locationSelectionGroup in request.SelectValidLocationGroups)
             {
                 cacheItem.Locations[locationSelectionGroup.Index] = locationSelectionGroup.SelectedValue;
             }

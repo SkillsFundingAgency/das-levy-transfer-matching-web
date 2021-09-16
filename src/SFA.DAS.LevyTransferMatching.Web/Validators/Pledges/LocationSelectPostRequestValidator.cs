@@ -7,7 +7,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Pledges
     {
         public LocationSelectPostRequestValidator()
         {
-            RuleForEach(x => x.LocationSelectionGroups)
+            RuleForEach(x => x.SelectValidLocationGroups)
                 .Must(x => !string.IsNullOrEmpty(x.SelectedValue))
                 .WithMessage("Please select a location");
         }

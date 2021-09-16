@@ -680,13 +680,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var result = await _orchestrator.GetLocationSelectViewModel(request);
 
             // Assert
-            foreach (var locationSelectionGroup in result.LocationSelectionGroups)
+            foreach (var selectValidLocationGroup in result.SelectValidLocationGroups)
             {
-                CollectionAssert.Contains(cacheItem.MultipleValidLocations.Keys, locationSelectionGroup.Index);
+                CollectionAssert.Contains(cacheItem.MultipleValidLocations.Keys, selectValidLocationGroup.Index);
 
-                var locationNames = locationSelectionGroup.LocationSelectionItems.Select(x => x.Value);
+                var locationNames = selectValidLocationGroup.ValidLocationItems.Select(x => x.Value);
 
-                CollectionAssert.AreEqual(cacheItem.MultipleValidLocations[locationSelectionGroup.Index], locationNames);
+                CollectionAssert.AreEqual(cacheItem.MultipleValidLocations[selectValidLocationGroup.Index], locationNames);
             }
         }
 		
