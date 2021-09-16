@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.LevyTransferMatching.Web.Authentication;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
+using SFA.DAS.LevyTransferMatching.Web.ValidatorInterceptors;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
@@ -178,7 +180,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Authorize]
         [Route("create/location/select")]
         [HttpPost]
-        public async Task<IActionResult> LocationSelect(LocationSelectPostRequest request)
+        public async Task<IActionResult> LocationSelect([CustomizeValidator(Interceptor = typeof(LocationSelectPostRequestValidatorInterceptor))] LocationSelectPostRequest request)
         {
             await _orchestrator.UpdateCacheItem(request);
 
