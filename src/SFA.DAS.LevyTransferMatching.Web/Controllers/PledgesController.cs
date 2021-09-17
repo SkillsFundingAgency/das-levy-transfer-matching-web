@@ -158,7 +158,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
             await _orchestrator.UpdateCacheItem(request);
 
-            if (multipleValidLocations.Any())
+            if (multipleValidLocations.Any() && !request.AllLocationsSelected)
             {
                 // Then surface a view to allow them to select the correct
                 // location, from a set of multiple valid locations

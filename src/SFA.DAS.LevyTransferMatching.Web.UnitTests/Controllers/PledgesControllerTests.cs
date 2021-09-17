@@ -273,7 +273,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         public async Task POST_Location_Returns_Expected_Redirect_To_LocationSelect()
         {
             // Arrange
-            var request = _fixture.Create<LocationPostRequest>();
+            var request = _fixture
+                .Build<LocationPostRequest>()
+                .With(x => x.AllLocationsSelected, false)
+                .Create();
 
             Action<LocationPostRequest, IDictionary<int, IEnumerable<string>>> validateCallback =
                 (x, y) =>
@@ -292,6 +295,29 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             // Assert
             Assert.NotNull(actionResult);
             Assert.AreEqual("LocationSelect", actionResult.ActionName);
+            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
+            Assert.AreEqual(request.CacheKey, actionResult.RouteValues["cacheKey"]);
+        }
+
+        [Test]
+        public async Task POST_LocationSelect_AllLocationsSelected_Redirect_To_Create()
+        {
+            // Arrange
+            var request = _fixture
+                .Build<LocationPostRequest>()
+                .With(x => x.AllLocationsSelected, true)
+                .Create();
+
+            _orchestrator
+                .Setup(x => x.ValidateLocations(It.IsAny<LocationPostRequest>(), It.IsAny<IDictionary<int, IEnumerable<string>>>()))
+                .ReturnsAsync(new Dictionary<int, string>());
+
+            // Act
+            var actionResult = await _pledgesController.Location(request) as RedirectToActionResult;
+
+            // Assert
+            Assert.NotNull(actionResult);
+            Assert.AreEqual("Create", actionResult.ActionName);
             Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
             Assert.AreEqual(request.CacheKey, actionResult.RouteValues["cacheKey"]);
         }
