@@ -23,20 +23,43 @@
                         <checkbox-list asp-for="Sectors" source="@Model.SectorOptions"></checkbox-list>
                     </fieldset>
                 </div>
-
-                <div class="govuk-form-group" das-highlight-error-for="Postcode" error-class="govuk-form-group--error">
-                    <label class="govuk-label" asp-for="Postcode">
-                        <strong>Add the location where your apprentice will work</strong>
-                    </label>
-                    <div class="govuk-hint">
-                        If your apprentice will work at more than one location, enter the one where they will spend most time. If they are based at home, use this postcode or your business location.
-                    </div>
-                    <br />
-                    <div class="govuk-hint">
-                        Enter postcode, for example SW1 2AT
-                    </div>
-                    <span das-validation-for="Postcode" class="govuk-error-message"></span>
-                    <input class="govuk-input" type="text" asp-for="Postcode" das-highlight-error-for="Postcode" error-class="govuk-input--error" />
+                <div class="govuk-form-group">
+                    <fieldset class="govuk-fieldset" aria-describedby="locations-hint">
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+                            Select the location where your apprentice will work
+                        </legend>
+                        <div id="locations-hint" class="govuk-hint">
+                            Select all locations that apply
+                        </div>
+                        <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" id="location-1" name="locations" type="checkbox" value="Manchester">
+                                <label class="govuk-label govuk-checkboxes__label" for="location-1">
+                                    Manchester
+                                </label>
+                            </div>
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" id="location-2" name="locations" type="checkbox" value="Liverpool">
+                                <label class="govuk-label govuk-checkboxes__label" for="location-2">
+                                    Liverpool
+                                </label>
+                            </div>
+                            <div class="govuk-checkboxes__divider">and/or</div>
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" id="another-location" name="locations" type="checkbox" value="phone" data-aria-controls="additional-location-field">
+                                <label class="govuk-label govuk-checkboxes__label" for="another-location">
+                                    Another location
+                                </label>
+                            </div>
+                            <div class="govuk-checkboxes__conditional govuk-checkboxes__conditional--hidden" id="additional-location-field">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label govuk-visually-hidden" for="additional-location">
+                                    Additional location
+                                </label>
+                                <input class="govuk-input govuk-!-width-two-thirds" id="additional-location" name="additional-location" type="text"></div>
+                            </div>
+                        </div>
+                    </fieldset>
                 </div>
             </div>
             <div class="govuk-grid-column-one-third">
