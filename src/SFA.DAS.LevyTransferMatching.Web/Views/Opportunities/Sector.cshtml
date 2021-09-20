@@ -17,14 +17,10 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <div class="govuk-form-group govuk-!-margin-bottom-9" das-highlight-error-for="Sectors" error-class="govuk-form-group--error">
-                    <label class="govuk-label" asp-for="Sectors">
-                        <strong>Your business sector</strong>
-                    </label>
                     <fieldset class="govuk-fieldset">
-
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Select one or more sectors to describe your business</legend>
                         <span das-validation-for="Sectors" class="govuk-error-message"></span>
                         <checkbox-list asp-for="Sectors" source="@Model.SectorOptions"></checkbox-list>
-
                     </fieldset>
                 </div>
 
