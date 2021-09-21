@@ -20,6 +20,7 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using Microsoft.AspNetCore.Http;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Location;
 
 namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
@@ -40,6 +41,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
             services.AddTransient<ILocationValidatorService, LocationValidatorService>();
             services.AddTransient<ICacheStorageService, CacheStorageService>();
             services.AddTransient<IPledgeOrchestrator, PledgeOrchestrator>();
+            services.AddTransient<IApplicationsOrchestrator, ApplicationsOrchestrator>();
             services.AddTransient<IOpportunitiesOrchestrator, OpportunitiesOrchestrator>();
             services.AddTransient<ILocationOrchestrator, LocationOrchestrator>();
             services.AddTransient<IApplicationsOrchestrator, ApplicationsOrchestrator>();
@@ -51,6 +53,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
             services.AddClient<IPledgeService>((c, s) => new PledgeService(c));
             services.AddClient<IOpportunitiesService>((c, s) => new OpportunitiesService(c));
             services.AddClient<ILocationService>((c, s) => new LocationService(c));
+            services.AddClient<IApplicationsService>((c, s) => new ApplicationsService(c));
         }
 
         private static IServiceCollection AddClient<T>(

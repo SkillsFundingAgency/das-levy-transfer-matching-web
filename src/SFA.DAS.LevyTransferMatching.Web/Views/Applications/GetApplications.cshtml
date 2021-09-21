@@ -1,8 +1,52 @@
-﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Applications.GetApplicationsViewModel
+﻿@using SFA.DAS.EmployerUrlHelper
+@model SFA.DAS.LevyTransferMatching.Web.Models.Applications.GetApplicationsViewModel
 
 @{
     ViewData["Title"] = "My applications";
 }
 
 
-<p>My applications</p>
+
+<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
+    <div class="govuk-width-container">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <h1 class="govuk-heading-xl">
+                    My applications
+                </h1>
+            </div>
+            <div class="govuk-grid-column-two-thirds">
+                <p>You have <strong>@Model.Applications.Count()</strong> transfers applications.</p>
+                <table class="govuk-table govuk-!-margin-bottom-9" aria-label="Transfer pledges table">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header app-custom-class">Opportunity</th>
+                            <th scope="col" class="govuk-table__header govuk-table__header--numeric">Estimated Total Cost</th>
+                            <th scope="col" class="govuk-table__header govuk-table__header--numeric">Approval Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        @foreach (var application in Model.Applications)
+                        {
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell">
+                                    @*<a href="pledges/@pledge.ReferenceNumber/applications" class=govuk-link--no-visited-state>@pledge.ReferenceNumber</a>*@
+                                    @application.DasAccountName<br/>
+                                    @application.CreatedOn
+                                </td>
+                                <td class="govuk-table__cell govuk-table__cell--numeric">£@application.Amount.ToString("N0")</td>
+                                <td class="govuk-table__cell govuk-table__cell--numeric">£@application.Status</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                @*@if (Model.RenderCreatePledgeButton)
+                {
+                    <div class="govuk-button-group">
+                        <a class="govuk-button" data-module="govuk-button" href="@Url.Action("Inform", "Pledges", new { EncodedAccountId = Model.EncodedAccountId })">Create a transfers pledge</a>
+                    </div>
+                }*@
+            </div>
+        </div>
+    </div>
+</main>

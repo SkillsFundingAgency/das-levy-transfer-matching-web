@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SFA.DAS.LevyTransferMatching.Web.Models.Applications;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
@@ -18,9 +19,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
         [HttpGet]
         [Route("/accounts/{encodedAccountId}/applications")]
-        public async Task<IActionResult> GetApplications(string encodedAccountId)
+        public async Task<IActionResult> GetApplications(GetApplicationsRequest request)
         {
-            var viewModel = await _applicationsOrchestrator.GetApplications(encodedAccountId).ConfigureAwait(false);
+            var viewModel = await _applicationsOrchestrator.GetApplications(request).ConfigureAwait(false);
 
             return View(viewModel);
         }
