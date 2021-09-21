@@ -20,6 +20,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
     public class PledgeOrchestrator : IPledgeOrchestrator
     {
+        private const string LocationSelectionCacheItemPrefix = "LocationSelectionCacheItem";
+
         private readonly ICacheStorageService _cacheStorageService;
         private readonly IPledgeService _pledgeService;
         private readonly IEncodingService _encodingService;
@@ -202,9 +204,43 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
         
-        public async Task<Dictionary<int, string>> ValidateLocations(LocationPostRequest request)
+        public async Task<LocationSelectViewModel> GetLocationSelectViewModel(LocationSelectRequest request)
         {
-            return await _validatorService.ValidateLocations(request);
+            var cacheItem = await RetrieveLocationSelectionCacheItem(request.CacheKey);
+
+            var selectValidLocationGroups = cacheItem.MultipleValidLocations
+                .Select(MapValidLocationGroup)
+                .ToArray();
+
+            return new LocationSelectViewModel()
+            {
+                CacheKey = request.CacheKey,
+                EncodedAccountId = request.EncodedAccountId,
+                SelectValidLocationGroups = selectValidLocationGroups,
+            };
+        }
+
+        private LocationSelectPostRequest.SelectValidLocationGroup MapValidLocationGroup(KeyValuePair<int, IEnumerable<string>> kvp)
+        {
+            return new LocationSelectPostRequest.SelectValidLocationGroup()
+            {
+                Index = kvp.Key,
+                ValidLocationItems = kvp.Value
+                    .Select(y => new LocationSelectPostRequest.SelectValidLocationGroup.ValidLocationItem()
+                    {
+                        Value = y,
+                    })
+                    .ToArray()
+            };
+        } 
+
+        public async Task<Dictionary<int, string>> ValidateLocations(LocationPostRequest request, IDictionary<int, IEnumerable<string>> multipleValidLocations)
+        {
+            var errors = await _validatorService.ValidateLocations(request, multipleValidLocations);
+
+            await UpdateCacheItem(request.CacheKey, multipleValidLocations);
+
+            return errors;
         }
 
         public async Task UpdateCacheItem(AmountPostRequest request)
@@ -249,9 +285,30 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
 
-            cacheItem.Locations = request.Locations;
+            cacheItem.Locations = request.AllLocationsSelected ? null : request.Locations;
 
             await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
+        }
+
+        public async Task UpdateCacheItem(Guid cacheKey, IDictionary<int, IEnumerable<string>> multipleValidLocations)
+        {
+            var cacheItem = await RetrieveLocationSelectionCacheItem(cacheKey);
+
+            cacheItem.MultipleValidLocations = multipleValidLocations;
+
+            await _cacheStorageService.SaveToCache($"{LocationSelectionCacheItemPrefix}_{cacheItem.Key}", cacheItem, 1);
+        }
+
+        public async Task UpdateCacheItem(LocationSelectPostRequest request)
+        {
+            var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
+
+            foreach (var locationSelectionGroup in request.SelectValidLocationGroups)
+            {
+                cacheItem.Locations[locationSelectionGroup.Index] = locationSelectionGroup.SelectedValue;
+            }
+
+            await _cacheStorageService.SaveToCache(request.CacheKey.ToString(), cacheItem, 1);
         }
 
         public async Task<LevelViewModel> GetLevelViewModel(LevelRequest request)
@@ -278,6 +335,19 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             {
                 result = new CreatePledgeCacheItem(key);
                 await _cacheStorageService.SaveToCache(key.ToString(), result, 1);
+            }
+
+            return result;
+        }
+
+        private async Task<LocationSelectionCacheItem> RetrieveLocationSelectionCacheItem(Guid key)
+        {
+            var result = await _cacheStorageService.RetrieveFromCache<LocationSelectionCacheItem>($"{LocationSelectionCacheItemPrefix}_{key}");
+
+            if (result == null)
+            {
+                result = new LocationSelectionCacheItem(key);
+                await _cacheStorageService.SaveToCache($"{LocationSelectionCacheItemPrefix}_{key}", result, 1);
             }
 
             return result;
