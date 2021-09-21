@@ -20,7 +20,7 @@
                     <fieldset class="govuk-fieldset">
                         <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Select one or more sectors to describe your business</legend>
                         <span das-validation-for="Sectors" class="govuk-error-message"></span>
-                        <checkbox-list asp-for="Sectors" source="@Model.SectorOptions"></checkbox-list>
+                        <checkbox-list asp-for="Sectors" source="@Model.SectorOptions" css-class="govuk-checkboxes govuk-checkboxes--small"></checkbox-list>
                     </fieldset>
                 </div>
                 <div class="govuk-form-group">
@@ -31,34 +31,26 @@
                         <div id="locations-hint" class="govuk-hint">
                             Select all locations that apply
                         </div>
-                        <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
-                            <div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" id="location-1" name="locations" type="checkbox" value="Manchester">
-                                <label class="govuk-label govuk-checkboxes__label" for="location-1">
-                                    Manchester
-                                </label>
-                            </div>
-                            <div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" id="location-2" name="locations" type="checkbox" value="Liverpool">
-                                <label class="govuk-label govuk-checkboxes__label" for="location-2">
-                                    Liverpool
-                                </label>
-                            </div>
+                        
+                        <div data-module="govuk-checkboxes">
+                        
+                            <generic-checkbox-list asp-for="Locations" source="@Model.PledgeLocations" css-class="govuk-checkboxes govuk-checkboxes--small"></generic-checkbox-list>
+
                             <div class="govuk-checkboxes__divider">and/or</div>
-                            <div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" id="another-location" name="locations" type="checkbox" value="phone" data-aria-controls="additional-location-field">
-                                <label class="govuk-label govuk-checkboxes__label" for="another-location">
-                                    Another location
-                                </label>
+
+                            <checkbox asp-for="AdditionalLocation" label="Another location" aria-controls="additional-location-field" css-class="govuk-checkboxes govuk-checkboxes--small">
+                                <div class="govuk-checkboxes__conditional govuk-checkboxes__conditional--hidden" id="additional-location-field">
+                                    <div class="govuk-form-group">
+                                        <label class="govuk-label govuk-visually-hidden" for="AdditionalLocationText">
+                                            Additional location
+                                        </label>
+                                        <input class="govuk-input govuk-!-width-two-thirds" asp-for="AdditionalLocationText" type="text">
+                                    </div>
+                                </div>
+                            </checkbox>
+
                             </div>
-                            <div class="govuk-checkboxes__conditional govuk-checkboxes__conditional--hidden" id="additional-location-field">
-                            <div class="govuk-form-group">
-                                <label class="govuk-label govuk-visually-hidden" for="additional-location">
-                                    Additional location
-                                </label>
-                                <input class="govuk-input govuk-!-width-two-thirds" id="additional-location" name="additional-location" type="text"></div>
-                            </div>
-                        </div>
+
                     </fieldset>
                 </div>
             </div>
@@ -72,7 +64,7 @@
                     <button id="opportunity-criteria-continue" class="govuk-button" data-module="govuk-button">
                         Continue
                     </button>
-                    <a href="@Url.Action("Apply", new { Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey })" class="govuk-back-link">Back</a>
+                    <a href="@Url.Action("Apply", new {Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey})" class="govuk-back-link">Back</a>
                 </div>
             </div>
         </div>

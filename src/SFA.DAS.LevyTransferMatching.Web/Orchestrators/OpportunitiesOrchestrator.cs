@@ -143,7 +143,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 HasTrainingProvider = cacheItem.HasTrainingProvider.Value,
                 Amount = cacheItem.Amount,
                 Sectors = cacheItem.Sectors,
-                Postcode = cacheItem.Postcode ?? string.Empty,
+                
                 FirstName = cacheItem.FirstName ?? string.Empty,
                 LastName = cacheItem.LastName ?? string.Empty,
                 EmailAddresses = cacheItem.EmailAddresses,
@@ -224,7 +224,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 HaveTrainingProvider = applicationTask.Result.HasTrainingProvider.ToApplyViewString(),
                 Sectors = applicationTask.Result.Sectors?.ToList(),
                 SectorOptions = applyResponseTask.Result.Sectors?.ToList(),
-                Location = applicationTask.Result.Postcode ?? "-",
+                Location = "-",
                 MoreDetail = applicationTask.Result.Details ?? "-",
                 ContactName = string.IsNullOrWhiteSpace(contactName) ? "-" : contactName,
                 EmailAddresses = applicationTask.Result.EmailAddresses,
@@ -353,7 +353,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                         response.Opportunity.DasAccountName,
                         request.EncodedPledgeId
                     ),
-                Postcode = cacheItem.Postcode
+                PledgeLocations = response.PledgeLocations.Select(x => new CheckboxListItem{ Id = x.Id, Label = x.Name})
             };
         }
 
@@ -385,7 +385,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             var cacheItem = await RetrieveCacheItem(request.CacheKey);
 
             cacheItem.Sectors = request.Sectors;
-            cacheItem.Postcode = request.Postcode.ToUpper();
 
             await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
         }

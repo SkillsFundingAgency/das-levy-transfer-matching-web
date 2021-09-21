@@ -93,7 +93,7 @@ namespace SFA.DAS.LevyTransferMatching.Web
             services.AddEmployerUrlHelper();
             services.AddAsyncValidators();
 
-            #if DEBUG
+    #if DEBUG
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
             #endif
         }

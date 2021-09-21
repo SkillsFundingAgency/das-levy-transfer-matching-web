@@ -8,6 +8,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
     {
         public List<ReferenceDataItem> SectorOptions { get; set; }
 
+        public IEnumerable<CheckboxListItem> PledgeLocations { get; set; }
+
         public OpportunitySummaryViewModel OpportunitySummaryViewModel { get; set; }
     }
 }

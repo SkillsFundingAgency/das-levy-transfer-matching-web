@@ -160,28 +160,16 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/create/sector")]
         public async Task<IActionResult> Sector(SectorRequest request)
         {
+            var x = ModelState;
+
             return View(await _opportunitiesOrchestrator.GetSectorViewModel(request));
         }
 
         [Authorize(Policy = PolicyNames.ManageAccount)]
         [HttpPost]
         [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/create/sector")]
-        public async Task<IActionResult> Sector([FromServices] AsyncValidator<SectorPostRequest> validator, SectorPostRequest request)
+        public async Task<IActionResult> Sector(SectorPostRequest request)
         {
-            var validationResult = await validator.ValidateAsync(request);
-
-            if (!validationResult.IsValid)
-            {
-                validationResult.AddToModelState(ModelState, "");
-
-                return RedirectToAction("Sector", new SectorRequest
-                {
-                    EncodedAccountId = request.EncodedAccountId,
-                    EncodedPledgeId = request.EncodedPledgeId,
-                    CacheKey = request.CacheKey
-                });
-            }
-
             await _opportunitiesOrchestrator.UpdateCacheItem(request);
 
             return RedirectToAction("Apply", new ApplicationRequest

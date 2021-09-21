@@ -1,14 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
+using SFA.DAS.LevyTransferMatching.Web.Models.Shared;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Helpers
 {
-    public class CheckboxListTagHelper : TagHelper
+    public class GenericCheckboxListTagHelper : TagHelper
     {
         private const string ItemClass = "govuk-checkboxes__item";
         private const string InputClass = "govuk-checkboxes__input";
@@ -19,7 +21,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
         public ModelExpression Property { get; set; }
 
         [HtmlAttributeName("source")]
-        public List<ReferenceDataItem> Source { get; set; }
+        public IEnumerable<CheckboxListItem> Source { get; set; }
 
         [HtmlAttributeName("show-description")]
         public bool ShowHint { get; set; }
@@ -29,7 +31,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
         public ViewContext ViewContext { get; set; }
 
         [HtmlAttributeName("css-class")]
-        public string CssClass { get; set; } = "govuk-checkboxes govuk-checkboxes--large";
+        public string CssClass { get; set; } = "govuk-checkboxes";
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
@@ -38,20 +40,20 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
             var content = new StringBuilder();
             content.Append($"<div class=\"{CssClass}\">");
 
-            List<string> attemptedValue = null;
+            List<int> attemptedValue = null;
 
             if (ViewContext.ModelState.ContainsKey(Property.Name))
             {
                   var modelStateEntry = ViewContext.ModelState[Property.Name];
                 if (!string.IsNullOrWhiteSpace(modelStateEntry.AttemptedValue))
                 {
-                    attemptedValue = modelStateEntry.AttemptedValue.Split(",").ToList();
+                    attemptedValue = modelStateEntry.AttemptedValue.Split(",").ToList().ConvertAll(int.Parse);
                 }
             }
 
             if (attemptedValue == null)
             {
-                attemptedValue = Property.Model as List<string>;
+                attemptedValue = Property.Model as List<int>;
             }
 
             var i = 0;
@@ -67,7 +69,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
 
                 content.Append($"<input id=\"{id}\" type = \"checkbox\"{checkedValue}class=\"{InputClass}\" name=\"{Property.Name}\" value=\"{tag.Id}\">");
 
-                content.Append($"<label class=\"{LabelClass}\" for=\"{id}\">{tag.Description}</label>");
+                content.Append($"<label class=\"{LabelClass}\" for=\"{id}\">{tag.Label}</label>");
 
                 if (ShowHint)
                 {

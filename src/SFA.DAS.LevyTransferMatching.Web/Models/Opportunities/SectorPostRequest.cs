@@ -14,6 +14,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
         public long AccountId { get; set; }
 
         public List<string> Sectors { get; set; }
-        public string Postcode { get; set; }
+
+        public List<int> Locations { get; set; }
+
+        public bool AdditionalLocation { get; set; }
+        public string AdditionalLocationText { get; set; }
     }
 }

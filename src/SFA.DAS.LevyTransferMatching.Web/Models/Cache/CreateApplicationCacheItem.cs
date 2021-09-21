@@ -25,7 +25,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Cache
         public DateTime? StartDate { get; set; }
         public bool? HasTrainingProvider { get; set; }
         public List<string> Sectors { get; set; }
-        public string Postcode { get; set; }
+
         public string FirstName { get; set; }
         public int Amount { get; set; }
         public string LastName { get; set; }
