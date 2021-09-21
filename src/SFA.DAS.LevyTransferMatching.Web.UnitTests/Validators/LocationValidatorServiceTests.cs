@@ -1,109 +1,141 @@
-﻿using Moq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using AutoFixture;
+using Moq;
 using NUnit.Framework;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.LocationService;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
-using SFA.DAS.LevyTransferMatching.Web.Validators;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Location;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators
 {
     [TestFixture]
     public class LocationValidatorServiceTests
     {
-        private ILocationValidatorService validatorService;
-        private Mock<ILocationService> locationService;
+        private Mock<ILocationService> _locationService;
+        private LocationValidatorService _locationValidatorService;
+        private Fixture _fixture;
 
         [SetUp]
         public void SetUp()
         {
-            locationService = new Mock<ILocationService>();
+            _locationService = new Mock<ILocationService>();
+            _fixture = new Fixture();
+
+            _locationValidatorService = new LocationValidatorService(_locationService.Object);
         }
 
         [Test]
-        public async Task ValidateLocations_Produces_No_Errors_With_Valid_Locations()
+        public async Task ValidateLocations_One_Auto_Update_Two_With_Multiple_Valid_Results()
         {
-            //Arrange
-            var locationPostRequest = new LocationPostRequest
+            // Arrange
+            var enteredLocations = new List<string>()
             {
-                Locations = new List<string>
-                {
-                    "Manchester",
-                    "Warwick",
-                    "Stoke"
-                }
+                "Middleton",
+                "Leicester",
+                "London",
             };
 
-            foreach (var location in locationPostRequest.Locations)
-            {
-                locationService.Setup(x => x.GetLocationInformation(location)).Returns(Task.FromResult(new LocationInformationDto { Name = location }));
-            };
+            var middletonSuggestions = _fixture.Create<LocationsDto>();
+            var leicesterSuggestions = _fixture
+                .Build<LocationsDto>()
+                .With(x => x.Names, _fixture.CreateMany<string>(1))
+                .Create();
+            var londonSuggestions = _fixture.Create<LocationsDto>();
 
-            validatorService = new LocationValidatorService(locationService.Object);
+            var request = _fixture
+                .Build<LocationPostRequest>()
+                .With(x => x.Locations, enteredLocations)
+                .Create();
 
-            //Act
-            var errorsResult = await validatorService.ValidateLocations(locationPostRequest);
+            var multipleValidResults = new Dictionary<int, IEnumerable<string>>();
 
-            //Assert
-            Assert.That(!errorsResult.Any());
+            _locationService
+                .Setup(x => x.GetLocations(It.Is<string>(y => y == "Middleton")))
+                .ReturnsAsync(middletonSuggestions);
+            
+            _locationService
+                .Setup(x => x.GetLocations(It.Is<string>(y => y == "Leicester")))
+                .ReturnsAsync(leicesterSuggestions);
+
+            var leicesterInformation = _fixture.Create<LocationInformationDto>();
+
+            _locationService
+                .Setup(x => x.GetLocationInformation(It.Is<string>(y => y == "Leicester")))
+                .ReturnsAsync(leicesterInformation);
+
+            _locationService
+                .Setup(x => x.GetLocations(It.Is<string>(y => y == "London")))
+                .ReturnsAsync(londonSuggestions);
+
+            // Act
+            var result = await _locationValidatorService.ValidateLocations(request, multipleValidResults);
+
+            // Assert
+            CollectionAssert.Contains(multipleValidResults.Keys, 0);
+            CollectionAssert.AreEqual(multipleValidResults[0], middletonSuggestions.Names);
+
+            Assert.AreEqual(request.Locations[1], leicesterInformation.Name);
+
+            CollectionAssert.Contains(multipleValidResults.Keys, 2);
+            CollectionAssert.AreEqual(multipleValidResults[2], londonSuggestions.Names);
         }
 
         [Test]
-        public async Task ValidateLocations_Produces_Errors_With_Duplicate_Locations()
+        public async Task ValidateLocations_One_Typo_One_Duplicate()
         {
-            //Arrange
-            var locationPostRequest = new LocationPostRequest
+            // Arrange
+            var enteredLocations = new List<string>()
             {
-                Locations = new List<string>
-                {
-                    "Manchester",
-                    "Warwick",
-                    "Manchester"
-                }
+                "Macester",
+                "Leicester",
+                "Leicester",
             };
 
-            foreach (var location in locationPostRequest.Locations)
-            {
-                locationService.Setup(x => x.GetLocationInformation(location)).Returns(Task.FromResult(new LocationInformationDto { Name = location }));
-            };
+            var macesterSuggestions = _fixture
+                .Build<LocationsDto>()
+                .With(x => x.Names, _fixture.CreateMany<string>(0))
+                .Create();
+            var leicesterSuggestions = _fixture
+                .Build<LocationsDto>()
+                .With(x => x.Names, _fixture.CreateMany<string>(1))
+                .Create();
 
-            validatorService = new LocationValidatorService(locationService.Object);
+            var request = _fixture
+                .Build<LocationPostRequest>()
+                .With(x => x.Locations, enteredLocations)
+                .Create();
 
-            //Act
-            var errorsResult = await validatorService.ValidateLocations(locationPostRequest);
+            var multipleValidResults = new Dictionary<int, IEnumerable<string>>();
 
-            //Assert
-            Assert.That(errorsResult.Any());
-        }
+            _locationService
+                .Setup(x => x.GetLocations(It.Is<string>(y => y == "Macester")))
+                .ReturnsAsync(macesterSuggestions);
+            
+            _locationService
+                .Setup(x => x.GetLocations(It.Is<string>(y => y == "Leicester")))
+                .ReturnsAsync(leicesterSuggestions);
 
-        [Test]
-        public async Task ValidateLocations_Produces_Errors_With_NotFound_Locations()
-        {
-            //Arrange
-            var locationPostRequest = new LocationPostRequest
-            {
-                Locations = new List<string>
-                {
-                    "Manchester",
-                    "IncorrectLocation"
-                }
-            };
+            var leicesterInformation = _fixture.Create<LocationInformationDto>();
 
-            locationService.Setup(x => x.GetLocationInformation("Manchester")).Returns(Task.FromResult(new LocationInformationDto { Name = "Manchester" }));
-            locationService.Setup(x => x.GetLocationInformation("IncorrectLocation")).Returns(Task.FromResult(new LocationInformationDto { Name = null }));
+            _locationService
+                .Setup(x => x.GetLocationInformation(It.Is<string>(y => y == "Leicester")))
+                .ReturnsAsync(leicesterInformation);
 
-            validatorService = new LocationValidatorService(locationService.Object);
+            // Act
+            var result = await _locationValidatorService.ValidateLocations(request, multipleValidResults);
 
-            //Act
-            var errorsResult = await validatorService.ValidateLocations(locationPostRequest);
+            // Assert
+            CollectionAssert.Contains(result.Keys, 0);
+            Assert.AreEqual("Check the spelling of your location", result[0]);
 
-            //Assert
-            Assert.That(errorsResult.Any());
+            CollectionAssert.Contains(result.Keys, 1);
+            Assert.AreEqual("Duplicates of the same location are not allowed", result[1]);
+
+            CollectionAssert.Contains(result.Keys, 2);
+            Assert.AreEqual("Duplicates of the same location are not allowed", result[2]);
         }
     }
 }

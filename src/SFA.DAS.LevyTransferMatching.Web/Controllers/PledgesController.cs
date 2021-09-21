@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
-using SFA.DAS.LevyTransferMatching.Web.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.LevyTransferMatching.Web.Authentication;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
+using SFA.DAS.LevyTransferMatching.Web.ValidatorInterceptors;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
@@ -134,6 +136,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         public async Task<IActionResult> Location(LocationRequest request)
         {
             var viewModel = await _orchestrator.GetLocationViewModel(request);
+
             return View(viewModel);
         }
 
@@ -142,14 +145,45 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Route("create/location")]
         public async Task<IActionResult> Location(LocationPostRequest request)
         {
-            Dictionary<int, string> errors = await _orchestrator.ValidateLocations(request);
+            var multipleValidLocations = new Dictionary<int, IEnumerable<string>>();
+
+            var errors = await _orchestrator.ValidateLocations(request, multipleValidLocations);
+
             if (errors.Any())
             {
                 AddLocationErrorsToModelState(errors);
-                return RedirectToAction("Location", new { request.EncodedAccountId, request.AccountId, request.CacheKey });
+
+                return RedirectToAction(nameof(Location), new { request.EncodedAccountId, request.AccountId, request.CacheKey });
             }
 
             await _orchestrator.UpdateCacheItem(request);
+
+            if (multipleValidLocations.Any() && !request.AllLocationsSelected)
+            {
+                // Then surface a view to allow them to select the correct
+                // location, from a set of multiple valid locations
+                return RedirectToAction(nameof(LocationSelect), new { request.EncodedAccountId, request.CacheKey });
+            }
+
+            return RedirectToAction("Create", new CreateRequest() { EncodedAccountId = request.EncodedAccountId, CacheKey = request.CacheKey });
+        }
+
+        [Authorize]
+        [Route("create/location/select")]
+        public async Task<IActionResult> LocationSelect(LocationSelectRequest request)
+        {
+            var viewModel = await _orchestrator.GetLocationSelectViewModel(request);
+
+            return View(viewModel);
+        }
+
+        [Authorize]
+        [Route("create/location/select")]
+        [HttpPost]
+        public async Task<IActionResult> LocationSelect([CustomizeValidator(Interceptor = typeof(LocationSelectPostRequestValidatorInterceptor))] LocationSelectPostRequest request)
+        {
+            await _orchestrator.UpdateCacheItem(request);
+
             return RedirectToAction("Create", new CreateRequest() { EncodedAccountId = request.EncodedAccountId, CacheKey = request.CacheKey });
         }
 

@@ -1,8 +1,8 @@
-﻿using SFA.DAS.LevyTransferMatching.Infrastructure.Services.LocationService;
-using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.LocationService;
+using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Validators.Location
 {
@@ -15,37 +15,58 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Location
             _locationService = locationService;
         }
 
-        public async Task<Dictionary<int, string>> ValidateLocations(LocationPostRequest request)
+        public async Task<Dictionary<int, string>> ValidateLocations(LocationPostRequest request, IDictionary<int, IEnumerable<string>> multipleValidResults)
         {
             var errors = new Dictionary<int, string>();
 
-            await CheckLocationsExist(errors, request.Locations);
-            CheckForDuplicates(errors, request.Locations);
+            await CheckLocationsExist(request.Locations, errors, multipleValidResults);
+            CheckForDuplicateLocations(errors, request.Locations);
 
             return errors;
         }
 
-        private async Task CheckLocationsExist(Dictionary<int, string> errors, List<string> locations)
+        private async Task CheckLocationsExist(List<string> locations, Dictionary<int, string> errors, IDictionary<int, IEnumerable<string>> multipleValidResults)
         {
             for (int i = 0; i < locations.Count; i++)
             {
                 if (locations[i] != null)
                 {
-                    var locationsDto = await _locationService.GetLocationInformation(locations[i]);
-                    if (locationsDto?.Name == null)
-                    {
-                        if (!errors.ContainsKey(i))
-                            errors.Add(i, $"No locations could be found for { locations[i] }");
-                    }
-                    else
-                    {
-                        locations[i] = locationsDto.Name;
-                    }
+                    await CheckLocationExists(locations, errors, multipleValidResults, i);
                 }
             }
         }
 
-        private void CheckForDuplicates(Dictionary<int, string> errors, List<string> locations)
+        private async Task CheckLocationExists(List<string> locations, Dictionary<int, string> errors, IDictionary<int, IEnumerable<string>> multipleValidResults, int i)
+        {
+            var locationSuggestions = await _locationService.GetLocations(locations[i]);
+
+            if (!locationSuggestions.Names.Any())
+            {
+                await CheckIfValidLocationSuggestion(errors, locations, i);
+            }
+            else if (locationSuggestions.Names.Count() == 1)
+            {
+                var locationInformation = await _locationService.GetLocationInformation(locations[i]);
+
+                locations[i] = locationInformation.Name;
+            }
+            else
+            {
+                multipleValidResults.Add(i, locationSuggestions.Names);
+            }
+        }
+
+        private async Task CheckIfValidLocationSuggestion(Dictionary<int, string> errors, List<string> locations, int index)
+        {
+            var locationInformation = await _locationService.GetLocationInformation(locations[index]);
+
+            if (string.IsNullOrEmpty(locationInformation?.Name))
+            {
+                errors.Add(index, $"Check the spelling of your location");
+            }
+        }
+
+        private void CheckForDuplicateLocations(Dictionary<int, string> errors, List<string> locations)
         {
             for (int i = 0; i < locations.Count; i++)
             {
