@@ -52,11 +52,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
                 {
                     attemptedValue = modelStateEntry.AttemptedValue.Split(",").ToList();
                 }
-
-                if (attemptedValue == null)
-                {
-                    attemptedValue = Property.Model as List<string>;
-                }
+            }
+            else
+            {
+                attemptedValue = new List<string> {Property.Model.ToString().ToLower()};
             }
 
             var isChecked = attemptedValue != null && attemptedValue.Contains("true");
@@ -73,10 +72,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
 
             if (!string.IsNullOrWhiteSpace(Hint))
             {
-                if (!string.IsNullOrWhiteSpace(Hint))
-                {
-                    content.Append($"<span class=\"{DescriptionClass}\" for=\"{id}\">{ Hint}</span>");
-                }
+                content.Append($"<span class=\"{DescriptionClass}\" for=\"{id}\">{ Hint}</span>");
             }
 
             content.Append("</div>");

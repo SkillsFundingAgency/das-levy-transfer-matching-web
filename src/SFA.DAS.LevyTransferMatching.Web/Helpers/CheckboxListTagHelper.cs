@@ -48,8 +48,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
                     attemptedValue = modelStateEntry.AttemptedValue.Split(",").ToList();
                 }
             }
-
-            if (attemptedValue == null)
+            else
             {
                 attemptedValue = Property.Model as List<string>;
             }

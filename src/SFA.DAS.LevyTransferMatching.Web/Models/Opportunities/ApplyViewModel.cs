@@ -16,7 +16,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
         public string HaveTrainingProvider { get; set; }
         public List<ReferenceDataItem> SectorOptions { get; set; }
         public List<string> Sectors { get; set; }
-        public string Location { get; set; }
+        
+        public IEnumerable<string> Locations { get; set; }
 
         public string MoreDetail { get; set; }
         public string ContactName { get; set; }
@@ -31,7 +32,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
                                                                && HaveTrainingProvider.IsComplete();
 
         public bool IsBusinessDetailsSectionComplete => Sectors.IsComplete()
-                                                        && Location.IsComplete();
+                                                        && Locations.IsComplete();
 
         public bool IsContactDetailsSectionComplete => ContactName.IsComplete()
                                                        && EmailAddresses.IsComplete();

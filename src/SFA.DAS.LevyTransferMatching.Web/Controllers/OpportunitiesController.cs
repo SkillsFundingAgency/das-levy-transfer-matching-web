@@ -160,8 +160,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/create/sector")]
         public async Task<IActionResult> Sector(SectorRequest request)
         {
-            var x = ModelState;
-
             return View(await _opportunitiesOrchestrator.GetSectorViewModel(request));
         }
 

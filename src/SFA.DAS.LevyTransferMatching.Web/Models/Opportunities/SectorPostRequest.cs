@@ -15,9 +15,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
 
         public List<string> Sectors { get; set; }
 
+        public bool HasPledgeLocations { get; set; }
         public List<int> Locations { get; set; }
-
         public bool AdditionalLocation { get; set; }
         public string AdditionalLocationText { get; set; }
+        public string SpecificLocation { get; set; }
     }
 }

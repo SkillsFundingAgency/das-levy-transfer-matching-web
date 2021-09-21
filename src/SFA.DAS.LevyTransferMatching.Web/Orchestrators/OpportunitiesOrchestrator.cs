@@ -199,7 +199,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             var contactName = $"{applicationTask.Result.FirstName} {applicationTask.Result.LastName}";
 
-            return new ApplyViewModel
+            var result = new ApplyViewModel
             {
                 CacheKey = applicationTask.Result.Key,
                 EncodedPledgeId = request.EncodedPledgeId,
@@ -224,13 +224,34 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 HaveTrainingProvider = applicationTask.Result.HasTrainingProvider.ToApplyViewString(),
                 Sectors = applicationTask.Result.Sectors?.ToList(),
                 SectorOptions = applyResponseTask.Result.Sectors?.ToList(),
-                Location = "-",
                 MoreDetail = applicationTask.Result.Details ?? "-",
                 ContactName = string.IsNullOrWhiteSpace(contactName) ? "-" : contactName,
                 EmailAddresses = applicationTask.Result.EmailAddresses,
                 WebsiteUrl = string.IsNullOrEmpty(applicationTask.Result.BusinessWebsite) ? "-" : applicationTask.Result.BusinessWebsite,
                 AccessToMultipleAccounts = request.AccessToMultipleAccounts,
             };
+
+            if(applyResponseTask.Result.PledgeLocations.Any())
+            {
+                if (applicationTask.Result.Locations != null)
+                {
+                    var locations = applyResponseTask.Result.PledgeLocations
+                        .Where(x => applicationTask.Result.Locations.Contains(x.Id)).Select(y => y.Name).ToList();
+
+                    if (applicationTask.Result.AdditionalLocation)
+                    {
+                        locations.Add(applicationTask.Result.AdditionLocationText);
+                    }
+
+                    result.Locations = locations.OrderBy(x => x);
+                }
+            }
+            else
+            {
+                result.Locations = new List<string> {applicationTask.Result.SpecificLocation};
+            }
+
+            return result;
         }
 
         public async Task<ContactDetailsViewModel> GetContactDetailsViewModel(ContactDetailsRequest contactDetailsRequest)
@@ -353,7 +374,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                         response.Opportunity.DasAccountName,
                         request.EncodedPledgeId
                     ),
-                PledgeLocations = response.PledgeLocations.Select(x => new CheckboxListItem{ Id = x.Id, Label = x.Name})
+                PledgeLocations = response.PledgeLocations.Select(x => new CheckboxListItem{ Id = x.Id, Label = x.Name}).OrderBy(y => y.Label),
+                HasPledgeLocations = response.PledgeLocations.Any(),
+                Locations = cacheItem.Locations,
+                AdditionalLocation = cacheItem.AdditionalLocation,
+                AdditionalLocationText = cacheItem.AdditionLocationText,
+                SpecificLocation = cacheItem.SpecificLocation
             };
         }
 
@@ -385,6 +411,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             var cacheItem = await RetrieveCacheItem(request.CacheKey);
 
             cacheItem.Sectors = request.Sectors;
+            cacheItem.Locations = request.Locations;
+            cacheItem.AdditionalLocation = request.AdditionalLocation;
+            cacheItem.AdditionLocationText = request.AdditionalLocationText;
+            cacheItem.SpecificLocation = request.SpecificLocation;
 
             await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
         }
