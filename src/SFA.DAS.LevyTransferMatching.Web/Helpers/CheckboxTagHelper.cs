@@ -37,6 +37,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
         public override async Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
         {
             output.TagName = "";
+            output.Attributes.Clear();
 
             var innerContent = await output.GetChildContentAsync();
 
@@ -82,7 +83,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
             content.Append("</div>");
 
             output.Content.SetHtmlContent(content.ToString());
-            output.Attributes.Clear();
 
             await base.ProcessAsync(context, output);
         }

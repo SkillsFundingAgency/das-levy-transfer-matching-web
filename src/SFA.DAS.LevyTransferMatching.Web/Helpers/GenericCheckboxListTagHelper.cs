@@ -36,6 +36,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             output.TagName = "";
+            output.Attributes.Clear();
 
             var content = new StringBuilder();
             content.Append($"<div class=\"{CssClass}\">");
@@ -83,7 +84,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
             content.Append("</div>");
 
             output.PostContent.SetHtmlContent(content.ToString());
-            output.Attributes.Clear();
         }
     }
 }
