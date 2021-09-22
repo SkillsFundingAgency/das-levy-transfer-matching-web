@@ -25,5 +25,21 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
             return View(viewModel);
         }
+
+        [HttpGet]
+        [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}")]
+        public async Task<IActionResult> ApplicationStatus(ApplicationStatusRequest applicationStatusRequest)
+        {
+            var viewModel = await _applicationsOrchestrator.GetApplicationStatusViewModel(applicationStatusRequest);
+
+            if (viewModel != null)
+            {
+                return View(viewModel);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
     }
 }

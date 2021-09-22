@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.Encoding;
-using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
@@ -12,23 +10,20 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
-using SFA.DAS.LevyTransferMatching.Web.Models.Shared;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
-    public class OpportunitiesOrchestrator : IOpportunitiesOrchestrator
+    public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportunitiesOrchestrator
     {
         private const int MaximumNumberAdditionalEmailAddresses = 4;
 
         private readonly ICacheStorageService _cacheStorageService;
-        private readonly IDateTimeService _dateTimeService;
         private readonly IOpportunitiesService _opportunitiesService;
         private readonly IEncodingService _encodingService;
         private readonly IUserService _userService;
 
-        public OpportunitiesOrchestrator(IDateTimeService dateTimeService, IOpportunitiesService opportunitiesService, IUserService userService, IEncodingService encodingService, ICacheStorageService cacheStorageService)
+        public OpportunitiesOrchestrator(IDateTimeService dateTimeService, IOpportunitiesService opportunitiesService, IUserService userService, IEncodingService encodingService, ICacheStorageService cacheStorageService) : base(dateTimeService)
         {
-            _dateTimeService = dateTimeService;
             _opportunitiesService = opportunitiesService;
             _encodingService = encodingService;
             _userService = userService;
@@ -155,39 +150,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             await _opportunitiesService.PostApplication(request.AccountId, request.PledgeId, applyRequest);
 
             await _cacheStorageService.DeleteFromCache(request.CacheKey.ToString());
-        }
-
-        public OpportunitySummaryViewModel GetOpportunitySummaryViewModel(
-            IEnumerable<string> sectors,
-            IEnumerable<string> jobRoles,
-            IEnumerable<string> levels,
-            IEnumerable<string> locations,
-            IEnumerable<ReferenceDataItem> allSectors,
-            IEnumerable<ReferenceDataItem> allJobRoles,
-            IEnumerable<ReferenceDataItem> allLevels,
-            int amount,
-            bool isNamePublic,
-            string dasAccountName,
-            string encodedPledgeId)
-        {
-            string sectorList = sectors.ToReferenceDataDescriptionList(allSectors);
-            string jobRoleList = jobRoles.ToReferenceDataDescriptionList(allJobRoles);
-            string levelList = levels.ToReferenceDataDescriptionList(allLevels, descriptionSource: x => x.ShortDescription);
-            string locationList = locations.ToLocationsList();
-
-            DateTime dateTime = _dateTimeService.UtcNow;
-
-            return new OpportunitySummaryViewModel()
-            {
-                Amount = amount,
-                Description = isNamePublic ? $"{dasAccountName} ({encodedPledgeId})" : "A levy-paying business",
-                JobRoleList = jobRoleList,
-                LevelList = levelList,
-                SectorList = sectorList,
-                LocationList = locationList,
-                YearDescription = dateTime.ToTaxYearDescription(),
-                IsNamePublic = isNamePublic
-            };
         }
 
         public async Task<ApplyViewModel> GetApplyViewModel(ApplicationRequest request)

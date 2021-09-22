@@ -1,23 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using SFA.DAS.Encoding;
-using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService;
-using SFA.DAS.LevyTransferMatching.Web.Extensions;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using SFA.DAS.LevyTransferMatching.Web.Models.Applications;
-using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
-    public class ApplicationsOrchestrator : IApplicationsOrchestrator
+    public class ApplicationsOrchestrator : OpportunitiesOrchestratorBase, IApplicationsOrchestrator
     {
         private readonly IApplicationsService _applicationsService;
         private readonly IEncodingService _encodingService;
 
-        public ApplicationsOrchestrator(IApplicationsService applicationsService, IEncodingService encodingService)
+        public ApplicationsOrchestrator(IApplicationsService applicationsService, IDateTimeService dateTimeService, IEncodingService encodingService) : base(dateTimeService)
         {
             _applicationsService = applicationsService;
             _encodingService = encodingService;
@@ -44,6 +40,30 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
 
             return viewModel;
+        }
+
+        public async Task<ApplicationStatusViewModel> GetApplicationStatusViewModel(ApplicationStatusRequest request)
+        {
+            var result = await _applicationsService.GetApplicationStatus(request.AccountId, request.ApplicationId);
+
+            var encodedOpportunityId = _encodingService.Encode(result.OpportunityId, EncodingType.PledgeId);
+
+            return new ApplicationStatusViewModel()
+            {
+                 OpportunitySummaryViewModel = GetOpportunitySummaryViewModel(result.Sectors, result.JobRoles, result.Levels, result.PledgeLocations, result.AllSectors, result.AllJobRoles, result.AllLevels, result.Amount, result.IsNamePublic, result.EmployerAccountName, encodedOpportunityId),
+                 Amount = result.Amount,
+                 EmployerAccountName = result.EmployerAccountName,
+                 EncodedAccountId = request.EncodedAccountId,
+                 EncodedApplicationId = request.EncodedApplicationId,
+                 IsNamePublic = result.IsNamePublic,
+                 JobRole = result.JobRole,
+                 Level = result.Level,
+                 Locations = result.PledgeLocations,
+                 NumberOfApprentices = result.NumberOfApprentices,
+                 StartBy = result.StartBy,
+                 Status = result.Status,
+                 EncodedOpportunityId = encodedOpportunityId,
+            };
         }
     }
 }

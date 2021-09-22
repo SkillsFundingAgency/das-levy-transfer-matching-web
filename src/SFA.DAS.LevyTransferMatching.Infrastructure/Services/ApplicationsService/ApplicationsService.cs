@@ -1,7 +1,9 @@
-﻿using System.Net.Http;
+﻿using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService
@@ -21,6 +23,26 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsServi
             response.EnsureSuccessStatusCode();
 
             return JsonConvert.DeserializeObject<GetApplicationsResponse>(await response.Content.ReadAsStringAsync());
+        }
+
+        public async Task<GetApplicationStatusResponse> GetApplicationStatus(long accountId, int applicationId)
+        {
+            var response = await _httpClient.GetAsync($"accounts/{accountId}/applications/{applicationId}");
+
+            GetApplicationStatusResponse getApplicationStatusResponse = null; 
+            if (response.IsSuccessStatusCode)
+            {
+                getApplicationStatusResponse = JsonConvert.DeserializeObject<GetApplicationStatusResponse>(await response.Content.ReadAsStringAsync());
+            }
+            else
+            {
+                if (response.StatusCode != HttpStatusCode.NotFound)
+                {
+                    response.EnsureSuccessStatusCode();
+                }
+            }
+
+            return getApplicationStatusResponse;
         }
     }
 }
