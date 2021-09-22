@@ -600,10 +600,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                                           r.HasTrainingProvider == cacheItem.HasTrainingProvider.Value &&
                                           r.Amount == cacheItem.Amount &&
                                           r.Sectors.Equals(cacheItem.Sectors) &&
-                                          
+                                          r.Locations.Equals(cacheItem.Locations) &&
+                                          r.AdditionalLocation == (cacheItem.AdditionalLocation ? cacheItem.AdditionLocationText : string.Empty) &&
+                                          r.SpecificLocation == cacheItem.SpecificLocation &&
                                           r.FirstName == cacheItem.FirstName &&
                                           r.LastName == cacheItem.LastName &&
-                                          r.EmailAddresses == cacheItem.EmailAddresses &&
+                                          r.EmailAddresses.Equals(cacheItem.EmailAddresses) &&
                                           r.BusinessWebsite == cacheItem.BusinessWebsite &&
                                           r.UserId == _userId &&
                                           r.UserDisplayName == _userDisplayName)));

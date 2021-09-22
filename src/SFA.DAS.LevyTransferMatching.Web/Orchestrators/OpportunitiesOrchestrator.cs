@@ -143,7 +143,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 HasTrainingProvider = cacheItem.HasTrainingProvider.Value,
                 Amount = cacheItem.Amount,
                 Sectors = cacheItem.Sectors,
-                
+                Locations = cacheItem.Locations,
+                AdditionalLocation = cacheItem.AdditionalLocation ? cacheItem.AdditionLocationText : string.Empty,
+                SpecificLocation = cacheItem.SpecificLocation,
                 FirstName = cacheItem.FirstName ?? string.Empty,
                 LastName = cacheItem.LastName ?? string.Empty,
                 EmailAddresses = cacheItem.EmailAddresses,
