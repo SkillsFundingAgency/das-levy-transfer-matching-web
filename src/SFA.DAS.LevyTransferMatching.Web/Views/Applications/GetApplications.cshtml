@@ -1,4 +1,6 @@
 ﻿@using SFA.DAS.EmployerUrlHelper
+@using SFA.DAS.LevyTransferMatching.Domain.Extensions
+@inject SFA.DAS.EmployerUrlHelper.ILinkGenerator LinkGenerator
 @model SFA.DAS.LevyTransferMatching.Web.Models.Applications.GetApplicationsViewModel
 
 @{
@@ -14,38 +16,61 @@
                 <h1 class="govuk-heading-xl">
                     My applications
                 </h1>
-            </div>
-            <div class="govuk-grid-column-two-thirds">
+
                 <p>You have <strong>@Model.Applications.Count()</strong> transfers applications.</p>
-                <table class="govuk-table govuk-!-margin-bottom-9" aria-label="Transfer pledges table">
+                <table class="govuk-table govuk-!-margin-bottom-9" aria-label="Transfer applications table">
                     <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
                             <th scope="col" class="govuk-table__header app-custom-class">Opportunity</th>
-                            <th scope="col" class="govuk-table__header govuk-table__header--numeric">Estimated Total Cost</th>
-                            <th scope="col" class="govuk-table__header govuk-table__header--numeric">Approval Status</th>
+                            <th scope="col" class="govuk-table__header">Estimated total<br />cost</th>
+                            <th scope="col" class="govuk-table__header">Approval status</th>
                         </tr>
                     </thead>
-                    <tbody class="govuk-table__body">
-                        @foreach (var application in Model.Applications)
-                        {
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__cell">
-                                    @*<a href="pledges/@pledge.ReferenceNumber/applications" class=govuk-link--no-visited-state>@pledge.ReferenceNumber</a>*@
-                                    @application.DasAccountName<br/>
-                                    @application.CreatedOn
-                                </td>
-                                <td class="govuk-table__cell govuk-table__cell--numeric">£@application.Amount.ToString("N0")</td>
-                                <td class="govuk-table__cell govuk-table__cell--numeric">£@application.Status</td>
+                    @if (Model.Applications.Any())
+                    {
+                        <tbody class="govuk-table__body">
+                            @foreach (var application in Model.Applications)
+                            {
+
+
+                                <tr class="govuk-table__row">
+                                    <td class="govuk-table__cell">
+                                        @if (Model.CanViewApplicationDetails)
+                                        {
+                                            <a href="">@(application.IsAnonymous ? "Opportunity" : @application.DasAccountName) (@application.PledgeReference)</a><br />
+                                        }
+                                        else
+                                        {
+                                            @(application.IsAnonymous ? "Opportunity" : @application.DasAccountName) <text> (@application.PledgeReference)</text>
+
+                                        }
+
+                                        <span class="govuk-caption-m">Date: @application.CreatedOn.ToString("dd/MM/yyyy")</span>
+                                    </td>
+                                    <td class="govuk-table__cell">£@((application.Amount * (application.Duration / 12)).ToString("N0"))</td>
+                                    <td class="govuk-table__cell"><span class=" @application.Status.GetCssClassForReceiver()">@application.Status.GetLabelForSender()</span></td>
+                                </tr>
+                            }
+                        </tbody>
+                    }
+                    else
+                    {
+                        <tbody class="govuk-table__body">
+                            <tr class="govuk-table__row" data-table-row="one">
+                                <td colspan="3" class="govuk-table__cell">No applications received yet</td>
                             </tr>
-                        }
-                    </tbody>
+                        </tbody>
+                    }
+
                 </table>
+
+                <a href="@LinkGenerator.AccountsLink($"accounts/{Model.EncodedAccountId}/transfers")" class="govuk-link govuk-link--no-visited-state" )>Back to transfers</a>
                 @*@if (Model.RenderCreatePledgeButton)
-                {
-                    <div class="govuk-button-group">
-                        <a class="govuk-button" data-module="govuk-button" href="@Url.Action("Inform", "Pledges", new { EncodedAccountId = Model.EncodedAccountId })">Create a transfers pledge</a>
-                    </div>
-                }*@
+                    {
+                        <div class="govuk-button-group">
+                            <a class="govuk-button" data-module="govuk-button" href="@Url.Action("Inform", "Pledges", new { EncodedAccountId = Model.EncodedAccountId })">Create a transfers pledge</a>
+                        </div>
+                    }*@
             </div>
         </div>
     </div>

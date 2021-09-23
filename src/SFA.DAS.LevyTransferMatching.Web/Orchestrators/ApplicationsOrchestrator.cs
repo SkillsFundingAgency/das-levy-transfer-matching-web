@@ -23,21 +23,24 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         public async Task<GetApplicationsViewModel> GetApplications(GetApplicationsRequest request, CancellationToken cancellationToken = default)
         {
             var result = await _applicationsService.GetApplications(request.AccountId, cancellationToken);
-
+            
             var applicationViewModels = result.Applications?.Select(app => new GetApplicationsViewModel.ApplicationViewModel
             {
                 EncodedApplicationId = _encodingService.Encode(app.Id, EncodingType.PledgeApplicationId),
                 DasAccountName = app.DasAccountName,
-                Amount = app.Amount,
-               // Duration = app.Standard.ApprenticeshipFunding.GetEffectiveFundingLine(app.StartDate).Duration,
+                Amount = app.Standard.ApprenticeshipFunding.GetEffectiveFundingLine(app.StartDate).CalcFundingForDate(app.NumberOfApprentices, app.StartDate),
+                Duration = app.Standard.ApprenticeshipFunding.GetEffectiveFundingLine(app.StartDate).Duration,
                 CreatedOn = app.CreatedOn,
                 Status = app.Status,
                 NumberOfApprentices = app.NumberOfApprentices,
+                PledgeReference = _encodingService.Encode(app.Id, EncodingType.PledgeId),
+                IsAnonymous = app.IsAnonymousPledge
             }).ToList();
 
             var viewModel = new GetApplicationsViewModel()
             {
-                Applications = applicationViewModels
+                Applications = applicationViewModels,
+                EncodedAccountId = request.EncodedAccountId
             };
 
             return viewModel;

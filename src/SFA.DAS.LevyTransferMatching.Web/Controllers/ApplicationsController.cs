@@ -22,7 +22,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         public async Task<IActionResult> GetApplications(GetApplicationsRequest request)
         {
             var viewModel = await _applicationsOrchestrator.GetApplications(request).ConfigureAwait(false);
-
+            
             return View(viewModel);
         }
 
