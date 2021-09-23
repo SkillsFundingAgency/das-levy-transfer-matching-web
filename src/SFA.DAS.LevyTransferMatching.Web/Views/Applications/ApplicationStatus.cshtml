@@ -4,15 +4,10 @@
     ViewData["Title"] = $"Your {(Model.IsNamePublic ? Model.EmployerAccountName : "opportunity")} ({Model.EncodedOpportunityId}) application details";
 }
 
+<a href="@Url.Action("GetApplications")" class="govuk-back-link">Back</a>
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
 
     <div class="govuk-width-container form-entry">
-
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-full">
-                <a href="@Url.Action("GetApplications")" class="govuk-back-link">Back</a>
-            </div>
-        </div>
 
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
@@ -38,14 +33,14 @@
                 -->
 
                 <div class="accepted-text-hide">
-                    <h2 class="govuk-heading-m">About your apprenticeship training course</h2>
+                    <h2 class="govuk-heading-m">About your apprenticeship training</h2>
                 </div>
 
-                <section class="employer-contact-details">
-                    <p><strong>Apprenticeship training course:</strong> Engineer surveyor (level 4)</p>
-                    <p><strong>Number of apprentices:</strong> 2</p>
-                    <p><strong>Estimated total cost:</strong> £25,000</p>
-                    <p><strong>Apprenticeship training to start by:</strong> 10/2021</p>
+                <section class="das-highlight">
+                    <p><strong>Apprenticeship training course:</strong> @Model.JobRole</p>
+                    <p><strong>Number of apprentices:</strong> @Model.NumberOfApprentices</p>
+                    <p><strong>Estimated total cost:</strong> @Model.Amount</p>
+                    <p class="govuk-!-margin-bottom-0"><strong>Apprenticeship training to start by:</strong> @Model.StartBy.ToString("MM/yyyy")</p>
                 </section>
 
             </div>

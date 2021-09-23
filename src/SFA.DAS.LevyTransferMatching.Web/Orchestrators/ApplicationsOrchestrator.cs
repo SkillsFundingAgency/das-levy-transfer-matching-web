@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
+using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Models.Applications;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
@@ -51,7 +52,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             return new ApplicationStatusViewModel()
             {
                  OpportunitySummaryViewModel = GetOpportunitySummaryViewModel(result.Sectors, result.JobRoles, result.Levels, result.PledgeLocations, result.AllSectors, result.AllJobRoles, result.AllLevels, result.Amount, result.IsNamePublic, result.EmployerAccountName, encodedOpportunityId),
-                 Amount = result.Amount,
+                 Amount = result.Amount.ToCurrencyString(),
                  EmployerAccountName = result.EmployerAccountName,
                  EncodedAccountId = request.EncodedAccountId,
                  EncodedApplicationId = request.EncodedApplicationId,

@@ -14,7 +14,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
         public string JobRole { get; set; }
         public int Level { get; set; }
         public int NumberOfApprentices { get; set; }
-        public int Amount { get; set; }
+        public string Amount { get; set; }
         public DateTime StartBy { get; set; }
         public OpportunitySummaryViewModel OpportunitySummaryViewModel { get; set; }
         public string EncodedOpportunityId { get; set; }
