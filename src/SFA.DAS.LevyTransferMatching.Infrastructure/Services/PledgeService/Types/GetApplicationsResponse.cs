@@ -29,6 +29,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Typ
             public DateTime CreatedOn { get; set; }
             public StandardsListItemDto Standard { get; set; }
             public ApplicationStatus Status { get; set; }
+            public bool IsAnonymousPledge { get; set; }
         }
     }
 }

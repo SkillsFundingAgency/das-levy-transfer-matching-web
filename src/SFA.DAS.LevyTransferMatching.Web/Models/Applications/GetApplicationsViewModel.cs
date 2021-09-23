@@ -9,7 +9,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
 {
     public class GetApplicationsViewModel
     {
+        public string EncodedAccountId { get; set; }
         public IEnumerable<ApplicationViewModel> Applications { get; set; }
+        public bool CanViewApplicationDetails { get; set; }
 
         public class ApplicationViewModel
         {
@@ -20,6 +22,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
             public int Duration { get; set; }
             public ApplicationStatus Status { get; set; }
             public string EncodedApplicationId { get; set; }
+            public string PledgeReference { get; set; }
+            public bool IsAnonymous { get; set; }
         }
     }
 }
