@@ -11,7 +11,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
     {
         public string EncodedAccountId { get; set; }
         public IEnumerable<ApplicationViewModel> Applications { get; set; }
-        public bool CanViewApplicationDetails { get; set; }
+        public bool RenderViewApplicationDetailsHyperlink { get; set; }
 
         public class ApplicationViewModel
         {
