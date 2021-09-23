@@ -16,7 +16,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             _dateTimeService = dateTimeService;
         }
 
-        protected OpportunitySummaryViewModel GetOpportunitySummaryViewModel(
+        public OpportunitySummaryViewModel GetOpportunitySummaryViewModel(
             IEnumerable<string> sectors,
             IEnumerable<string> jobRoles,
             IEnumerable<string> levels,

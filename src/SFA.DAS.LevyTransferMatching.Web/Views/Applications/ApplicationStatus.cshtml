@@ -1,4 +1,6 @@
-﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Applications.ApplicationStatusViewModel
+﻿@using SFA.DAS.LevyTransferMatching.Domain.Extensions
+
+@model SFA.DAS.LevyTransferMatching.Web.Models.Applications.ApplicationStatusViewModel
 
 @{
     ViewData["Title"] = $"Your {(Model.IsNamePublic ? Model.EmployerAccountName : "opportunity")} ({Model.EncodedOpportunityId}) application details";
@@ -18,19 +20,9 @@
                     <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                     <strong class="govuk-warning-text__text">
                         <span class="govuk-warning-text__assistive">Warning</span>
-                        Application status: <span class="govuk-tag govuk-tag--grey">Awaiting approval</span>
+                        Application status: <span class="@Model.Status.GetCssClassForReceiver()">@Model.Status.GetLabelForReceiver()</span>
                     </strong>
                 </div>
-
-                <!--
-                    <div class="govuk-warning-text application-status-one-accepted">
-                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                        <strong class="govuk-warning-text__text">
-                            <span class="govuk-warning-text__assistive">Warning</span>
-                            <span class="govuk-tag govuk-tag--blue">approved, awaiting your acceptance</span> Barry & Barry Ltd have approved your application - <strong id="date-stamp"></strong>
-                        </strong>
-                    </div>
-                -->
 
                 <div class="accepted-text-hide">
                     <h2 class="govuk-heading-m">About your apprenticeship training</h2>
