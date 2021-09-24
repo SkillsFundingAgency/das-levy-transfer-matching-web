@@ -15,7 +15,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         private readonly IEncodingService _encodingService;
         private readonly Infrastructure.Configuration.FeatureToggles _featureToggles;
 
-        public ApplicationsOrchestrator(IApplicationsService applicationsService, IEncodingService encodingService, Infrastructure.Configuration.FeatureToggles featureToggles)
+        public ApplicationsOrchestrator(IApplicationsService applicationsService, IDateTimeService dateTimeService, IEncodingService encodingService, Infrastructure.Configuration.FeatureToggles featureToggles) : base(dateTimeService)
         {
             _applicationsService = applicationsService;
             _encodingService = encodingService;
