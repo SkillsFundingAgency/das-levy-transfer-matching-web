@@ -35,7 +35,7 @@
                                     <td class="govuk-table__cell">
                                         @if (Model.RenderViewApplicationDetailsHyperlink)
                                         {
-                                            <a href="@Url.Action("ApplicationStatus", "Applications" ,new{ encodedApplicationId = application.EncodedApplicationId })" class="govuk-link govuk-link--no-visited-state">@(application.IsAnonymous ? "Opportunity" : @application.DasAccountName) (@application.PledgeReference)</a><br />
+                                            <a href="@Url.Action("ApplicationStatus", "Applications" ,new{ encodedApplicationId = application.EncodedApplicationId,  encodedAccountId = Model.EncodedAccountId})" class="govuk-link govuk-link--no-visited-state">@(application.IsAnonymous ? "Opportunity" : @application.DasAccountName) (@application.PledgeReference)</a><br />
                                         }
                                         else
                                         {
