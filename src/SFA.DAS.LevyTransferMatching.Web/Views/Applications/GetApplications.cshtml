@@ -31,13 +31,11 @@
                         <tbody class="govuk-table__body">
                             @foreach (var application in Model.Applications)
                             {
-
-
                                 <tr class="govuk-table__row">
                                     <td class="govuk-table__cell">
-                                        @if (Model.CanViewApplicationDetails)
+                                        @if (Model.RenderViewApplicationDetailsHyperlink)
                                         {
-                                            <a href="">@(application.IsAnonymous ? "Opportunity" : @application.DasAccountName) (@application.PledgeReference)</a><br />
+                                            <a href="@Url.Action("ApplicationStatus", "Applications" ,new{ encodedApplicationId = application.EncodedApplicationId })" class="govuk-link govuk-link--no-visited-state">@(application.IsAnonymous ? "Opportunity" : @application.DasAccountName) (@application.PledgeReference)</a><br />
                                         }
                                         else
                                         {

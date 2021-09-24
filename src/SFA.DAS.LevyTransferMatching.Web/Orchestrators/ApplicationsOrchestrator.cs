@@ -13,11 +13,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
     {
         private readonly IApplicationsService _applicationsService;
         private readonly IEncodingService _encodingService;
+        private readonly Infrastructure.Configuration.FeatureToggles _featureToggles;
 
-        public ApplicationsOrchestrator(IApplicationsService applicationsService, IDateTimeService dateTimeService, IEncodingService encodingService) : base(dateTimeService)
+        public ApplicationsOrchestrator(IApplicationsService applicationsService, IEncodingService encodingService, Infrastructure.Configuration.FeatureToggles featureToggles) : base(dateTimeService)
         {
             _applicationsService = applicationsService;
             _encodingService = encodingService;
+            _featureToggles = featureToggles;
         }
 
         public async Task<GetApplicationsViewModel> GetApplications(GetApplicationsRequest request, CancellationToken cancellationToken = default)
@@ -40,7 +42,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             var viewModel = new GetApplicationsViewModel()
             {
                 Applications = applicationViewModels,
-                EncodedAccountId = request.EncodedAccountId
+                EncodedAccountId = request.EncodedAccountId,
+                RenderViewApplicationDetailsHyperlink = _featureToggles.CanViewApplicationDetails
             };
 
             return viewModel;
