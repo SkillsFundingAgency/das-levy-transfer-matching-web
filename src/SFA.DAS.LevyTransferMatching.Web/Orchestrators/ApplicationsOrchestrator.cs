@@ -15,7 +15,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         private readonly IEncodingService _encodingService;
         private readonly Infrastructure.Configuration.FeatureToggles _featureToggles;
 
-        public ApplicationsOrchestrator(IApplicationsService applicationsService, IEncodingService encodingService, Infrastructure.Configuration.FeatureToggles featureToggles) : base(dateTimeService)
+        public ApplicationsOrchestrator(IApplicationsService applicationsService, IDateTimeService dateTimeService, IEncodingService encodingService, Infrastructure.Configuration.FeatureToggles featureToggles) : base(dateTimeService)
         {
             _applicationsService = applicationsService;
             _encodingService = encodingService;
@@ -25,7 +25,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         public async Task<GetApplicationsViewModel> GetApplications(GetApplicationsRequest request, CancellationToken cancellationToken = default)
         {
             var result = await _applicationsService.GetApplications(request.AccountId, cancellationToken);
-            
+
             var applicationViewModels = result.Applications?.Select(app => new GetApplicationsViewModel.ApplicationViewModel
             {
                 EncodedApplicationId = _encodingService.Encode(app.Id, EncodingType.PledgeApplicationId),
@@ -52,6 +52,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         public async Task<ApplicationStatusViewModel> GetApplicationStatusViewModel(ApplicationStatusRequest request)
         {
             var result = await _applicationsService.GetApplicationStatus(request.AccountId, request.ApplicationId);
+
+            if (result == null)
+            {
+                return null;
+            }
 
             var encodedOpportunityId = _encodingService.Encode(result.OpportunityId, EncodingType.PledgeId);
 
