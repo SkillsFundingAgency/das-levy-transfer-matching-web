@@ -46,7 +46,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             {
                 Applications = applicationViewModels,
                 EncodedAccountId = request.EncodedAccountId,
-                RenderViewApplicationDetailsHyperlink = _featureToggles.CanViewApplicationDetails
+                RenderViewApplicationDetailsHyperlink = _featureToggles.FeatureToggleCanViewApplicationDetails
             };
 
             return viewModel;
