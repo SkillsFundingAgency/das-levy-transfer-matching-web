@@ -39,7 +39,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 Status = app.Status,
                 NumberOfApprentices = app.NumberOfApprentices,
                 PledgeReference = _encodingService.Encode(app.Id, EncodingType.PledgeId),
-                IsAnonymous = app.IsAnonymousPledge
+                IsNamePublic = app.IsNamePublic
             }).ToList();
 
             var viewModel = new GetApplicationsViewModel()
