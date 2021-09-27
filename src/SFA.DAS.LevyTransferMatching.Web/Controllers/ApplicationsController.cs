@@ -21,7 +21,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Route("/accounts/{encodedAccountId}/applications")]
         public async Task<IActionResult> GetApplications(GetApplicationsRequest request)
         {
-            var viewModel = await _applicationsOrchestrator.GetApplications(request).ConfigureAwait(false);
+            var viewModel = await _applicationsOrchestrator.GetApplications(request);
             
             return View(viewModel);
         }
