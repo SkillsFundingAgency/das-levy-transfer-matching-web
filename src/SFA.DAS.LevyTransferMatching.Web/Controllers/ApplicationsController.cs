@@ -19,7 +19,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
         [HttpGet]
         [Route("/accounts/{encodedAccountId}/applications")]
-        public async Task<IActionResult> GetApplications(GetApplicationsRequest request)
+        public async Task<IActionResult> Applications(GetApplicationsRequest request)
         {
             var viewModel = await _applicationsOrchestrator.GetApplications(request);
             

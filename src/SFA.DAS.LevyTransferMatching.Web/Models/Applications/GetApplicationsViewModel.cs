@@ -24,6 +24,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
             public string EncodedApplicationId { get; set; }
             public string PledgeReference { get; set; }
             public bool IsNamePublic { get; set; }
+            public string EstimatedTotalCost { get; set; }
         }
     }
 }

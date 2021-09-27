@@ -35,17 +35,16 @@
                                     <td class="govuk-table__cell">
                                         @if (Model.RenderViewApplicationDetailsHyperlink)
                                         {
-                                            <a href="@Url.Action("ApplicationStatus", "Applications" ,new{ encodedApplicationId = application.EncodedApplicationId,  encodedAccountId = Model.EncodedAccountId})" class="govuk-link govuk-link--no-visited-state">@(application.IsNamePublic ? application.DasAccountName : "Opportunity") (@application.PledgeReference)</a><br />
+                                            <a href="@Url.Action("ApplicationStatus", "Applications" ,new{ encodedApplicationId = application.EncodedApplicationId,  encodedAccountId = Model.EncodedAccountId})" class="govuk-link govuk-link--no-visited-state">@application.DasAccountName (@application.PledgeReference)</a><br />
                                         }
                                         else
                                         {
-                                            @(application.IsNamePublic ? application.DasAccountName : "Opportunity") <text> (@application.PledgeReference)</text>
-
+                                            @application.DasAccountName <text> (@application.PledgeReference)</text>
                                         }
 
                                         <span class="govuk-caption-m">Date: @application.CreatedOn.ToString("dd/MM/yyyy")</span>
                                     </td>
-                                    <td class="govuk-table__cell">£@((application.Amount * (application.Duration / 12)).ToString("N0"))</td>
+                                    <td class="govuk-table__cell">£@application.EstimatedTotalCost</td>
                                     <td class="govuk-table__cell"><span class=" @application.Status.GetCssClassForReceiver()">@application.Status.GetLabelForSender()</span></td>
                                 </tr>
                             }
