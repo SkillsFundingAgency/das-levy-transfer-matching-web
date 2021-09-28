@@ -19,7 +19,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
         public DateTime StartBy { get; set; }
         public OpportunitySummaryViewModel OpportunitySummaryViewModel { get; set; }
         public string EncodedOpportunityId { get; set; }
-
+        public bool CanAcceptFunding { get; set; }
         public ApplicationPostRequest.ApprovalAction? SelectedAction { get; set; }
         public bool TruthfulInformation { get; set; }
         public bool ComplyWithRules { get; set; }

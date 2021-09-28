@@ -76,6 +76,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                  StartBy = result.StartBy,
                  Status = result.Status,
                  EncodedOpportunityId = encodedOpportunityId,
+                 CanAcceptFunding = 
             };
         }
     }
