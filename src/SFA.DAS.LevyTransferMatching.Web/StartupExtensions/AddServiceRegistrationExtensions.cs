@@ -41,7 +41,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
             services.AddTransient<ILocationValidatorService, LocationValidatorService>();
             services.AddTransient<ICacheStorageService, CacheStorageService>();
             services.AddTransient<IPledgeOrchestrator, PledgeOrchestrator>();
-            services.AddTransient<IApplicationsOrchestrator, ApplicationsOrchestrator>();
             services.AddTransient<IOpportunitiesOrchestrator, OpportunitiesOrchestrator>();
             services.AddTransient<ILocationOrchestrator, LocationOrchestrator>();
             services.AddTransient<IApplicationsOrchestrator, ApplicationsOrchestrator>();
