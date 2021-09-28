@@ -46,31 +46,32 @@
                             Yes, accept the funding
                         </label>
                     </div>
+
                     <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="approval-content">
-                        <p>
-                            I confirm that:
-                        </p>
-                        
-                        <checkbox asp-for="TruthfulInformation" label="terms and conditions" aria-controls="TruthfulInformation" css-class="govuk-checkboxes govuk-checkboxes--small">
-                            <div class="govuk-checkboxes__conditional govuk-checkboxes__conditional--hidden" id="truthful-information">
-                                <div class="govuk-form-group">
-                                    <label class="govuk-label govuk-checkboxes__label" asp-for="TruthfulInformation">
-                                        the information that I have provided is truthful and accurate
-                                    </label>
-                                </div>
-                            </div>
-                        </checkbox>
-                        
-                        <checkbox asp-for="ComplyWithRules" label="terms and conditions" aria-controls="ComplyWithRules" css-class="govuk-checkboxes govuk-checkboxes--small">
-                            <div class="govuk-checkboxes__conditional govuk-checkboxes__conditional--hidden" id="truthful-information">
-                                <div class="govuk-form-group">
-                                    <label class="govuk-label govuk-checkboxes__label" asp-for="ComplyWithRules">
-                                        I will comply with the <a href="https://www.gov.uk/guidance/apprenticeship-funding-rules" target="_blank">apprenticeship funding rules</a>, including not offering or making any payments in return for a transfer of funding
-                                    </label>
-                                </div>
-                            </div>
-                        </checkbox>
+            <p>
+                I confirm that:
+            </p>
+
+                <checkbox asp-for="TruthfulInformation" label="terms and conditions" aria-controls="TruthfulInformation" css-class="govuk-checkboxes govuk-checkboxes--large">
+                <div class="govuk-checkboxes__conditional govuk-checkboxes__conditional--hidden" id="truthful-information">
+                    <div class="govuk-form-group">
+                        <label class="govuk-label govuk-checkboxes__label" asp-for="TruthfulInformation">
+                            the information that I have provided is truthful and accurate
+                        </label>
                     </div>
+                </div>
+            </checkbox>
+
+            <checkbox asp-for="ComplyWithRules" label="terms and conditions" aria-controls="ComplyWithRules" css-class="govuk-checkboxes govuk-checkboxes--large">
+                <div class="govuk-checkboxes__conditional govuk-checkboxes__conditional--hidden" id="comply-with-rules">
+                    <div class="govuk-form-group">
+                        <label class="govuk-label govuk-checkboxes__label" asp-for="ComplyWithRules">
+                            I will comply with the <a href="https://www.gov.uk/guidance/apprenticeship-funding-rules" target="_blank">apprenticeship funding rules</a>, including not offering or making any payments in return for a transfer of funding
+                        </label>
+                    </div>
+                </div>
+            </checkbox>
+        </div>
                 </div>
             </div>
 
