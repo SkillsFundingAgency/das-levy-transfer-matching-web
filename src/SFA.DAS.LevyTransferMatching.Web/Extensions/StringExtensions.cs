@@ -49,5 +49,16 @@ namespace SFA.DAS.LevyTransferMatching.Web.Extensions
         {
             return list != null && list.Any();
         }
+
+        public static string ToApplicationLocationsString(this IEnumerable<string> list, string separator, string additionalLocation = null)
+        {
+            var applicationLocationsString = string.Join(separator, string.Join(separator, list));
+            if (additionalLocation != null)
+            {
+                applicationLocationsString = string.Concat(applicationLocationsString, separator, additionalLocation);
+            }
+
+            return applicationLocationsString;
+        }
     }
 }
