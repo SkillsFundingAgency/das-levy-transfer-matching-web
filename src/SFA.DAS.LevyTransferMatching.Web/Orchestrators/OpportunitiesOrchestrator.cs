@@ -138,7 +138,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 HasTrainingProvider = cacheItem.HasTrainingProvider.Value,
                 Amount = cacheItem.Amount,
                 Sectors = cacheItem.Sectors,
-                Postcode = cacheItem.Postcode ?? string.Empty,
+                Locations = cacheItem.Locations,
+                AdditionalLocation = cacheItem.AdditionalLocation ? cacheItem.AdditionLocationText : string.Empty,
+                SpecificLocation = cacheItem.SpecificLocation ?? string.Empty,
                 FirstName = cacheItem.FirstName ?? string.Empty,
                 LastName = cacheItem.LastName ?? string.Empty,
                 EmailAddresses = cacheItem.EmailAddresses,
@@ -161,7 +163,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             var contactName = $"{applicationTask.Result.FirstName} {applicationTask.Result.LastName}";
 
-            return new ApplyViewModel
+            var result = new ApplyViewModel
             {
                 CacheKey = applicationTask.Result.Key,
                 EncodedPledgeId = request.EncodedPledgeId,
@@ -186,13 +188,36 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 HaveTrainingProvider = applicationTask.Result.HasTrainingProvider.ToApplyViewString(),
                 Sectors = applicationTask.Result.Sectors?.ToList(),
                 SectorOptions = applyResponseTask.Result.Sectors?.ToList(),
-                Location = applicationTask.Result.Postcode ?? "-",
                 MoreDetail = applicationTask.Result.Details ?? "-",
                 ContactName = string.IsNullOrWhiteSpace(contactName) ? "-" : contactName,
                 EmailAddresses = applicationTask.Result.EmailAddresses,
                 WebsiteUrl = string.IsNullOrEmpty(applicationTask.Result.BusinessWebsite) ? "-" : applicationTask.Result.BusinessWebsite,
-                AccessToMultipleAccounts = request.AccessToMultipleAccounts,
+                AccessToMultipleAccounts = request.AccessToMultipleAccounts
             };
+
+            if (applyResponseTask.Result.PledgeLocations.Any())
+            {
+                var locations = new List<string>();
+
+                if (applicationTask.Result.Locations != null)
+                {
+                    locations.AddRange(applyResponseTask.Result.PledgeLocations
+                        .Where(x => applicationTask.Result.Locations.Contains(x.Id)).Select(y => y.Name).ToList());
+                }
+
+                if (applicationTask.Result.AdditionalLocation)
+                {
+                    locations.Add(applicationTask.Result.AdditionLocationText);
+                }
+
+                result.Locations = locations.OrderBy(x => x);
+            }
+            else
+            {
+                result.Locations = new List<string> {applicationTask.Result.SpecificLocation};
+            }
+
+            return result;
         }
 
         public async Task<ContactDetailsViewModel> GetContactDetailsViewModel(ContactDetailsRequest contactDetailsRequest)
@@ -315,7 +340,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                         response.Opportunity.DasAccountName,
                         request.EncodedPledgeId
                     ),
-                Postcode = cacheItem.Postcode
+                PledgeLocations = response.PledgeLocations.Select(x => new CheckboxListItem{ Id = x.Id, Label = x.Name}).OrderBy(y => y.Label),
+                HasPledgeLocations = response.PledgeLocations.Any(),
+                Locations = cacheItem.Locations,
+                AdditionalLocation = cacheItem.AdditionalLocation,
+                AdditionalLocationText = cacheItem.AdditionLocationText,
+                SpecificLocation = cacheItem.SpecificLocation
             };
         }
 
@@ -347,7 +377,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             var cacheItem = await RetrieveCacheItem(request.CacheKey);
 
             cacheItem.Sectors = request.Sectors;
-            cacheItem.Postcode = request.Postcode.ToUpper();
+            cacheItem.Locations = request.Locations;
+            cacheItem.AdditionalLocation = request.AdditionalLocation;
+            cacheItem.AdditionLocationText = request.AdditionalLocationText;
+            cacheItem.SpecificLocation = request.SpecificLocation;
 
             await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
         }
