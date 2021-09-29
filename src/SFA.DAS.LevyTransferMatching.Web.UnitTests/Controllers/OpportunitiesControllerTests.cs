@@ -501,16 +501,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var encodedPledgeId = _fixture.Create<string>();
             var encodedAccountId = _fixture.Create<string>();
             var cacheKey = _fixture.Create<Guid>();
-            var validPostcode = "ST4 5NQ";
-
-            var opportunitiesService = new Mock<IOpportunitiesService>();
-            opportunitiesService.Setup(x => x.GetSector(It.IsAny<long>(), It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync(new GetSectorResponse { Location = "Valid" });
-            var validator = new SectorPostRequestAsyncValidator(opportunitiesService.Object);
 
             var request = new SectorPostRequest
             {
                 Sectors = new List<string> { "Sector" },
-                Postcode = validPostcode,
                 EncodedPledgeId = encodedPledgeId,
                 EncodedAccountId = encodedAccountId,
                 CacheKey = cacheKey
@@ -519,7 +513,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             _orchestrator.Setup(x => x.UpdateCacheItem(request));
 
             // Assert
-            var redirectToActionResult = (await _opportunitiesController.Sector(validator, request)) as RedirectToActionResult;
+            var redirectToActionResult = (await _opportunitiesController.Sector(request)) as RedirectToActionResult;
 
             // Assert
             Assert.IsNotNull(redirectToActionResult);
@@ -528,37 +522,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             Assert.AreEqual(redirectToActionResult.RouteValues["EncodedAccountId"], encodedAccountId);
             Assert.AreEqual(redirectToActionResult.RouteValues["CacheKey"], cacheKey);
             _orchestrator.Verify(x => x.UpdateCacheItem(request), Times.Once);
-        }
-
-        [Test]
-        public async Task POST_Sector_Redirects_To_Sector_When_Validation_Fails()
-        {
-            // Arrange
-            var encodedPledgeId = _fixture.Create<string>();
-            var encodedAccountId = _fixture.Create<string>();
-            var cacheKey = _fixture.Create<Guid>();
-
-            var opportunitiesService = new Mock<IOpportunitiesService>();
-            opportunitiesService.Setup(x => x.GetSector(It.IsAny<long>(), It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync(new GetSectorResponse { Location = "" });
-            var validator = new SectorPostRequestAsyncValidator(opportunitiesService.Object);
-
-            var request = new SectorPostRequest
-            {
-                Sectors = new List<string>(),
-                Postcode = "InvalidPostcode",
-                EncodedPledgeId = encodedPledgeId,
-                EncodedAccountId = encodedAccountId,
-                CacheKey = cacheKey
-            };
-
-            _orchestrator.Setup(x => x.UpdateCacheItem(request));
-
-            // Assert
-            var redirectToActionResult = (await _opportunitiesController.Sector(validator, request)) as RedirectToActionResult;
-
-            // Assert
-            Assert.IsNotNull(redirectToActionResult);
-            Assert.AreEqual(redirectToActionResult.ActionName, nameof(OpportunitiesController.Sector));
         }
     }
 }

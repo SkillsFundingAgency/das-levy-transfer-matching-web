@@ -14,48 +14,93 @@
         </div>
     </div>
     <form method="post" class="validate-auto-complete">
+        <input type="hidden" asp-for="HasPledgeLocations"/>
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <div class="govuk-form-group govuk-!-margin-bottom-9" das-highlight-error-for="Sectors" error-class="govuk-form-group--error">
-                    <label class="govuk-label" asp-for="Sectors">
-                        <strong>Your business sector</strong>
-                    </label>
                     <fieldset class="govuk-fieldset">
-
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Select one or more sectors to describe your business</legend>
                         <span das-validation-for="Sectors" class="govuk-error-message"></span>
-                        <checkbox-list asp-for="Sectors" source="@Model.SectorOptions"></checkbox-list>
-
+                        <checkbox-list asp-for="Sectors" source="@Model.SectorOptions" css-class="govuk-checkboxes govuk-checkboxes--small"></checkbox-list>
                     </fieldset>
                 </div>
 
-                <div class="govuk-form-group" das-highlight-error-for="Postcode" error-class="govuk-form-group--error">
-                    <label class="govuk-label" asp-for="Postcode">
-                        <strong>Add the location where your apprentice will work</strong>
-                    </label>
-                    <div class="govuk-hint">
-                        If your apprentice will work at more than one location, enter the one where they will spend most time. If they are based at home, use this postcode or your business location.
+                @if (Model.HasPledgeLocations)
+                {
+                    <div class="govuk-form-group" das-highlight-error-for="Locations" das-highlight-error-for="AdditionalLocationText"  error-class="govuk-form-group--error">
+                        <fieldset class="govuk-fieldset" aria-describedby="locations-hint">
+                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+                                Select the location where your apprentice will work
+                            </legend>
+                            <div id="locations-hint" class="govuk-hint">
+                                Select all locations that apply
+                            </div>
+
+                            <span das-validation-for="Locations" class="govuk-error-message"></span>
+                            <span das-validation-for="AdditionalLocationText" class="govuk-error-message"></span>
+                            <div data-module="govuk-checkboxes">
+
+                                <generic-checkbox-list asp-for="Locations" source="@Model.PledgeLocations" css-class="govuk-checkboxes govuk-checkboxes--small"></generic-checkbox-list>
+
+                                <div class="govuk-checkboxes__divider">and/or</div>
+
+                                <checkbox asp-for="AdditionalLocation" label="Another location" aria-controls="additional-location-field" css-class="govuk-checkboxes govuk-checkboxes--small">
+                                    <div class="govuk-checkboxes__conditional govuk-checkboxes__conditional--hidden" id="additional-location-field">
+                                        <div class="govuk-form-group">
+                                            <label class="govuk-label govuk-visually-hidden" for="AdditionalLocationText">
+                                                Additional location
+                                            </label>
+                                            <input class="govuk-input govuk-!-width-two-thirds" asp-for="AdditionalLocationText" type="text">
+                                        </div>
+                                    </div>
+                                </checkbox>
+
+                            </div>
+
+                        </fieldset>
                     </div>
-                    <br />
-                    <div class="govuk-hint">
-                        Enter postcode, for example SW1 2AT
+                }
+                else
+                {
+                    <div class="govuk-form-group" das-highlight-error-for="SpecificLocation" error-class="govuk-form-group--error">
+                        <div></div>
+                        <fieldset class="govuk-fieldset" aria-describedby="locations-hint">
+                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+                                Enter the location where your apprentice will work
+                            </legend>
+                            <div id="locations-hint" class="govuk-hint">
+                                If your apprentice will work in more than one location, enter the one where they will spend most of their time. If they are based at home, use your business location.
+                            </div>
+                            <br />
+                            <div id="locations-hint2" class="govuk-hint">
+                                For example, Manchester
+                            </div>
+
+                            <span das-validation-for="SpecificLocation" class="govuk-error-message"></span>
+                            <div class="govuk-form-group">
+                                <label class="govuk-label govuk-visually-hidden" for="SpecificLocation">
+                                    Location
+                                </label>
+                                <input class="govuk-input govuk-!-width-two-thirds" asp-for="SpecificLocation" type="text">
+                            </div>
+
+                        </fieldset>
                     </div>
-                    <span das-validation-for="Postcode" class="govuk-error-message"></span>
-                    <input class="govuk-input" type="text" asp-for="Postcode" das-highlight-error-for="Postcode" error-class="govuk-input--error" />
+                        }
+                    </div>
+                    <div class="govuk-grid-column-one-third">
+                        <section class="employer-details side-panel">
+                            <partial name="/Views/Shared/_OpportunitySummary.cshtml" for="OpportunitySummaryViewModel" />
+                        </section>
+                    </div>
+                    <div class="govuk-grid-column-full">
+                        <div class="govuk-button-group">
+                            <button id="opportunity-criteria-continue" class="govuk-button" data-module="govuk-button">
+                                Continue
+                            </button>
+                            <a href="@Url.Action("Apply", new {Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey})" class="govuk-back-link">Back</a>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="govuk-grid-column-one-third">
-                <section class="employer-details side-panel">
-                    <partial name="/Views/Shared/_OpportunitySummary.cshtml" for="OpportunitySummaryViewModel" />
-                </section>
-            </div>
-            <div class="govuk-grid-column-full">
-                <div class="govuk-button-group">
-                    <button id="opportunity-criteria-continue" class="govuk-button" data-module="govuk-button">
-                        Continue
-                    </button>
-                    <a href="@Url.Action("Apply", new { Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey })" class="govuk-back-link">Back</a>
-                </div>
-            </div>
-        </div>
     </form>
 </main>
