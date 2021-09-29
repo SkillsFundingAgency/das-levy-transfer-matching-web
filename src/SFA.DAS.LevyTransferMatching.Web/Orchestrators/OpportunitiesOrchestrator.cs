@@ -230,23 +230,25 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 ContactName = string.IsNullOrWhiteSpace(contactName) ? "-" : contactName,
                 EmailAddresses = applicationTask.Result.EmailAddresses,
                 WebsiteUrl = string.IsNullOrEmpty(applicationTask.Result.BusinessWebsite) ? "-" : applicationTask.Result.BusinessWebsite,
-                AccessToMultipleAccounts = request.AccessToMultipleAccounts,
+                AccessToMultipleAccounts = request.AccessToMultipleAccounts
             };
 
-            if(applyResponseTask.Result.PledgeLocations.Any())
+            if (applyResponseTask.Result.PledgeLocations.Any())
             {
+                var locations = new List<string>();
+
                 if (applicationTask.Result.Locations != null)
                 {
-                    var locations = applyResponseTask.Result.PledgeLocations
-                        .Where(x => applicationTask.Result.Locations.Contains(x.Id)).Select(y => y.Name).ToList();
-
-                    if (applicationTask.Result.AdditionalLocation)
-                    {
-                        locations.Add(applicationTask.Result.AdditionLocationText);
-                    }
-
-                    result.Locations = locations.OrderBy(x => x);
+                    locations.AddRange(applyResponseTask.Result.PledgeLocations
+                        .Where(x => applicationTask.Result.Locations.Contains(x.Id)).Select(y => y.Name).ToList());
                 }
+
+                if (applicationTask.Result.AdditionalLocation)
+                {
+                    locations.Add(applicationTask.Result.AdditionLocationText);
+                }
+
+                result.Locations = locations.OrderBy(x => x);
             }
             else
             {
