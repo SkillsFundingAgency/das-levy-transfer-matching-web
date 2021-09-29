@@ -98,6 +98,7 @@
     float: left;
     margin-right: .3em;
     position: relative;
+    display: flex;
 }
 
 .app-dl-icon-list__title:after {
