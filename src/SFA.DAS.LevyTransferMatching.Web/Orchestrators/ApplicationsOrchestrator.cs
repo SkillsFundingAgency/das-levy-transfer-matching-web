@@ -42,7 +42,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     CreatedOn = app.CreatedOn,
                     Status = app.Status,
                     NumberOfApprentices = app.NumberOfApprentices,
-                    PledgeReference = _encodingService.Encode(app.Id, EncodingType.PledgeId),
+                    PledgeReference = _encodingService.Encode(app.PledgeId, EncodingType.PledgeId),
                     IsNamePublic = app.IsNamePublic,
                     EstimatedTotalCost = (app.Amount * (duration / 12)).ToString("N0")
                 };
