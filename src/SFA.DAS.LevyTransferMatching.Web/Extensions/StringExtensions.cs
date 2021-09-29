@@ -52,6 +52,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Extensions
 
         public static string ToApplicationLocationsString(this IEnumerable<string> list, string separator, string additionalLocation = null)
         {
+            list = list.Select(x => x.Contains(',') ? x.Split(',')[0] : x);
             var applicationLocationsString = string.Join(separator, string.Join(separator, list));
             if (additionalLocation != null)
             {
