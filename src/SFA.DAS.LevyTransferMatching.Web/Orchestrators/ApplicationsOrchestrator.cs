@@ -2,8 +2,10 @@
 using System.Threading;
 using System.Threading.Tasks;
 using SFA.DAS.Encoding;
+using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Models.Applications;
 
@@ -14,12 +16,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         private readonly IApplicationsService _applicationsService;
         private readonly IEncodingService _encodingService;
         private readonly Infrastructure.Configuration.FeatureToggles _featureToggles;
+        private readonly IUserService _userService;
 
-        public ApplicationsOrchestrator(IApplicationsService applicationsService, IDateTimeService dateTimeService, IEncodingService encodingService, Infrastructure.Configuration.FeatureToggles featureToggles) : base(dateTimeService)
+        public ApplicationsOrchestrator(IApplicationsService applicationsService, IDateTimeService dateTimeService, IEncodingService encodingService, 
+            Infrastructure.Configuration.FeatureToggles featureToggles, IUserService userService) : base(dateTimeService)
         {
             _applicationsService = applicationsService;
             _encodingService = encodingService;
             _featureToggles = featureToggles;
+            _userService = userService;
         }
 
         public async Task<GetApplicationsViewModel> GetApplications(GetApplicationsRequest request, CancellationToken cancellationToken = default)
@@ -58,7 +63,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         public async Task<ApplicationStatusViewModel> GetApplicationStatusViewModel(ApplicationStatusRequest request)
         {
             var result = await _applicationsService.GetApplicationStatus(request.AccountId, request.ApplicationId);
-
+            var isOwnerOrTransactor = _userService.IsOwnerOrTransactor(request.AccountId);
             var encodedOpportunityId = _encodingService.Encode(result.OpportunityId, EncodingType.PledgeId);
 
             return new ApplicationStatusViewModel()
@@ -76,7 +81,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                  StartBy = result.StartBy,
                  Status = result.Status,
                  EncodedOpportunityId = encodedOpportunityId,
-                 CanAcceptFunding = 
+                 CanAcceptFunding = isOwnerOrTransactor && result.Status == ApplicationStatus.Approved
             };
         }
     }
