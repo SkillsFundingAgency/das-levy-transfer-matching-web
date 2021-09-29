@@ -7,7 +7,7 @@
 
 <a href="@Url.Action("Applications", "Pledges", new { encodedAccountId = ViewContext.RouteData.Values["encodedAccountId"], EncodedPledgeId = ViewContext.RouteData.Values["EncodedPledgeId"]})" class="govuk-back-link">Back to my transfer applications</a>
 
-<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
+<main class="govuk-main-wrapper" id="main-content">
     <partial name="_ValidationSummary" />
     <h1 class="govuk-heading-xl">
         @Model.EmployerAccountName
