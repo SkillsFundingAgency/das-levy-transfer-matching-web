@@ -55,9 +55,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             return viewModel;
         }
 
-        public async Task<ApplicationStatusViewModel> GetApplicationStatusViewModel(ApplicationStatusRequest request)
+        public async Task<ApplicationViewModel> GetApplication(ApplicationRequest request)
         {
-            var result = await _applicationsService.GetApplicationStatus(request.AccountId, request.ApplicationId);
+            var result = await _applicationsService.GetApplication(request.AccountId, request.ApplicationId);
 
             if (result == null)
             {
@@ -66,7 +66,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             var encodedOpportunityId = _encodingService.Encode(result.OpportunityId, EncodingType.PledgeId);
 
-            return new ApplicationStatusViewModel()
+            return new ApplicationViewModel()
             {
                  OpportunitySummaryViewModel = GetOpportunitySummaryViewModel(result.Sectors, result.JobRoles, result.Levels, result.PledgeLocations, result.AllSectors, result.AllJobRoles, result.AllLevels, result.Amount, result.IsNamePublic, result.EmployerAccountName, encodedOpportunityId),
                  Amount = result.Amount.ToCurrencyString(),

@@ -42,15 +42,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         }
 
         [Test]
-        public async Task GetApplicationStatusViewModel_ApplicationStatusExists_ReturnsViewModel()
+        public async Task GetApplicationViewModel_ApplicationExists_ReturnsViewModel()
         {
             // Arrange
-            var request = _fixture.Create<ApplicationStatusRequest>();
-            var response = _fixture.Create<GetApplicationStatusResponse>();
+            var request = _fixture.Create<ApplicationRequest>();
+            var response = _fixture.Create<GetApplicationResponse>();
             var encodedPledgeId = _fixture.Create<string>();
 
             _mockApplicationsService
-                .Setup(x => x.GetApplicationStatus(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId)))
+                .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId)))
                 .ReturnsAsync(response);
 
             _mockEncodingService
@@ -58,7 +58,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                 .Returns(encodedPledgeId);
 
             // Act
-            var viewModel = await _applicationsOrchestrator.GetApplicationStatusViewModel(request);
+            var viewModel = await _applicationsOrchestrator.GetApplication(request);
 
             // Assert
             Assert.IsNotNull(viewModel);
@@ -66,17 +66,17 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         }
 
         [Test]
-        public async Task GetApplicationStatusViewModel_ApplicationDoesntExist_ReturnsNull()
+        public async Task GetApplicationViewModel_ApplicationDoesntExist_ReturnsNull()
         {
             // Arrange
-            var request = _fixture.Create<ApplicationStatusRequest>();
+            var request = _fixture.Create<ApplicationRequest>();
 
             _mockApplicationsService
-                .Setup(x => x.GetApplicationStatus(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId)))
-                .ReturnsAsync((GetApplicationStatusResponse)null);
+                .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId)))
+                .ReturnsAsync((GetApplicationResponse)null);
 
             // Act
-            var viewModel = await _applicationsOrchestrator.GetApplicationStatusViewModel(request);
+            var viewModel = await _applicationsOrchestrator.GetApplication(request);
 
             // Assert
             Assert.IsNull(viewModel);

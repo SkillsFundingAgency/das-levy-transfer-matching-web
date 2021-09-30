@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture;
 using Microsoft.AspNetCore.Mvc;
@@ -44,38 +41,38 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         }
 
         [Test]
-        public async Task GET_ApplicationStatus_ApplicationExists_ReturnsViewAndModel()
+        public async Task GET_Application_ApplicationExists_ReturnsViewAndModel()
         {
             // Arrange
-            var request = _fixture.Create<ApplicationStatusRequest>();
+            var request = _fixture.Create<ApplicationRequest>();
             _orchestrator
-                .Setup(x => x.GetApplicationStatusViewModel(request))
-                .ReturnsAsync(new ApplicationStatusViewModel());
+                .Setup(x => x.GetApplication(request))
+                .ReturnsAsync(new ApplicationViewModel());
 
             // Act
-            var actionResult = await _controller.ApplicationStatus(request);
+            var actionResult = await _controller.Application(request);
             var viewResult = actionResult as ViewResult;
             var model = viewResult.Model;
-            var applicationStatusViewModel = model as ApplicationStatusViewModel;
+            var applicationViewModel = model as ApplicationViewModel;
 
             // Assert
             Assert.NotNull(actionResult);
             Assert.NotNull(viewResult);
             Assert.NotNull(model);
-            Assert.NotNull(applicationStatusViewModel);
+            Assert.NotNull(applicationViewModel);
         }
 
         [Test]
-        public async Task GET_ApplicationStatus_ApplicationDoesntExist_ReturnsNotFound()
+        public async Task GET_Application_ApplicationDoesntExist_ReturnsNotFound()
         {
             // Arrange
-            var request = _fixture.Create<ApplicationStatusRequest>();
+            var request = _fixture.Create<ApplicationRequest>();
             _orchestrator
-                .Setup(x => x.GetApplicationStatusViewModel(request))
-                .ReturnsAsync((ApplicationStatusViewModel)null);
+                .Setup(x => x.GetApplication(request))
+                .ReturnsAsync((ApplicationViewModel)null);
 
             // Act
-            var actionResult = await _controller.ApplicationStatus(request);
+            var actionResult = await _controller.Application(request);
             var notFoundResult = actionResult as NotFoundResult;
 
             // Assert

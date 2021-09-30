@@ -7,6 +7,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
     public interface IApplicationsOrchestrator
     {
         Task<GetApplicationsViewModel> GetApplications(GetApplicationsRequest request, CancellationToken cancellationToken = default);
-        Task<ApplicationStatusViewModel> GetApplicationStatusViewModel(ApplicationStatusRequest request);
+        Task<ApplicationViewModel> GetApplication(ApplicationRequest request);
     }
 }

@@ -28,9 +28,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
         [HttpGet]
         [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}")]
-        public async Task<IActionResult> ApplicationStatus(ApplicationStatusRequest applicationStatusRequest)
+        public async Task<IActionResult> Application(ApplicationRequest request)
         {
-            var viewModel = await _applicationsOrchestrator.GetApplicationStatusViewModel(applicationStatusRequest);
+            var viewModel = await _applicationsOrchestrator.GetApplication(request);
 
             if (viewModel != null)
             {

@@ -5,7 +5,7 @@ using SFA.DAS.LevyTransferMatching.Web.Models.Shared;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
 {
-    public class ApplicationStatusViewModel : ApplicationStatusRequest
+    public class ApplicationViewModel : ApplicationRequest
     {
         public IEnumerable<string> Locations { get; set; }
         public bool IsNamePublic { get; set; }

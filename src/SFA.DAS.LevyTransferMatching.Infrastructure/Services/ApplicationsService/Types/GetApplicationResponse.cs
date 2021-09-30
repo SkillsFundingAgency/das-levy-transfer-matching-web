@@ -5,7 +5,7 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService.Types
 {
-    public class GetApplicationStatusResponse
+    public class GetApplicationResponse
     {
         public IEnumerable<string> Sectors { get; set; }
         public IEnumerable<string> Levels { get; set; }
