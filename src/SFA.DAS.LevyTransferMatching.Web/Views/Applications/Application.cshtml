@@ -1,0 +1,44 @@
+﻿@using SFA.DAS.LevyTransferMatching.Domain.Extensions
+
+@model SFA.DAS.LevyTransferMatching.Web.Models.Applications.ApplicationViewModel
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<a href="@Url.Action("GetApplications")" class="govuk-back-link">Back</a>
+<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <h1 class="govuk-heading-xl">@Model.Title</h1>
+
+            <div class="govuk-warning-text application-status-one">
+                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                <strong class="govuk-warning-text__text">
+                    <span class="govuk-warning-text__assistive">Warning</span>
+                    Application status: <span class="@Model.Status.GetCssClassForReceiver()">@Model.Status.GetLabelForReceiver()</span>
+                </strong>
+            </div>
+
+            <div class="accepted-text-hide">
+                <h2 class="govuk-heading-m">About your apprenticeship training</h2>
+            </div>
+
+            <section class="das-highlight">
+                <p><strong>Apprenticeship training course:</strong> @Model.JobRole</p>
+                <p><strong>Number of apprentices:</strong> @Model.NumberOfApprentices</p>
+                <p><strong>Estimated total cost:</strong> @Model.Amount</p>
+                <p class="govuk-!-margin-bottom-0"><strong>Apprenticeship training to start by:</strong> @Model.StartBy.ToString("MM/yyyy")</p>
+            </section>
+
+        </div>
+
+        <div class="govuk-grid-column-one-third">
+            <partial name="_OpportunitySummary" for="OpportunitySummaryViewModel" />
+        </div>
+
+    </div>
+
+</main>

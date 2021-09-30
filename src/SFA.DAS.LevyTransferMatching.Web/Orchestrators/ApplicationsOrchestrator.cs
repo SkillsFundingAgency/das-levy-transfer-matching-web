@@ -18,8 +18,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         private readonly Infrastructure.Configuration.FeatureToggles _featureToggles;
         private readonly IUserService _userService;
 
-        public ApplicationsOrchestrator(IApplicationsService applicationsService, IDateTimeService dateTimeService, IEncodingService encodingService, 
-            Infrastructure.Configuration.FeatureToggles featureToggles, IUserService userService) : base(dateTimeService)
+        public ApplicationsOrchestrator(IApplicationsService applicationsService, IDateTimeService dateTimeService, IEncodingService encodingService) : base(dateTimeService)
+        public ApplicationsOrchestrator(IApplicationsService applicationsService, IEncodingService encodingService, Infrastructure.Configuration.FeatureToggles featureToggles)
         {
             _applicationsService = applicationsService;
             _encodingService = encodingService;
@@ -60,13 +60,18 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             return viewModel;
         }
 
-        public async Task<ApplicationStatusViewModel> GetApplicationStatusViewModel(ApplicationStatusRequest request)
+        public async Task<ApplicationViewModel> GetApplication(ApplicationRequest request)
         {
-            var result = await _applicationsService.GetApplicationStatus(request.AccountId, request.ApplicationId);
+            var result = await _applicationsService.GetApplication(request.AccountId, request.ApplicationId);
             var isOwnerOrTransactor = _userService.IsOwnerOrTransactor(request.AccountId);
+            if (result == null)
+            {
+                return null;
+            }
+
             var encodedOpportunityId = _encodingService.Encode(result.OpportunityId, EncodingType.PledgeId);
 
-            return new ApplicationStatusViewModel()
+            return new ApplicationViewModel()
             {
                  OpportunitySummaryViewModel = GetOpportunitySummaryViewModel(result.Sectors, result.JobRoles, result.Levels, result.PledgeLocations, result.AllSectors, result.AllJobRoles, result.AllLevels, result.Amount, result.IsNamePublic, result.EmployerAccountName, encodedOpportunityId),
                  Amount = result.Amount.ToCurrencyString(),

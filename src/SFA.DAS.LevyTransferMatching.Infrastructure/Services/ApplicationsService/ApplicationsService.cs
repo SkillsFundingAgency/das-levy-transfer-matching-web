@@ -3,7 +3,6 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService
@@ -25,14 +24,14 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsServi
             return JsonConvert.DeserializeObject<GetApplicationsResponse>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<GetApplicationStatusResponse> GetApplicationStatus(long accountId, int applicationId)
+        public async Task<Types.GetApplicationResponse> GetApplication(long accountId, int applicationId)
         {
             var response = await _httpClient.GetAsync($"accounts/{accountId}/applications/{applicationId}");
 
-            GetApplicationStatusResponse getApplicationStatusResponse = null; 
+            Types.GetApplicationResponse getApplicationResponse = null; 
             if (response.IsSuccessStatusCode)
             {
-                getApplicationStatusResponse = JsonConvert.DeserializeObject<GetApplicationStatusResponse>(await response.Content.ReadAsStringAsync());
+                getApplicationResponse = JsonConvert.DeserializeObject<Types.GetApplicationResponse>(await response.Content.ReadAsStringAsync());
             }
             else
             {
@@ -42,7 +41,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsServi
                 }
             }
 
-            return getApplicationStatusResponse;
+            return getApplicationResponse;
         }
     }
 }

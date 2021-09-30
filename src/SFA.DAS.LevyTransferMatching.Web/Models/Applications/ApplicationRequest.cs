@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
 {
-    public class ApplicationStatusRequest
+    public class ApplicationRequest
     {
         public string EncodedAccountId { get; set; }
         [AutoDecode(nameof(EncodedAccountId), Encoding.EncodingType.AccountId)]

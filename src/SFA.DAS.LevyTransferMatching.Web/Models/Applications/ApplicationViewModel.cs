@@ -6,7 +6,7 @@ using SFA.DAS.LevyTransferMatching.Web.Models.Shared;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
 {
-    public class ApplicationStatusViewModel : ApplicationStatusRequest
+    public class ApplicationViewModel : ApplicationRequest
     {
         public IEnumerable<string> Locations { get; set; }
         public bool IsNamePublic { get; set; }
@@ -25,5 +25,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
         public bool ComplyWithRules { get; set; }
 
         public bool HasAcceptedTermsAndConditions => TruthfulInformation == true && ComplyWithRules == true;
+		public string Title => $"Your {(IsNamePublic ? EmployerAccountName : "opportunity")} ({EncodedOpportunityId}) application details";
     }
 }
