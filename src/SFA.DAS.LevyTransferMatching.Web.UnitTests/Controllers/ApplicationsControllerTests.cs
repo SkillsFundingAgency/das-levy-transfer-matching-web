@@ -37,7 +37,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
                     EncodedAccountId = "ID"
                 });
 
-            var result = await _controller.GetApplications(new GetApplicationsRequest()) as ViewResult;
+            var result = await _controller.Applications(new GetApplicationsRequest()) as ViewResult;
 
             var actual = result.Model as GetApplicationsViewModel;
             Assert.AreEqual("ID", actual.EncodedAccountId);

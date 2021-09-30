@@ -26,24 +26,30 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var result = await _applicationsService.GetApplications(request.AccountId, cancellationToken);
 
-            var applicationViewModels = result.Applications?.Select(app => new GetApplicationsViewModel.ApplicationViewModel
+            var applicationViewModels = result.Applications?.Select(app =>
             {
-                EncodedApplicationId = _encodingService.Encode(app.Id, EncodingType.PledgeApplicationId),
-                DasAccountName = app.DasAccountName,
-                Amount = app.Standard.ApprenticeshipFunding.GetEffectiveFundingLine(app.StartDate).CalcFundingForDate(app.NumberOfApprentices, app.StartDate),
-                Duration = app.Standard.ApprenticeshipFunding.GetEffectiveFundingLine(app.StartDate).Duration,
-                CreatedOn = app.CreatedOn,
-                Status = app.Status,
-                NumberOfApprentices = app.NumberOfApprentices,
-                PledgeReference = _encodingService.Encode(app.Id, EncodingType.PledgeId),
-                IsAnonymous = app.IsAnonymousPledge
+                var duration = app.Standard.ApprenticeshipFunding.GetEffectiveFundingLine(app.StartDate).Duration;
+                return new GetApplicationsViewModel.ApplicationViewModel
+                {
+                    EncodedApplicationId = _encodingService.Encode(app.Id, EncodingType.PledgeApplicationId),
+                    DasAccountName = app.IsNamePublic ? app.DasAccountName : "Opportunity",
+                    Amount = app.Standard.ApprenticeshipFunding.GetEffectiveFundingLine(app.StartDate)
+                        .CalcFundingForDate(app.NumberOfApprentices, app.StartDate),
+                    Duration = duration,
+                    CreatedOn = app.CreatedOn,
+                    Status = app.Status,
+                    NumberOfApprentices = app.NumberOfApprentices,
+                    PledgeReference = _encodingService.Encode(app.PledgeId, EncodingType.PledgeId),
+                    IsNamePublic = app.IsNamePublic,
+                    EstimatedTotalCost = (app.Amount * (duration / 12)).ToString("N0")
+                };
             }).ToList();
 
             var viewModel = new GetApplicationsViewModel()
             {
                 Applications = applicationViewModels,
                 EncodedAccountId = request.EncodedAccountId,
-                RenderViewApplicationDetailsHyperlink = _featureToggles.CanViewApplicationDetails
+                RenderViewApplicationDetailsHyperlink = _featureToggles.FeatureToggleCanViewApplicationDetails
             };
 
             return viewModel;
