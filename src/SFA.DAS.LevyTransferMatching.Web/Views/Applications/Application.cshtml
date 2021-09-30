@@ -3,7 +3,7 @@
 @model SFA.DAS.LevyTransferMatching.Web.Models.Applications.ApplicationViewModel
 
 @{
-    ViewData["Title"] = $"Your {(Model.IsNamePublic ? Model.EmployerAccountName : "opportunity")} ({Model.EncodedOpportunityId}) application details";
+    ViewData["Title"] = Model.Title;
 }
 
 <a href="@Url.Action("GetApplications")" class="govuk-back-link">Back</a>
@@ -14,7 +14,7 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
 
-                <h1 class="govuk-heading-xl">@ViewData["Title"]</h1>
+                <h1 class="govuk-heading-xl">@Model.Title</h1>
 
                 <div class="govuk-warning-text application-status-one">
                     <span class="govuk-warning-text__icon" aria-hidden="true">!</span>

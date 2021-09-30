@@ -18,5 +18,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
         public DateTime StartBy { get; set; }
         public OpportunitySummaryViewModel OpportunitySummaryViewModel { get; set; }
         public string EncodedOpportunityId { get; set; }
+        public string Title => $"Your {(IsNamePublic ? EmployerAccountName : "opportunity")} ({EncodedOpportunityId}) application details";
     }
 }
