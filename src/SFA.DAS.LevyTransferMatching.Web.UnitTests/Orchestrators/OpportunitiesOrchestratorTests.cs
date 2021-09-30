@@ -1,44 +1,35 @@
-﻿using AutoFixture;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using AutoFixture;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using SFA.DAS.Encoding;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
-using System.Linq;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
-using System;
-using SFA.DAS.LevyTransferMatching.Web.Extensions;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
-using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
+using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
+using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using ApplyRequest = SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types.ApplyRequest;
-
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 {
     [TestFixture]
-    public class OpportunitiesOrchestratorTests
+    public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
     {
         private OpportunitiesOrchestrator _orchestrator;
         private Fixture _fixture;
 
-        private Mock<IDateTimeService> _dateTimeService;
         private Mock<IOpportunitiesService> _opportunitiesService;
         private Mock<IUserService> _userService;
         private Mock<IEncodingService> _encodingService;
         private Mock<ICacheStorageService> _cacheStorageService;
 
-        private List<ReferenceDataItem> _sectorReferenceDataItems;
-        private List<ReferenceDataItem> _jobRoleReferenceDataItems;
-        private List<ReferenceDataItem> _levelReferenceDataItems;
         private GetIndexResponse _getIndexResponse;
-        private DateTime _currentDateTime;
         private string _userId;
         private string _userDisplayName;
 
@@ -46,7 +37,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         public void SetUp()
         {
             _fixture = new Fixture();
-            _dateTimeService = new Mock<IDateTimeService>();
             _opportunitiesService = new Mock<IOpportunitiesService>();
             _userService = new Mock<IUserService>();
             _encodingService = new Mock<IEncodingService>();
@@ -62,7 +52,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _opportunitiesService.Setup(x => x.GetIndex()).ReturnsAsync(_getIndexResponse);
             _encodingService.Setup(x => x.Encode(It.IsAny<long>(), EncodingType.PledgeId)).Returns("test");
 
-            _orchestrator = new OpportunitiesOrchestrator(_dateTimeService.Object, _opportunitiesService.Object, _userService.Object, _encodingService.Object, _cacheStorageService.Object);
+            _orchestrator = new OpportunitiesOrchestrator(DateTimeService.Object, _opportunitiesService.Object, _userService.Object, _encodingService.Object, _cacheStorageService.Object);
         }
 
         [Test]
@@ -111,9 +101,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             this.SetupGetOpportunityViewModelServices();
 
-            var sectors = _sectorReferenceDataItems.Take(4);
-            var jobRoles = _jobRoleReferenceDataItems.Take(5);
-            var levels = _levelReferenceDataItems.Take(6);
+            var sectors = SectorReferenceDataItems.Take(4);
+            var jobRoles = JobRoleReferenceDataItems.Take(5);
+            var levels = LevelReferenceDataItems.Take(6);
 
             var opportunity = _fixture
                 .Build<GetDetailResponse.OpportunityData>()
@@ -141,103 +131,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             // Assert
             Assert.IsNotNull(result.OpportunitySummaryView);
             Assert.AreEqual(encodedId, result.EncodedPledgeId);
-        }
-
-        [Test]
-        public void GetOpportunitySummaryViewModel_All_Selected_For_Everything_Tax_Year_Calculated_Successfully_And_Description_Is_Anonymous()
-        {
-            // Arrange
-            string encodedPledgeId = _fixture.Create<string>();
-
-            this.SetupGetOpportunityViewModelServices();
-
-            var opportunity = _fixture
-                .Build<OpportunityDto>()
-                .With(x => x.IsNamePublic, false)
-                .With(x => x.Sectors, _sectorReferenceDataItems.Select(y => y.Id))
-                .With(x => x.JobRoles, _jobRoleReferenceDataItems.Select(y => y.Id))
-                .With(x => x.Levels, _levelReferenceDataItems.Select(y => y.Id))
-                .Create();
-
-            // Act
-            var result = _orchestrator.GetOpportunitySummaryViewModel
-                (
-                    opportunity.Sectors,
-                    opportunity.JobRoles,
-                    opportunity.Levels,
-                    opportunity.Locations,
-                    _sectorReferenceDataItems,
-                    _jobRoleReferenceDataItems,
-                    _levelReferenceDataItems,
-                    opportunity.Amount,
-                    opportunity.IsNamePublic,
-                    opportunity.DasAccountName,
-                    encodedPledgeId
-                );
-
-            // Assert
-            Assert.AreEqual("All", result.JobRoleList);
-            Assert.AreEqual("All", result.LevelList);
-            Assert.AreEqual("All", result.SectorList);
-            Assert.AreEqual(result.YearDescription, $"{_currentDateTime.ToTaxYear("yyyy")}/{_currentDateTime.AddYears(1).ToTaxYear("yy")}");
-            Assert.IsFalse(result.Description.Contains(encodedPledgeId));
-        }
-
-        [Test]
-        public void GetOpportunitySummaryViewModel_Some_Selected_For_Everything_Tax_Year_Calculated_Successfully_And_Description_Contains_EncodedPledgeId()
-        {
-            // Arrange
-            string encodedPledgeId = _fixture.Create<string>();
-
-            this.SetupGetOpportunityViewModelServices();
-
-            var sectors = _sectorReferenceDataItems.Take(4);
-            var jobRoles = _jobRoleReferenceDataItems.Take(5);
-            var levels = _levelReferenceDataItems.Take(6);
-
-            var opportunity = _fixture
-                .Build<OpportunityDto>()
-                .With(x => x.IsNamePublic, true)
-                .With(x => x.Sectors, sectors.Select(y => y.Id))
-                .With(x => x.JobRoles, jobRoles.Select(y => y.Id))
-                .With(x => x.Levels, levels.Select(y => y.Id))
-                .Create();
-
-            // Act
-            var result = _orchestrator.GetOpportunitySummaryViewModel
-                (
-                    opportunity.Sectors,
-                    opportunity.JobRoles,
-                    opportunity.Levels,
-                    opportunity.Locations,
-                    _sectorReferenceDataItems,
-                    _jobRoleReferenceDataItems,
-                    _levelReferenceDataItems,
-                    opportunity.Amount,
-                    opportunity.IsNamePublic,
-                    opportunity.DasAccountName,
-                    encodedPledgeId
-                );
-
-            // Assert
-            var jobRoleDescriptions = _jobRoleReferenceDataItems
-                .Where(x => opportunity.JobRoles.Contains(x.Id))
-                .Select(x => x.Description);
-            Assert.AreEqual(result.JobRoleList, string.Join(", ", jobRoleDescriptions));
-
-            var levelDescriptions = _levelReferenceDataItems
-                .Where(x => opportunity.Levels.Contains(x.Id))
-                .Select(x => x.ShortDescription);
-            Assert.AreEqual(result.LevelList, string.Join(", ", levelDescriptions));
-
-            var sectorDescriptions = _sectorReferenceDataItems
-                .Where(x => opportunity.Sectors.Contains(x.Id))
-                .Select(x => x.Description);
-            Assert.AreEqual(result.SectorList, string.Join(", ", sectorDescriptions));
-            
-            Assert.AreEqual(result.YearDescription, $"{_currentDateTime.ToTaxYear("yyyy")}/{_currentDateTime.AddYears(1).ToTaxYear("yy")}");
-
-            Assert.IsTrue(result.Description.Contains(encodedPledgeId));
         }
 
         [Test]
@@ -285,60 +178,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         }
 
         [Test]
-        public void GetOpportunitySummaryViewModel_One_Selected_For_Everything_Tax_Year_Calculated_Successfully()
-        {
-            // Arrange
-            string encodedPledgeId = _fixture.Create<string>();
-
-            this.SetupGetOpportunityViewModelServices();
-
-            var sectors = _sectorReferenceDataItems.Take(1);
-            var jobRoles = _jobRoleReferenceDataItems.Take(1);
-            var levels = _levelReferenceDataItems.Take(1);
-
-            var opportunity = _fixture
-                .Build<OpportunityDto>()
-                .With(x => x.Sectors, sectors.Select(y => y.Id))
-                .With(x => x.JobRoles, jobRoles.Select(y => y.Id))
-                .With(x => x.Levels, levels.Select(y => y.Id))
-                .Create();
-
-            // Act
-            var result = _orchestrator.GetOpportunitySummaryViewModel
-                (
-                    opportunity.Sectors,
-                    opportunity.JobRoles,
-                    opportunity.Levels,
-                    opportunity.Locations,
-                    _sectorReferenceDataItems,
-                    _jobRoleReferenceDataItems,
-                    _levelReferenceDataItems,
-                    opportunity.Amount,
-                    opportunity.IsNamePublic,
-                    opportunity.DasAccountName,
-                    encodedPledgeId
-                );
-
-            // Assert
-            var jobRoleDescriptions = _jobRoleReferenceDataItems
-                .Where(x => opportunity.JobRoles.Contains(x.Id))
-                .Select(x => x.Description);
-            Assert.AreEqual(result.JobRoleList, jobRoleDescriptions.Single());
-
-            var levelDescriptions = _levelReferenceDataItems
-                .Where(x => opportunity.Levels.Contains(x.Id))
-                .Select(x => x.ShortDescription);
-            Assert.AreEqual(result.LevelList, levelDescriptions.Single());
-
-            var sectorDescriptions = _sectorReferenceDataItems
-                .Where(x => opportunity.Sectors.Contains(x.Id))
-                .Select(x => x.Description);
-            Assert.AreEqual(result.SectorList, sectorDescriptions.Single());
-
-            Assert.AreEqual(result.YearDescription, $"{_currentDateTime.ToTaxYear("yyyy")}/{_currentDateTime.AddYears(1).ToTaxYear("yy")}");
-        }
-
-        [Test]
         public async Task GetContactDetailsViewModel_No_Opportunity_Found_Returns_Null()
         {
             // Arrange
@@ -361,10 +200,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             // Arrange
             ContactDetailsRequest contactDetailsRequest = _fixture.Create<ContactDetailsRequest>();
 
-            _currentDateTime = _fixture.Create<DateTime>();
-            _dateTimeService
+            CurrentDateTime = _fixture.Create<DateTime>();
+            DateTimeService
                 .Setup(x => x.UtcNow)
-                .Returns(_currentDateTime);
+                .Returns(CurrentDateTime);
 
             GetContactDetailsResponse getContactDetailsResult = _fixture.Create<GetContactDetailsResponse>();
 
@@ -391,10 +230,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             // Arrange
             ContactDetailsRequest contactDetailsRequest = _fixture.Create<ContactDetailsRequest>();
 
-            _currentDateTime = _fixture.Create<DateTime>();
-            _dateTimeService
+            CurrentDateTime = _fixture.Create<DateTime>();
+            DateTimeService
                 .Setup(x => x.UtcNow)
-                .Returns(_currentDateTime);
+                .Returns(CurrentDateTime);
 
             GetContactDetailsResponse getContactDetailsResult = _fixture.Create<GetContactDetailsResponse>();
 
@@ -417,26 +256,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             // Assert
             Assert.AreEqual(expectedEmailAddress, contactDetailsViewModel.EmailAddress);
             CollectionAssert.AreEqual(expectedAdditionalEmailAddresses, contactDetailsViewModel.AdditionalEmailAddresses);
-        }
-
-        private void SetupGetOpportunityViewModelServices()
-        {
-            _sectorReferenceDataItems = _fixture
-                .CreateMany<ReferenceDataItem>(9)
-                .ToList();
-
-            _jobRoleReferenceDataItems = _fixture
-                .CreateMany<ReferenceDataItem>(8)
-                .ToList();
-
-            _levelReferenceDataItems = _fixture
-                .CreateMany<ReferenceDataItem>(7)
-                .ToList();
-
-            _currentDateTime = _fixture.Create<DateTime>();
-            _dateTimeService
-                .Setup(x => x.UtcNow)
-                .Returns(_currentDateTime);
         }
 
         [Test]
@@ -466,7 +285,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             Assert.AreEqual(string.Join(", ", getMoreDetailsResponse.Opportunity.JobRoles.ToReferenceDataDescriptionList(getMoreDetailsResponse.JobRoles)), result.OpportunitySummaryViewModel.JobRoleList);
             Assert.AreEqual(string.Join(", ", getMoreDetailsResponse.Opportunity.Levels.ToReferenceDataDescriptionList(getMoreDetailsResponse.Levels, (x) => x.ShortDescription)), result.OpportunitySummaryViewModel.LevelList);
             Assert.AreEqual(string.Join(", ", getMoreDetailsResponse.Opportunity.Sectors.ToReferenceDataDescriptionList(getMoreDetailsResponse.Sectors)), result.OpportunitySummaryViewModel.SectorList);
-            Assert.AreEqual(_currentDateTime.ToTaxYearDescription(), result.OpportunitySummaryViewModel.YearDescription);
+            Assert.AreEqual(CurrentDateTime.ToTaxYearDescription(), result.OpportunitySummaryViewModel.YearDescription);
 
             _cacheStorageService.Verify(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()), Times.Once);
             _opportunitiesService.Verify(x => x.GetMoreDetails(request.AccountId, request.PledgeId), Times.Once);
@@ -504,7 +323,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             Assert.AreEqual(result.OpportunitySummaryViewModel.SectorList, applicationDetailsResponse.Opportunity.Sectors.ToReferenceDataDescriptionList(applicationDetailsResponse.Sectors));
             Assert.AreEqual(result.OpportunitySummaryViewModel.JobRoleList, applicationDetailsResponse.Opportunity.JobRoles.ToReferenceDataDescriptionList(applicationDetailsResponse.JobRoles));
             Assert.AreEqual(result.OpportunitySummaryViewModel.LevelList, applicationDetailsResponse.Opportunity.Levels.ToReferenceDataDescriptionList(applicationDetailsResponse.Levels, x => x.ShortDescription));
-            Assert.AreEqual(_currentDateTime.ToTaxYearDescription(), result.OpportunitySummaryViewModel.YearDescription);
+            Assert.AreEqual(CurrentDateTime.ToTaxYearDescription(), result.OpportunitySummaryViewModel.YearDescription);
             Assert.AreEqual(cacheItem.StartDate.Value.Month, result.Month);
             Assert.AreEqual(cacheItem.StartDate.Value.Year, result.Year);
             Assert.AreEqual(applicationDetailsResponse.Standards.Count(), result.SelectStandardViewModel.Standards.Count());
@@ -518,7 +337,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         {
             var applicationRequest = SetupForGetApplyViewModel();
 
-            var orchestrator = new OpportunitiesOrchestrator(_dateTimeService.Object, _opportunitiesService.Object,
+            var orchestrator = new OpportunitiesOrchestrator(DateTimeService.Object, _opportunitiesService.Object,
                 _userService.Object, _encodingService.Object, _cacheStorageService.Object);
 
             var result = await orchestrator.GetApplyViewModel(applicationRequest);
@@ -530,7 +349,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         public async Task GetApplyViewModel_Returns_Empty_Value_For_True_HasTrainingProvider()
         {
             var applicationRequest = SetupForGetApplyViewModel(true);
-            var orchestrator = new OpportunitiesOrchestrator(_dateTimeService.Object, _opportunitiesService.Object,
+            var orchestrator = new OpportunitiesOrchestrator(DateTimeService.Object, _opportunitiesService.Object,
                 _userService.Object, _encodingService.Object, _cacheStorageService.Object);
 
             var result = await orchestrator.GetApplyViewModel(applicationRequest);
@@ -542,7 +361,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         public async Task GetApplyViewModel_Returns_Empty_Value_For_False_HasTrainingProvider()
         {
             var applicationRequest = SetupForGetApplyViewModel(false);
-            var orchestrator = new OpportunitiesOrchestrator(_dateTimeService.Object, _opportunitiesService.Object,
+            var orchestrator = new OpportunitiesOrchestrator(DateTimeService.Object, _opportunitiesService.Object,
                 _userService.Object, _encodingService.Object, _cacheStorageService.Object); 
 
             var result = await orchestrator.GetApplyViewModel(applicationRequest);
@@ -641,7 +460,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             _cacheStorageService.Setup(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString())).ReturnsAsync(cacheItem);
             _opportunitiesService.Setup(x => x.GetApply(applicationRequest.AccountId, applicationRequest.PledgeId)).ReturnsAsync(getApplyResponse);
-            _dateTimeService.SetupGet(x => x.UtcNow).Returns(DateTime.Now);
+            DateTimeService.SetupGet(x => x.UtcNow).Returns(DateTime.Now);
 
             return applicationRequest;
         }
@@ -673,7 +492,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             Assert.AreEqual(result.OpportunitySummaryViewModel.SectorList, getSectorResponse.Opportunity.Sectors.ToReferenceDataDescriptionList(getSectorResponse.Sectors));
             Assert.AreEqual(result.OpportunitySummaryViewModel.JobRoleList, getSectorResponse.Opportunity.JobRoles.ToReferenceDataDescriptionList(getSectorResponse.JobRoles));
             Assert.AreEqual(result.OpportunitySummaryViewModel.LevelList, getSectorResponse.Opportunity.Levels.ToReferenceDataDescriptionList(getSectorResponse.Levels, x => x.ShortDescription));
-            Assert.AreEqual(_currentDateTime.ToTaxYearDescription(), result.OpportunitySummaryViewModel.YearDescription);
+            Assert.AreEqual(CurrentDateTime.ToTaxYearDescription(), result.OpportunitySummaryViewModel.YearDescription);
 
             _cacheStorageService.Verify(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()), Times.Once);
             _opportunitiesService.Verify(x => x.GetSector(1, 1), Times.Once);

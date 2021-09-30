@@ -16,37 +16,41 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             _dateTimeService = dateTimeService;
         }
 
-        public OpportunitySummaryViewModel GetOpportunitySummaryViewModel(
-            IEnumerable<string> sectors,
-            IEnumerable<string> jobRoles,
-            IEnumerable<string> levels,
-            IEnumerable<string> locations,
-            IEnumerable<ReferenceDataItem> allSectors,
-            IEnumerable<ReferenceDataItem> allJobRoles,
-            IEnumerable<ReferenceDataItem> allLevels,
-            int amount,
-            bool isNamePublic,
-            string dasAccountName,
-            string encodedPledgeId)
+        public OpportunitySummaryViewModel GetOpportunitySummaryViewModel(GetOpportunitySummaryViewModelOptions options)
         {
-            string sectorList = sectors.ToReferenceDataDescriptionList(allSectors);
-            string jobRoleList = jobRoles.ToReferenceDataDescriptionList(allJobRoles);
-            string levelList = levels.ToReferenceDataDescriptionList(allLevels, descriptionSource: x => x.ShortDescription);
-            string locationList = locations.ToLocationsList();
+            var sectorList = options.Sectors.ToReferenceDataDescriptionList(options.AllSectors);
+            var jobRoleList = options.JobRoles.ToReferenceDataDescriptionList(options.AllJobRoles);
+            var levelList = options.Levels.ToReferenceDataDescriptionList(options.AllLevels, descriptionSource: x => x.ShortDescription);
+            var locationList = options.Locations.ToLocationsList();
 
             DateTime dateTime = _dateTimeService.UtcNow;
 
             return new OpportunitySummaryViewModel()
             {
-                Amount = amount,
-                Description = isNamePublic ? $"{dasAccountName} ({encodedPledgeId})" : "A levy-paying business",
+                Amount = options.Amount,
+                Description = options.IsNamePublic ? $"{options.DasAccountName} ({options.EncodedPledgeId})" : "A levy-paying business",
                 JobRoleList = jobRoleList,
                 LevelList = levelList,
                 SectorList = sectorList,
                 LocationList = locationList,
                 YearDescription = dateTime.ToTaxYearDescription(),
-                IsNamePublic = isNamePublic
+                IsNamePublic = options.IsNamePublic,
             };
+        }
+
+        public class GetOpportunitySummaryViewModelOptions
+        {
+            public IEnumerable<string> Sectors { get; set; }
+            public IEnumerable<string> JobRoles { get; set; }
+            public IEnumerable<string> Levels { get; set; }
+            public IEnumerable<string> Locations { get; set; }
+            public IEnumerable<ReferenceDataItem> AllSectors { get; set; }
+            public IEnumerable<ReferenceDataItem> AllJobRoles { get; set; }
+            public IEnumerable<ReferenceDataItem> AllLevels { get; set; }
+            public int Amount { get; set; }
+            public bool IsNamePublic { get; set; }
+            public string DasAccountName { get; set; }
+            public string EncodedPledgeId { get; set; }
         }
     }
 }
