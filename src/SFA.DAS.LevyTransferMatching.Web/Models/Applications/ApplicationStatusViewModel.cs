@@ -23,6 +23,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
         public ApplicationPostRequest.ApprovalAction? SelectedAction { get; set; }
         public bool TruthfulInformation { get; set; }
         public bool ComplyWithRules { get; set; }
-        public bool HasAcceptedTermsAndConditions => TruthfulInformation && ComplyWithRules;
+
+        public bool HasAcceptedTermsAndConditions => TruthfulInformation == true && ComplyWithRules == true;
     }
 }

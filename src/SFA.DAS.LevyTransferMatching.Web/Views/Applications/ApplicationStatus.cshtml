@@ -37,13 +37,19 @@
                     <p class="govuk-!-margin-bottom-0"><strong>Apprenticeship training to start by:</strong> @Model.StartBy.ToString("MM/yyyy")</p>
                 </section>
 
-                @if (Model.CanAcceptFunding)
+                @using (Html.BeginForm(FormMethod.Post))
                 {
+
+
+
+                    @*@if (Model.CanAcceptFunding)
+                        {*@
                     <h2 class="govuk-heading-m">Do you want to accept this transfer of funds?</h2>
+
 
                     <div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios">
                         <div class="govuk-radios__item">
-                            <input class="govuk-radios__input" id="SelectedAction" name="SelectedAction" asp-for="SelectedAction" type="radio" value="@approve" das-highlight-error-for="SelectedAction" error-class="govuk-textarea--error" data-aria-controls="approval-content" />
+                            <input class="govuk-radios__input" id="SelectedAction" name="SelectedAction" asp-for="SelectedAction" type="radio" value="@approve" data-aria-controls="approval-content" />
                             <label class="govuk-label govuk-radios__label" for="SelectedAction">
                                 Yes, accept the funding
                             </label>
@@ -54,7 +60,7 @@
                                 I confirm that:
                             </p>
 
-                            <checkbox asp-for="TruthfulInformation" label="terms and conditions" aria-controls="TruthfulInformation" css-class="govuk-checkboxes govuk-checkboxes--large">
+                            <checkbox asp-for="TruthfulInformation" label="terms and conditions" aria-controls="approval-content" css-class="govuk-checkboxes govuk-checkboxes--large">
                                 <div class="govuk-checkboxes__conditional govuk-checkboxes__conditional--hidden" id="truthful-information">
                                     <div class="govuk-form-group">
                                         <label class="govuk-label govuk-checkboxes__label" asp-for="TruthfulInformation">
@@ -64,7 +70,7 @@
                                 </div>
                             </checkbox>
 
-                            <checkbox asp-for="ComplyWithRules" label="terms and conditions" aria-controls="ComplyWithRules" css-class="govuk-checkboxes govuk-checkboxes--large">
+                            <checkbox asp-for="ComplyWithRules" label="terms and conditions" aria-controls="approval-content" css-class="govuk-checkboxes govuk-checkboxes--large">
                                 <div class="govuk-checkboxes__conditional govuk-checkboxes__conditional--hidden" id="comply-with-rules">
                                     <div class="govuk-form-group">
                                         <label class="govuk-label govuk-checkboxes__label" asp-for="ComplyWithRules">
@@ -75,8 +81,11 @@
                             </checkbox>
                         </div>
                     </div>
-                }
 
+                    <button class="govuk-button" data-module="govuk-button" id="fund-transfer-accept">Continue</button>
+
+                    @*}*@
+                }
             </div>
 
             <div class="govuk-grid-column-one-third">

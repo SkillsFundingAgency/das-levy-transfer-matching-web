@@ -1,9 +1,13 @@
 ﻿using System.Threading.Tasks;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.LevyTransferMatching.Web.Authentication;
 using SFA.DAS.LevyTransferMatching.Web.Models.Applications;
+using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
+using SFA.DAS.LevyTransferMatching.Web.Validators;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
@@ -39,5 +43,26 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
             return NotFound();
         }
+
+        [HttpPost]
+        [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}")]
+        public async Task<IActionResult> ApplicationStatus(ApplicationStatusPostRequest request)
+        {
+            //var validationResult = await validator.ValidateAsync(request);
+            //if (!validationResult.IsValid)
+            //{
+               // validationResult.AddToModelState(ModelState, string.Empty);
+
+                //return RedirectToAction("ApplicationDetails", new ApplicationDetailsRequest()
+                //{
+                //    EncodedAccountId = request.EncodedAccountId,
+                //    EncodedPledgeId = request.EncodedPledgeId,
+                //    CacheKey = request.CacheKey
+                //});
+            //}
+
+            return RedirectToAction("ApplicationStatus");
+        }
+
     }
 }
