@@ -81,21 +81,25 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 EncodedPledgeId = encodedOpportunityId,
             };
 
+            var duration = result.Standard.ApprenticeshipFunding.GetEffectiveFundingLine(result.StartBy).Duration;
+
+            var estimatedTotalCost = (result.Amount * (duration / 12)).ToCurrencyString();
+
             return new ApplicationViewModel()
             {
                  OpportunitySummaryViewModel = GetOpportunitySummaryViewModel(opportunitySummaryViewModelOptions),
-                 Amount = result.Amount.ToCurrencyString(),
                  EmployerAccountName = result.EmployerAccountName,
                  EncodedAccountId = request.EncodedAccountId,
                  EncodedApplicationId = request.EncodedApplicationId,
                  IsNamePublic = result.IsNamePublic,
-                 JobRole = result.JobRole,
-                 Level = result.Level,
+                 JobRole = result.Standard.Title,
+                 Level = result.Standard.Level,
                  Locations = result.PledgeLocations,
                  NumberOfApprentices = result.NumberOfApprentices,
                  StartBy = result.StartBy,
                  Status = result.Status,
                  EncodedOpportunityId = encodedOpportunityId,
+                 EstimatedTotalCost = estimatedTotalCost,
             };
         }
     }

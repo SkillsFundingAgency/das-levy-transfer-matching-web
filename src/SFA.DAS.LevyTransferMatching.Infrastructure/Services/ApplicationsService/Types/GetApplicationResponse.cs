@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using SFA.DAS.LevyTransferMatching.Domain.Types;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService.Types
@@ -18,11 +19,10 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsServi
         public bool IsNamePublic { get; set; }
         public string EmployerAccountName { get; set; }
         public ApplicationStatus Status { get; set; }
-        public string JobRole { get; set; }
-        public int Level { get; set; }
         public int NumberOfApprentices { get; set; }
         public int Amount { get; set; }
         public DateTime StartBy { get; set; }
         public int OpportunityId { get; set; }
+        public StandardsListItemDto Standard { get; set; }
     }
 }
