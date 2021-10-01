@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
@@ -69,7 +70,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
 
             content.Append($"<input id=\"{id}\" type = \"checkbox\"{checkedValue}class=\"{InputClass}\" name=\"{Property.Name}\"{dataAriaControlsValue}value=\"true\">");
 
-            content.Append($"<label class=\"{LabelClass}\" for=\"{id}\">{Label}</label>");
+            content.Append($"<label class=\"{LabelClass}\" for=\"{id}\">{HttpUtility.HtmlDecode(Label)}</label>");
 
             if (!string.IsNullOrWhiteSpace(Hint))
             {

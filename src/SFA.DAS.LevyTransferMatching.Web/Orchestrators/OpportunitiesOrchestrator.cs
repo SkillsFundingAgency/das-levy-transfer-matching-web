@@ -145,7 +145,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 Locations = cacheItem.Locations,
                 AdditionalLocation = cacheItem.AdditionalLocation ? cacheItem.AdditionLocationText : string.Empty,
                 SpecificLocation = cacheItem.SpecificLocation ?? string.Empty,
-                Postcode = cacheItem.Postcode ?? string.Empty,
                 FirstName = cacheItem.FirstName ?? string.Empty,
                 LastName = cacheItem.LastName ?? string.Empty,
                 EmailAddresses = cacheItem.EmailAddresses,
@@ -357,7 +356,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 OpportunitySummaryViewModel = GetOpportunitySummaryViewModel(opportunitySummaryViewModelOptions),
                 PledgeLocations = response.PledgeLocations.Select(x => new CheckboxListItem{ Id = x.Id, Label = x.Name}).OrderBy(y => y.Label),
                 HasPledgeLocations = response.PledgeLocations.Any(),
-                Postcode = cacheItem.Postcode
+
                 AdditionalLocation = cacheItem.AdditionalLocation,
                 AdditionalLocationText = cacheItem.AdditionLocationText,
                 SpecificLocation = cacheItem.SpecificLocation

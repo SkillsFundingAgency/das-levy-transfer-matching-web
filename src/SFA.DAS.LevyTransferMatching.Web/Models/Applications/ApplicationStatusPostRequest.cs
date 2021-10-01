@@ -6,7 +6,7 @@ using SFA.DAS.LevyTransferMatching.Web.Models.Shared;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
 {
-    public class ApplicationStatusPostRequest : ApplicationStatusViewModel
+    public class ApplicationStatusPostRequest : ApplicationViewModel
     {
        
     }

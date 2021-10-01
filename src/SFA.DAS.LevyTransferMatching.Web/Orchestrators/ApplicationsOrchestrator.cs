@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;
@@ -18,8 +19,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         private readonly Infrastructure.Configuration.FeatureToggles _featureToggles;
         private readonly IUserService _userService;
 
-        public ApplicationsOrchestrator(IApplicationsService applicationsService, IDateTimeService dateTimeService, IEncodingService encodingService) : base(dateTimeService)
-        public ApplicationsOrchestrator(IApplicationsService applicationsService, IEncodingService encodingService, Infrastructure.Configuration.FeatureToggles featureToggles)
+        public ApplicationsOrchestrator(IApplicationsService applicationsService, IDateTimeService dateTimeService, IEncodingService encodingService, Infrastructure.Configuration.FeatureToggles featureToggles, IUserService userService) : base(dateTimeService)
         {
             _applicationsService = applicationsService;
             _encodingService = encodingService;
@@ -104,9 +104,27 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                  StartBy = result.StartBy,
                  Status = result.Status,
                  EncodedOpportunityId = encodedOpportunityId,
-                 CanAcceptFunding = isOwnerOrTransactor && result.Status == ApplicationStatus.Approved
+                 CanAcceptFunding = isOwnerOrTransactor && result.Status == ApplicationStatus.Approved,
                  EstimatedTotalCost = estimatedTotalCost,
             };
+        }
+
+        public async Task AcceptFunding(AcceptFundingPostRequest request, CancellationToken cancellationToken = default)
+        {
+            var application = await _applicationsService.GetApplication(request.AccountId, request.ApplicationId, cancellationToken);
+
+            if (application == null)
+            {
+                return;
+            }
+
+            await _applicationsService.AcceptFunding(new AcceptFundingRequest
+            {
+                ApplicationId = request.ApplicationId,
+                AccountId = request.AccountId,
+                UserDisplayName = _userService.GetUserDisplayName(),
+                UserId = _userService.GetUserId()
+            }, cancellationToken);
         }
     }
 }

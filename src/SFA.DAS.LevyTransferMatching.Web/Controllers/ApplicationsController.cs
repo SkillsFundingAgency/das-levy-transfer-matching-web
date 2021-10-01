@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
@@ -7,7 +8,7 @@ using SFA.DAS.LevyTransferMatching.Web.Authentication;
 using SFA.DAS.LevyTransferMatching.Web.Models.Applications;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
-using SFA.DAS.LevyTransferMatching.Web.Validators;
+using ApplicationRequest = SFA.DAS.LevyTransferMatching.Web.Models.Applications.ApplicationRequest;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
@@ -46,20 +47,21 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
         [HttpPost]
         [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}")]
-        public async Task<IActionResult> ApplicationStatus(ApplicationStatusPostRequest request)
+        public async Task<IActionResult> ApplicationStatus([FromServices] AbstractValidator<ApplicationStatusPostRequest> validator, ApplicationStatusPostRequest request, CancellationToken cancellationToken = default)
         {
-            //var validationResult = await validator.ValidateAsync(request);
-            //if (!validationResult.IsValid)
-            //{
-               // validationResult.AddToModelState(ModelState, string.Empty);
+            var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
-                //return RedirectToAction("ApplicationDetails", new ApplicationDetailsRequest()
-                //{
-                //    EncodedAccountId = request.EncodedAccountId,
-                //    EncodedPledgeId = request.EncodedPledgeId,
-                //    CacheKey = request.CacheKey
-                //});
-            //}
+            if (!validationResult.IsValid)
+            {
+                validationResult.AddToModelState(ModelState, string.Empty);
+
+                return RedirectToAction("ApplicationStatus");
+            }
+
+            await _applicationsOrchestrator.AcceptFunding(new AcceptFundingPostRequest{
+                ApplicationId = request.ApplicationId,
+                AccountId = request.AccountId,
+            }, cancellationToken);
 
             return RedirectToAction("ApplicationStatus");
         }
