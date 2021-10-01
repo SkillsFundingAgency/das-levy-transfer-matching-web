@@ -71,22 +71,41 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             var encodedOpportunityId = _encodingService.Encode(result.OpportunityId, EncodingType.PledgeId);
 
+            var opportunitySummaryViewModelOptions = new GetOpportunitySummaryViewModelOptions()
+            {
+                Sectors = result.Sectors,
+                JobRoles = result.JobRoles,
+                Levels = result.Levels,
+                Locations = result.PledgeLocations,
+                AllSectors = result.AllSectors,
+                AllJobRoles = result.AllJobRoles,
+                AllLevels = result.AllLevels,
+                Amount = result.Amount,
+                IsNamePublic = result.IsNamePublic,
+                DasAccountName = result.EmployerAccountName,
+                EncodedPledgeId = encodedOpportunityId,
+            };
+
+            var duration = result.Standard.ApprenticeshipFunding.GetEffectiveFundingLine(result.StartBy).Duration;
+
+            var estimatedTotalCost = (result.Amount * (duration / 12)).ToCurrencyString();
+
             return new ApplicationViewModel()
             {
-                 OpportunitySummaryViewModel = GetOpportunitySummaryViewModel(result.Sectors, result.JobRoles, result.Levels, result.PledgeLocations, result.AllSectors, result.AllJobRoles, result.AllLevels, result.Amount, result.IsNamePublic, result.EmployerAccountName, encodedOpportunityId),
-                 Amount = result.Amount.ToCurrencyString(),
+                 OpportunitySummaryViewModel = GetOpportunitySummaryViewModel(opportunitySummaryViewModelOptions),
                  EmployerAccountName = result.EmployerAccountName,
                  EncodedAccountId = request.EncodedAccountId,
                  EncodedApplicationId = request.EncodedApplicationId,
                  IsNamePublic = result.IsNamePublic,
-                 JobRole = result.JobRole,
-                 Level = result.Level,
+                 JobRole = result.Standard.Title,
+                 Level = result.Standard.Level,
                  Locations = result.PledgeLocations,
                  NumberOfApprentices = result.NumberOfApprentices,
                  StartBy = result.StartBy,
                  Status = result.Status,
                  EncodedOpportunityId = encodedOpportunityId,
                  CanAcceptFunding = isOwnerOrTransactor && result.Status == ApplicationStatus.Approved
+                 EstimatedTotalCost = estimatedTotalCost,
             };
         }
     }

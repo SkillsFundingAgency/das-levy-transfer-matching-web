@@ -41,20 +41,22 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             var encodedPledgeId = _encodingService.Encode(response.Opportunity.Id, EncodingType.PledgeId);
 
-            var opportunitySummaryViewModel = GetOpportunitySummaryViewModel
-                (
-                    response.Opportunity.Sectors,
-                    response.Opportunity.JobRoles,
-                    response.Opportunity.Levels,
-                    response.Opportunity.Locations,
-                    response.Sectors,
-                    response.JobRoles,
-                    response.Levels,
-                    response.Opportunity.Amount,
-                    response.Opportunity.IsNamePublic,
-                    response.Opportunity.DasAccountName,
-                    encodedPledgeId
-                );
+            var opportunitySummaryViewModelOptions = new GetOpportunitySummaryViewModelOptions()
+            {
+                    Sectors = response.Opportunity.Sectors,
+                    JobRoles = response.Opportunity.JobRoles,
+                    Levels = response.Opportunity.Levels,
+                    Locations = response.Opportunity.Locations,
+                    AllSectors = response.Sectors,
+                    AllJobRoles = response.JobRoles,
+                    AllLevels = response.Levels,
+                    Amount = response.Opportunity.Amount,
+                    IsNamePublic = response.Opportunity.IsNamePublic,
+                    DasAccountName = response.Opportunity.DasAccountName,
+                    EncodedPledgeId = encodedPledgeId,
+            };
+
+            var opportunitySummaryViewModel = GetOpportunitySummaryViewModel(opportunitySummaryViewModelOptions);
 
             return new DetailViewModel()
             {
@@ -143,6 +145,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 Locations = cacheItem.Locations,
                 AdditionalLocation = cacheItem.AdditionalLocation ? cacheItem.AdditionLocationText : string.Empty,
                 SpecificLocation = cacheItem.SpecificLocation ?? string.Empty,
+                Postcode = cacheItem.Postcode ?? string.Empty,
                 FirstName = cacheItem.FirstName ?? string.Empty,
                 LastName = cacheItem.LastName ?? string.Empty,
                 EmailAddresses = cacheItem.EmailAddresses,
@@ -165,25 +168,27 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             var contactName = $"{applicationTask.Result.FirstName} {applicationTask.Result.LastName}";
 
+            var opportunitySummaryViewModelOptions = new GetOpportunitySummaryViewModelOptions()
+            {
+                Sectors = applyResponseTask.Result.Opportunity.Sectors,
+                JobRoles = applyResponseTask.Result.Opportunity.JobRoles,
+                Levels = applyResponseTask.Result.Opportunity.Levels,
+                Locations = applyResponseTask.Result.Opportunity.Locations,
+                AllSectors = applyResponseTask.Result.Sectors,
+                AllJobRoles = applyResponseTask.Result.JobRoles,
+                AllLevels = applyResponseTask.Result.Levels,
+                Amount = applyResponseTask.Result.Opportunity.Amount,
+                IsNamePublic = applyResponseTask.Result.Opportunity.IsNamePublic,
+                DasAccountName = applyResponseTask.Result.Opportunity.DasAccountName,
+                EncodedPledgeId = request.EncodedPledgeId,
+            };
+
             var result = new ApplyViewModel
             {
                 CacheKey = applicationTask.Result.Key,
                 EncodedPledgeId = request.EncodedPledgeId,
                 EncodedAccountId = request.EncodedAccountId,
-                OpportunitySummaryViewModel = GetOpportunitySummaryViewModel
-                    (
-                        applyResponseTask.Result.Opportunity.Sectors,
-                        applyResponseTask.Result.Opportunity.JobRoles,
-                        applyResponseTask.Result.Opportunity.Levels,
-                        applyResponseTask.Result.Opportunity.Locations,
-                        applyResponseTask.Result.Sectors,
-                        applyResponseTask.Result.JobRoles,
-                        applyResponseTask.Result.Levels,
-                        applyResponseTask.Result.Opportunity.Amount,
-                        applyResponseTask.Result.Opportunity.IsNamePublic,
-                        applyResponseTask.Result.Opportunity.DasAccountName,
-                        request.EncodedPledgeId
-                    ),
+                OpportunitySummaryViewModel = GetOpportunitySummaryViewModel(opportunitySummaryViewModelOptions),
                 JobRole = applicationTask.Result.JobRole ?? "-",
                 NumberOfApprentices = applicationTask.Result.NumberOfApprentices.HasValue ? applicationTask.Result.NumberOfApprentices.Value.ToString() : "-",
                 StartBy = applicationTask.Result.StartDate.HasValue ? applicationTask.Result.StartDate.Value.ToShortDisplayString() : "-",
@@ -231,18 +236,22 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 return null;
             }
 
-            var opportunitySummaryViewModel = GetOpportunitySummaryViewModel(
-                getContactDetailsResult.Sectors,
-                getContactDetailsResult.JobRoles,
-                getContactDetailsResult.Levels,
-                getContactDetailsResult.Locations,
-                getContactDetailsResult.AllSectors,
-                getContactDetailsResult.AllJobRoles,
-                getContactDetailsResult.AllLevels,
-                getContactDetailsResult.Amount,
-                getContactDetailsResult.IsNamePublic,
-                getContactDetailsResult.DasAccountName,
-                contactDetailsRequest.EncodedPledgeId);
+            var opportunitySummaryViewModelOptions = new GetOpportunitySummaryViewModelOptions()
+            {
+                Sectors = getContactDetailsResult.Sectors,
+                JobRoles = getContactDetailsResult.JobRoles,
+                Levels = getContactDetailsResult.Levels,
+                Locations = getContactDetailsResult.Locations,
+                AllSectors = getContactDetailsResult.AllSectors,
+                AllJobRoles = getContactDetailsResult.AllJobRoles,
+                AllLevels = getContactDetailsResult.AllLevels,
+                Amount = getContactDetailsResult.Amount,
+                IsNamePublic = getContactDetailsResult.IsNamePublic,
+                DasAccountName = getContactDetailsResult.DasAccountName,
+                EncodedPledgeId = contactDetailsRequest.EncodedPledgeId,
+            };
+
+            var opportunitySummaryViewModel = GetOpportunitySummaryViewModel(opportunitySummaryViewModelOptions);
 
             var cacheItem = await RetrieveCacheItem(contactDetailsRequest.CacheKey);
 
@@ -293,26 +302,28 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             await Task.WhenAll(applicationTask, moreDetailsResponseTask);
 
+            var opportunitySummaryViewModelOptions = new GetOpportunitySummaryViewModelOptions()
+            {
+                Sectors = moreDetailsResponseTask.Result.Opportunity.Sectors,
+                JobRoles = moreDetailsResponseTask.Result.Opportunity.JobRoles,
+                Levels = moreDetailsResponseTask.Result.Opportunity.Levels,
+                Locations = moreDetailsResponseTask.Result.Opportunity.Locations,
+                AllSectors = moreDetailsResponseTask.Result.Sectors,
+                AllJobRoles = moreDetailsResponseTask.Result.JobRoles,
+                AllLevels = moreDetailsResponseTask.Result.Levels,
+                Amount = moreDetailsResponseTask.Result.Opportunity.Amount,
+                IsNamePublic = moreDetailsResponseTask.Result.Opportunity.IsNamePublic,
+                DasAccountName = moreDetailsResponseTask.Result.Opportunity.DasAccountName,
+                EncodedPledgeId = request.EncodedPledgeId,
+            };
+
             return new MoreDetailsViewModel()
             {
                 CacheKey = request.CacheKey,
                 EncodedAccountId = request.EncodedAccountId,
                 EncodedPledgeId = request.EncodedPledgeId,
                 Details = applicationTask.Result.Details,
-                OpportunitySummaryViewModel = GetOpportunitySummaryViewModel
-                    (
-                        moreDetailsResponseTask.Result.Opportunity.Sectors,
-                        moreDetailsResponseTask.Result.Opportunity.JobRoles,
-                        moreDetailsResponseTask.Result.Opportunity.Levels,
-                        moreDetailsResponseTask.Result.Opportunity.Locations,
-                        moreDetailsResponseTask.Result.Sectors,
-                        moreDetailsResponseTask.Result.JobRoles,
-                        moreDetailsResponseTask.Result.Levels,
-                        moreDetailsResponseTask.Result.Opportunity.Amount,
-                        moreDetailsResponseTask.Result.Opportunity.IsNamePublic,
-                        moreDetailsResponseTask.Result.Opportunity.DasAccountName,
-                        request.EncodedPledgeId
-                    )
+                OpportunitySummaryViewModel = GetOpportunitySummaryViewModel(opportunitySummaryViewModelOptions),
             };
         }
 
@@ -321,6 +332,21 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             var cacheItem = await RetrieveCacheItem(request.CacheKey);
             var response = await _opportunitiesService.GetSector(request.AccountId, request.PledgeId);
 
+            var opportunitySummaryViewModelOptions = new GetOpportunitySummaryViewModelOptions()
+            {
+                Sectors = response.Opportunity.Sectors,
+                JobRoles = response.Opportunity.JobRoles,
+                Levels = response.Opportunity.Levels,
+                Locations = response.Opportunity.Locations,
+                AllSectors = response.Sectors,
+                AllJobRoles = response.JobRoles,
+                AllLevels = response.Levels,
+                Amount = response.Opportunity.Amount,
+                IsNamePublic = response.Opportunity.IsNamePublic,
+                DasAccountName = response.Opportunity.DasAccountName,
+                EncodedPledgeId = request.EncodedPledgeId,
+            };
+
             return new SectorViewModel
             {
                 CacheKey = request.CacheKey,
@@ -328,23 +354,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 EncodedPledgeId = request.EncodedPledgeId,
                 Sectors = cacheItem.Sectors,
                 SectorOptions = response.Sectors.ToList(),
-                OpportunitySummaryViewModel = GetOpportunitySummaryViewModel
-                    (
-                        response.Opportunity.Sectors,
-                        response.Opportunity.JobRoles,
-                        response.Opportunity.Levels,
-                        response.Opportunity.Locations,
-                        response.Sectors,
-                        response.JobRoles,
-                        response.Levels,
-                        response.Opportunity.Amount,
-                        response.Opportunity.IsNamePublic,
-                        response.Opportunity.DasAccountName,
-                        request.EncodedPledgeId
-                    ),
+                OpportunitySummaryViewModel = GetOpportunitySummaryViewModel(opportunitySummaryViewModelOptions),
                 PledgeLocations = response.PledgeLocations.Select(x => new CheckboxListItem{ Id = x.Id, Label = x.Name}).OrderBy(y => y.Label),
                 HasPledgeLocations = response.PledgeLocations.Any(),
-                Locations = cacheItem.Locations,
+                Postcode = cacheItem.Postcode
                 AdditionalLocation = cacheItem.AdditionalLocation,
                 AdditionalLocationText = cacheItem.AdditionLocationText,
                 SpecificLocation = cacheItem.SpecificLocation
@@ -410,6 +423,21 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             var application = applicationTask.Result;
             var applicationDetails = applicationDetailsTask.Result;
 
+            var opportunitySummaryViewModelOptions = new GetOpportunitySummaryViewModelOptions()
+            {
+                Sectors = applicationDetails.Opportunity.Sectors,
+                JobRoles = applicationDetails.Opportunity.JobRoles,
+                Levels = applicationDetails.Opportunity.Levels,
+                Locations = applicationDetails.Opportunity.Locations,
+                AllSectors = applicationDetails.Sectors,
+                AllJobRoles = applicationDetails.JobRoles,
+                AllLevels = applicationDetails.Levels,
+                Amount = applicationDetails.Opportunity.RemainingAmount,
+                IsNamePublic = applicationDetails.Opportunity.IsNamePublic,
+                DasAccountName = applicationDetails.Opportunity.DasAccountName,
+                EncodedPledgeId = request.EncodedPledgeId,
+            };
+
             return new ApplicationDetailsViewModel()
             {
                 CacheKey = request.CacheKey,
@@ -420,20 +448,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 Month = application.StartDate?.Month,
                 Year = application.StartDate?.Year,
                 HasTrainingProvider = application.HasTrainingProvider,
-                OpportunitySummaryViewModel = GetOpportunitySummaryViewModel
-                    (
-                        applicationDetails.Opportunity.Sectors,
-                        applicationDetails.Opportunity.JobRoles,
-                        applicationDetails.Opportunity.Levels,
-                        applicationDetails.Opportunity.Locations,
-                        applicationDetails.Sectors,
-                        applicationDetails.JobRoles,
-                        applicationDetails.Levels,
-                        applicationDetails.Opportunity.RemainingAmount,
-                        applicationDetails.Opportunity.IsNamePublic,
-                        applicationDetails.Opportunity.DasAccountName,
-                        request.EncodedPledgeId
-                    ),
+                OpportunitySummaryViewModel = GetOpportunitySummaryViewModel(opportunitySummaryViewModelOptions),
                 MinYear = DateTime.Now.Year,
                 MaxYear = DateTime.Now.FinancialYearEnd().Year,
                 SelectStandardViewModel = new SelectStandardViewModel
@@ -445,8 +460,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                         Level = app.Level,
                         Title = app.Title,
                         Selected = !string.IsNullOrEmpty(application.StandardId) && (app.StandardUId == application.StandardId) ? "selected": null
-                    })
-                }
+                    }),
+                },
             };
         }
 

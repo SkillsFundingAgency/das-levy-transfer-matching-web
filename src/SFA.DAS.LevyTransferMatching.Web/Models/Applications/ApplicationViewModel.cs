@@ -15,7 +15,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
         public string JobRole { get; set; }
         public int Level { get; set; }
         public int NumberOfApprentices { get; set; }
-        public string Amount { get; set; }
         public DateTime StartBy { get; set; }
         public OpportunitySummaryViewModel OpportunitySummaryViewModel { get; set; }
         public string EncodedOpportunityId { get; set; }
@@ -26,5 +25,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
 
         public bool HasAcceptedTermsAndConditions => TruthfulInformation == true && ComplyWithRules == true;
 		public string Title => $"Your {(IsNamePublic ? EmployerAccountName : "opportunity")} ({EncodedOpportunityId}) application details";
+        public string EstimatedTotalCost { get; set; }
     }
 }
