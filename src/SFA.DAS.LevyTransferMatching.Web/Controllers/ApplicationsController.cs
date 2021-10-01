@@ -63,7 +63,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
                 AccountId = request.AccountId,
             }, cancellationToken);
 
-            return RedirectToAction("ApplicationStatus");
+            return RedirectToAction("Applications");
         }
 
     }
