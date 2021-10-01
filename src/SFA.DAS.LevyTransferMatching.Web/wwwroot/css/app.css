@@ -52,7 +52,6 @@
 }
 
 /* Overwrite the style in the CDN */
-
 .das-task-list__task-tag {
     display: block;
 }
@@ -62,6 +61,8 @@
     margin-bottom: 15px;
     border-bottom: 1px solid #b1b4b6;
 }
+
+/* Inline definition list */
 
 .app-dl-inline {
     overflow: hidden;
@@ -84,6 +85,51 @@
     float: left;
 }
 
+/* Inline definition list with icons */
+
+.app-dl-icon-list {
+    overflow: hidden;
+    margin: 0;
+    padding-left: 1.6em;
+}
+
+.app-dl-icon-list__title {
+    clear: both;
+    float: left;
+    margin-right: .3em;
+    position: relative;
+    display: flex;
+}
+
+.app-dl-icon-list__title:after {
+    content: ':';
+}
+
+.app-dl-icon-list__definition {
+    font-weight: 700;
+    margin: 0;
+    float: left;
+}
+
+.app-dl-icon-list__icon {
+    height: .95em;
+    width: .95em;
+    position: absolute;
+    background-size: contain;
+    background-repeat: no-repeat;
+    left: -1.6em;
+    top: .2em;
+    overflow: hidden;
+    text-indent: -9999px;
+}
+
+.app-dl-icon-list__icon--tick {
+    background-image: url("/assets/images/icon-tick--green.svg");
+    width: 1.2em;
+}
+
+/* Darker footer area for a highlight element */
+
 .app-highlight__footer {
     background: #dbd9d6;
     margin: 0 -15px -15px -15px;
@@ -100,6 +146,8 @@
 .app-highlight__footer p:last-child {
     margin: 0
 }
+
+/* Extra fields */
 
 .app-extra-fields__fieldset {
     border-left: 5px solid #b1b4b6;

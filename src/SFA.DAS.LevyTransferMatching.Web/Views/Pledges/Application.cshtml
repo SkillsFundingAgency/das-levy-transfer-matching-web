@@ -7,15 +7,11 @@
 
 <a href="@Url.Action("Applications", "Pledges", new { encodedAccountId = ViewContext.RouteData.Values["encodedAccountId"], EncodedPledgeId = ViewContext.RouteData.Values["EncodedPledgeId"]})" class="govuk-back-link">Back to my transfer applications</a>
 
-<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
+<main class="govuk-main-wrapper" id="main-content">
     <partial name="_ValidationSummary" />
-    <div class="govuk-grid-row title-options">
-        <div class="govuk-grid-column-full">
-            <h1 class="govuk-heading-xl">
-                @Model.EmployerAccountName
-            </h1>
-        </div>
-    </div>
+    <h1 class="govuk-heading-xl">
+        @Model.EmployerAccountName
+    </h1>
     <div class="das-highlight">
         <h2 class="govuk-heading-m">Details about the application</h2>
         @*
@@ -39,17 +35,20 @@
             </ul>
         *@
 
-        <dl class="govuk-body app-dl-inline">
-            <dt class="app-dl-inline__title">Location</dt>
-            <dd class="app-dl-inline__definition"><strong>@Model.Location</strong></dd>
-            <dt class="app-dl-inline__title">Sector</dt>
-            <dd class="app-dl-inline__definition"><strong>@Model.DisplaySectors</strong></dd>
-            <dt class="app-dl-inline__title">Type of job role</dt>
-            <dd class="app-dl-inline__definition"><strong>@Model.JobRole</strong></dd>
-            <dt class="app-dl-inline__title">Level</dt>
-            <dd class="app-dl-inline__definition"><strong>@Model.Level</strong></dd>
+        <dl class="govuk-body app-dl-icon-list govuk-!-margin-bottom-4">
+            <dt class="app-dl-icon-list__title">
+                @if (Model.IsLocationMatch) { <span class="app-dl-icon-list__icon app-dl-icon-list__icon--tick">Match for: </span> }
+                Location
+            </dt>
+            <dd class="app-dl-icon-list__definition">@Model.Locations</dd>
+            <dt class="app-dl-icon-list__title">Sector</dt>
+            <dd class="app-dl-icon-list__definition">@Model.DisplaySectors</dd>
+            <dt class="app-dl-icon-list__title">Type of job role</dt>
+            <dd class="app-dl-icon-list__definition">@Model.JobRole</dd>
+            <dt class="app-dl-icon-list__title">Level</dt>
+            <dd class="app-dl-icon-list__definition">@Model.Level</dd>
         </dl>
-        <br />
+  
         <dl class="govuk-body app-dl-inline">
             <dt class="app-dl-inline__title">Apprentices</dt>
             <dd class="app-dl-inline__definition">@Model.NumberOfApprentices</dd>
@@ -73,17 +72,15 @@
     @if (Model.ShowAffordabilityPanel)
     {
         <div class="das-highlight">
-            <h1 class="govuk-heading-m">Can I afford to fund this training?</h1>
+            <h2 class="govuk-heading-m">Can I afford to fund this training?</h2>
             <p>Estimated cost over @Model.EstimatedDurationMonths months: <strong>@Model.Affordability.EstimatedCostOverDuration</strong></p>
-
-            <p>
-                <strong>For @Model.Affordability.YearDescription:</strong>
-                <br/>
-                Pledge funds remaining this year: <strong>@Model.Affordability.RemainingFunds</strong>
-                <br/>
-                Estimated costs this year: <strong>@Model.Affordability.EstimatedCostThisYear</strong>
-            </p>
-
+            <h3 class="govuk-heading-s govuk-!-margin-bottom-0">For @Model.Affordability.YearDescription:</h3>
+            <dl class="app-dl-inline govuk-body govuk-!-margin-bottom-4">
+                <dt class="app-dl-inline__title">Pledge funds remaining this year</dt>
+                <dd class="app-dl-inline__definition">@Model.Affordability.RemainingFunds</dd>
+                <dt class="app-dl-inline__title">Estimated costs this year</dt>
+                <dd class="app-dl-inline__definition">@Model.Affordability.EstimatedCostThisYear</dd>
+            </dl>
             <p>Pledge funds remaining if application is approved: <strong>@Model.Affordability.RemainingFundsIfApproved</strong></p>
             <details class="govuk-details" data-module="govuk-details">
                 <summary class="govuk-details__summary">
