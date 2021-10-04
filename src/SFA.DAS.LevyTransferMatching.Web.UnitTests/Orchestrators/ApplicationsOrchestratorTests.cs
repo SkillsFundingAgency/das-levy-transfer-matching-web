@@ -73,7 +73,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         public async Task GetApplicationViewModel_ApplicationDoesntExist_ReturnsNull()
         {
             // Arrange
-            var request = _fixture.Create<ApplicationRequest>();
+            var request = _fixture.Freeze<ApplicationRequest>();
 
             _mockApplicationsService
                 .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId), CancellationToken.None))

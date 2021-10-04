@@ -24,7 +24,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
         public bool TruthfulInformation { get; set; }
         public bool ComplyWithRules { get; set; }
 
-        public bool HasAcceptedTermsAndConditions => TruthfulInformation && ComplyWithRules;
+        public bool HasAcceptedTermsAndConditions => TruthfulInformation && ComplyWithRules && SelectedAction == Pledges.ApplicationPostRequest.ApprovalAction.Approve;
         public string EstimatedTotalCost { get; set; }
     }
 }
