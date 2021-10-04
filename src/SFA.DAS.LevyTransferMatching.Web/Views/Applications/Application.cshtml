@@ -4,9 +4,11 @@
 
 @{
     ViewData["Title"] = Model.Title;
+    var approve = SFA.DAS.LevyTransferMatching.Web.Models.Pledges.ApplicationPostRequest.ApprovalAction.Approve;
+    var reject = SFA.DAS.LevyTransferMatching.Web.Models.Pledges.ApplicationPostRequest.ApprovalAction.Reject;
 }
 
-<a href="@Url.Action("GetApplications")" class="govuk-back-link">Back</a>
+<a href="@Url.Action("Applications")" class="govuk-back-link">Back</a>
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
 
     <div class="govuk-grid-row">
@@ -32,7 +34,41 @@
                 <p><strong>Estimated total cost:</strong> @Model.EstimatedTotalCost</p>
                 <p class="govuk-!-margin-bottom-0"><strong>Apprenticeship training to start by:</strong> @Model.StartBy.ToString("MM/yyyy")</p>
             </section>
+            @if (Model.CanAcceptFunding)
+            {
+                <form method="post">
+                    <h2 class="govuk-heading-m">Do you want to accept this transfer of funds?</h2>
+                    <div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios" das-highlight-error-for="HasAcceptedTermsAndConditions" error-class="govuk-form-group--error">
+                        <span das-validation-for="SelectedAction" class="govuk-error-message"></span>
+                        <div class="govuk-radios__item">
 
+                            <input class="govuk-radios__input" id="SelectedAction" name="SelectedAction" asp-for="SelectedAction" type="radio" value="@approve" das-highlight-error-for="SelectedAction" error-class="govuk-textarea--error" data-aria-controls="approval-content" />
+                            <label class="govuk-label govuk-radios__label" for="SelectedAction">
+                                Yes, accept the funding
+                            </label>
+                        </div>
+                        <div class="govuk-radios__conditional" id="approval-content">
+                            <div class="govuk-form-group">
+                                <fieldset class="govuk-fieldset">
+                                    <legend class="govuk-fieldset__legend">I confirm that:</legend>
+
+                                    <span das-validation-for="HasAcceptedTermsAndConditions" class="govuk-error-message"></span>
+                                    <checkbox asp-for="TruthfulInformation" label="the information that I have provided is truthful and accurate" aria-controls="TruthfulInformation" css-class="govuk-checkboxes govuk-checkboxes--small">
+
+                                    </checkbox>
+                                    <checkbox asp-for="ComplyWithRules" label="I will comply with the &lt;a href=&quot;https://www.gov.uk/guidance/apprenticeship-funding-rules&quot; target=&quot;_blank&quot;&gt;apprenticeship funding rules&lt;/a&gt;, including not offering or making any payments in return for a transfer of funding" aria-controls="ComplyWithRules" css-class="govuk-checkboxes govuk-checkboxes--small">
+
+                                    </checkbox>
+
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                    <p>
+                        <button class="govuk-button" data-module="govuk-button" id="fund-transfer-accept">Continue</button>
+                    </p>
+                </form>
+            }
         </div>
 
         <div class="govuk-grid-column-one-third">

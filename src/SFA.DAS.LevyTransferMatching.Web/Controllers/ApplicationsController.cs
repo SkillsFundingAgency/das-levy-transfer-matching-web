@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.LevyTransferMatching.Web.Authentication;
@@ -36,10 +39,37 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             {
                 return View(viewModel);
             }
-            else
+
+            return NotFound();
+        }
+
+        [HttpPost]
+        [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}")]
+        public async Task<IActionResult> Application([FromServices] AbstractValidator<ApplicationPostRequest> validator, ApplicationPostRequest request, CancellationToken cancellationToken = default)
+        {
+            var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+            if (!validationResult.IsValid)
             {
-                return NotFound();
+                validationResult.AddToModelState(ModelState, string.Empty);
+
+                return RedirectToAction("Application");
             }
+
+            await _applicationsOrchestrator.AcceptFunding(new AcceptFundingPostRequest
+            {
+                ApplicationId = request.ApplicationId,
+                AccountId = request.AccountId,
+            }, cancellationToken);
+
+            return Redirect($"/accounts/{request.EncodedAccountId}/applications/{request.EncodedApplicationId}/accepted");
+        }
+
+        [HttpGet]
+        [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}/accepted")]
+        public async Task<IActionResult> AcceptedFunding()
+        {
+            return View();
         }
     }
 }

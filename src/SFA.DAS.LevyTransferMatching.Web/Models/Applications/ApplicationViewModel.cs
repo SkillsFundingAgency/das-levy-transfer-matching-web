@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using SFA.DAS.LevyTransferMatching.Domain.Types;
+using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Models.Shared;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
@@ -18,6 +19,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
         public OpportunitySummaryViewModel OpportunitySummaryViewModel { get; set; }
         public string EncodedOpportunityId { get; set; }
         public string Title => $"Your {(IsNamePublic ? EmployerAccountName : "opportunity")} ({EncodedOpportunityId}) application details";
+        public bool CanAcceptFunding { get; set; }
+        public Pledges.ApplicationPostRequest.ApprovalAction? SelectedAction { get; set; }
+        public bool TruthfulInformation { get; set; }
+        public bool ComplyWithRules { get; set; }
+
+        public bool HasAcceptedTermsAndConditions => TruthfulInformation && ComplyWithRules;
         public string EstimatedTotalCost { get; set; }
     }
 }

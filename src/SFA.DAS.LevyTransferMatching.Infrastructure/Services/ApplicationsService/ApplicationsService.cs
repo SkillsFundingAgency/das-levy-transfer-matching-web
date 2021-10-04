@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService
@@ -24,9 +25,9 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsServi
             return JsonConvert.DeserializeObject<GetApplicationsResponse>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<Types.GetApplicationResponse> GetApplication(long accountId, int applicationId)
+        public async Task<Types.GetApplicationResponse> GetApplication(long accountId, int applicationId, CancellationToken cancellationToken = default)
         {
-            var response = await _httpClient.GetAsync($"accounts/{accountId}/applications/{applicationId}");
+            var response = await _httpClient.GetAsync($"accounts/{accountId}/applications/{applicationId}", cancellationToken);
 
             Types.GetApplicationResponse getApplicationResponse = null; 
             if (response.IsSuccessStatusCode)
@@ -42,6 +43,15 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsServi
             }
 
             return getApplicationResponse;
+        }
+
+        public async Task AcceptFunding(AcceptFundingRequest request, CancellationToken cancellationToken = default)
+        {
+            var json = JsonConvert.SerializeObject(request);
+            var response = await _httpClient.PostAsync($"accounts/{request.AccountId}/applications/{request.ApplicationId}/accept-funding",
+                new StringContent(json, System.Text.Encoding.UTF8, "application/json"), cancellationToken);
+
+            response.EnsureSuccessStatusCode();
         }
     }
 }
