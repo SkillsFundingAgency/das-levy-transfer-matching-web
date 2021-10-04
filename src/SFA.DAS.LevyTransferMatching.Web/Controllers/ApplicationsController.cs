@@ -63,8 +63,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
                 AccountId = request.AccountId,
             }, cancellationToken);
 
-            return RedirectToAction("Applications");
+            return Redirect($"/accounts/{request.EncodedAccountId}/applications/{request.EncodedApplicationId}/accepted");
         }
 
+        [HttpGet]
+        [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}/accepted")]
+        public async Task<IActionResult> AcceptedFunding()
+        {
+            return View();
+        }
     }
 }
