@@ -37,11 +37,9 @@
             
             @if (Model.CanAcceptFunding)
             {
-
-
                 <form method="post">
                     <h2 class="govuk-heading-m">Do you want to accept this transfer of funds?</h2>
-                    <div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios">
+                    <div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios" das-highlight-error-for="HasAcceptedTermsAndConditions" error-class="govuk-form-group--error">
                         <span das-validation-for="SelectedAction" class="govuk-error-message"></span>
                         <div class="govuk-radios__item">
 
@@ -50,7 +48,7 @@
                                 Yes, accept the funding
                             </label>
                         </div>
-                        <div class="govuk-radios__conditional @(Model.HasAcceptedTermsAndConditions ? "" : "govuk-radios__conditional--error")" id="approval-content">
+                        <div class="govuk-radios__conditional" id="approval-content">
                             <div class="govuk-form-group">
                                 <fieldset class="govuk-fieldset">
                                     <legend class="govuk-fieldset__legend">I confirm that:</legend>

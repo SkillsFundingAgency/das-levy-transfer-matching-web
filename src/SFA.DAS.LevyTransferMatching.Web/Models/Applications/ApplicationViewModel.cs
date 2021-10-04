@@ -23,7 +23,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
         public bool TruthfulInformation { get; set; }
         public bool ComplyWithRules { get; set; }
 
-        public bool HasAcceptedTermsAndConditions => TruthfulInformation == true && ComplyWithRules == true;
+        public bool HasAcceptedTermsAndConditions => TruthfulInformation && ComplyWithRules;
 		public string Title => $"Your {(IsNamePublic ? EmployerAccountName : "opportunity")} ({EncodedOpportunityId}) application details";
         public string EstimatedTotalCost { get; set; }
     }
