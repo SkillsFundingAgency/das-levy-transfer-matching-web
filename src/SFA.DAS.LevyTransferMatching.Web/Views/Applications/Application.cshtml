@@ -6,7 +6,7 @@
     ViewData["Title"] = Model.Title;
 }
 
-<a href="@Url.Action("GetApplications")" class="govuk-back-link">Back</a>
+<a href="@Url.Action("Applications", new { EncodedAccountId = Model.EncodedAccountId })" class="govuk-back-link">Back</a>
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
 
     <div class="govuk-grid-row">
