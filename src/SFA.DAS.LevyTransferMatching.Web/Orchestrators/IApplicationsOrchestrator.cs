@@ -9,5 +9,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         Task<GetApplicationsViewModel> GetApplications(GetApplicationsRequest request, CancellationToken cancellationToken = default);
         Task<ApplicationViewModel> GetApplication(ApplicationRequest request);
         Task AcceptFunding(AcceptFundingPostRequest request, CancellationToken cancellationToken = default);
+        Task<AcceptedViewModel> GetAcceptedViewModel(AcceptedRequest request);
     }
 }

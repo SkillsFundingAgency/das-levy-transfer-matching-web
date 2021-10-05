@@ -127,5 +127,22 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 UserId = _userService.GetUserId()
             }, cancellationToken);
         }
+
+        public async Task<AcceptedViewModel> GetAcceptedViewModel(AcceptedRequest request)
+        {
+            var result = await _applicationsService.GetAccepted(request.AccountId, request.ApplicationId);
+
+            if (result == null)
+            {
+                return null;
+            }
+
+            var encodedPledgeId = _encodingService.Encode(result.OpportunityId, EncodingType.PledgeId);
+
+            return new AcceptedViewModel()
+            {
+                EmployerNameAndReference = $"{result.EmployerAccountName} ({encodedPledgeId})",
+            };
+        }
     }
 }
