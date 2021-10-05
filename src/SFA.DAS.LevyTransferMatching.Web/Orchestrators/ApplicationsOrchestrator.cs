@@ -106,7 +106,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                  Status = result.Status,
                  EncodedOpportunityId = encodedOpportunityId,
                  EstimatedTotalCost = estimatedTotalCost,
-                 CanAcceptFunding = isOwnerOrTransactor && result.Status == ApplicationStatus.Approved
+                 CanAcceptFunding = isOwnerOrTransactor && result.Status == ApplicationStatus.Approved,
+                 CanUseTransferFunds = isOwnerOrTransactor && result.Status == ApplicationStatus.Accepted
             };
         }
 

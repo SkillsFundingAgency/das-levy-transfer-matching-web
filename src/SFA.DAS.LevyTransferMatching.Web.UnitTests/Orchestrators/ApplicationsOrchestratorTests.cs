@@ -85,5 +85,30 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             // Assert
             Assert.IsNull(viewModel);
         }
+
+        [Test]
+        public async Task GetApplicationViewModel_IsOwnerAndTransactorAndStatusEqualsApproved_ReturnsViewModel()
+        {
+            // Arrange
+            var request = _fixture.Create<ApplicationRequest>();
+            var response = _fixture.Create<GetApplicationResponse>();
+            var encodedPledgeId = _fixture.Create<string>();
+
+            _mockApplicationsService
+                .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId), CancellationToken.None))
+                .ReturnsAsync(response);
+
+            _mockEncodingService
+                .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
+                .Returns(encodedPledgeId);
+
+            // Act
+            var viewModel = await _applicationsOrchestrator.GetApplication(request);
+
+            // Assert
+            Assert.IsNotNull(viewModel);
+            Assert.AreEqual(encodedPledgeId, viewModel.EncodedOpportunityId);
+        }
+
     }
 }
