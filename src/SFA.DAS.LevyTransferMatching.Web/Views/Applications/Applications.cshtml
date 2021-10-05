@@ -45,7 +45,7 @@
                                         <span class="govuk-caption-m">Date: @application.CreatedOn.ToString("dd/MM/yyyy")</span>
                                     </td>
                                     <td class="govuk-table__cell">£@application.EstimatedTotalCost</td>
-                                    <td class="govuk-table__cell"><span class=" @application.Status.GetCssClassForReceiver()">@application.Status.GetLabelForSender()</span></td>
+                                    <td class="govuk-table__cell"><span class=" @application.Status.GetCssClassForReceiver()">@application.Status.GetLabelForReceiver()</span></td>
                                 </tr>
                             }
                         </tbody>
