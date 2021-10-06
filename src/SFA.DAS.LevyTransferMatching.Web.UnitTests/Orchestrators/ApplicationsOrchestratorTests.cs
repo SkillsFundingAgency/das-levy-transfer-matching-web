@@ -17,7 +17,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
     [TestFixture]
     public class ApplicationsOrchestratorTests
     {
-        private readonly Fixture _fixture = new Fixture();
+        private Fixture _fixture;
 
         private Mock<IApplicationsService> _mockApplicationsService;
         private Mock<IDateTimeService> _mockDateTimeService;
@@ -29,6 +29,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         [SetUp]
         public void Arrange()
         {
+            _fixture = new Fixture();
+
             _mockApplicationsService = new Mock<IApplicationsService>();
             _mockUserService = new Mock<IUserService>();
             _mockDateTimeService = new Mock<IDateTimeService>();
@@ -71,7 +73,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         public async Task GetApplicationViewModel_ApplicationDoesntExist_ReturnsNull()
         {
             // Arrange
-            var request = _fixture.Create<ApplicationRequest>();
+            var request = _fixture.Freeze<ApplicationRequest>();
 
             _mockApplicationsService
                 .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId), CancellationToken.None))
@@ -84,29 +86,45 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             Assert.IsNull(viewModel);
         }
 
-        //[Test]
-        //public async Task GetApplicationViewModel_IsOwnerAndTransactorAndStatusEqualsApproved_ReturnsViewModel()
-        //{
-        //    // Arrange
-        //    var request = _fixture.Create<ApplicationRequest>();
-        //    var response = _fixture.Create<GetApplicationResponse>();
-        //    var encodedPledgeId = _fixture.Create<string>();
+        [Test]
+        public async Task GetAcceptedViewModel_ApplicationExists_ReturnsViewModel()
+        {
+            // Arrange
+            var request = _fixture.Create<AcceptedRequest>();
+            var response = _fixture.Create<GetAcceptedResponse>();
+            var encodedPledgeId = _fixture.Create<string>();
 
-        //    _mockApplicationsService
-        //        .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId), CancellationToken.None))
-        //        .ReturnsAsync(response);
+            _mockApplicationsService
+                .Setup(x => x.GetAccepted(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId)))
+                .ReturnsAsync(response);
 
-        //    _mockEncodingService
-        //        .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
-        //        .Returns(encodedPledgeId);
+            _mockEncodingService
+                .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
+                .Returns(encodedPledgeId);
 
-        //    // Act
-        //    var viewModel = await _applicationsOrchestrator.GetApplication(request);
+            // Act
+            var viewModel = await _applicationsOrchestrator.GetAcceptedViewModel(request);
 
-        //    // Assert
-        //    Assert.IsNotNull(viewModel);
-        //    Assert.AreEqual(encodedPledgeId, viewModel.EncodedOpportunityId);
-        //}
+            // Assert
+            Assert.IsNotNull(viewModel);
+            Assert.AreEqual($"{response.EmployerAccountName} ({encodedPledgeId})", viewModel.EmployerNameAndReference);
+        }
 
+        [Test]
+        public async Task GetAcceptedViewModel_ApplicationDoesntExist_ReturnsNull()
+        {
+            // Arrange
+            var request = _fixture.Create<AcceptedRequest>();
+
+            _mockApplicationsService
+                .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId), CancellationToken.None))
+                .ReturnsAsync((GetApplicationResponse)null);
+
+            // Act
+            var viewModel = await _applicationsOrchestrator.GetAcceptedViewModel(request);
+
+            // Assert
+            Assert.IsNull(viewModel);
+        }
     }
 }

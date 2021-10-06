@@ -71,7 +71,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         {
             var viewModel = await _applicationsOrchestrator.GetAcceptedViewModel(request);
 
-            return View(viewModel);
+            if (viewModel != null)
+            {
+                return View(viewModel);
+            }
+
+            return NotFound();
         }
     }
 }
