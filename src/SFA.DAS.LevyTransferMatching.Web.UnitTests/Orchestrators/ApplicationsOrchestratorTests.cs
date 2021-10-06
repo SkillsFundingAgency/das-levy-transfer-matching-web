@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture;
 using Moq;
@@ -8,6 +9,7 @@ using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using SFA.DAS.LevyTransferMatching.Web.Models.Applications;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 
@@ -21,7 +23,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private Mock<IApplicationsService> _mockApplicationsService;
         private Mock<IDateTimeService> _mockDateTimeService;
         private Mock<IEncodingService> _mockEncodingService;
-
+        private Mock<IUserService> _mockUserService;
         private ApplicationsOrchestrator _applicationsOrchestrator;
 
         [SetUp]
@@ -35,11 +37,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _mockDateTimeService
                 .Setup(x => x.UtcNow)
                 .Returns(_fixture.Create<DateTime>());
-
+            _mockUserService = new Mock<IUserService>();
             _mockEncodingService = new Mock<IEncodingService>();
             var featureToggles = _fixture.Create<Infrastructure.Configuration.FeatureToggles>();
 
-            _applicationsOrchestrator = new ApplicationsOrchestrator(_mockApplicationsService.Object, _mockDateTimeService.Object, _mockEncodingService.Object, featureToggles);
+            _applicationsOrchestrator = new ApplicationsOrchestrator(_mockApplicationsService.Object, _mockDateTimeService.Object, _mockEncodingService.Object, featureToggles, _mockUserService.Object);
         }
 
         [Test]
@@ -58,7 +60,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var encodedPledgeId = _fixture.Create<string>();
 
             _mockApplicationsService
-                .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId)))
+                .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(response);
 
             _mockEncodingService
@@ -80,7 +82,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var request = _fixture.Create<ApplicationRequest>();
 
             _mockApplicationsService
-                .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId)))
+                .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId), It.IsAny<CancellationToken>()))
                 .ReturnsAsync((GetApplicationResponse)null);
 
             // Act
