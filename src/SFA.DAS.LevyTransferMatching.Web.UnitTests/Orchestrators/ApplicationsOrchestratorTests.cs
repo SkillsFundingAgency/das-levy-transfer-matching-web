@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture;
@@ -22,9 +23,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private Mock<IApplicationsService> _mockApplicationsService;
         private Mock<IDateTimeService> _mockDateTimeService;
         private Mock<IEncodingService> _mockEncodingService;
-
-        private ApplicationsOrchestrator _applicationsOrchestrator;
         private Mock<IUserService> _mockUserService;
+        private ApplicationsOrchestrator _applicationsOrchestrator;
 
         [SetUp]
         public void Arrange()
@@ -32,13 +32,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _fixture = new Fixture();
 
             _mockApplicationsService = new Mock<IApplicationsService>();
-            _mockUserService = new Mock<IUserService>();
             _mockDateTimeService = new Mock<IDateTimeService>();
-            
+
             _mockDateTimeService
                 .Setup(x => x.UtcNow)
                 .Returns(_fixture.Create<DateTime>());
-
+            _mockUserService = new Mock<IUserService>();
             _mockEncodingService = new Mock<IEncodingService>();
             var featureToggles = _fixture.Create<Infrastructure.Configuration.FeatureToggles>();
 
@@ -50,11 +49,18 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         {
             // Arrange
             var request = _fixture.Create<ApplicationRequest>();
-            var response = _fixture.Create<GetApplicationResponse>();
+            var response = _fixture.Create <GetApplicationResponse>();
+
+            // Because -
+            // Random dates don't play well with ApprenticeshipFundingDtoExtensions.GetEffectiveFundingLine
+            response.Standard.ApprenticeshipFunding.First().EffectiveFrom = DateTime.Now.AddMonths(-3);
+            response.Standard.ApprenticeshipFunding.First().EffectiveTo = DateTime.Now.AddYears(2);
+            response.StartBy = DateTime.Now.AddMonths(2);
+
             var encodedPledgeId = _fixture.Create<string>();
 
             _mockApplicationsService
-                .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId), CancellationToken.None))
+                .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(response);
 
             _mockEncodingService
@@ -73,10 +79,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         public async Task GetApplicationViewModel_ApplicationDoesntExist_ReturnsNull()
         {
             // Arrange
-            var request = _fixture.Freeze<ApplicationRequest>();
+            var request = _fixture.Create<ApplicationRequest>();
 
             _mockApplicationsService
-                .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId), CancellationToken.None))
+                .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId), It.IsAny<CancellationToken>()))
                 .ReturnsAsync((GetApplicationResponse)null);
 
             // Act
