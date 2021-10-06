@@ -6,6 +6,7 @@ using AutoFixture;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Encoding;
+using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
@@ -18,7 +19,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
     [TestFixture]
     public class ApplicationsOrchestratorTests
     {
-        private Fixture _fixture;
+        private readonly Fixture _fixture = new Fixture();
 
         private Mock<IApplicationsService> _mockApplicationsService;
         private Mock<IDateTimeService> _mockDateTimeService;
@@ -29,8 +30,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         [SetUp]
         public void Arrange()
         {
-            _fixture = new Fixture();
-
             _mockApplicationsService = new Mock<IApplicationsService>();
             _mockDateTimeService = new Mock<IDateTimeService>();
 
@@ -51,11 +50,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var request = _fixture.Create<ApplicationRequest>();
             var response = _fixture.Create <GetApplicationResponse>();
 
-            // Because -
-            // Random dates don't play well with ApprenticeshipFundingDtoExtensions.GetEffectiveFundingLine
-            response.Standard.ApprenticeshipFunding.First().EffectiveFrom = DateTime.Now.AddMonths(-3);
-            response.Standard.ApprenticeshipFunding.First().EffectiveTo = DateTime.Now.AddYears(2);
-            response.StartBy = DateTime.Now.AddMonths(2);
+            SetCorrectDatesForGetEffectiveFundingLine(response);
 
             var encodedPledgeId = _fixture.Create<string>();
 
@@ -131,6 +126,71 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             // Assert
             Assert.IsNull(viewModel);
+        }
+
+
+        [Test]
+        public async Task GetApplicationViewModel_IsOwnerAndTransactorAndStatusEqualsApproved_ReturnsViewModelWithCanAcceptFunding()
+        {
+            // Arrange
+            var request = _fixture.Create<ApplicationRequest>();
+            var response = _fixture.Create<GetApplicationResponse>();
+            var encodedPledgeId = _fixture.Create<string>();
+
+            _mockApplicationsService
+                .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId), CancellationToken.None))
+                .ReturnsAsync(response);
+
+            _mockEncodingService
+                .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
+                .Returns(encodedPledgeId);
+            SetCorrectDatesForGetEffectiveFundingLine(response);
+            response.Status = ApplicationStatus.Approved;
+            _mockUserService.Setup(o => o.IsOwnerOrTransactor(It.IsAny<long>())).Returns(true);
+
+            // Act
+            var viewModel = await _applicationsOrchestrator.GetApplication(request);
+
+            // Assert
+            Assert.IsNotNull(viewModel);
+            Assert.AreEqual(true, viewModel.CanAcceptFunding);
+        }
+
+        [Test]
+        public async Task GetApplicationViewModel_IsOwnerAndTransactorAndStatusEqualsAccepted_ReturnsViewModelWithCanUseTransferFunds()
+        {
+            // Arrange
+            var request = _fixture.Create<ApplicationRequest>();
+            var response = _fixture.Create<GetApplicationResponse>();
+            var encodedPledgeId = _fixture.Create<string>();
+
+            _mockApplicationsService
+                .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId), CancellationToken.None))
+                .ReturnsAsync(response);
+
+            _mockEncodingService
+                .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
+                .Returns(encodedPledgeId);
+            SetCorrectDatesForGetEffectiveFundingLine(response);
+            response.Status = ApplicationStatus.Accepted;
+            _mockUserService.Setup(o => o.IsOwnerOrTransactor(It.IsAny<long>())).Returns(true);
+
+            // Act
+            var viewModel = await _applicationsOrchestrator.GetApplication(request);
+
+            // Assert
+            Assert.IsNotNull(viewModel);
+            Assert.AreEqual(true, viewModel.CanUseTransferFunds);
+        }
+
+
+        private static void SetCorrectDatesForGetEffectiveFundingLine(GetApplicationResponse response)
+        {
+            // Because -
+            // Random dates don't play well with ApprenticeshipFundingDtoExtensions.GetEffectiveFundingLine
+            response.Standard.ApprenticeshipFunding.First().EffectiveFrom = DateTime.Now.AddMonths(-3);
+            response.Standard.ApprenticeshipFunding.First().EffectiveTo = DateTime.Now.AddYears(2);
+            response.StartBy = DateTime.Now.AddMonths(2);
         }
     }
 }
