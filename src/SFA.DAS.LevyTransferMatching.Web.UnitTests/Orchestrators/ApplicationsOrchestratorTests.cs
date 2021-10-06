@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
 using Moq;
@@ -46,7 +47,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         {
             // Arrange
             var request = _fixture.Create<ApplicationRequest>();
-            var response = _fixture.Create<GetApplicationResponse>();
+            var response = _fixture.Create <GetApplicationResponse>();
+
+            // Because -
+            // Random dates don't play well with ApprenticeshipFundingDtoExtensions.GetEffectiveFundingLine
+            response.Standard.ApprenticeshipFunding.First().EffectiveFrom = DateTime.Now.AddMonths(-3);
+            response.Standard.ApprenticeshipFunding.First().EffectiveTo = DateTime.Now.AddYears(2);
+            response.StartBy = DateTime.Now.AddMonths(2);
+
             var encodedPledgeId = _fixture.Create<string>();
 
             _mockApplicationsService
