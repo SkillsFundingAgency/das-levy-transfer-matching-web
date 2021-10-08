@@ -11,7 +11,7 @@
             <div class="govuk-grid-column-two-thirds">
 
                 <div class="govuk-panel govuk-panel--confirmation application-complete">
-                    <h1 class="govuk-panel__title">You have succesfully accepted a transfer</h1>
+                    <h1 class="govuk-panel__title">You have successfully accepted a transfer</h1>
                 </div>
 
                 <div class="govuk-warning-text application-status-one">
@@ -29,7 +29,11 @@
                 <p><strong>@Model.EmployerNameAndReference</strong> will need to review and approve the details after you have added them.</p>
 
                 <p>
-                    <a href="4-my-applications" class="govuk-link">View my applications</a>
+                    <a href="@Url.Action("Application", "Applications" ,new{ encodedApplicationId = Model.EncodedApplicationId,  encodedAccountId = Model.EncodedAccountId})" class="govuk-link">Add apprentices</a>
+                    <br />
+                    or
+                    <br />
+                    <a href="@Url.Action("Applications", "Applications", new {encodedAccountId = Model.EncodedAccountId})" class="govuk-link">View my applications</a>
                     <br>
                     or
                     <br>

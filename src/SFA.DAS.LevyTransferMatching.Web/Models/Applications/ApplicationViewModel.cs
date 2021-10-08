@@ -18,7 +18,20 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
         public DateTime StartBy { get; set; }
         public OpportunitySummaryViewModel OpportunitySummaryViewModel { get; set; }
         public string EncodedOpportunityId { get; set; }
-        public string Title => $"Your {(IsNamePublic ? EmployerAccountName : "opportunity")} ({EncodedOpportunityId}) application details";
+        public string Title
+        {
+            get
+            {
+                return Status switch
+                {
+                    ApplicationStatus.Accepted =>
+                        $"Use transfer funds from {(IsNamePublic ? EmployerAccountName : "opportunity")} {EncodedOpportunityId}",
+                    _ =>
+                        $"Your {(IsNamePublic ? EmployerAccountName : "opportunity")} ({EncodedOpportunityId}) application details"
+                };
+            }
+        }
+
         public bool CanAcceptFunding { get; set; }
         public bool CanUseTransferFunds { get; set; }
         public Pledges.ApplicationPostRequest.ApprovalAction? SelectedAction { get; set; }

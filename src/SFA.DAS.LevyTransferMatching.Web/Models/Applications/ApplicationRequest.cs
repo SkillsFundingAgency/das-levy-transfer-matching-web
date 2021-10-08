@@ -1,4 +1,5 @@
-﻿using SFA.DAS.LevyTransferMatching.Web.Attributes;
+﻿using SFA.DAS.Encoding;
+using SFA.DAS.LevyTransferMatching.Web.Attributes;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
 {
@@ -12,5 +13,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
 
         [AutoDecode(nameof(EncodedApplicationId), Encoding.EncodingType.PledgeApplicationId)]
         public int ApplicationId { get; set; }
+        
+        public string EncodedSenderPublicAccountId { get; set; }
     }
 }

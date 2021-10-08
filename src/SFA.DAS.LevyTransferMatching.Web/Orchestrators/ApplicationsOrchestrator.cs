@@ -69,8 +69,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             {
                 return null;
             }
+
             var isOwnerOrTransactor = _userService.IsOwnerOrTransactor(request.AccountId);
             var encodedOpportunityId = _encodingService.Encode(result.OpportunityId, EncodingType.PledgeId);
+            var encodedSenderPublicAccountId = _encodingService.Encode(result.OpportunityId, EncodingType.PublicAccountId);
 
             var opportunitySummaryViewModelOptions = new GetOpportunitySummaryViewModelOptions()
             {
@@ -107,7 +109,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                  EncodedOpportunityId = encodedOpportunityId,
                  EstimatedTotalCost = estimatedTotalCost,
                  CanAcceptFunding = isOwnerOrTransactor && result.Status == ApplicationStatus.Approved,
-                 CanUseTransferFunds = isOwnerOrTransactor && result.Status == ApplicationStatus.Accepted
+                 CanUseTransferFunds = isOwnerOrTransactor && result.Status == ApplicationStatus.Accepted,
+                 EncodedSenderPublicAccountId = encodedSenderPublicAccountId
             };
         }
 
@@ -142,6 +145,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             return new AcceptedViewModel()
             {
+                EncodedAccountId = request.EncodedAccountId,
+                EncodedApplicationId = request.EncodedApplicationId,
                 EmployerNameAndReference = $"{result.EmployerAccountName} ({encodedPledgeId})",
             };
         }
