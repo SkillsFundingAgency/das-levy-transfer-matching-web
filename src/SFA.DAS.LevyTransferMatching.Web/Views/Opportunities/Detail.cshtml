@@ -11,6 +11,11 @@
         <div class="govuk-grid-column-two-thirds">
             <span class="govuk-caption-m">Find a business to fund training for your apprentices</span>
             <h1 class="govuk-heading-xl">Transfer fund details for @(Model.IsNamePublic ? Model.EmployerName : "opportunity") (@Model.EncodedPledgeId)</h1>
+            <div class="govuk-warning-text">
+                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                <span class="govuk-warning-text__assistive">Warning</span>
+                <p class="govuk-warning-text__text">Funds from a transfer will be available to use from 27th October. If you require an apprenticeship to start before this date, you can reserve funds via reservations.</p>
+            </div>
             <h2 class="govuk-heading-m">Details of the opportunity</h2>
             <partial name="_OpportunitySummary" for="OpportunitySummaryView" />
             <form method="post">
