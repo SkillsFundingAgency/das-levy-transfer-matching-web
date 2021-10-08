@@ -40,5 +40,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
 
         public bool HasAcceptedTermsAndConditions => TruthfulInformation && ComplyWithRules && SelectedAction == Pledges.ApplicationPostRequest.ApprovalAction.Approve;
         public string EstimatedTotalCost { get; set; }
+        public bool RenderCanUseTransferFundsStartButton { get; set; }
     }
 }

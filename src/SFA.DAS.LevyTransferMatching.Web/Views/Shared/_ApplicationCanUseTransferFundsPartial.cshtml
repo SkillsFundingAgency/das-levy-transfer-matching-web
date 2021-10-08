@@ -19,10 +19,14 @@
             <li>make sure the PAYE scheme that each apprentice is paid through is in your account - <a href="@LinkGenerator.AccountsLink($"accounts/{Model.EncodedAccountId}/schemes")" class="govuk-link govuk-link--no-visited-state">view PAYE schemes in this account</a></li>
         </ul>
         <p><a href="https://findapprenticeshiptraining.apprenticeships.education.gov.uk/" class="govuk-link govuk-link--no-visited-state" target="_blank">Find a training provider</a></p>
-        <p>
-            <a href="@LinkGenerator.CommitmentsV2Link($"{Model.EncodedAccountId}/unapproved/legalEntity/create?encodedpledgeapplicationid={Model.EncodedApplicationId}&transferConnectionCode={Model.EncodedSenderPublicAccountId}")"
-               class="govuk-button govuk-!-margin-bottom-0">Start now</a>
-        </p>
-        <p><a href="@Url.Action("applications", "applications", new {encodedApplicationId = Model.EncodedApplicationId})" class="govuk-link govuk-link--no-visited-state">View my applications</a></p>
+
+        @if (Model.RenderCanUseTransferFundsStartButton)
+        {
+            <p>
+                <a href="@LinkGenerator.CommitmentsV2Link($"{Model.EncodedAccountId}/unapproved/legalEntity/create?encodedpledgeapplicationid={Model.EncodedApplicationId}&transferConnectionCode={Model.EncodedSenderPublicAccountId}")"
+                   class="govuk-button govuk-!-margin-bottom-0">Start now</a>
+            </p>
+        }
+        <p><a href="@Url.Action("applications", "applications", new {encodedAccountId = Model.EncodedAccountId})" class="govuk-link govuk-link--no-visited-state">View my applications</a></p>
     </div>
 }

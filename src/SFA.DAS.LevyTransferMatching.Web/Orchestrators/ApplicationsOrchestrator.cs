@@ -110,7 +110,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                  EstimatedTotalCost = estimatedTotalCost,
                  CanAcceptFunding = isOwnerOrTransactor && result.Status == ApplicationStatus.Approved,
                  CanUseTransferFunds = isOwnerOrTransactor && result.Status == ApplicationStatus.Accepted,
-                 EncodedSenderPublicAccountId = encodedSenderPublicAccountId
+                 EncodedSenderPublicAccountId = encodedSenderPublicAccountId,
+                 RenderCanUseTransferFundsStartButton = _featureToggles.FeatureToggleRenderCanUseTransferFundsStartButton
             };
         }
 
