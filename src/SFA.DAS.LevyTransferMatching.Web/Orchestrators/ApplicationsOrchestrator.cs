@@ -141,6 +141,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             return new AcceptedViewModel()
             {
+                EncodedAccountId = request.EncodedAccountId,
                 EmployerNameAndReference = $"{result.EmployerAccountName} ({encodedPledgeId})",
             };
         }
