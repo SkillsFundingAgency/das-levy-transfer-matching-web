@@ -23,5 +23,12 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
             public int Amount { get; set; }
             public bool IsNamePublic { get; set; }
         }
+
+        public IEnumerable<PledgeLocation> PledgeLocations { get; set; }
+        public class PledgeLocation
+        {
+            public int Id { get; set; }
+            public string Name { get; set; }
+        }
     }
 }
