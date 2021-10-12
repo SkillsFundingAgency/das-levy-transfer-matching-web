@@ -12,6 +12,11 @@
     <h1 class="govuk-heading-xl">
         @Model.EmployerAccountName
     </h1>
+    <div class="govuk-warning-text">
+        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+        <span class="govuk-warning-text__assistive">Warning</span>
+        <p class="govuk-warning-text__text">Businesses will be able to use the funds pledged from the 27th October.</p>
+    </div>
     <div class="das-highlight">
         <h2 class="govuk-heading-m">Details about the application</h2>
         @*
@@ -68,7 +73,7 @@
             <p>@Model.AboutOpportunity</p>
         </div>
     }
-    
+
     @if (Model.ShowAffordabilityPanel)
     {
         <div class="das-highlight">
@@ -90,7 +95,7 @@
                 </summary>
                 <div class="govuk-details__text">
                     <p>The estimated total cost of training is based on the funding band maximum.</p>
-                    <p>The estimated cost of training for this financial year is based on the funding band maximum, the planned start date of training and the 20% EPA payment made at the end of training.</p>
+                    <p>The estimated cost of training for this financial year is based on the funding band maximum, the planned start date of training and the 20% completion payment.</p>
                 </div>
             </details>
         </div>
@@ -141,14 +146,14 @@
                             </label>
                         </div>
                         <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="approval-content">
-                            <p><strong>Disclaimer:</strong> The information provided by @Model.EmployerAccountName in their application for this pledge has not been checked and verified by the apprenticeship service.<br/>Please carry out your own due diligence when deciding whether to offer a transfer of your levy funds.</p>
+                            <p><strong>Disclaimer:</strong> The information provided by @Model.EmployerAccountName in their application for this pledge has not been checked and verified by the apprenticeship service.<br />Please carry out your own due diligence when deciding whether to offer a transfer of your levy funds.</p>
                         </div>
                         @*<div class="govuk-radios__item">
-                            <input class="govuk-radios__input" id="SelectedAction-2" name="SelectedAction" asp-for="SelectedAction" type="radio" value="@reject" das-highlight-error-for="SelectedAction" error-class="govuk-textarea--error" />
-                            <label class="govuk-label govuk-radios__label" for="SelectedAction-2">
-                                Reject the application
-                            </label>
-                        </div>*@
+                                <input class="govuk-radios__input" id="SelectedAction-2" name="SelectedAction" asp-for="SelectedAction" type="radio" value="@reject" das-highlight-error-for="SelectedAction" error-class="govuk-textarea--error" />
+                                <label class="govuk-label govuk-radios__label" for="SelectedAction-2">
+                                    Reject the application
+                                </label>
+                            </div>*@
                     </div>
                 </fieldset>
             </div>
