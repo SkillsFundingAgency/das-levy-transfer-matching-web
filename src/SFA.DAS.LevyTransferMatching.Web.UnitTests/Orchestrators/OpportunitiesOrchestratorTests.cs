@@ -600,10 +600,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                                           r.HasTrainingProvider == cacheItem.HasTrainingProvider.Value &&
                                           r.Amount == cacheItem.Amount &&
                                           r.Sectors.Equals(cacheItem.Sectors) &&
-                                          r.Postcode == cacheItem.Postcode &&
+                                          r.Locations.Equals(cacheItem.Locations) &&
+                                          r.AdditionalLocation == (cacheItem.AdditionalLocation ? cacheItem.AdditionLocationText : string.Empty) &&
+                                          r.SpecificLocation == cacheItem.SpecificLocation &&
                                           r.FirstName == cacheItem.FirstName &&
                                           r.LastName == cacheItem.LastName &&
-                                          r.EmailAddresses == cacheItem.EmailAddresses &&
+                                          r.EmailAddresses.Equals(cacheItem.EmailAddresses) &&
                                           r.BusinessWebsite == cacheItem.BusinessWebsite &&
                                           r.UserId == _userId &&
                                           r.UserDisplayName == _userDisplayName)));
@@ -667,7 +669,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             Assert.AreEqual(encodedAccountId, result.EncodedAccountId);
             Assert.AreEqual(encodedPledgeId, result.EncodedPledgeId);
             Assert.AreEqual(cacheItem.Sectors, result.Sectors);
-            Assert.AreEqual(cacheItem.Postcode, result.Postcode);
+            
             Assert.IsNotNull(result.OpportunitySummaryViewModel);
             Assert.AreEqual(getSectorResponse.Opportunity.Amount, result.OpportunitySummaryViewModel.Amount);
             Assert.AreEqual(result.OpportunitySummaryViewModel.SectorList, getSectorResponse.Opportunity.Sectors.ToReferenceDataDescriptionList(getSectorResponse.Sectors));

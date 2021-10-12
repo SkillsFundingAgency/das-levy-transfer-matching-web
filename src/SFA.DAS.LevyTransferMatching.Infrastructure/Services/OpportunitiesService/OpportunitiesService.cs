@@ -33,7 +33,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
         {
             GetApplicationDetailsResponse applicationDetailsResponse = null;
 
-            var response = await _client.GetAsync($"accounts/{accountId}/opportunities/{id}/create/application-details{(standardId != default ? $"?standardId={standardId}" : string.Empty)}");
+            var response = await _client.GetAsync($"accounts/{accountId}/opportunities/{id}/apply/application-details{(standardId != default ? $"?standardId={standardId}" : string.Empty)}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -49,21 +49,21 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
 
         public async Task<GetMoreDetailsResponse> GetMoreDetails(long accountId, int pledgeId)
         {
-            var response = await _client.GetAsync($"accounts/{accountId}/opportunities/{pledgeId}/create/more-details");
+            var response = await _client.GetAsync($"accounts/{accountId}/opportunities/{pledgeId}/apply/more-details");
             response.EnsureSuccessStatusCode();
             return JsonConvert.DeserializeObject<GetMoreDetailsResponse>(await response.Content.ReadAsStringAsync());
         }
 
         public async Task<GetSectorResponse> GetSector(long accountId, int pledgeId)
         {
-            var response = await _client.GetAsync($"accounts/{accountId}/opportunities/{pledgeId}/create/sector");
+            var response = await _client.GetAsync($"accounts/{accountId}/opportunities/{pledgeId}/apply/sector");
             response.EnsureSuccessStatusCode();
             return JsonConvert.DeserializeObject<GetSectorResponse>(await response.Content.ReadAsStringAsync());
         }
 
         public async Task<GetSectorResponse> GetSector(long accountId, int pledgeId, string postcode)
         {
-            var response = await _client.GetAsync($"accounts/{accountId}/opportunities/{pledgeId}/create/sector?postcode={postcode}");
+            var response = await _client.GetAsync($"accounts/{accountId}/opportunities/{pledgeId}/apply/sector?postcode={postcode}");
             response.EnsureSuccessStatusCode();
             return JsonConvert.DeserializeObject<GetSectorResponse>(await response.Content.ReadAsStringAsync());
         }
