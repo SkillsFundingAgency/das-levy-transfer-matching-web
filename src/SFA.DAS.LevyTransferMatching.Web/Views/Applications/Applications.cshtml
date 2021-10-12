@@ -5,9 +5,18 @@
 
 @{
     ViewData["Title"] = "My applications";
+    ViewData[ViewDataKeys.HideAccountNavigation] = false;
+    ViewData[ViewDataKeys.ShowNav] = true;
+    var breadCrumbs = new List<Tuple<string, string>>
+{
+        new Tuple<string, string>(LinkGenerator.AccountsLink($"accounts/{Model.EncodedAccountId}/teams"), "Home"),
+        new Tuple<string, string>(LinkGenerator.FinanceLink($"accounts/{Model.EncodedAccountId}/transfers"), "Manage Transfers"),
+        new Tuple<string, string>("", $"My applications")
+    };
+
 }
 
-
+<bread-crumb source="@breadCrumbs"></bread-crumb>
 
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
     <div class="govuk-width-container">
@@ -17,7 +26,7 @@
                     My applications
                 </h1>
 
-                <p>You have <strong>@Model.Applications.Count()</strong> transfers applications.</p>
+                <p>You have <strong>@Model.Applications.Count()</strong> @Model.ApplicationCountPostFix.</p>
                 <table class="govuk-table govuk-!-margin-bottom-9" aria-label="Transfer applications table">
                     <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
@@ -35,7 +44,7 @@
                                     <td class="govuk-table__cell">
                                         @if (Model.RenderViewApplicationDetailsHyperlink)
                                         {
-                                            <a href="@Url.Action("ApplicationStatus", "Applications" ,new{ encodedApplicationId = application.EncodedApplicationId,  encodedAccountId = Model.EncodedAccountId})" class="govuk-link govuk-link--no-visited-state">@application.DasAccountName (@application.PledgeReference)</a><br />
+                                            <a href="@Url.Action("Application", "Applications" ,new{ encodedApplicationId = application.EncodedApplicationId,  encodedAccountId = Model.EncodedAccountId})" class="govuk-link govuk-link--no-visited-state">@application.DasAccountName (@application.PledgeReference)</a><br />
                                         }
                                         else
                                         {
@@ -45,7 +54,7 @@
                                         <span class="govuk-caption-m">Date: @application.CreatedOn.ToString("dd/MM/yyyy")</span>
                                     </td>
                                     <td class="govuk-table__cell">£@application.EstimatedTotalCost</td>
-                                    <td class="govuk-table__cell"><span class=" @application.Status.GetCssClassForReceiver()">@application.Status.GetLabelForSender()</span></td>
+                                    <td class="govuk-table__cell"><span class=" @application.Status.GetCssClassForReceiver()">@application.Status.GetLabelForReceiver()</span></td>
                                 </tr>
                             }
                         </tbody>
@@ -61,8 +70,8 @@
 
                 </table>
 
-                <a href="@LinkGenerator.AccountsLink($"accounts/{Model.EncodedAccountId}/transfers")" class="govuk-link govuk-back-link" )>Back to transfers</a>
-          
+                <a href="@LinkGenerator.FinanceLink($"accounts/{Model.EncodedAccountId}/transfers")" class="govuk-link govuk-back-link" )>Back to transfers</a>
+
             </div>
         </div>
     </div>
