@@ -78,12 +78,7 @@
                                             </td>
                                             <td class="govuk-table__cell">@app.Duration months</td>
                                             <td class="govuk-table__cell">
-                                                <p style="color: grey; padding-top: 5px; font-size: 16px;">
-                                                    • Location <br>
-                                                    • Sector <br>
-                                                    • Type of job role <br>
-                                                    • Level
-                                                </p>
+                                                <criteria-list application="@app"></criteria-list>
                                             </td>
                                             <td class="govuk-table__cell">@app.CreatedOn.ToLongDateDisplayString()</td>
                                             <td class="govuk-table__cell"><strong class="@app.Status.GetCssClassForSender()">@app.Status.GetLabelForSender()</strong></td>
