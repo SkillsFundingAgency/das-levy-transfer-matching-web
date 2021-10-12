@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.Encoding;
@@ -10,6 +11,7 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
+using SFA.DAS.LevyTransferMatching.Web.Models.Shared;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
@@ -180,7 +182,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 EncodedPledgeId = request.EncodedPledgeId,
             };
 
-            return new ApplyViewModel
+            var result = new ApplyViewModel
             {
                 CacheKey = applicationTask.Result.Key,
                 EncodedPledgeId = request.EncodedPledgeId,
@@ -352,7 +354,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 Sectors = cacheItem.Sectors,
                 SectorOptions = response.Sectors.ToList(),
                 OpportunitySummaryViewModel = GetOpportunitySummaryViewModel(opportunitySummaryViewModelOptions),
-                Postcode = cacheItem.Postcode,
+                PledgeLocations = response.PledgeLocations.Select(x => new CheckboxListItem { Id = x.Id, Label = x.Name }).OrderBy(y => y.Label),
+                HasPledgeLocations = response.PledgeLocations.Any(),
+                Locations = cacheItem.Locations,
+                AdditionalLocation = cacheItem.AdditionalLocation,
+                AdditionalLocationText = cacheItem.AdditionLocationText,
+                SpecificLocation = cacheItem.SpecificLocation
             };
         }
 
