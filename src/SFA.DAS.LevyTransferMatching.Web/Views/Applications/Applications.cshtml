@@ -5,8 +5,7 @@
 
 @{
     ViewData["Title"] = "My applications";
-    ViewData[ViewDataKeys.HideAccountNavigation] = false;
-    ViewData[ViewDataKeys.ShowNav] = true;
+
     var breadCrumbs = new List<Tuple<string, string>>
 {
         new Tuple<string, string>(LinkGenerator.AccountsLink($"accounts/{Model.EncodedAccountId}/teams"), "Home"),
