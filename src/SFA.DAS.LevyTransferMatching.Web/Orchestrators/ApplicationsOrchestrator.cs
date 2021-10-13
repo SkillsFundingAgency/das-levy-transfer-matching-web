@@ -75,7 +75,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 AllSectors = result.AllSectors,
                 AllJobRoles = result.AllJobRoles,
                 AllLevels = result.AllLevels,
-                Amount = result.Amount,
+                Amount = result.PledgeAmount,
                 IsNamePublic = result.IsNamePublic,
                 DasAccountName = result.PledgeEmployerAccountName,
                 EncodedPledgeId = encodedOpportunityId,
