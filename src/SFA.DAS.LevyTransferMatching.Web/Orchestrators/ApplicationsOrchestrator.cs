@@ -77,7 +77,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 AllLevels = result.AllLevels,
                 Amount = result.Amount,
                 IsNamePublic = result.IsNamePublic,
-                DasAccountName = result.EmployerAccountName,
+                DasAccountName = result.PledgeEmployerAccountName,
                 EncodedPledgeId = encodedOpportunityId,
             };
 
@@ -88,7 +88,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             return new ApplicationViewModel()
             {
                  OpportunitySummaryViewModel = GetOpportunitySummaryViewModel(opportunitySummaryViewModelOptions),
-                 EmployerAccountName = result.EmployerAccountName,
+                 PledgeEmployerAccountName = result.PledgeEmployerAccountName,
                  EncodedAccountId = request.EncodedAccountId,
                  EncodedApplicationId = request.EncodedApplicationId,
                  IsNamePublic = result.IsNamePublic,

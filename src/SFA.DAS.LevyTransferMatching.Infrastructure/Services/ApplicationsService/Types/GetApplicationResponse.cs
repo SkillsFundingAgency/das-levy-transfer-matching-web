@@ -24,5 +24,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsServi
         public DateTime StartBy { get; set; }
         public int OpportunityId { get; set; }
         public StandardsListItemDto Standard { get; set; }
+        public string PledgeEmployerAccountName { get; set; }
     }
 }
