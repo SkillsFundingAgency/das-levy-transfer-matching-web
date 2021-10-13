@@ -81,9 +81,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 EncodedPledgeId = encodedOpportunityId,
             };
 
-            var duration = result.Standard.ApprenticeshipFunding.GetEffectiveFundingLine(result.StartBy).Duration;
-
-            var estimatedTotalCost = (result.Amount * (duration / 12)).ToCurrencyString();
+            var estimatedTotalCost = result.Standard.ApprenticeshipFunding
+                .GetEffectiveFundingLine(result.StartBy)
+                .CalcFundingForDate(result.NumberOfApprentices, result.StartBy)
+                .ToString("N0");
 
             return new ApplicationViewModel()
             {
