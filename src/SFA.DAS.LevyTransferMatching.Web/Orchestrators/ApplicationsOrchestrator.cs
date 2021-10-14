@@ -83,7 +83,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             var estimatedTotalCost = result.Standard.ApprenticeshipFunding
                 .GetEffectiveFundingLine(result.StartBy)
-                .CalcFundingForDate(result.NumberOfApprentices, result.StartBy)
+                .CalculateEstimatedTotalCost(result.NumberOfApprentices)
                 .ToString("N0");
 
             return new ApplicationViewModel()
