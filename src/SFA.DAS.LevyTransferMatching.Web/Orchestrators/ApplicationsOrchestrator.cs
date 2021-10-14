@@ -1,24 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using SFA.DAS.Encoding;
-using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Models.Applications;
-using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
-    public class ApplicationsOrchestrator : IApplicationsOrchestrator
+    public class ApplicationsOrchestrator : OpportunitiesOrchestratorBase, IApplicationsOrchestrator
     {
         private readonly IApplicationsService _applicationsService;
         private readonly IEncodingService _encodingService;
         private readonly Infrastructure.Configuration.FeatureToggles _featureToggles;
 
-        public ApplicationsOrchestrator(IApplicationsService applicationsService, IEncodingService encodingService, Infrastructure.Configuration.FeatureToggles featureToggles)
+        public ApplicationsOrchestrator(IApplicationsService applicationsService, IDateTimeService dateTimeService, IEncodingService encodingService, Infrastructure.Configuration.FeatureToggles featureToggles) : base(dateTimeService)
         {
             _applicationsService = applicationsService;
             _encodingService = encodingService;
@@ -56,6 +53,55 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
 
             return viewModel;
+        }
+
+        public async Task<ApplicationViewModel> GetApplication(ApplicationRequest request)
+        {
+            var result = await _applicationsService.GetApplication(request.AccountId, request.ApplicationId);
+
+            if (result == null)
+            {
+                return null;
+            }
+
+            var encodedOpportunityId = _encodingService.Encode(result.OpportunityId, EncodingType.PledgeId);
+
+            var opportunitySummaryViewModelOptions = new GetOpportunitySummaryViewModelOptions()
+            {
+                Sectors = result.Sectors,
+                JobRoles = result.JobRoles,
+                Levels = result.Levels,
+                Locations = result.PledgeLocations,
+                AllSectors = result.AllSectors,
+                AllJobRoles = result.AllJobRoles,
+                AllLevels = result.AllLevels,
+                Amount = result.RemainingAmount,
+                IsNamePublic = result.IsNamePublic,
+                DasAccountName = result.PledgeEmployerAccountName,
+                EncodedPledgeId = encodedOpportunityId,
+            };
+
+            var estimatedTotalCost = result.Standard.ApprenticeshipFunding
+                .GetEffectiveFundingLine(result.StartBy)
+                .CalculateEstimatedTotalCost(result.NumberOfApprentices)
+                .ToString("N0");
+
+            return new ApplicationViewModel()
+            {
+                 OpportunitySummaryViewModel = GetOpportunitySummaryViewModel(opportunitySummaryViewModelOptions),
+                 PledgeEmployerAccountName = result.PledgeEmployerAccountName,
+                 EncodedAccountId = request.EncodedAccountId,
+                 EncodedApplicationId = request.EncodedApplicationId,
+                 IsNamePublic = result.IsNamePublic,
+                 JobRole = result.Standard.Title,
+                 Level = result.Standard.Level,
+                 Locations = result.PledgeLocations,
+                 NumberOfApprentices = result.NumberOfApprentices,
+                 StartBy = result.StartBy,
+                 Status = result.Status,
+                 EncodedOpportunityId = encodedOpportunityId,
+                 EstimatedTotalCost = estimatedTotalCost,
+            };
         }
     }
 }
