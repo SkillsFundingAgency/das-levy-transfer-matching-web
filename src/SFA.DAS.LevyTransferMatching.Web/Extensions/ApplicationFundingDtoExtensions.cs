@@ -30,5 +30,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Extensions
 
             return (cost * numberOfApprentices ?? 0).ToNearest(100);
         }
+
+        public static int CalculateEstimatedTotalCost(this ApprenticeshipFundingDto apprenticeshipFunding, int numberOfApprentices)
+        {
+            return apprenticeshipFunding.MaxEmployerLevyCap * numberOfApprentices;
+        }
     }
 }

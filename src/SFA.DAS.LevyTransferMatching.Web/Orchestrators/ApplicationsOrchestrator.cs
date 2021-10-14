@@ -41,7 +41,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     NumberOfApprentices = app.NumberOfApprentices,
                     PledgeReference = _encodingService.Encode(app.PledgeId, EncodingType.PledgeId),
                     IsNamePublic = app.IsNamePublic,
-                    EstimatedTotalCost = app.Amount.ToString("N0")
+                    EstimatedTotalCost = app.Standard.ApprenticeshipFunding.GetEffectiveFundingLine(app.StartDate).CalculateEstimatedTotalCost(app.NumberOfApprentices).ToString("N0")
                 };
             }).ToList();
 
