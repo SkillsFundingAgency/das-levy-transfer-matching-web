@@ -10,7 +10,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
     {
         public IEnumerable<string> Locations { get; set; }
         public bool IsNamePublic { get; set; }
-        public string EmployerAccountName { get; set; }
+        public string PledgeEmployerAccountName { get; set; }
         public ApplicationStatus Status { get; set; }
         public string JobRole { get; set; }
         public int Level { get; set; }
@@ -18,7 +18,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
         public DateTime StartBy { get; set; }
         public OpportunitySummaryViewModel OpportunitySummaryViewModel { get; set; }
         public string EncodedOpportunityId { get; set; }
-        public string Title => $"Your {(IsNamePublic ? EmployerAccountName : "opportunity")} ({EncodedOpportunityId}) application details";
+        public string Title => $"Your {(IsNamePublic ? PledgeEmployerAccountName : "opportunity")} ({EncodedOpportunityId}) application details";
         public bool CanAcceptFunding { get; set; }
         public ApprovalAction? SelectedAction { get; set; }
         public bool TruthfulInformation { get; set; }

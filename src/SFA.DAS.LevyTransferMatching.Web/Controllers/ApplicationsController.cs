@@ -5,6 +5,7 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.LevyTransferMatching.Web.Attributes;
 using SFA.DAS.LevyTransferMatching.Web.Authentication;
 using SFA.DAS.LevyTransferMatching.Web.Models.Applications;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
@@ -22,6 +23,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         }
 
         [HttpGet]
+        [HideAccountNavigation(false)]
         [Route("/accounts/{encodedAccountId}/applications")]
         public async Task<IActionResult> Applications(GetApplicationsRequest request)
         {

@@ -7,6 +7,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
     public class GetSectorResponse
     {
         public OpportunityData Opportunity { get; set; }
+        public IEnumerable<PledgeLocation> PledgeLocations { get; set; }
         public string Location { get; set; }
         public List<ReferenceDataItem> Sectors { get; set; }
         public List<ReferenceDataItem> JobRoles { get; set; }
@@ -22,6 +23,12 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
             public IEnumerable<string> Locations { get; set; }
             public int Amount { get; set; }
             public bool IsNamePublic { get; set; }
+        }
+
+        public class PledgeLocation
+        {
+            public int Id { get; set; }
+            public string Name { get; set; }
         }
     }
 }

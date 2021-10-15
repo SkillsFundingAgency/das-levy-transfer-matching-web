@@ -125,7 +125,19 @@
                                 </a>
                             </span>
                             <span class="das-task-list__task-tag">
-                                @Model.Location
+                                @if (Model.Locations != null)
+                                {
+                                    <ul class="govuk-list das-!-text-align-right">
+                                        @foreach (var location in Model.Locations)
+                                        {
+                                            <li>@location</li>
+                                        }
+                                    </ul>
+                                }
+                                else
+                                {
+                                    <span>-</span>
+                                }
                             </span>
                         </li>
                     </ul>

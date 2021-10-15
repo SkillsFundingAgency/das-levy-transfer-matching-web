@@ -5,9 +5,17 @@
 
 @{
     ViewData["Title"] = "My applications";
+
+    var breadCrumbs = new List<Tuple<string, string>>
+{
+        new Tuple<string, string>(LinkGenerator.AccountsLink($"accounts/{Model.EncodedAccountId}/teams"), "Home"),
+        new Tuple<string, string>(LinkGenerator.FinanceLink($"accounts/{Model.EncodedAccountId}/transfers"), "Manage Transfers"),
+        new Tuple<string, string>("", $"My applications")
+    };
+
 }
 
-
+<bread-crumb source="@breadCrumbs"></bread-crumb>
 
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
     <div class="govuk-width-container">
@@ -17,7 +25,7 @@
                     My applications
                 </h1>
 
-                <p>You have <strong>@Model.Applications.Count()</strong> transfers applications.</p>
+                <p>You have <strong>@Model.Applications.Count()</strong> @Model.ApplicationCountPostFix.</p>
                 <table class="govuk-table govuk-!-margin-bottom-9" aria-label="Transfer applications table">
                     <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
@@ -61,8 +69,8 @@
 
                 </table>
 
-                <a href="@LinkGenerator.AccountsLink($"accounts/{Model.EncodedAccountId}/transfers")" class="govuk-link govuk-back-link" )>Back to transfers</a>
-          
+                <a href="@LinkGenerator.FinanceLink($"accounts/{Model.EncodedAccountId}/transfers")" class="govuk-link govuk-back-link" )>Back to transfers</a>
+
             </div>
         </div>
     </div>
