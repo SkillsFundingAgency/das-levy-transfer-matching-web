@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -62,7 +63,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
                 AccountId = request.AccountId,
             }, cancellationToken);
 
-            return Redirect($"/accounts/{request.EncodedAccountId}/applications/{request.EncodedApplicationId}/accepted");
+            if (request.SelectedAction == ApplicationViewModel.ApprovalAction.Accept)
+            {
+                return Redirect($"/accounts/{request.EncodedAccountId}/applications/{request.EncodedApplicationId}/accepted");
+            }
+
+            // TODO: Implemnentation of decline journey to follow
+            throw new NotImplementedException();
         }
 
         [HttpGet]

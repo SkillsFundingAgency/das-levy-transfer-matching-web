@@ -20,11 +20,16 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
         public string EncodedOpportunityId { get; set; }
         public string Title => $"Your {(IsNamePublic ? EmployerAccountName : "opportunity")} ({EncodedOpportunityId}) application details";
         public bool CanAcceptFunding { get; set; }
-        public Pledges.ApplicationPostRequest.ApprovalAction? SelectedAction { get; set; }
+        public ApprovalAction? SelectedAction { get; set; }
         public bool TruthfulInformation { get; set; }
         public bool ComplyWithRules { get; set; }
-
-        public bool HasAcceptedTermsAndConditions => TruthfulInformation && ComplyWithRules && SelectedAction == Pledges.ApplicationPostRequest.ApprovalAction.Approve;
+        public bool HasAcceptedTermsAndConditions => TruthfulInformation && ComplyWithRules && SelectedAction == ApprovalAction.Accept;
         public string EstimatedTotalCost { get; set; }
+
+        public enum ApprovalAction
+        {
+            Accept,
+            Decline,
+        }
     }
 }

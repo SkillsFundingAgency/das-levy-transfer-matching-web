@@ -4,8 +4,9 @@
 
 @{
     ViewData["Title"] = Model.Title;
-    var approve = SFA.DAS.LevyTransferMatching.Web.Models.Pledges.ApplicationPostRequest.ApprovalAction.Approve;
-    var reject = SFA.DAS.LevyTransferMatching.Web.Models.Pledges.ApplicationPostRequest.ApprovalAction.Reject;
+
+    var accept = SFA.DAS.LevyTransferMatching.Web.Models.Applications.ApplicationPostRequest.ApprovalAction.Accept;
+    var decline = SFA.DAS.LevyTransferMatching.Web.Models.Applications.ApplicationPostRequest.ApprovalAction.Decline;
 }
 
 <a href="@Url.Action("Applications", new { EncodedAccountId = Model.EncodedAccountId })" class="govuk-back-link">Back</a>
@@ -42,7 +43,7 @@
                         <span das-validation-for="SelectedAction" class="govuk-error-message"></span>
                         <div class="govuk-radios__item">
 
-                            <input class="govuk-radios__input" id="SelectedAction" name="SelectedAction" asp-for="SelectedAction" type="radio" value="@approve" das-highlight-error-for="SelectedAction" error-class="govuk-textarea--error" data-aria-controls="approval-content" />
+                            <input class="govuk-radios__input" id="SelectedAction" name="SelectedAction" asp-for="SelectedAction" type="radio" value="@accept" das-highlight-error-for="SelectedAction" error-class="govuk-textarea--error" data-aria-controls="approval-content" />
                             <label class="govuk-label govuk-radios__label" for="SelectedAction">
                                 Yes, accept the funding
                             </label>
