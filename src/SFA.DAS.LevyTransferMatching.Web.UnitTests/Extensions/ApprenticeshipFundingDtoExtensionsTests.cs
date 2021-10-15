@@ -118,5 +118,22 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
 
             Assert.AreEqual(1_600, result);
         }
+
+        [TestCase(1, 15000, 15000)]
+        [TestCase(2, 15000, 30000)]
+        public void Calculate_Estimated_Total_Cost_Calculates_Correctly_When_Given_Inputs(int numberOfApprentices, int maxLevyCap, int expected)
+        {
+            var dto = new ApprenticeshipFundingDto
+            {
+                Duration = 24,
+                EffectiveFrom = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.AddMonths(-1).Month, 1),
+                EffectiveTo = null,
+                MaxEmployerLevyCap = maxLevyCap
+            };
+
+            var result = dto.CalculateEstimatedTotalCost(numberOfApprentices);
+
+            Assert.AreEqual(expected, result);
+        }
     }
 }

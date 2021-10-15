@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <CodeAnalysisRuleSet>..\.sonarlint\skillsfundingagency_das-levy-transfer-matching-webcsharp.ruleset</CodeAnalysisRuleSet>
+    <UserSecretsId> </UserSecretsId>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -39,6 +40,15 @@
   <ItemGroup>
     <ProjectReference Include="..\SFA.DAS.LevyTransferMatching.Domain\SFA.DAS.LevyTransferMatching.Domain.csproj" />
     <ProjectReference Include="..\SFA.DAS.LevyTransferMatching.Infrastructure\SFA.DAS.LevyTransferMatching.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="appsettings.json">
+      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+    </Content>
+    <Content Update="appsettings.Development.json">
+      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

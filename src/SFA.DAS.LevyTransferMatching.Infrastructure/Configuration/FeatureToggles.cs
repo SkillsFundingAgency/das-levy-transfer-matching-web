@@ -2,6 +2,6 @@
 {
     public class FeatureToggles
     {
-        
+        public bool FeatureToggleCanViewApplicationDetails { get; set; }
     }
 }
