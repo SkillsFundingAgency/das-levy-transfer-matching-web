@@ -9,6 +9,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsServi
     {
         Task<GetApplicationsResponse> GetApplications(long accountId, CancellationToken cancellationToken = default);
         Task<Types.GetApplicationResponse> GetApplication(long accountId, int applicationId, CancellationToken cancellationToken = default);
-        Task AcceptFunding(AcceptFundingRequest request, CancellationToken cancellationToken = default);
+        Task SetApplicationAcceptance(SetApplicationAcceptanceRequest request, CancellationToken cancellationToken = default);
     }
 }

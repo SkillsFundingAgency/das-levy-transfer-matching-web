@@ -57,18 +57,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
                 return RedirectToAction("Application");
             }
 
-            await _applicationsOrchestrator.AcceptFunding(new AcceptFundingPostRequest
-            {
-                ApplicationId = request.ApplicationId,
-                AccountId = request.AccountId,
-            }, cancellationToken);
+            await _applicationsOrchestrator.SetApplicationAcceptance(request);
 
             if (request.SelectedAction == ApplicationViewModel.ApprovalAction.Accept)
             {
                 return Redirect($"/accounts/{request.EncodedAccountId}/applications/{request.EncodedApplicationId}/accepted");
             }
-
-            // TODO: Implemnentation of decline journey to follow
+            
+            // TODO: Implemnentation of decline journey
             throw new NotImplementedException();
         }
 

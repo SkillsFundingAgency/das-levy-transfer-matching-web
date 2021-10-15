@@ -110,22 +110,25 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
-        public async Task AcceptFunding(AcceptFundingPostRequest request, CancellationToken cancellationToken = default)
+        public async Task SetApplicationAcceptance(ApplicationPostRequest request)
         {
-            var application = await _applicationsService.GetApplication(request.AccountId, request.ApplicationId, cancellationToken);
+            var application = await _applicationsService.GetApplication(request.AccountId, request.ApplicationId);
 
             if (application == null)
             {
                 return;
             }
 
-            await _applicationsService.AcceptFunding(new AcceptFundingRequest
+            await _applicationsService.SetApplicationAcceptance(new SetApplicationAcceptanceRequest
             {
                 ApplicationId = request.ApplicationId,
                 AccountId = request.AccountId,
                 UserDisplayName = _userService.GetUserDisplayName(),
-                UserId = _userService.GetUserId()
-            }, cancellationToken);
+                UserId = _userService.GetUserId(),
+                Acceptance = request.SelectedAction == ApplicationViewModel.ApprovalAction.Accept ?
+                    SetApplicationAcceptanceRequest.ApplicationAcceptance.Accept
+                    : SetApplicationAcceptanceRequest.ApplicationAcceptance.Decline,
+            });
         }
     }
 }
