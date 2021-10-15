@@ -21,22 +21,22 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
             if (Application.IsLocationMatch)
             {
                 matches++;
-                matchesList.Append("• Location <br>");
+                matchesList.Append("<li>Location</li>");
             }
             if (Application.IsSectorMatch)
             {
                 matches++;
-                matchesList.Append("• Sector <br>");
+                matchesList.Append("<li>Sector</li>");
             }
             if (Application.IsJobRoleMatch)
             {
                 matches++;
-                matchesList.Append("• Job Role <br>");
+                matchesList.Append("<li>Job Role</li>");
             }
             if (Application.IsLevelMatch)
             {
                 matches++;
-                matchesList.Append("• Level <br>");
+                matchesList.Append("<li>Level</li>");
             }
 
             string matchPercentageText = "";
@@ -49,13 +49,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
                 case 4: matchPercentageText = "100% match"; break;
             }
 
-            content.Append("<span>" + matchPercentageText + "</span>");
+            content.Append("<p>" + matchPercentageText + "</p>");
 
             if (matches > 0)
             {
-                content.Append("<p style=\"color: grey; padding-top: 5px; font-size: 16px;\">");
+                content.Append("<ul class=\"app-criteria-list govuk-list govuk-list--bullet\">");
                 content.Append(matchesList.ToString());
-                content.Append("</p>");
+                content.Append("</ul>");
             }
 
             output.PostContent.SetHtmlContent(content.ToString());
