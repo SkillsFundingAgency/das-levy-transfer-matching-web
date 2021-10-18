@@ -113,13 +113,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         public async Task SetApplicationAcceptance(ApplicationPostRequest request)
         {
-            var application = await _applicationsService.GetApplication(request.AccountId, request.ApplicationId);
-
-            if (application == null)
-            {
-                return;
-            }
-
             await _applicationsService.SetApplicationAcceptance(new SetApplicationAcceptanceRequest
             {
                 ApplicationId = request.ApplicationId,
