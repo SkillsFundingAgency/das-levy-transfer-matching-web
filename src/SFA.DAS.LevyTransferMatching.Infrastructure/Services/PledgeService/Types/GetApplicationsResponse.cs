@@ -29,6 +29,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Typ
             public DateTime CreatedOn { get; set; }
             public StandardsListItemDto Standard { get; set; }
             public ApplicationStatus Status { get; set; }
+            public bool IsNamePublic { get; set; }
             public bool IsLocationMatch { get; set; }
             public bool IsSectorMatch { get; set; }
             public bool IsJobRoleMatch { get; set; }

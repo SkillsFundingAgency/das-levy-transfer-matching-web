@@ -9,7 +9,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
     public class ApplicationViewModel : ApplicationPostRequest
     {
         public string DisplaySectors { get; set; }
-        public string EncodedApplicationId { get; set; }
         public string DasAccountName { get; set; }
         public string Details { get; set; }
         public int NumberOfApprentices { get; set; }
