@@ -48,17 +48,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
         [HttpPost]
         [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}")]
-        public async Task<IActionResult> Application([FromServices] AbstractValidator<ApplicationPostRequest> validator, ApplicationPostRequest request, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> Application(ApplicationPostRequest request)
         {
-            var validationResult = await validator.ValidateAsync(request, cancellationToken);
-
-            if (!validationResult.IsValid)
-            {
-                validationResult.AddToModelState(ModelState, string.Empty);
-
-                return RedirectToAction("Application");
-            }
-
             await _applicationsOrchestrator.SetApplicationAcceptance(request);
 
             if (request.SelectedAction == ApplicationViewModel.ApprovalAction.Accept)
