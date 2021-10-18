@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
-using FluentValidation;
-using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.LevyTransferMatching.Web.Attributes;
@@ -63,7 +60,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
         [HttpGet]
         [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}/accepted")]
-        public async Task<IActionResult> AcceptedFunding()
+        public IActionResult AcceptedFunding()
         {
             return View();
         }
