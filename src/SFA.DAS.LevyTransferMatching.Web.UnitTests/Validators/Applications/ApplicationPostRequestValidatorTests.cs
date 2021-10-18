@@ -5,7 +5,7 @@ using static SFA.DAS.LevyTransferMatching.Web.Models.Applications.ApplicationVie
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Applications
 {
-    public class ApplicationPostRequestAsyncValidatorTests
+    public class ApplicationPostRequestValidatorTests
     {
         private ApplicationPostRequestValidator _validator;
 
