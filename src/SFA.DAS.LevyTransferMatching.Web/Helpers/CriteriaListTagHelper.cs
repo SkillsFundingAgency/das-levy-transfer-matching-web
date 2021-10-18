@@ -49,7 +49,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
                 case 4: matchPercentageText = "100% match"; break;
             }
 
-            content.Append("<p>" + matchPercentageText + "</p>");
+            content.Append("<p class=\"govuk-!-margin-bottom-1\">" + matchPercentageText + "</p>");
 
             if (matches > 0)
             {
