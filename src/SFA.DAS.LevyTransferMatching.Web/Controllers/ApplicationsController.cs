@@ -9,7 +9,7 @@ using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
-    [Authorize(Policy = PolicyNames.ManageAccount)]
+    [Authorize(Policy = PolicyNames.ViewAccount)]
     public class ApplicationsController : Controller
     {
         private readonly IApplicationsOrchestrator _applicationsOrchestrator;
@@ -44,6 +44,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = PolicyNames.ManageAccount)]
         [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}")]
         public async Task<IActionResult> Application(ApplicationPostRequest request)
         {

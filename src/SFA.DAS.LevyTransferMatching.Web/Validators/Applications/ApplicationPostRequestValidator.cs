@@ -9,7 +9,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Applications
         {
             RuleFor(o => o.HasAcceptedTermsAndConditions)
                 .Equal(true)
-                .WithMessage("You must agree to the terms and conditions before accepting funding for this application");
+                .WithMessage("You must agree to the terms and conditions before accepting funding for this application")
+                .When(o => o.SelectedAction.HasValue);
 
             RuleFor(o => o.SelectedAction)
                 .Equal(ApplicationViewModel.ApprovalAction.Accept)
