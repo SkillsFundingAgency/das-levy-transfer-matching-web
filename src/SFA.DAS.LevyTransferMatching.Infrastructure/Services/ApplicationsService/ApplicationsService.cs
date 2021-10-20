@@ -45,10 +45,10 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsServi
             return getApplicationResponse;
         }
 
-        public async Task AcceptFunding(AcceptFundingRequest request, CancellationToken cancellationToken = default)
+        public async Task SetApplicationAcceptance(SetApplicationAcceptanceRequest request, CancellationToken cancellationToken = default)
         {
             var json = JsonConvert.SerializeObject(request);
-            var response = await _httpClient.PostAsync($"accounts/{request.AccountId}/applications/{request.ApplicationId}/accept-funding",
+            var response = await _httpClient.PostAsync($"accounts/{request.AccountId}/applications/{request.ApplicationId}",
                 new StringContent(json, System.Text.Encoding.UTF8, "application/json"), cancellationToken);
 
             response.EnsureSuccessStatusCode();

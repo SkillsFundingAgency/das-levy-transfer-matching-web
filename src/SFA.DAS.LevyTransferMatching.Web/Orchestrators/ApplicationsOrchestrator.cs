@@ -47,7 +47,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     NumberOfApprentices = app.NumberOfApprentices,
                     PledgeReference = _encodingService.Encode(app.PledgeId, EncodingType.PledgeId),
                     IsNamePublic = app.IsNamePublic,
-                    EstimatedTotalCost = (app.Amount * (duration / 12)).ToString("N0")
+                    EstimatedTotalCost = app.Standard.ApprenticeshipFunding.GetEffectiveFundingLine(app.StartDate).CalculateEstimatedTotalCost(app.NumberOfApprentices).ToString("N0")
                 };
             }).ToList();
 
@@ -81,20 +81,21 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 AllSectors = result.AllSectors,
                 AllJobRoles = result.AllJobRoles,
                 AllLevels = result.AllLevels,
-                Amount = result.Amount,
+                Amount = result.RemainingAmount,
                 IsNamePublic = result.IsNamePublic,
-                DasAccountName = result.EmployerAccountName,
+                DasAccountName = result.PledgeEmployerAccountName,
                 EncodedPledgeId = encodedOpportunityId,
             };
 
-            var duration = result.Standard.ApprenticeshipFunding.GetEffectiveFundingLine(result.StartBy).Duration;
-
-            var estimatedTotalCost = (result.Amount * (duration / 12)).ToCurrencyString();
+            var estimatedTotalCost = result.Standard.ApprenticeshipFunding
+                .GetEffectiveFundingLine(result.StartBy)
+                .CalculateEstimatedTotalCost(result.NumberOfApprentices)
+                .ToString("N0");
 
             return new ApplicationViewModel()
             {
                  OpportunitySummaryViewModel = GetOpportunitySummaryViewModel(opportunitySummaryViewModelOptions),
-                 EmployerAccountName = result.EmployerAccountName,
+                 PledgeEmployerAccountName = result.PledgeEmployerAccountName,
                  EncodedAccountId = request.EncodedAccountId,
                  EncodedApplicationId = request.EncodedApplicationId,
                  IsNamePublic = result.IsNamePublic,
@@ -110,22 +111,18 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
-        public async Task AcceptFunding(AcceptFundingPostRequest request, CancellationToken cancellationToken = default)
+        public async Task SetApplicationAcceptance(ApplicationPostRequest request)
         {
-            var application = await _applicationsService.GetApplication(request.AccountId, request.ApplicationId, cancellationToken);
-
-            if (application == null)
-            {
-                return;
-            }
-
-            await _applicationsService.AcceptFunding(new AcceptFundingRequest
+            await _applicationsService.SetApplicationAcceptance(new SetApplicationAcceptanceRequest
             {
                 ApplicationId = request.ApplicationId,
                 AccountId = request.AccountId,
                 UserDisplayName = _userService.GetUserDisplayName(),
-                UserId = _userService.GetUserId()
-            }, cancellationToken);
+                UserId = _userService.GetUserId(),
+                Acceptance = request.SelectedAction == ApplicationViewModel.ApprovalAction.Accept ?
+                    SetApplicationAcceptanceRequest.ApplicationAcceptance.Accept
+                    : SetApplicationAcceptanceRequest.ApplicationAcceptance.Decline,
+            });
         }
 
         public async Task<AcceptedViewModel> GetAcceptedViewModel(AcceptedRequest request)

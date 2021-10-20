@@ -20,13 +20,10 @@
                     <label class="govuk-label" for="pledge-amount">
                         How much funding would you like to transfer?
                     </label>
-                    @*<div class="govuk-hint">
-                        Minimum pledge amount is &pound;@Model.RemainingTransferAllowance
-                    </div>*@
                     <span class="govuk-error-message">@Html.ValidationMessageFor(x => x.Amount)</span>
                     <div class="govuk-input__wrapper">
                         <div class="govuk-input__prefix govuk-!-font-weight-bold" aria-hidden="true">&pound;</div>
-                        <input class="govuk-input govuk-input--width-10"  type="text"  asp-for="Amount" das-highlight-error-for="Amount" error-class="govuk-textarea--error" />
+                        <input class="govuk-input govuk-input--width-10"  type="text"  asp-for="Amount" das-highlight-error-for="Amount" error-class="govuk-input--error" />
                     </div>
                 </div>
                 <div class="govuk-form-group" das-highlight-error-for="IsNamePublic" error-class="govuk-form-group--error">

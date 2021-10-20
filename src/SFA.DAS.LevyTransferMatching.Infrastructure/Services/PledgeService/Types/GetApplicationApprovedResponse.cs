@@ -2,6 +2,6 @@
 {
     public class GetApplicationApprovedResponse
     {
-        public string DasAccountName { get; set; }
+        public string EmployerAccountName { get; set; }
     }
 }

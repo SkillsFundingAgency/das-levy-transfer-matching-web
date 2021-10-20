@@ -107,7 +107,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
         [HideAccountNavigation(false)]
         [Authorize(Policy = PolicyNames.ManageAccount)]
-        [Route("/accounts/{encodedAccountId}/opportunities/{EncodedPledgeId}/create/more-details")]
+        [Route("/accounts/{encodedAccountId}/opportunities/{EncodedPledgeId}/apply/more-details")]
         public async Task<IActionResult> MoreDetails(MoreDetailsRequest request)
         {
             return View(await _opportunitiesOrchestrator.GetMoreDetailsViewModel(request));
@@ -115,7 +115,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
         [HideAccountNavigation(false)]
         [Authorize(Policy = PolicyNames.ManageAccount)]
-        [Route("/accounts/{encodedAccountId}/opportunities/{EncodedPledgeId}/create/more-details")]
+        [Route("/accounts/{encodedAccountId}/opportunities/{EncodedPledgeId}/apply/more-details")]
         [HttpPost]
         public async Task<IActionResult> MoreDetails(MoreDetailsPostRequest request)
         {
@@ -129,7 +129,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         }
 
         [Authorize(Policy = PolicyNames.ManageAccount)]
-        [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/create/application-details")]
+        [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/apply/application-details")]
         public async Task<IActionResult> ApplicationDetails(ApplicationDetailsRequest request)
         {
             return View(await _opportunitiesOrchestrator.GetApplicationViewModel(request));
@@ -137,7 +137,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
         [Authorize(Policy = PolicyNames.ManageAccount)]
         [HttpPost]
-        [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/create/application-details")]
+        [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/apply/application-details")]
         public async Task<IActionResult> ApplicationDetails([FromServices] AsyncValidator<ApplicationDetailsPostRequest> validator, ApplicationDetailsPostRequest request)
         {
             var validationResult = await validator.ValidateAsync(request);
@@ -157,7 +157,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         }
 
         [Authorize(Policy = PolicyNames.ManageAccount)]
-        [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/create/sector")]
+        [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/apply/sector")]
         public async Task<IActionResult> Sector(SectorRequest request)
         {
             return View(await _opportunitiesOrchestrator.GetSectorViewModel(request));
@@ -165,23 +165,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
         [Authorize(Policy = PolicyNames.ManageAccount)]
         [HttpPost]
-        [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/create/sector")]
-        public async Task<IActionResult> Sector([FromServices] AsyncValidator<SectorPostRequest> validator, SectorPostRequest request)
+        [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/apply/sector")]
+        public async Task<IActionResult> Sector(SectorPostRequest request)
         {
-            var validationResult = await validator.ValidateAsync(request);
-
-            if (!validationResult.IsValid)
-            {
-                validationResult.AddToModelState(ModelState, "");
-
-                return RedirectToAction("Sector", new SectorRequest
-                {
-                    EncodedAccountId = request.EncodedAccountId,
-                    EncodedPledgeId = request.EncodedPledgeId,
-                    CacheKey = request.CacheKey
-                });
-            }
-
             await _opportunitiesOrchestrator.UpdateCacheItem(request);
 
             return RedirectToAction("Apply", new ApplicationRequest
@@ -221,7 +207,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
         [Authorize(Policy = PolicyNames.ManageAccount)]
         [HttpGet]
-        [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/create/application-details/funding-estimate")]
+        [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/apply/application-details/funding-estimate")]
         public async Task<IActionResult> GetFundingEstimate(GetFundingEstimateRequest request)
         {
             var result = await _opportunitiesOrchestrator.GetFundingEstimate(request);
