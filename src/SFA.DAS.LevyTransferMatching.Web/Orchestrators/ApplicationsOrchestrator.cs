@@ -63,7 +63,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         public async Task<ApplicationViewModel> GetApplication(ApplicationRequest request)
         {
-            var result = await _applicationsService.GetApplication(request.AccountId, request.ApplicationId);
+           var result = await _applicationsService.GetApplication(request.AccountId, request.ApplicationId);
 
             if (result == null)
             {
