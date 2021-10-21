@@ -36,9 +36,8 @@
                 <p class="govuk-!-margin-bottom-0"><strong>Apprenticeship training to start by:</strong> @Model.StartBy.ToString("MM/yyyy")</p>
             </section>
 
-                            <input class="govuk-radios__input" id="SelectedAction" name="SelectedAction" asp-for="SelectedAction" type="radio" value="@accept" das-highlight-error-for="SelectedAction" error-class="govuk-textarea--error" data-aria-controls="approval-content" />
             <partial name="_ApplicationCanAcceptFundingPartial" model="Model" />
-
+            
             <partial name="_ApplicationCanUseTransferFundsPartial" model="Model" />
 
         </div>

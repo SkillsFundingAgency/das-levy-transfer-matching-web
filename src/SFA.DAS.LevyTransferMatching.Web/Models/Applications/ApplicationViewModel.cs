@@ -36,7 +36,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
         public ApprovalAction? SelectedAction { get; set; }
         public bool TruthfulInformation { get; set; }
         public bool ComplyWithRules { get; set; }
-        public bool HasAcceptedTermsAndConditions => TruthfulInformation && ComplyWithRules && SelectedAction == ApprovalAction.Accept;
+        public bool HasAcceptedTermsAndConditions => SelectedAction != null && TruthfulInformation && ComplyWithRules;
+
         public string EstimatedTotalCost { get; set; }
         public bool RenderCanUseTransferFundsStartButton { get; set; }
         public enum ApprovalAction
