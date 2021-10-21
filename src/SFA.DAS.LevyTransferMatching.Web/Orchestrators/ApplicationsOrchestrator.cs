@@ -72,7 +72,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             var isOwnerOrTransactor = _userService.IsOwnerOrTransactor(request.AccountId);
             var encodedOpportunityId = _encodingService.Encode(result.OpportunityId, EncodingType.PledgeId);
-            var encodedSenderPublicAccountId = _encodingService.Encode(result.OpportunityId, EncodingType.PublicAccountId);
+            var encodedSenderPublicAccountId = _encodingService.Encode(result.SenderEmployerAccountId, EncodingType.PublicAccountId);
 
             var opportunitySummaryViewModelOptions = new GetOpportunitySummaryViewModelOptions()
             {
