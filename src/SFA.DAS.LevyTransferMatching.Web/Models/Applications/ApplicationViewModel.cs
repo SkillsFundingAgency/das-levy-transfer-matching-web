@@ -24,9 +24,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
                 return Status switch
                 {
                     ApplicationStatus.Accepted =>
-                        $"Use transfer funds from {(IsNamePublic ? EmployerAccountName : "opportunity")} {EncodedOpportunityId}",
+                        $"Use transfer funds from {(IsNamePublic ? PledgeEmployerAccountName : "opportunity")} {EncodedOpportunityId}",
                     _ =>
-        public string Title => $"Your {(IsNamePublic ? EmployerAccountName : "opportunity")} ({EncodedOpportunityId}) application details";
+                     $"Your {(IsNamePublic ? PledgeEmployerAccountName : "opportunity")} ({EncodedOpportunityId}) application details"
                 };
             }
         }

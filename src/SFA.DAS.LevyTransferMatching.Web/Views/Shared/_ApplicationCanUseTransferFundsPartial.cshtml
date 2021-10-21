@@ -22,7 +22,7 @@
 
         @if (Model.RenderCanUseTransferFundsStartButton)
         {
-            <p>
+            <p class="govuk-!-margin-bottom-5 govuk-!-margin-top-5">
                 <a href="@LinkGenerator.CommitmentsV2Link($"{Model.EncodedAccountId}/unapproved/legalEntity/create?encodedpledgeapplicationid={Model.EncodedApplicationId}&transferConnectionCode={Model.EncodedSenderPublicAccountId}")"
                    class="govuk-button govuk-!-margin-bottom-0">Start now</a>
             </p>
