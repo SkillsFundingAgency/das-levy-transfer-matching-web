@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using FluentValidation;
+﻿using FluentValidation;
 using SFA.DAS.LevyTransferMatching.Web.Models.Applications;
-
 
 namespace SFA.DAS.LevyTransferMatching.Web.Validators.Applications
 {
@@ -14,10 +9,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Applications
         {
             RuleFor(o => o.HasAcceptedTermsAndConditions)
                 .Equal(true)
-                .WithMessage("You must agree to the terms and conditions before accepting funding for this application");
+                .WithMessage("You must agree to the terms and conditions before accepting funding for this application")
+                .When(o => o.SelectedAction.HasValue);
 
             RuleFor(o => o.SelectedAction)
-                .Equal(Models.Pledges.ApplicationPostRequest.ApprovalAction.Approve)
+                .Equal(ApplicationViewModel.ApprovalAction.Accept)
                 .WithMessage("You must choose to either accept or decline funding for this application");
         }
     }

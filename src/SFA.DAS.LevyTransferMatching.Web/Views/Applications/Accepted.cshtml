@@ -1,7 +1,8 @@
 ﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Applications.AcceptedViewModel
+@inject SFA.DAS.EmployerUrlHelper.ILinkGenerator LinkGenerator
 
 @{
-    ViewData["Title"] = "You have succesfully accepted a transfer";
+    ViewData["Title"] = "You have successfully accepted a transfer";
 }
 
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
@@ -29,7 +30,7 @@
                 <p><strong>@Model.EmployerNameAndReference</strong> will need to review and approve the details after you have added them.</p>
 
                 <p>
-                    <a href="@Url.Action("Application", "Applications" ,new{ encodedApplicationId = Model.EncodedApplicationId,  encodedAccountId = Model.EncodedAccountId})" class="govuk-link">Add apprentices</a>
+                    <a href="4-my-applications" class="govuk-link">View my applications</a>
                     <br />
                     or
                     <br />
@@ -37,7 +38,7 @@
                     <br>
                     or
                     <br>
-                    <a href="2-my-account" class="govuk-link">Return to my account</a>
+                    <a href="@LinkGenerator.AccountsLink($"accounts/{Model.EncodedAccountId}/teams")" class="govuk-link">Return to my account</a>
                 </p>
 
             </div>

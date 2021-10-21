@@ -4,8 +4,9 @@
 
 @{
     ViewData["Title"] = Model.Title;
-    var approve = SFA.DAS.LevyTransferMatching.Web.Models.Pledges.ApplicationPostRequest.ApprovalAction.Approve;
-    var reject = SFA.DAS.LevyTransferMatching.Web.Models.Pledges.ApplicationPostRequest.ApprovalAction.Reject;
+
+    var accept = SFA.DAS.LevyTransferMatching.Web.Models.Applications.ApplicationPostRequest.ApprovalAction.Accept;
+    var decline = SFA.DAS.LevyTransferMatching.Web.Models.Applications.ApplicationPostRequest.ApprovalAction.Decline;
 }
 
 <a href="@Url.Action("Applications", new { EncodedAccountId = Model.EncodedAccountId })" class="govuk-back-link">Back</a>
@@ -31,10 +32,11 @@
             <section class="das-highlight">
                 <p><strong>Apprenticeship training course:</strong> @Model.JobRole</p>
                 <p><strong>Number of apprentices:</strong> @Model.NumberOfApprentices</p>
-                <p><strong>Estimated total cost:</strong> @Model.EstimatedTotalCost</p>
+                <p><strong>Estimated total cost:</strong> £@Model.EstimatedTotalCost</p>
                 <p class="govuk-!-margin-bottom-0"><strong>Apprenticeship training to start by:</strong> @Model.StartBy.ToString("MM/yyyy")</p>
             </section>
 
+                            <input class="govuk-radios__input" id="SelectedAction" name="SelectedAction" asp-for="SelectedAction" type="radio" value="@approve" das-highlight-error-for="SelectedAction" error-class="govuk-textarea--error" data-aria-controls="approval-content" />
             <partial name="_ApplicationCanAcceptFundingPartial" model="Model" />
 
             <partial name="_ApplicationCanUseTransferFundsPartial" model="Model" />

@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using SFA.DAS.LevyTransferMatching.Web.Models.Applications;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Applications;
+using static SFA.DAS.LevyTransferMatching.Web.Models.Applications.ApplicationViewModel;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Applications
 {
-    public class ApplicationPostRequestAsyncValidatorTests
+    public class ApplicationPostRequestValidatorTests
     {
         private ApplicationPostRequestValidator _validator;
 
@@ -28,7 +26,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Applications
         [Test]
         public void ValidatorReturnsFalseWhenUserHasNotAcceptedTermsAndConditions()
         {
-            var actual = _validator.Validate(CreateApplicationStatusPostRequest(approvalAction: Web.Models.Pledges.ApplicationPostRequest.ApprovalAction.Approve));
+            var actual = _validator.Validate(CreateApplicationStatusPostRequest(approvalAction: ApprovalAction.Accept));
 
             Assert.AreEqual(false, actual.IsValid);
         }
@@ -42,7 +40,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Applications
             Assert.AreEqual(false, actual.IsValid);
         }
 
-        private ApplicationPostRequest CreateApplicationStatusPostRequest(bool truthfulInformation = false, bool complyWithRules = false, Web.Models.Pledges.ApplicationPostRequest.ApprovalAction approvalAction = Web.Models.Pledges.ApplicationPostRequest.ApprovalAction.Reject) =>
+        private ApplicationPostRequest CreateApplicationStatusPostRequest(bool truthfulInformation = false, bool complyWithRules = false, ApprovalAction approvalAction = ApprovalAction.Decline) =>
             new ApplicationPostRequest()
             {
                 EncodedAccountId = "HGVVMY",

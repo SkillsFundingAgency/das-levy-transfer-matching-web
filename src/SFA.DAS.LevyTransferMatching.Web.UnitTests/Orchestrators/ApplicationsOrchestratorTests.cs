@@ -88,6 +88,47 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         }
 
         [Test]
+        public async Task SetApplicationAcceptance_OuterApiCalled_RequestMappedCorrectly()
+        {
+            // Arrange
+            var request = _fixture.Create<ApplicationPostRequest>();
+
+            var expectedUserId = _fixture.Create<string>();
+            var expectedUserDisplayName = _fixture.Create<string>();
+
+            var expectedAcceptance = request.SelectedAction == ApplicationViewModel.ApprovalAction.Accept ?
+                SetApplicationAcceptanceRequest.ApplicationAcceptance.Accept :
+                SetApplicationAcceptanceRequest.ApplicationAcceptance.Decline;
+
+            SetApplicationAcceptanceRequest actualRequest = null;
+            Action<SetApplicationAcceptanceRequest, CancellationToken> setApplicationAcceptanceCallback =
+                (x, y) =>
+                {
+                    actualRequest = x;
+                };
+
+            _mockUserService
+                .Setup(x => x.GetUserId())
+                .Returns(expectedUserId);
+            _mockUserService
+                .Setup(x => x.GetUserDisplayName())
+                .Returns(expectedUserDisplayName);
+
+            _mockApplicationsService
+                .Setup(x => x.SetApplicationAcceptance(It.IsAny<SetApplicationAcceptanceRequest>(), It.IsAny<CancellationToken>()))
+                .Callback(setApplicationAcceptanceCallback);
+
+            // Act
+            await _applicationsOrchestrator.SetApplicationAcceptance(request);
+
+            // Assert
+            Assert.NotNull(actualRequest);
+            Assert.AreEqual(expectedUserId, actualRequest.UserId);
+            Assert.AreEqual(expectedUserDisplayName, actualRequest.UserDisplayName);
+            Assert.AreEqual(expectedAcceptance, actualRequest.Acceptance);
+        }
+
+        [Test]
         public async Task GetAcceptedViewModel_ApplicationExists_ReturnsViewModel()
         {
             // Arrange
