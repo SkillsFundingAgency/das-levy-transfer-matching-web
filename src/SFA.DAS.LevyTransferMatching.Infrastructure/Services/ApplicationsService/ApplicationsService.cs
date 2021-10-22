@@ -29,6 +29,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsServi
             var response = await _httpClient.GetAsync($"accounts/{accountId}/applications/{applicationId}");
 
             Types.GetApplicationResponse getApplicationResponse = null; 
+            
             if (response.IsSuccessStatusCode)
             {
                 getApplicationResponse = JsonConvert.DeserializeObject<Types.GetApplicationResponse>(await response.Content.ReadAsStringAsync());
