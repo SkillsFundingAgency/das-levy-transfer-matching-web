@@ -112,7 +112,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                  CanAcceptFunding = isOwnerOrTransactor && result.Status == ApplicationStatus.Approved,
                  CanUseTransferFunds = isOwnerOrTransactor && result.Status == ApplicationStatus.Accepted,
                  EncodedSenderPublicAccountId = encodedSenderPublicAccountId,
-                 RenderCanUseTransferFundsStartButton = _featureToggles.FeatureToggleRenderCanUseTransferFundsStartButton
+                 RenderCanUseTransferFundsStartButton = _featureToggles.FeatureToggleRenderCanUseTransferFundsStartButton,
+                 DisplayCurrentFundsBalance = result.AmountUsed > 0 || result.NumberOfApprenticesUsed > 0,
+                 Amount = result.Amount.ToCurrencyString(),
+                 AmountUsed = result.AmountUsed.ToCurrencyString(),
+                 AmountRemaining = (result.Amount - result.AmountUsed).ToCurrencyString(),
+                 NumberOfApprenticesRemaining = result.NumberOfApprentices - result.NumberOfApprenticesUsed
             };
         }
 
