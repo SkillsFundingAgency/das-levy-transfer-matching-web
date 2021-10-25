@@ -2,8 +2,11 @@
 using System.Threading;
 using System.Threading.Tasks;
 using SFA.DAS.Encoding;
+using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Models.Applications;
 
@@ -14,12 +17,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         private readonly IApplicationsService _applicationsService;
         private readonly IEncodingService _encodingService;
         private readonly Infrastructure.Configuration.FeatureToggles _featureToggles;
+        private readonly IUserService _userService;
 
-        public ApplicationsOrchestrator(IApplicationsService applicationsService, IDateTimeService dateTimeService, IEncodingService encodingService, Infrastructure.Configuration.FeatureToggles featureToggles) : base(dateTimeService)
+        public ApplicationsOrchestrator(IApplicationsService applicationsService, IDateTimeService dateTimeService, IEncodingService encodingService, 
+            Infrastructure.Configuration.FeatureToggles featureToggles, IUserService userService) : base(dateTimeService)
         {
             _applicationsService = applicationsService;
             _encodingService = encodingService;
             _featureToggles = featureToggles;
+            _userService = userService;
         }
 
         public async Task<GetApplicationsViewModel> GetApplications(GetApplicationsRequest request, CancellationToken cancellationToken = default)
@@ -57,13 +63,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         public async Task<ApplicationViewModel> GetApplication(ApplicationRequest request)
         {
-            var result = await _applicationsService.GetApplication(request.AccountId, request.ApplicationId);
+           var result = await _applicationsService.GetApplication(request.AccountId, request.ApplicationId);
 
             if (result == null)
             {
                 return null;
             }
-
+            var isOwnerOrTransactor = _userService.IsOwnerOrTransactor(request.AccountId);
             var encodedOpportunityId = _encodingService.Encode(result.OpportunityId, EncodingType.PledgeId);
 
             var opportunitySummaryViewModelOptions = new GetOpportunitySummaryViewModelOptions()
@@ -101,6 +107,39 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                  Status = result.Status,
                  EncodedOpportunityId = encodedOpportunityId,
                  EstimatedTotalCost = estimatedTotalCost,
+                 CanAcceptFunding = isOwnerOrTransactor && result.Status == ApplicationStatus.Approved
+            };
+        }
+
+        public async Task SetApplicationAcceptance(ApplicationPostRequest request)
+        {
+            await _applicationsService.SetApplicationAcceptance(new SetApplicationAcceptanceRequest
+            {
+                ApplicationId = request.ApplicationId,
+                AccountId = request.AccountId,
+                UserDisplayName = _userService.GetUserDisplayName(),
+                UserId = _userService.GetUserId(),
+                Acceptance = request.SelectedAction == ApplicationViewModel.ApprovalAction.Accept ?
+                    SetApplicationAcceptanceRequest.ApplicationAcceptance.Accept
+                    : SetApplicationAcceptanceRequest.ApplicationAcceptance.Decline,
+            });
+        }
+
+        public async Task<AcceptedViewModel> GetAcceptedViewModel(AcceptedRequest request)
+        {
+            var result = await _applicationsService.GetAccepted(request.AccountId, request.ApplicationId);
+
+            if (result == null)
+            {
+                return null;
+            }
+
+            var encodedPledgeId = _encodingService.Encode(result.OpportunityId, EncodingType.PledgeId);
+
+            return new AcceptedViewModel()
+            {
+                EncodedAccountId = request.EncodedAccountId,
+                EmployerNameAndReference = $"{result.EmployerAccountName} ({encodedPledgeId})",
             };
         }
     }
