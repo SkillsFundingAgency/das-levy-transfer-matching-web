@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.LevyTransferMatching.Web.Attributes;
@@ -8,7 +9,7 @@ using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
-    [Authorize(Policy = PolicyNames.ManageAccount)]
+    [Authorize(Policy = PolicyNames.ViewAccount)]
     public class ApplicationsController : Controller
     {
         private readonly IApplicationsOrchestrator _applicationsOrchestrator;
@@ -38,10 +39,31 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             {
                 return View(viewModel);
             }
-            else
+
+            return NotFound();
+        }
+
+        [HttpPost]
+        [Authorize(Policy = PolicyNames.ManageAccount)]
+        [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}")]
+        public async Task<IActionResult> Application(ApplicationPostRequest request)
+        {
+            await _applicationsOrchestrator.SetApplicationAcceptance(request);
+
+            if (request.SelectedAction == ApplicationViewModel.ApprovalAction.Accept)
             {
-                return NotFound();
+                return Redirect($"/accounts/{request.EncodedAccountId}/applications/{request.EncodedApplicationId}/accepted");
             }
+            
+            // TODO: Implemnentation of decline journey
+            throw new NotImplementedException();
+        }
+
+        [HttpGet]
+        [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}/accepted")]
+        public IActionResult AcceptedFunding()
+        {
+            return View();
         }
     }
 }
