@@ -32,7 +32,7 @@
                     <section class="das-highlight">
                         <dl class="govuk-body app-dl-inline">
                             <dt class="app-dl-inline__title--strong">Accepted</dt>
-                            <dd class="app-dl-inline__definition">@Model.Amount</dd>
+                            <dd class="app-dl-inline__definition">@Model.EstimatedTotalCost</dd>
                             <dt class="app-dl-inline__title--strong">Used</dt>
                             <dd class="app-dl-inline__definition">@Model.AmountUsed</dd>
                             <dt class="app-dl-inline__title--strong">Remaining</dt>
@@ -51,7 +51,7 @@
             <section class="das-highlight">
                 <p><strong>Apprenticeship training course:</strong> @Model.JobRole</p>
                 <p><strong>Number of apprentices:</strong> @Model.NumberOfApprentices</p>
-                <p><strong>Estimated total cost:</strong> £@Model.EstimatedTotalCost</p>
+                <p><strong>Estimated total cost:</strong> @Model.EstimatedTotalCost</p>
                 <p class="govuk-!-margin-bottom-0"><strong>Apprenticeship training to start by:</strong> @Model.StartBy.ToString("MM/yyyy")</p>
             </section>
 
