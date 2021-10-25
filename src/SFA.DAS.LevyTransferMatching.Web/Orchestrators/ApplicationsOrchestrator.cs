@@ -114,7 +114,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                  RenderCanUseTransferFundsStartButton = _featureToggles.FeatureToggleRenderCanUseTransferFundsStartButton,
                  DisplayCurrentFundsBalance = result.AmountUsed > 0 || result.NumberOfApprenticesUsed > 0,
                  AmountUsed = result.AmountUsed.ToCurrencyString(),
-                 AmountRemaining = (result.Amount - result.AmountUsed).ToCurrencyString(),
+                 AmountRemaining = (estimatedTotalCost - result.AmountUsed).ToCurrencyString(),
                  NumberOfApprenticesRemaining = result.NumberOfApprentices - result.NumberOfApprenticesUsed
             };
         }
