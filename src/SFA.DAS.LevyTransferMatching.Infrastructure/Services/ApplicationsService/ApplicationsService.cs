@@ -53,5 +53,25 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsServi
 
             response.EnsureSuccessStatusCode();
         }
+
+        public async Task<GetAcceptedResponse> GetAccepted(long accountId, int applicationId)
+        {
+            var response = await _httpClient.GetAsync($"accounts/{accountId}/applications/{applicationId}/accepted");
+
+            GetAcceptedResponse getAcceptedResponse = null;
+            if (response.IsSuccessStatusCode)
+            {
+                getAcceptedResponse = JsonConvert.DeserializeObject<GetAcceptedResponse>(await response.Content.ReadAsStringAsync());
+            }
+            else
+            {
+                if (response.StatusCode != HttpStatusCode.NotFound)
+                {
+                    response.EnsureSuccessStatusCode();
+                }
+            }
+
+            return getAcceptedResponse;
+        }
     }
 }

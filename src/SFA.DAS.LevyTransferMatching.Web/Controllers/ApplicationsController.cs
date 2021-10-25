@@ -61,9 +61,16 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
         [HttpGet]
         [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}/accepted")]
-        public IActionResult AcceptedFunding()
+        public async Task<IActionResult> Accepted(AcceptedRequest request)
         {
-            return View();
+            var viewModel = await _applicationsOrchestrator.GetAcceptedViewModel(request);
+
+            if (viewModel != null)
+            {
+                return View(viewModel);
+            }
+
+            return NotFound();
         }
     }
 }

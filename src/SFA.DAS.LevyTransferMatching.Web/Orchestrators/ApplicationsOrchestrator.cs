@@ -63,7 +63,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         public async Task<ApplicationViewModel> GetApplication(ApplicationRequest request)
         {
-            var result = await _applicationsService.GetApplication(request.AccountId, request.ApplicationId);
+           var result = await _applicationsService.GetApplication(request.AccountId, request.ApplicationId);
 
             if (result == null)
             {
@@ -123,6 +123,24 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     SetApplicationAcceptanceRequest.ApplicationAcceptance.Accept
                     : SetApplicationAcceptanceRequest.ApplicationAcceptance.Decline,
             });
+        }
+
+        public async Task<AcceptedViewModel> GetAcceptedViewModel(AcceptedRequest request)
+        {
+            var result = await _applicationsService.GetAccepted(request.AccountId, request.ApplicationId);
+
+            if (result == null)
+            {
+                return null;
+            }
+
+            var encodedPledgeId = _encodingService.Encode(result.OpportunityId, EncodingType.PledgeId);
+
+            return new AcceptedViewModel()
+            {
+                EncodedAccountId = request.EncodedAccountId,
+                EmployerNameAndReference = $"{result.EmployerAccountName} ({encodedPledgeId})",
+            };
         }
     }
 }

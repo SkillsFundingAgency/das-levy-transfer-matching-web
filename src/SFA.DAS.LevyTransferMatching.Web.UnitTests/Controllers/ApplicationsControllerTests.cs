@@ -81,6 +81,46 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         }
 
         [Test]
+        public async Task GET_Accepted_ApplicationExists_ReturnsViewAndModel()
+        {
+            // Arrange
+            var request = _fixture.Create<AcceptedRequest>();
+            _orchestrator
+                .Setup(x => x.GetAcceptedViewModel(request))
+                .ReturnsAsync(new AcceptedViewModel());
+
+            // Act
+            var actionResult = await _controller.Accepted(request);
+            var viewResult = actionResult as ViewResult;
+            var model = viewResult.Model;
+            var acceptedViewModel = model as AcceptedViewModel;
+
+            // Assert
+            Assert.NotNull(actionResult);
+            Assert.NotNull(viewResult);
+            Assert.NotNull(model);
+            Assert.NotNull(acceptedViewModel);
+        }
+
+        [Test]
+        public async Task GET_Accepted_ApplicationDoesntExist_ReturnsNotFound()
+        {
+            // Arrange
+            var request = _fixture.Create<AcceptedRequest>();
+            _orchestrator
+                .Setup(x => x.GetAcceptedViewModel(request))
+                .ReturnsAsync((AcceptedViewModel)null);
+
+            // Act
+            var actionResult = await _controller.Accepted(request);
+            var notFoundResult = actionResult as NotFoundResult;
+
+            // Assert
+            Assert.NotNull(actionResult);
+            Assert.NotNull(notFoundResult);
+        }
+
+        [Test]
         public async Task POST_Application_SelectedActionIsAccept_RedirectsToCorrectPath()
         {
             // Arrange

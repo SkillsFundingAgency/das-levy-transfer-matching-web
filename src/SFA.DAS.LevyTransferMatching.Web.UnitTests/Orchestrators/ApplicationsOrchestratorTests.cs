@@ -132,5 +132,46 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             Assert.AreEqual(expectedUserDisplayName, actualRequest.UserDisplayName);
             Assert.AreEqual(expectedAcceptance, actualRequest.Acceptance);
         }
+
+        [Test]
+        public async Task GetAcceptedViewModel_ApplicationExists_ReturnsViewModel()
+        {
+            // Arrange
+            var request = _fixture.Create<AcceptedRequest>();
+            var response = _fixture.Create<GetAcceptedResponse>();
+            var encodedPledgeId = _fixture.Create<string>();
+
+            _mockApplicationsService
+                .Setup(x => x.GetAccepted(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId)))
+                .ReturnsAsync(response);
+
+            _mockEncodingService
+                .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
+                .Returns(encodedPledgeId);
+
+            // Act
+            var viewModel = await _applicationsOrchestrator.GetAcceptedViewModel(request);
+
+            // Assert
+            Assert.IsNotNull(viewModel);
+            Assert.AreEqual($"{response.EmployerAccountName} ({encodedPledgeId})", viewModel.EmployerNameAndReference);
+        }
+
+        [Test]
+        public async Task GetAcceptedViewModel_ApplicationDoesntExist_ReturnsNull()
+        {
+            // Arrange
+            var request = _fixture.Create<AcceptedRequest>();
+
+            _mockApplicationsService
+                .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId), CancellationToken.None))
+                .ReturnsAsync((GetApplicationResponse)null);
+
+            // Act
+            var viewModel = await _applicationsOrchestrator.GetAcceptedViewModel(request);
+
+            // Assert
+            Assert.IsNull(viewModel);
+        }
     }
 }
