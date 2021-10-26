@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Net;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Mvc;
@@ -23,12 +24,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             return View();
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-
         [Route("signout", Name= "signout")]
         public IActionResult SignOut()
         {
@@ -48,5 +43,19 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             Response.Cookies.Delete("SFA.DAS.LevyTransferMatching.Web.Auth");
         }
 
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        [Route("/home/error/{statusCode}")]
+        public IActionResult Error(int? statusCode = null)
+        {
+            switch (statusCode)
+            {
+                case (int)HttpStatusCode.Unauthorized:
+                    return new UnauthorizedResult();
+                case (int)HttpStatusCode.NotFound:
+                    return View("NotFound", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+                default:
+                    return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            }
+        }
     }
 }

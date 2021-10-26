@@ -37,24 +37,20 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             {
                 return View(viewModel);
             }
-            else
-            {
-                return NotFound();
-            }
+
+            return NotFound();
         }
         
         [HttpPost]
         [Route("opportunities/{encodedPledgeId}")]
         public IActionResult Detail(DetailPostRequest detailPostRequest)
         {
-            if (detailPostRequest.HasConfirmed.Value)
+            if (detailPostRequest.HasConfirmed != null && detailPostRequest.HasConfirmed.Value)
             {
                 return RedirectToAction(nameof(SelectAccount), new { EncodedOpportunityId = detailPostRequest.EncodedPledgeId });
             }
-            else
-            {
-                return RedirectToAction(nameof(Index));
-            }
+
+            return RedirectToAction(nameof(Index));
         }
 
         [HideAccountNavigation(false, hideNavigationLinks: true)]

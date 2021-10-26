@@ -39,6 +39,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             {
                 return View(viewModel);
             }
+
             return NotFound();
         }
 
@@ -52,8 +53,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             if (request.SelectedAction == ApplicationViewModel.ApprovalAction.Accept)
 
                 return Redirect($"/accounts/{request.EncodedAccountId}/applications/{request.EncodedApplicationId}/accepted");
-            }
-            
+
             // TODO: Implemnentation of decline journey
             throw new NotImplementedException();
         }
@@ -67,6 +67,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             if (viewModel != null)
             {
                 return View(viewModel);
+            }
 
             return NotFound();
         }
