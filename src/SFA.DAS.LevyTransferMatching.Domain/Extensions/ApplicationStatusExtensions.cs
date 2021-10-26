@@ -10,6 +10,7 @@ namespace SFA.DAS.LevyTransferMatching.Domain.Extensions
             {
                 case ApplicationStatus.Pending: return "AWAITING APPROVAL";
                 case ApplicationStatus.Approved: return "AWAITING ACCEPTANCE BY APPLICANT";
+                case ApplicationStatus.Rejected: return "REJECTED";
                 default:
                     return string.Empty;
             }
@@ -21,6 +22,7 @@ namespace SFA.DAS.LevyTransferMatching.Domain.Extensions
             {
                 case ApplicationStatus.Pending: return "govuk-tag govuk-tag--blue";
                 case ApplicationStatus.Approved: return "govuk-tag govuk-tag--yellow";
+                case ApplicationStatus.Rejected: return "govuk-tag govuk-tag--red";
                 default:
                     return string.Empty;
             }
@@ -32,6 +34,7 @@ namespace SFA.DAS.LevyTransferMatching.Domain.Extensions
             {
                 case ApplicationStatus.Pending: return "AWAITING APPROVAL";
                 case ApplicationStatus.Approved: return "APPROVED, AWAITING YOUR ACCEPTANCE";
+                case ApplicationStatus.Rejected: return "REJECTED";
                 case ApplicationStatus.Accepted: return "FUNDS AVAILABLE";
                 default:
                     return string.Empty;
@@ -44,6 +47,7 @@ namespace SFA.DAS.LevyTransferMatching.Domain.Extensions
             {
                 case ApplicationStatus.Pending: return "govuk-tag govuk-tag--grey";
                 case ApplicationStatus.Approved: return "govuk-tag govuk-tag--blue";
+                case ApplicationStatus.Rejected: return "govuk-tag govuk-tag--red";
                 case ApplicationStatus.Accepted: return "govuk-tag govuk-tag--blue";
                 default:
                     return string.Empty;

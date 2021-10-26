@@ -377,6 +377,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             {
                 EncodedAccountId = request.EncodedAccountId,
                 EncodedPledgeId = request.EncodedPledgeId,
+                DisplayRejectedBanner = request.DisplayRejectedBanner,
+                RejectedEmployerName = request.RejectedEmployerName,
                 Applications = result.Applications?.Select(app => new ApplicationViewModel
                 {
                     EncodedApplicationId = _encodingService.Encode(app.Id, EncodingType.PledgeApplicationId),
