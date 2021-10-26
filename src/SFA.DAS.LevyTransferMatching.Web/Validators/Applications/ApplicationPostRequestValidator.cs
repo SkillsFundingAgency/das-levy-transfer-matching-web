@@ -14,7 +14,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Applications
 
             RuleFor(o => o.SelectedAction)
                 .Equal(ApplicationViewModel.ApprovalAction.Accept)
-                .WithMessage("You must choose to either accept or decline funding for this application");
+                .WithMessage("You must choose to either accept or decline funding for this application")
+                .When(o => o.SelectedAction == null);
+
         }
     }
 }

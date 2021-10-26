@@ -11,18 +11,22 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
 
-                <div class="govuk-panel govuk-panel--confirmation application-complete">
+                <div class="govuk-panel govuk-panel--confirmation application-complete govuk-!-margin-bottom-9">
                     <h1 class="govuk-panel__title">You have successfully accepted a transfer</h1>
                 </div>
 
-                <h2 class="govuk-heading-m">What happens next</h2>
+                <h2 class="govuk-heading-m ">What happens next</h2>
 
                 <p>You can now add apprentices for this transfer of funding from <strong>@Model.EmployerNameAndReference</strong>.</p>
 
                 <p><strong>@Model.EmployerNameAndReference</strong> will need to review and approve the details after you have added them.</p>
 
                 <p>
-                    <a href="@Url.Action("Applications", new { EncodedAccountId = Model.EncodedAccountId })" class="govuk-link">View my applications</a>
+                    <a href="@Url.Action("Application", "Applications", new {encodedAccountId = Model.EncodedAccountId, encodedApplicationId = Model.EncodedApplicationId})" class="govuk-link">Add apprentices</a>
+                    <br />
+                    or
+                    <br />
+                    <a href="@Url.Action("Applications", "Applications", new {encodedAccountId = Model.EncodedAccountId})" class="govuk-link">View my applications</a>
                     <br>
                     or
                     <br>
