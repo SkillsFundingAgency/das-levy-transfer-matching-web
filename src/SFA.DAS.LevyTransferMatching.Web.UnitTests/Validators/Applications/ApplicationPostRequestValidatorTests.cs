@@ -35,12 +35,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Applications
         [Test]
         public void ValidatorReturnsFalseWhenUserHasNotAcceptedFunding()
         {
-            var actual = _validator.Validate(CreateApplicationStatusPostRequest(truthfulInformation: true, complyWithRules: true));
+            var actual = _validator.Validate(CreateApplicationStatusPostRequest(truthfulInformation: true, complyWithRules: true, approvalAction: null));
 
             Assert.AreEqual(false, actual.IsValid);
         }
 
-        private ApplicationPostRequest CreateApplicationStatusPostRequest(bool truthfulInformation = false, bool complyWithRules = false, ApprovalAction approvalAction = ApprovalAction.Decline) =>
+        private ApplicationPostRequest CreateApplicationStatusPostRequest(bool truthfulInformation = false, bool complyWithRules = false, ApprovalAction? approvalAction = ApprovalAction.Decline) =>
             new ApplicationPostRequest()
             {
                 EncodedAccountId = "HGVVMY",

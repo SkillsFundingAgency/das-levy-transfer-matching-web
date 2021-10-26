@@ -3,5 +3,6 @@
     public class FeatureToggles
     {
         public bool FeatureToggleCanViewApplicationDetails { get; set; }
+        public bool FeatureToggleRenderCanUseTransferFundsStartButton { get; set; }
     }
 }
