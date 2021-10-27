@@ -45,7 +45,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         [Route("/home/error/{statusCode}")]
-        public IActionResult Error(int? statusCode = null)
+        public IActionResult Error(int statusCode)
         {
             switch (statusCode)
             {
@@ -56,6 +56,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
                 default:
                     return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
             }
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

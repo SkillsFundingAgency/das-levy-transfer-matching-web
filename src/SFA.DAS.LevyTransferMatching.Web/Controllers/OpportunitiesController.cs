@@ -76,7 +76,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Route("accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/apply")]
         public async Task<IActionResult> Apply(ApplicationRequest request)
         {
-            return View(await _opportunitiesOrchestrator.GetApplyViewModel(request));
+            var applyViewModel = await _opportunitiesOrchestrator.GetApplyViewModel(request);
+
+            if (applyViewModel == null)
+            {
+                return NotFound();
+            }
+
+            return View(applyViewModel);
         }
 
         [Authorize(Policy = PolicyNames.ManageAccount)]

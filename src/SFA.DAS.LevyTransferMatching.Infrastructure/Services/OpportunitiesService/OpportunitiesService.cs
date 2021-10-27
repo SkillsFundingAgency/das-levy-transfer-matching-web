@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
@@ -18,8 +19,8 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
         public async Task<GetApplyResponse> GetApply(long accountId, int opportunityId)
         {
             var response = await _client.GetAsync($"accounts/{accountId}/opportunities/{opportunityId}/apply");
-            response.EnsureSuccessStatusCode();
-            return JsonConvert.DeserializeObject<GetApplyResponse>(await response.Content.ReadAsStringAsync());
+
+            return await response.CorrectlyHandleResponse<GetApplyResponse>();
         }
 
         public async Task<GetIndexResponse> GetIndex()
@@ -110,8 +111,8 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
         public async Task<GetDetailResponse> GetDetail(int opportunityId)
         {
             var response = await _client.GetAsync($"opportunities/{opportunityId}");
-            response.EnsureSuccessStatusCode();
-            return JsonConvert.DeserializeObject<GetDetailResponse>(await response.Content.ReadAsStringAsync());
+            
+            return await response.CorrectlyHandleResponse<GetDetailResponse>();
         }
 
         public async Task<GetSelectAccountResponse> GetSelectAccount(int opportunityId, string userId)

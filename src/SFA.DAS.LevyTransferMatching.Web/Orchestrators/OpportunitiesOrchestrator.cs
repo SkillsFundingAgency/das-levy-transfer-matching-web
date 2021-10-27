@@ -36,7 +36,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var response = await _opportunitiesService.GetDetail(pledgeId);
 
-            if (response.Opportunity == null)
+            if (response?.Opportunity == null)
                 return null;
 
             var encodedPledgeId = _encodingService.Encode(response.Opportunity.Id, EncodingType.PledgeId);
@@ -164,6 +164,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             var applyResponseTask = _opportunitiesService.GetApply(request.AccountId, request.PledgeId);
 
             await Task.WhenAll(applicationTask, applyResponseTask);
+
+            if (applyResponseTask.Result == null)
+            {
+                return null;
+            }
 
             var contactName = $"{applicationTask.Result.FirstName} {applicationTask.Result.LastName}";
 

@@ -109,6 +109,7 @@ namespace SFA.DAS.LevyTransferMatching.Web
             }
             else
             {
+                app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
 
