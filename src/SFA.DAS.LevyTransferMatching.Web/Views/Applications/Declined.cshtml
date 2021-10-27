@@ -1,0 +1,35 @@
+﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Applications.DeclinedViewModel
+@inject SFA.DAS.EmployerUrlHelper.ILinkGenerator LinkGenerator
+
+@{
+    ViewData["Title"] = "You have successfully accepted a transfer";
+}
+
+<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
+    <div class="govuk-width-container">
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+
+                <div class="govuk-panel govuk-panel--confirmation application-complete govuk-!-margin-bottom-9">
+                    <h1 class="govuk-panel__title">You have successfully declined a transfer of funds</h1>
+                </div>
+
+                <h2 class="govuk-heading-m ">What happens next</h2>
+
+                <p>Your transfer of funds from <strong>@Model.EmployerNameAndReference</strong> has been declined. You can apply to another opportunity.</p>
+
+                <p>
+                    <br />
+                    <a href="@Url.Action("Opportunities", "Index")" class="govuk-link">View other opportunities</a>
+                    <br>
+                    or
+                    <br>
+                    <a href="@LinkGenerator.AccountsLink($"accounts/{Model.EncodedAccountId}/teams")" class="govuk-link">Return to my account</a>
+                </p>
+
+            </div>
+        </div>
+
+    </div>
+</main>
