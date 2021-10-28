@@ -32,34 +32,23 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
 
         public async Task<GetApplicationDetailsResponse> GetApplicationDetails(long accountId, int id, string standardId = default)
         {
-            GetApplicationDetailsResponse applicationDetailsResponse = null;
-
             var response = await _client.GetAsync($"accounts/{accountId}/opportunities/{id}/apply/application-details{(standardId != default ? $"?standardId={standardId}" : string.Empty)}");
 
-            if (response.IsSuccessStatusCode)
-            {
-                applicationDetailsResponse = JsonConvert.DeserializeObject<GetApplicationDetailsResponse>(await response.Content.ReadAsStringAsync());
-            }
-            else if (response.StatusCode != HttpStatusCode.NotFound)
-            {
-                response.EnsureSuccessStatusCode();
-            }
-
-            return applicationDetailsResponse;
+            return await response.CorrectlyHandleResponse<GetApplicationDetailsResponse>();
         }
 
         public async Task<GetMoreDetailsResponse> GetMoreDetails(long accountId, int pledgeId)
         {
             var response = await _client.GetAsync($"accounts/{accountId}/opportunities/{pledgeId}/apply/more-details");
-            response.EnsureSuccessStatusCode();
-            return JsonConvert.DeserializeObject<GetMoreDetailsResponse>(await response.Content.ReadAsStringAsync());
+
+            return await response.CorrectlyHandleResponse<GetMoreDetailsResponse>();
         }
 
         public async Task<GetSectorResponse> GetSector(long accountId, int pledgeId)
         {
             var response = await _client.GetAsync($"accounts/{accountId}/opportunities/{pledgeId}/apply/sector");
-            response.EnsureSuccessStatusCode();
-            return JsonConvert.DeserializeObject<GetSectorResponse>(await response.Content.ReadAsStringAsync());
+
+            return await response.CorrectlyHandleResponse<GetSectorResponse>();
         }
 
         public async Task<GetSectorResponse> GetSector(long accountId, int pledgeId, string postcode)
@@ -92,9 +81,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
             var response =
                 await _client.GetAsync($"accounts/{accountId}/opportunities/{opportunityId}/apply/confirmation");
 
-            response.EnsureSuccessStatusCode();
-
-            return JsonConvert.DeserializeObject<GetConfirmationResponse>(await response.Content.ReadAsStringAsync());
+            return await response.CorrectlyHandleResponse<GetConfirmationResponse>();
         }
 
         public async Task<ApplyResponse> PostApplication(long accountId, int opportunityId, ApplyRequest request)

@@ -105,7 +105,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Route("/accounts/{encodedAccountId}/opportunities/{EncodedPledgeId}/apply/confirmation")]
         public async Task<IActionResult> Confirmation(ConfirmationRequest request)
         {
-            return View(await _opportunitiesOrchestrator.GetConfirmationViewModel(request));
+            var confirmationViewModel = await _opportunitiesOrchestrator.GetConfirmationViewModel(request);
+
+            if (confirmationViewModel == null)
+            {
+                return NotFound();
+            }
+
+            return View(confirmationViewModel);
         }
 
         [HideAccountNavigation(false)]
@@ -113,7 +120,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Route("/accounts/{encodedAccountId}/opportunities/{EncodedPledgeId}/apply/more-details")]
         public async Task<IActionResult> MoreDetails(MoreDetailsRequest request)
         {
-            return View(await _opportunitiesOrchestrator.GetMoreDetailsViewModel(request));
+            var moreDetailsViewModel = await _opportunitiesOrchestrator.GetMoreDetailsViewModel(request);
+
+            if (moreDetailsViewModel == null)
+            {
+                return NotFound();
+            }
+
+            return View(moreDetailsViewModel);
         }
 
         [HideAccountNavigation(false)]
@@ -135,7 +149,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/apply/application-details")]
         public async Task<IActionResult> ApplicationDetails(ApplicationDetailsRequest request)
         {
-            return View(await _opportunitiesOrchestrator.GetApplicationViewModel(request));
+            var applicationDetailsViewModel = await _opportunitiesOrchestrator.GetApplicationViewModel(request);
+
+            if (applicationDetailsViewModel == null)
+            {
+                return NotFound();
+            }
+
+            return View(applicationDetailsViewModel);
         }
 
         [Authorize(Policy = PolicyNames.ManageAccount)]
@@ -163,7 +184,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/apply/sector")]
         public async Task<IActionResult> Sector(SectorRequest request)
         {
-            return View(await _opportunitiesOrchestrator.GetSectorViewModel(request));
+            var sectorViewModel = await _opportunitiesOrchestrator.GetSectorViewModel(request);
+
+            if (sectorViewModel == null)
+            {
+                return NotFound();
+            }
+
+            return View(sectorViewModel);
         }
 
         [Authorize(Policy = PolicyNames.ManageAccount)]
@@ -188,6 +216,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         public async Task<IActionResult> ContactDetails(ContactDetailsRequest contactDetailsRequest)
         {
             var viewModel = await _opportunitiesOrchestrator.GetContactDetailsViewModel(contactDetailsRequest);
+
+            if (viewModel == null)
+            {
+                return NotFound();
+            }
 
             return View(viewModel);
         }
@@ -214,6 +247,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         public async Task<IActionResult> GetFundingEstimate(GetFundingEstimateRequest request)
         {
             var result = await _opportunitiesOrchestrator.GetFundingEstimate(request);
+
+            if (result == null)
+            {
+                return NotFound();
+            }
 
             return Json(result);
         }

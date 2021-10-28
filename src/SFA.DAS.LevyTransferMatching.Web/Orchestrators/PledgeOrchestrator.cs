@@ -196,6 +196,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var response = await _pledgeService.GetApplicationApproved(request.AccountId, request.PledgeId, request.ApplicationId);
 
+            if (response == null)
+            {
+                return null;
+            }
+
             return new ApplicationApprovedViewModel
             {
                 EncodedAccountId = request.EncodedAccountId,

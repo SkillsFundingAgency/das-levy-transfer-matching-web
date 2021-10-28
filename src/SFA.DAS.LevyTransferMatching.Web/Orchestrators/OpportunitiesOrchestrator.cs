@@ -119,6 +119,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         public async Task<ConfirmationViewModel> GetConfirmationViewModel(ConfirmationRequest request)
         {
             var result = await _opportunitiesService.GetConfirmation(request.AccountId, request.PledgeId);
+
+            if (result == null)
+            {
+                return null;
+            }
+
             return new ConfirmationViewModel
             {
                 AccountName = result.AccountName,
@@ -306,6 +312,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             await Task.WhenAll(applicationTask, moreDetailsResponseTask);
 
+            if (moreDetailsResponseTask.Result == null)
+            {
+                return null;
+            }
+
             var opportunitySummaryViewModelOptions = new GetOpportunitySummaryViewModelOptions()
             {
                 Sectors = moreDetailsResponseTask.Result.Opportunity.Sectors,
@@ -335,6 +346,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var cacheItem = await RetrieveCacheItem(request.CacheKey);
             var response = await _opportunitiesService.GetSector(request.AccountId, request.PledgeId);
+
+            if (response == null)
+            {
+                return null;
+            }
 
             var opportunitySummaryViewModelOptions = new GetOpportunitySummaryViewModelOptions()
             {
@@ -424,6 +440,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             await Task.WhenAll(applicationDetailsTask, applicationTask);
 
+            if (applicationDetailsTask.Result == null)
+            {
+                return null;
+            }
+
             var application = applicationTask.Result;
             var applicationDetails = applicationDetailsTask.Result;
 
@@ -497,6 +518,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         public async Task<GetFundingEstimateViewModel> GetFundingEstimate(GetFundingEstimateRequest request, GetApplicationDetailsResponse applicationDetails = null)
         {
             applicationDetails ??= await _opportunitiesService.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId);
+
+            if (applicationDetails == null)
+            {
+                return null;
+            }
 
             var amount = applicationDetails.Standards.Single()
                 .ApprenticeshipFunding.GetEffectiveFundingLine(request.StartDate)

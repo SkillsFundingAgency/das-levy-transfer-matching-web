@@ -248,6 +248,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         public async Task<IActionResult> ApplicationApproved(ApplicationApprovedRequest request)
         {
             var viewModel = await _orchestrator.GetApplicationApprovedViewModel(request);
+
+            if (viewModel == null)
+            {
+                return NotFound();
+            }
+
             return View(viewModel);
         }
     }

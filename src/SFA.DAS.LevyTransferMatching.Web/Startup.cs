@@ -113,6 +113,7 @@ namespace SFA.DAS.LevyTransferMatching.Web
                 app.UseHsts();
             }
 
+            app.UseMiddleware<ErrorHandlerMiddleware>();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseDasHealthChecks();

@@ -6,6 +6,7 @@ using Newtonsoft.Json.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
@@ -75,9 +76,8 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
         public async Task<GetApplicationsResponse> GetApplications(long accountId, int pledgeId)
         {
             var response = await _client.GetAsync($"accounts/{accountId}/pledges/{pledgeId}/applications");
-            response.EnsureSuccessStatusCode();
 
-            return JsonConvert.DeserializeObject<GetApplicationsResponse>(await response.Content.ReadAsStringAsync());
+            return await response.CorrectlyHandleResponse<GetApplicationsResponse>();
         }
 
         public async Task<GetApplicationResponse> GetApplication(long accountId, int pledgeId, int applicationId, CancellationToken cancellationToken = default)
@@ -107,8 +107,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
         public async Task<GetApplicationApprovedResponse> GetApplicationApproved(long accountId, int pledgeId, int applicationId)
         {
             var response = await _client.GetAsync($"accounts/{accountId}/pledges/{pledgeId}/applications/{applicationId}/approved");
-            response.EnsureSuccessStatusCode();
-            return JsonConvert.DeserializeObject<GetApplicationApprovedResponse>(await response.Content.ReadAsStringAsync());
+            return await response.CorrectlyHandleResponse<GetApplicationApprovedResponse>();
         }
     }
 }
