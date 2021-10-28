@@ -293,6 +293,24 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         }
 
         [Test]
+        public async Task GetMoreDetailsViewModel_Given_Incorrect_Parameters_Returns_Null()
+        {
+            var accountId = _fixture.Create<int>();
+            var pledgeId = _fixture.Create<int>();
+
+            _opportunitiesService.Setup(o =>
+                    o.GetMoreDetails(It.Is<long>(l => l == accountId), It.Is<int>(i => i == pledgeId)))
+                .ReturnsAsync((GetMoreDetailsResponse) null);
+
+            var actual = await _orchestrator.GetMoreDetailsViewModel(new MoreDetailsRequest
+            {
+                AccountId = accountId, PledgeId = pledgeId
+            });
+
+            Assert.IsNull(actual);
+        }
+
+        [Test]
         public async Task GetApplicationViewModel_Is_Correct()
         {
             SetupGetOpportunityViewModelServices();
@@ -386,6 +404,24 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         }
 
         [Test]
+        public async Task GetApplyViewModel_Given_Invalid_Parameters_Returns_Null()
+        {
+            var accountId = _fixture.Create<long>();
+            var pledgeId = _fixture.Create<int>();
+
+            _opportunitiesService
+                .Setup(o => o.GetApply(It.Is<long>(l => l == accountId), It.Is<int>(i => i == pledgeId)))
+                .ReturnsAsync((GetApplyResponse) null);
+
+            var actual = await _orchestrator.GetApplyViewModel(new ApplicationRequest
+            {
+                AccountId = accountId, PledgeId = pledgeId
+            });
+
+            Assert.IsNull(actual);
+        }
+
+        [Test]
         public async Task GetConfirmationViewModel_Returns_Expected_Model()
         {
             var encodedAccountId = _fixture.Create<string>();
@@ -407,6 +443,24 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             Assert.AreEqual(response.IsNamePublic, result.IsNamePublic);
             Assert.AreEqual(reference, result.Reference);
             Assert.AreEqual(encodedAccountId, result.EncodedAccountId);
+        }
+
+        [Test]
+        public async Task GetConfirmationViewModel_Given_Invalid_Parameters_Returns_Null()
+        {
+            var encodedAccountId = _fixture.Create<string>();
+            var accountId = _fixture.Create<long>();
+            var opportunityId = _fixture.Create<int>();
+            var response = _fixture.Create<GetConfirmationResponse>();
+            var reference = _fixture.Create<string>();
+
+            _opportunitiesService.Setup(x => x.GetConfirmation(It.Is<long>(l => l == accountId), It.Is<int>(i => i == opportunityId)))
+                .ReturnsAsync((GetConfirmationResponse) null);
+
+            var result =
+                await _orchestrator.GetConfirmationViewModel(new ConfirmationRequest { PledgeId = opportunityId, AccountId = accountId, EncodedAccountId = encodedAccountId });
+
+            Assert.IsNull(result);
         }
 
         [Test]
