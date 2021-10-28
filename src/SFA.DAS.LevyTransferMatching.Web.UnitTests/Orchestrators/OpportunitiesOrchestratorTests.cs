@@ -6,6 +6,7 @@ using AutoFixture;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Encoding;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
@@ -333,6 +334,21 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         }
 
         [Test]
+        public async Task GetApplicationViewModel_Given_Invalid_Parameters_Returns_Null()
+        {
+            var accountId = _fixture.Create<int>();
+            var pledgeId = _fixture.Create<int>();
+
+            var actual = await _orchestrator.GetApplicationViewModel(new ApplicationDetailsRequest
+            {
+                AccountId = accountId,
+                PledgeId = pledgeId
+            });
+
+            Assert.IsNull(actual);
+        }
+
+        [Test]
         public async Task GetApplyViewModel_Returns_Empty_Value_For_Null_HasTrainingProvider()
         {
             var applicationRequest = SetupForGetApplyViewModel();
@@ -498,6 +514,66 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             _cacheStorageService.Verify(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()), Times.Once);
             _opportunitiesService.Verify(x => x.GetSector(1, 1), Times.Once);
+        }
+
+        [Test]
+        public async Task GetSectorViewModel_Given_Incorrect_Parameters_Returns_Null()
+        {
+            var accountId = _fixture.Create<long>();
+            var pledgeId = _fixture.Create<int>();
+            _opportunitiesService
+                .Setup(o => o.GetSector(It.Is<long>(l => l == accountId), It.Is<int>(i => i == pledgeId)))
+                .ReturnsAsync((GetSectorResponse) null);
+
+            var actual = await _orchestrator.GetSectorViewModel(new SectorRequest
+            {
+                AccountId = accountId, PledgeId = pledgeId
+            });
+
+            Assert.IsNull(actual);
+        }
+
+        [Test]
+        public async Task GetFundingEstimate_When_Application_Details_Are_Null_Returns_Null()
+        {
+            var accountId = _fixture.Create<int>();
+            var opportunityId = _fixture.Create<int>();
+            var request = _fixture.Create<GetFundingEstimateRequest>();
+            request.AccountId = accountId;
+            request.PledgeId = opportunityId;
+
+            _opportunitiesService.Setup(o => o.GetApplicationDetails(It.Is<long>(l => l == accountId),
+                    It.Is<int>(i => i == opportunityId), It.IsAny<string>()))
+                .ReturnsAsync((GetApplicationDetailsResponse) null);
+
+            var response = await _orchestrator.GetFundingEstimate(request);
+
+            Assert.IsNull(response);
+        }
+
+        [Test]
+        public async Task GetFundingEstimate_When_Given_Valid_Details_Returns_View_Model()
+        {
+            var accountId = _fixture.Create<int>();
+            var opportunityId = _fixture.Create<int>();
+            var request = _fixture.Create<GetFundingEstimateRequest>();
+            var response = _fixture.Create<GetApplicationDetailsResponse>();
+            request.StartDate = DateTime.Now;
+
+            response.Standards.First().ApprenticeshipFunding.First().EffectiveFrom = DateTime.Now.AddMonths(-3);
+            response.Standards.First().ApprenticeshipFunding.First().EffectiveTo = DateTime.Now.AddMonths(10);
+
+            response.Standards = new List<StandardsListItemDto> {response.Standards.First()};
+            request.AccountId = accountId;
+            request.PledgeId = opportunityId;
+
+            _opportunitiesService.Setup(o => o.GetApplicationDetails(It.Is<long>(l => l == accountId),
+                    It.Is<int>(i => i == opportunityId), It.IsAny<string>()))
+                .ReturnsAsync(response);
+
+            var orchestratorResponse = await _orchestrator.GetFundingEstimate(request);
+
+            Assert.IsNotNull(orchestratorResponse);
         }
     }
 }
