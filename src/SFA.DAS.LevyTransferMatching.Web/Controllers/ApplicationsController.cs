@@ -54,9 +54,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             {
                 return Redirect($"/accounts/{request.EncodedAccountId}/applications/{request.EncodedApplicationId}/accepted");
             }
-            
-            // TODO: Implemnentation of decline journey
-            throw new NotImplementedException();
+            else
+            {
+                return Redirect($"/accounts/{request.EncodedAccountId}/applications/{request.EncodedApplicationId}/declined");
+            }
         }
 
         [HttpGet]
