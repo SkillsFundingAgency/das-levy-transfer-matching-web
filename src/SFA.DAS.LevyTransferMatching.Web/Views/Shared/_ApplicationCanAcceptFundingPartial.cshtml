@@ -37,13 +37,24 @@
                         </fieldset>
                     </div>
                 </div>
-                @*<div class="govuk-radios__item">
+                <div class="govuk-radios__item">
 
-                        <input class="govuk-radios__input" id="SelectedAction_Decline" name="SelectedAction" asp-for="SelectedAction" type="radio" value="@decline" />
-                        <label class="govuk-label govuk-radios__label" for="SelectedAction_Decline">
-                            No, decline the funding and withdraw the application
-                        </label>
-                    </div>*@
+                    <input class="govuk-radios__input" id="SelectedAction_Decline" name="SelectedAction" asp-for="SelectedAction" type="radio" value="@decline" data-aria-controls="decline-content" />
+                    <label class="govuk-label govuk-radios__label" for="SelectedAction_Decline">
+                        No, decline the funding and withdraw the application
+                    </label>
+                </div>
+                <div class="govuk-radios__conditional" id="decline-content">
+                    <div class="govuk-form-group">
+                        <fieldset class="govuk-fieldset">
+                            <span id="ConfirmWithdrawal" das-validation-for="ConfirmWithdrawal" class="govuk-error-message"></span>
+                            <checkbox asp-for="ConfirmWithdrawal" label="I confirm I want to decline the funding and withdraw the application" aria-controls="ConfirmWithdrawl" css-class="govuk-checkboxes govuk-checkboxes--small">
+
+                            </checkbox>
+
+                        </fieldset>
+                    </div>
+                </div>
             </div>
         </div>
         <p class="govuk-!-margin-top-5">

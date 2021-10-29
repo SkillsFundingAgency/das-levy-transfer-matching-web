@@ -142,7 +142,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         }
 
         [Test]
-        public void POST_Application_SelectedActionIsDecline_ThrowsNotImplementedException()
+        public async Task POST_Application_SelectedActionIsDecline_RedirectsToCorrectPath()
         {
             // Arrange
             var request = _fixture
@@ -150,8 +150,16 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
                 .With(x => x.SelectedAction, ApplicationViewModel.ApprovalAction.Decline)
                 .Create();
 
-            // Act/Assert
-            Assert.ThrowsAsync<System.NotImplementedException>(() => _controller.Application(request));
+            // Act
+            var actionResult = await _controller.Application(request);
+            var redirectResult = actionResult as RedirectResult;
+
+            // Assert
+            Assert.NotNull(actionResult);
+            Assert.NotNull(redirectResult);
+            Assert.AreEqual(
+                $"/accounts/{request.EncodedAccountId}/applications/{request.EncodedApplicationId}/declined",
+                redirectResult.Url);
         }
     }
 }
