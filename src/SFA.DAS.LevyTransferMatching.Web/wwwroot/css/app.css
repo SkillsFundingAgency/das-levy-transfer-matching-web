@@ -74,11 +74,27 @@
     margin-right: .3em;
 }
 
+.app-dl-inline__title--strong {
+    font-weight: 700;
+    clear: both;
+    float: left;
+    margin-right: .3em;
+}
+
+.app-dl-inline__title:after, .app-dl-inline__title--strong:after {
+    content: ':';
+}
+
 .app-dl-inline__title:after {
     content: ':';
 }
 
 .app-dl-inline__definition {
+    margin: 0;
+    float: left;
+}
+
+.app-dl-inline__definition--strong {
     font-weight: 700;
     margin: 0;
     float: left;
