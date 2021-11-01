@@ -5,7 +5,7 @@
 @{
     ViewData["Title"] = "Pledge Applications";
     var breadCrumbs = new List<Tuple<string, string>>
-    {
+{
         new Tuple<string, string>(LinkGenerator.AccountsLink($"accounts/{Model.EncodedAccountId}/teams"), "Home"),
         new Tuple<string, string>(LinkGenerator.FinanceLink($"accounts/{Model.EncodedAccountId}/finance"), "Finance"),
         new Tuple<string, string>(LinkGenerator.FinanceLink($"accounts/{Model.EncodedAccountId}/transfers"), "Transfers"),
@@ -52,59 +52,59 @@
 
                         <table class="govuk-table" aria-label="Pledge applications">
                             <thead class="govuk-table__head">
-                            <tr class="govuk-table__row">
-                                <th scope="col" class="govuk-table__header applicant">Applicant</th>
-                                <th scope="col" class="govuk-table__header tax-year ">
-                                    <div class="small-text">
-                                        Estimated cost @Model.TaxYear
-                                    </div>
-                                </th>
-                                <th scope="col" class="govuk-table__header duration" >Typical duration</th>
-                                <th scope="col" class="govuk-table__header">Criteria</th>
-                                <th scope="col" class="govuk-table__header">Date applied</th>
-                                <th scope="col" class="govuk-table__header status" >Status</th>
-                            </tr>
+                                <tr class="govuk-table__row">
+                                    <th scope="col" class="govuk-table__header applicant">Applicant</th>
+                                    <th scope="col" class="govuk-table__header tax-year ">
+                                        <div class="small-text">
+                                            Estimated cost @Model.TaxYear
+                                        </div>
+                                    </th>
+                                    <th scope="col" class="govuk-table__header duration">Typical duration</th>
+                                    <th scope="col" class="govuk-table__header">Criteria</th>
+                                    <th scope="col" class="govuk-table__header">Date applied</th>
+                                    <th scope="col" class="govuk-table__header status">Status</th>
+                                </tr>
                             </thead>
                             <tbody class="govuk-table__body">
-                            @{
-                                if (Model.Applications != null && Model.Applications.Any())
-                                {
-                                    foreach (var app in Model.Applications)
+                                @{
+                                    if (Model.Applications != null && Model.Applications.Any())
+                                    {
+                                        foreach (var app in Model.Applications)
+                                        {
+                                            <tr class="govuk-table__row" data-table-row="one">
+                                                <td class="govuk-table__cell"><a href="applications/@app.EncodedApplicationId">@app.DasAccountName</a></td>
+                                                <td class="govuk-table__cell">
+                                                    @app.DisplayAmount
+                                                </td>
+                                                <td class="govuk-table__cell">@app.Duration months</td>
+                                                <td class="govuk-table__cell">
+                                                    <p style="color: grey; padding-top: 5px; font-size: 16px;">
+                                                        • Location <br>
+                                                        • Sector <br>
+                                                        • Type of job role <br>
+                                                        • Level
+                                                    </p>
+                                                </td>
+                                                <td class="govuk-table__cell">@app.CreatedOn.ToLongDateDisplayString()</td>
+                                                <td class="govuk-table__cell"><strong class="@app.Status.GetCssClassForSender()">@app.Status.GetLabelForSender()</strong></td>
+                                            </tr>
+                                        }
+                                    }
+
+                                    else
                                     {
                                         <tr class="govuk-table__row" data-table-row="one">
-                                            <td class="govuk-table__cell"><a href="applications/@app.EncodedApplicationId">@app.DasAccountName</a></td>
-                                            <td class="govuk-table__cell">
-                                                @app.DisplayAmount
-                                            </td>
-                                            <td class="govuk-table__cell">@app.Duration months</td>
-                                            <td class="govuk-table__cell">
-                                                <p style="color: grey; padding-top: 5px; font-size: 16px;">
-                                                    • Location <br>
-                                                    • Sector <br>
-                                                    • Type of job role <br>
-                                                    • Level
-                                                </p>
-                                            </td>
-                                            <td class="govuk-table__cell">@app.CreatedOn.ToLongDateDisplayString()</td>
-                                            <td class="govuk-table__cell"><strong class="@app.Status.GetCssClassForSender()">@app.Status.GetLabelForSender()</strong></td>
+                                            <td colspan="6" class="govuk-table__cell">No applications received yet</td>
                                         </tr>
                                     }
                                 }
-
-                                else
-                                {
-                                    <tr class="govuk-table__row" data-table-row="one">
-                                        <td colspan="6" class="govuk-table__cell">No applications received yet</td>
-                                    </tr>
-                                }
-                            }
                             </tbody>
                         </table>
 
                     </div>
 
                 </div>
-                
+
                 <div class="govuk-button-group">
                     <form action="/accounts/@Model.EncodedAccountId/pledges/create/inform" method="get">
                         <button class="govuk-button">
@@ -112,8 +112,15 @@
                         </button>
                     </form>
                 </div>
-                
+
                 <a href="/accounts/@Model.EncodedAccountId/pledges" class="govuk-back-link">Back to my transfer pledges</a>
+
+                @if (Model.Applications.Any())
+                {
+                    <div>
+                        download csv
+                    </div>
+                }
 
             </div>
 
