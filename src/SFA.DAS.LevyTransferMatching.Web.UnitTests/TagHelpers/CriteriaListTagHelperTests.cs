@@ -36,12 +36,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.TagHelpers
                 });
         }
 
-        [TestCase(false, false, false, false, "<p>0% match</p>")]
-        [TestCase(true, false, false, false, "<p>25% match</p><ul class=\"app-criteria-list govuk-list govuk-list--bullet\"><li>Location</li></ul>")]
-        [TestCase(false, false, true, false, "<p>25% match</p><ul class=\"app-criteria-list govuk-list govuk-list--bullet\"><li>Job Role</li></ul>")]
-        [TestCase(false, true, true, false, "<p>50% match</p><ul class=\"app-criteria-list govuk-list govuk-list--bullet\"><li>Sector</li><li>Job Role</li></ul>")]
-        [TestCase(true, false, true, true, "<p>75% match</p><ul class=\"app-criteria-list govuk-list govuk-list--bullet\"><li>Location</li><li>Job Role</li><li>Level</li></ul>")]
-        [TestCase(true, true, true, true, "<p>100% match</p><ul class=\"app-criteria-list govuk-list govuk-list--bullet\"><li>Location</li><li>Sector</li><li>Job Role</li><li>Level</li></ul>")]
+        [TestCase(false, false, false, false, "<p class=\"govuk-!-margin-bottom-1\">0% match</p>")]
+        [TestCase(true, false, false, false, "<p class=\"govuk-!-margin-bottom-1\">25% match</p><ul class=\"app-criteria-list govuk-list govuk-list--bullet\"><li>Location</li></ul>")]
+        [TestCase(false, false, true, false, "<p class=\"govuk-!-margin-bottom-1\">25% match</p><ul class=\"app-criteria-list govuk-list govuk-list--bullet\"><li>Job Role</li></ul>")]
+        [TestCase(false, true, true, false, "<p class=\"govuk-!-margin-bottom-1\">50% match</p><ul class=\"app-criteria-list govuk-list govuk-list--bullet\"><li>Sector</li><li>Job Role</li></ul>")]
+        [TestCase(true, false, true, true, "<p class=\"govuk-!-margin-bottom-1\">75% match</p><ul class=\"app-criteria-list govuk-list govuk-list--bullet\"><li>Location</li><li>Job Role</li><li>Level</li></ul>")]
+        [TestCase(true, true, true, true, "<p class=\"govuk-!-margin-bottom-1\">100% match</p><ul class=\"app-criteria-list govuk-list govuk-list--bullet\"><li>Location</li><li>Sector</li><li>Job Role</li><li>Level</li></ul>")]
         public void ProcessReturnsCorrectHtml(bool isLocationMatch, bool isSectorMatch, bool isJobRoleMatch, bool isLevelMatch, string expectedOutput)
         {
             var application = new ApplicationViewModel
