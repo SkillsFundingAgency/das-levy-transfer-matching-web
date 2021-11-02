@@ -1,0 +1,53 @@
+﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Applications.ApplicationViewModel
+
+@{
+
+    var accept = SFA.DAS.LevyTransferMatching.Web.Models.Applications.ApplicationPostRequest.ApprovalAction.Accept;
+    var decline = SFA.DAS.LevyTransferMatching.Web.Models.Applications.ApplicationPostRequest.ApprovalAction.Decline;
+}
+
+
+@if (Model.CanAcceptFunding)
+{
+    <form method="post">
+        <h2 class="govuk-heading-m">Do you want to accept this transfer of funds?</h2>
+        <div das-highlight-error-for="SelectedAction" error-class="govuk-form-group--error">
+            <div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios" das-highlight-error-for="HasAcceptedTermsAndConditions" error-class="govuk-form-group--error">
+                <span id="SelectedAction" das-validation-for="SelectedAction" class="govuk-error-message"></span>
+                <div class="govuk-radios__item">
+
+                    <input class="govuk-radios__input" id="SelectedAction_Approve" name="SelectedAction" asp-for="SelectedAction" type="radio" value="@accept" das-highlight-error-for="SelectedAction" error-class="govuk-textarea--error" data-aria-controls="approval-content" />
+                    <label class="govuk-label govuk-radios__label" for="SelectedAction_Approve">
+                        Yes, accept the funding
+                    </label>
+                </div>
+                <div class="govuk-radios__conditional" id="approval-content">
+                    <div class="govuk-form-group">
+                        <fieldset class="govuk-fieldset">
+                            <legend class="govuk-fieldset__legend">I confirm that:</legend>
+
+                            <span id="HasAcceptedTermsAndConditions" das-validation-for="HasAcceptedTermsAndConditions" class="govuk-error-message"></span>
+                            <checkbox asp-for="TruthfulInformation" label="the information that I have provided is truthful and accurate" aria-controls="TruthfulInformation" css-class="govuk-checkboxes govuk-checkboxes--small">
+
+                            </checkbox>
+                            <checkbox asp-for="ComplyWithRules" label="I will comply with the &lt;a href=&quot;https://www.gov.uk/guidance/apprenticeship-funding-rules&quot; target=&quot;_blank&quot;&gt;apprenticeship funding rules&lt;/a&gt;, including not offering or making any payments in return for a transfer of funding" aria-controls="ComplyWithRules" css-class="govuk-checkboxes govuk-checkboxes--small">
+
+                            </checkbox>
+
+                        </fieldset>
+                    </div>
+                </div>
+                @*<div class="govuk-radios__item">
+
+                        <input class="govuk-radios__input" id="SelectedAction_Decline" name="SelectedAction" asp-for="SelectedAction" type="radio" value="@decline" />
+                        <label class="govuk-label govuk-radios__label" for="SelectedAction_Decline">
+                            No, decline the funding and withdraw the application
+                        </label>
+                    </div>*@
+            </div>
+        </div>
+        <p class="govuk-!-margin-top-5">
+            <button class="govuk-button" data-module="govuk-button" id="fund-transfer-accept">Continue</button>
+        </p>
+    </form>
+}
