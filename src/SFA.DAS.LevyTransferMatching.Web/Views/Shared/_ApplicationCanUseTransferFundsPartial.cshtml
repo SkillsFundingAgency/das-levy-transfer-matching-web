@@ -1,0 +1,32 @@
+﻿@inject SFA.DAS.EmployerUrlHelper.ILinkGenerator LinkGenerator
+@model SFA.DAS.LevyTransferMatching.Web.Models.Applications.ApplicationViewModel
+
+@if (Model.CanUseTransferFunds)
+{
+    <div class="govuk">
+        <h2 class="govuk-heading-m">Add apprentices</h2>
+        <p>You'll need to add details of your apprentices to your apprenticeship service account, and authorise payments to your training provider.</p>
+        <h2 class="govuk-heading-m">Before you start</h2>
+        <p>You must:</p>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>know the names of your apprentices</li>
+            <li>have a training provider in place</li>
+            <li>know your training provider's UK Provider Reference Number (UKPRN) - your training provider can tell you this</li>
+            <li>
+                make sure the organisation that's named on the contract you have with your training provider is in your account -
+                <a href="@LinkGenerator.AccountsLink($"accounts/{Model.EncodedAccountId}/agreements")" class="govuk-link govuk-link--no-visited-state">view organisations in this account</a>
+            </li>
+            <li>make sure the PAYE scheme that each apprentice is paid through is in your account - <a href="@LinkGenerator.AccountsLink($"accounts/{Model.EncodedAccountId}/schemes")" class="govuk-link govuk-link--no-visited-state">view PAYE schemes in this account</a></li>
+        </ul>
+        <p><a href="https://findapprenticeshiptraining.apprenticeships.education.gov.uk/" class="govuk-link govuk-link--no-visited-state" target="_blank">Find a training provider</a></p>
+
+        @if (Model.RenderCanUseTransferFundsStartButton)
+        {
+            <p class="govuk-!-margin-bottom-5 govuk-!-margin-top-5">
+                <a href="@LinkGenerator.CommitmentsV2Link($"{Model.EncodedAccountId}/unapproved/legalEntity/create?encodedpledgeapplicationid={Model.EncodedApplicationId}&transferConnectionCode={Model.EncodedSenderPublicAccountId}")"
+                   class="govuk-button govuk-!-margin-bottom-0">Start now</a>
+            </p>
+        }
+        <p><a href="@Url.Action("applications", "applications", new {encodedAccountId = Model.EncodedAccountId})" class="govuk-link govuk-link--no-visited-state">View my applications</a></p>
+    </div>
+}

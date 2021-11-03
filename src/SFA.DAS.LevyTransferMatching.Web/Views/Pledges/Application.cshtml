@@ -12,11 +12,6 @@
     <h1 class="govuk-heading-xl">
         @Model.EmployerAccountName
     </h1>
-    <div class="govuk-warning-text">
-        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-        <span class="govuk-warning-text__assistive">Warning</span>
-        <p class="govuk-warning-text__text">Businesses will be able to use the funds pledged from the 27th October.</p>
-    </div>
     <div class="das-highlight">
         <h2 class="govuk-heading-m">Details about the application</h2>
         @*
@@ -45,24 +40,24 @@
                 @if (Model.IsLocationMatch) { <span class="app-dl-icon-list__icon app-dl-icon-list__icon--tick">Match for: </span> }
                 Location
             </dt>
-            <dd class="app-dl-icon-list__definition">@Model.Locations</dd>
+            <dd class="app-dl-icon-list__definition--strong">@Model.Locations</dd>
             <dt class="app-dl-icon-list__title">Sector</dt>
-            <dd class="app-dl-icon-list__definition">@Model.DisplaySectors</dd>
+            <dd class="app-dl-icon-list__definition--strong">@Model.DisplaySectors</dd>
             <dt class="app-dl-icon-list__title">Type of job role</dt>
-            <dd class="app-dl-icon-list__definition">@Model.JobRole</dd>
+            <dd class="app-dl-icon-list__definition--strong">@Model.JobRole</dd>
             <dt class="app-dl-icon-list__title">Level</dt>
-            <dd class="app-dl-icon-list__definition">@Model.Level</dd>
+            <dd class="app-dl-icon-list__definition--strong">@Model.Level</dd>
         </dl>
   
         <dl class="govuk-body app-dl-inline">
             <dt class="app-dl-inline__title">Apprentices</dt>
-            <dd class="app-dl-inline__definition">@Model.NumberOfApprentices</dd>
+            <dd class="app-dl-inline__definition--strong">@Model.NumberOfApprentices</dd>
             <dt class="app-dl-inline__title">Estimated duration</dt>
-            <dd class="app-dl-inline__definition">@Model.EstimatedDurationMonths months</dd>
+            <dd class="app-dl-inline__definition--strong">@Model.EstimatedDurationMonths months</dd>
             <dt class="app-dl-inline__title">Start by</dt>
-            <dd class="app-dl-inline__definition">@Model.StartBy.ToString("MMMMM yyyy")</dd>
+            <dd class="app-dl-inline__definition--strong">@Model.StartBy.ToString("MMMMM yyyy")</dd>
             <dt class="app-dl-inline__title">Do they have a training provider</dt>
-            <dd class="app-dl-inline__definition">@Model.HasTrainingProvider.ToYesNo()</dd>
+            <dd class="app-dl-inline__definition--strong">@Model.HasTrainingProvider.ToYesNo()</dd>
         </dl>
     </div>
 
