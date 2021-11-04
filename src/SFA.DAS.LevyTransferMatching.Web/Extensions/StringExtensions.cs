@@ -50,7 +50,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Extensions
             return list != null && list.Any();
         }
 
-        public static string ToApplicationLocationsString(this IEnumerable<string> list, string separator, string additionalLocation, string specificLocation)
+        public static string ToApplicationLocationsString(this IEnumerable<string> list, string separator, string additionalLocation)
         {
             string applicationLocationsString = "";
             if (list.Any())
@@ -64,7 +64,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Extensions
             }
             else
             {
-                applicationLocationsString = specificLocation;
+                applicationLocationsString = additionalLocation;
             }
 
             return applicationLocationsString;
