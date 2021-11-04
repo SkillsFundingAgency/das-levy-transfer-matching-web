@@ -50,21 +50,21 @@ namespace SFA.DAS.LevyTransferMatching.Web.Extensions
             return list != null && list.Any();
         }
 
-        public static string ToApplicationLocationsString(this IEnumerable<string> list, string separator, string additionalLocation = "")
+        public static string ToApplicationLocationsString(this IEnumerable<string> list, string separator, string additionalLocation, string specificLocation)
         {
             string applicationLocationsString = "";
             if (list.Any())
             {
                 list = list.Select(x => x.Contains(',') ? x.Split(',')[0] : x);
                 applicationLocationsString = string.Join(separator, list);
-                if (additionalLocation != "")
+                if (!string.IsNullOrEmpty(additionalLocation))
                 {
                     applicationLocationsString = string.Concat(applicationLocationsString, separator, additionalLocation);
                 }
             }
             else
             {
-                applicationLocationsString = additionalLocation;
+                applicationLocationsString = specificLocation;
             }
 
             return applicationLocationsString;
