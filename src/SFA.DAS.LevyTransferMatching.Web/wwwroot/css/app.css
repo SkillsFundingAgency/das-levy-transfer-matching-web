@@ -106,7 +106,7 @@
 .app-dl-icon-list {
     overflow: hidden;
     margin: 0;
-    padding-left: 1.6em;
+    /*padding-left: 1.6em;*/
 }
 
 .app-dl-icon-list__title {
