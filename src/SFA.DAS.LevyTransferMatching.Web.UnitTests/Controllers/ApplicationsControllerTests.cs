@@ -46,7 +46,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             // Arrange
             var request = _fixture.Create<ApplicationRequest>();
             _orchestrator
-                .Setup(x => x.GetApplication(request))
+                .Setup(x => x.GetApplication(It.Is<ApplicationRequest>(y => y == request)))
                 .ReturnsAsync(new ApplicationViewModel());
 
             // Act
@@ -68,7 +68,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             // Arrange
             var request = _fixture.Create<ApplicationRequest>();
             _orchestrator
-                .Setup(x => x.GetApplication(request))
+                .Setup(x => x.GetApplication(It.Is<ApplicationRequest>(y => y == request)))
                 .ReturnsAsync((ApplicationViewModel)null);
 
             // Act
@@ -86,7 +86,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             // Arrange
             var request = _fixture.Create<AcceptedRequest>();
             _orchestrator
-                .Setup(x => x.GetAcceptedViewModel(request))
+                .Setup(x => x.GetAcceptedViewModel(It.Is<AcceptedRequest>(y => y == request)))
                 .ReturnsAsync(new AcceptedViewModel());
 
             // Act
@@ -108,7 +108,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             // Arrange
             var request = _fixture.Create<AcceptedRequest>();
             _orchestrator
-                .Setup(x => x.GetAcceptedViewModel(request))
+                .Setup(x => x.GetAcceptedViewModel(It.Is<AcceptedRequest>(y => y == request)))
                 .ReturnsAsync((AcceptedViewModel)null);
 
             // Act
@@ -168,7 +168,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             // Arrange
             var request = _fixture.Create<DeclinedRequest>();
             _orchestrator
-                .Setup(x => x.GetDeclinedViewModel(request))
+                .Setup(x => x.GetDeclinedViewModel(It.Is<DeclinedRequest>(y => y == request)))
                 .ReturnsAsync(new DeclinedViewModel());
 
             // Act
@@ -190,7 +190,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             // Arrange
             var request = _fixture.Create<DeclinedRequest>();
             _orchestrator
-                .Setup(x => x.GetDeclinedViewModel(request))
+                .Setup(x => x.GetDeclinedViewModel(It.Is<DeclinedRequest>(y => y == request)))
                 .ReturnsAsync((DeclinedViewModel)null);
 
             // Act

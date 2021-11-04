@@ -83,12 +83,9 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsServi
             {
                 getDeclinedResponse = JsonConvert.DeserializeObject<GetDeclinedResponse>(await response.Content.ReadAsStringAsync());
             }
-            else
+            else if (response.StatusCode != HttpStatusCode.NotFound)
             {
-                if (response.StatusCode != HttpStatusCode.NotFound)
-                {
-                    response.EnsureSuccessStatusCode();
-                }
+                response.EnsureSuccessStatusCode();
             }
 
             return getDeclinedResponse;
