@@ -72,5 +72,19 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
             return NotFound();
         }
+
+        [HttpGet]
+        [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}/declined")]
+        public async Task<IActionResult> Declined(DeclinedRequest request)
+        {
+            var viewModel = await _applicationsOrchestrator.GetDeclinedViewModel(request);
+
+            if (viewModel != null)
+            {
+                return View(viewModel);
+            }
+
+            return NotFound();
+        }
     }
 }

@@ -46,7 +46,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             // Arrange
             var request = _fixture.Create<ApplicationRequest>();
             _orchestrator
-                .Setup(x => x.GetApplication(request))
+                .Setup(x => x.GetApplication(It.Is<ApplicationRequest>(y => y == request)))
                 .ReturnsAsync(new ApplicationViewModel());
 
             // Act
@@ -68,7 +68,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             // Arrange
             var request = _fixture.Create<ApplicationRequest>();
             _orchestrator
-                .Setup(x => x.GetApplication(request))
+                .Setup(x => x.GetApplication(It.Is<ApplicationRequest>(y => y == request)))
                 .ReturnsAsync((ApplicationViewModel)null);
 
             // Act
@@ -86,7 +86,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             // Arrange
             var request = _fixture.Create<AcceptedRequest>();
             _orchestrator
-                .Setup(x => x.GetAcceptedViewModel(request))
+                .Setup(x => x.GetAcceptedViewModel(It.Is<AcceptedRequest>(y => y == request)))
                 .ReturnsAsync(new AcceptedViewModel());
 
             // Act
@@ -108,7 +108,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             // Arrange
             var request = _fixture.Create<AcceptedRequest>();
             _orchestrator
-                .Setup(x => x.GetAcceptedViewModel(request))
+                .Setup(x => x.GetAcceptedViewModel(It.Is<AcceptedRequest>(y => y == request)))
                 .ReturnsAsync((AcceptedViewModel)null);
 
             // Act
@@ -160,6 +160,46 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             Assert.AreEqual(
                 $"/accounts/{request.EncodedAccountId}/applications/{request.EncodedApplicationId}/declined",
                 redirectResult.Url);
+        }
+
+        [Test]
+        public async Task GET_Declined_ApplicationExists_ReturnsViewAndModel()
+        {
+            // Arrange
+            var request = _fixture.Create<DeclinedRequest>();
+            _orchestrator
+                .Setup(x => x.GetDeclinedViewModel(It.Is<DeclinedRequest>(y => y == request)))
+                .ReturnsAsync(new DeclinedViewModel());
+
+            // Act
+            var actionResult = await _controller.Declined(request);
+            var viewResult = actionResult as ViewResult;
+            var model = viewResult.Model;
+            var declinedViewModel = model as DeclinedViewModel;
+
+            // Assert
+            Assert.NotNull(actionResult);
+            Assert.NotNull(viewResult);
+            Assert.NotNull(model);
+            Assert.NotNull(declinedViewModel);
+        }
+
+        [Test]
+        public async Task GET_Declined_ApplicationDoesntExist_ReturnsNotFound()
+        {
+            // Arrange
+            var request = _fixture.Create<DeclinedRequest>();
+            _orchestrator
+                .Setup(x => x.GetDeclinedViewModel(It.Is<DeclinedRequest>(y => y == request)))
+                .ReturnsAsync((DeclinedViewModel)null);
+
+            // Act
+            var actionResult = await _controller.Declined(request);
+            var notFoundResult = actionResult as NotFoundResult;
+
+            // Assert
+            Assert.NotNull(actionResult);
+            Assert.NotNull(notFoundResult);
         }
     }
 }

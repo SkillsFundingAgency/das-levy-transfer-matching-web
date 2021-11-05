@@ -151,5 +151,24 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 EmployerNameAndReference = $"{result.EmployerAccountName} ({encodedPledgeId})",
             };
         }
+
+        public async Task<DeclinedViewModel> GetDeclinedViewModel(DeclinedRequest request)
+        {
+            var result = await _applicationsService.GetDeclined(request.AccountId, request.ApplicationId);
+
+            if (result == null)
+            {
+                return null;
+            }
+
+            var encodedPledgeId = _encodingService.Encode(result.OpportunityId, EncodingType.PledgeId);
+
+            return new DeclinedViewModel()
+            {
+                EncodedAccountId = request.EncodedAccountId,
+                EncodedApplicationId = request.EncodedApplicationId,
+                EmployerNameAndReference = $"{result.EmployerAccountName} ({encodedPledgeId})",
+            };
+        }
     }
 }
