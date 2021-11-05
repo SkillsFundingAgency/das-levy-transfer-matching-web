@@ -26,7 +26,7 @@ namespace SFA.DAS.LevyTransferMatching.Domain.Extensions
                 case ApplicationStatus.Approved: return "govuk-tag govuk-tag--yellow";
                 case ApplicationStatus.Accepted: return "govuk-tag govuk-tag--turquoise";
                 case ApplicationStatus.FundsUsed: return "govuk-tag govuk-tag--pink";
-                case ApplicationStatus.Withdrawn: return "govuk-tag govuk-tag--grey";
+                case ApplicationStatus.Withdrawn: return "govuk-tag govuk-tag--yellow";
                 default:
                     return string.Empty;
             }
@@ -54,7 +54,7 @@ namespace SFA.DAS.LevyTransferMatching.Domain.Extensions
                 case ApplicationStatus.Approved: return "govuk-tag govuk-tag--blue";
                 case ApplicationStatus.Accepted: return "govuk-tag govuk-tag--blue";
                 case ApplicationStatus.FundsUsed: return "govuk-tag govuk-tag--pink";
-                case ApplicationStatus.Withdrawn: return "govuk-tag govuk-tag--grey";
+                case ApplicationStatus.Withdrawn: return "govuk-tag govuk-tag--yellow";
                 default:
                     return string.Empty;
             }
