@@ -420,10 +420,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     PledgeJobRoles = result.PledgeJobRoles,
                     PledgeLevels = result.PledgeLevels,
                     PledgeLocations = result.PledgeLocations,
-                    Location = result.Location,
                     JobRole = result.TypeOfJobRole,
                     Level = result.Level,
                     DisplaySectors = result.Sector.ToReferenceDataDescriptionList(result.AllSectors),
+                    Locations = string.IsNullOrEmpty(result.SpecificLocation) ? result.Locations.ToApplicationLocationsString(", ", result.AdditionalLocation) : result.SpecificLocation,
+                    IsLocationMatch = result.Locations.Any() || !result.PledgeLocations.Any(),
                     Affordability = GetAffordabilityViewModel(result.Amount, result.PledgeRemainingAmount, result.NumberOfApprentices, result.MaxFunding, result.EstimatedDurationMonths, result.StartBy),
                     ShowAffordabilityPanel = result.Status == ApplicationStatus.Pending,
                     AllowApproval = result.Status == ApplicationStatus.Pending && result.Amount <= result.PledgeRemainingAmount && isOwnerOrTransactor
