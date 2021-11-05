@@ -48,11 +48,21 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}")]
         public async Task<IActionResult> Application(ApplicationPostRequest request)
         {
+            if (request.SelectedAction == ApplicationViewModel.ApprovalAction.None)
+            {
+                return RedirectToAction("Applications", new { EncodedAccountId = request.EncodedAccountId });
+            }
+
             await _applicationsOrchestrator.SetApplicationAcceptance(request);
 
             if (request.SelectedAction == ApplicationViewModel.ApprovalAction.Accept)
             {
                 return Redirect($"/accounts/{request.EncodedAccountId}/applications/{request.EncodedApplicationId}/accepted");
+            }
+
+            if (request.SelectedAction == ApplicationViewModel.ApprovalAction.Withdraw)
+            {
+                return View("Withdrawn");
             }
             
             // TODO: Implemnentation of decline journey

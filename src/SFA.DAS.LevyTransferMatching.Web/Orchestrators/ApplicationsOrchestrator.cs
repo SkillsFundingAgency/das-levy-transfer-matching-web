@@ -115,7 +115,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                  DisplayCurrentFundsBalance = result.AmountUsed > 0 || result.NumberOfApprenticesUsed > 0,
                  AmountUsed = result.AmountUsed.ToCurrencyString(),
                  AmountRemaining = (estimatedTotalCost - result.AmountUsed) < 0 ? 0.ToCurrencyString() : (estimatedTotalCost - result.AmountUsed).ToCurrencyString(),
-                 NumberOfApprenticesRemaining = (result.NumberOfApprentices - result.NumberOfApprenticesUsed) < 0 ? 0 : (result.NumberOfApprentices - result.NumberOfApprenticesUsed)
+                 NumberOfApprenticesRemaining = (result.NumberOfApprentices - result.NumberOfApprenticesUsed) < 0 ? 0 : (result.NumberOfApprentices - result.NumberOfApprenticesUsed),
+                 CanWithdraw = isOwnerOrTransactor && result.Status == ApplicationStatus.Pending
             };
         }
 
@@ -127,9 +128,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 AccountId = request.AccountId,
                 UserDisplayName = _userService.GetUserDisplayName(),
                 UserId = _userService.GetUserId(),
-                Acceptance = request.SelectedAction == ApplicationViewModel.ApprovalAction.Accept ?
-                    SetApplicationAcceptanceRequest.ApplicationAcceptance.Accept
-                    : SetApplicationAcceptanceRequest.ApplicationAcceptance.Decline,
+                Acceptance = (SetApplicationAcceptanceRequest.ApplicationAcceptance)request.SelectedAction
             });
         }
 

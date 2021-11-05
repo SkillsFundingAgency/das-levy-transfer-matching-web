@@ -6,5 +6,6 @@
         Approved = 1,
         Accepted = 3,
         FundsUsed = 4,
+        Withdrawn = 5
     }
 }
