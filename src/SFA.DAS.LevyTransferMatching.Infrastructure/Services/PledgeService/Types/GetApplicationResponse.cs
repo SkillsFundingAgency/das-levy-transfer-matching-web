@@ -7,7 +7,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Typ
 {
     public class GetApplicationResponse
     {
-        public string Location { get; set; }
         public IEnumerable<string> Sector { get; set; }
         public string TypeOfJobRole { get; set; }
         public int Level { get; set; }
@@ -32,5 +31,8 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Typ
         public IEnumerable<ReferenceDataItem> AllJobRoles { get; set; }
         public IEnumerable<ReferenceDataItem> AllSectors { get; set; }
         public IEnumerable<ReferenceDataItem> AllLevels { get; set; }
+        public IEnumerable<string> Locations { get; set; }
+        public string AdditionalLocation { get; set; }
+        public string SpecificLocation { get; set; }
     }
 }

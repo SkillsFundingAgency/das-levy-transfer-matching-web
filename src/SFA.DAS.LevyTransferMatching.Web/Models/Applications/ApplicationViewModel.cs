@@ -47,5 +47,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
             Accept,
             Decline,
         }
+
+        public bool DisplayCurrentFundsBalance { get; set; }
+        public string Amount { get; set; }
+        public string AmountUsed { get; set; }
+        public string AmountRemaining { get; set; }
+        public int NumberOfApprenticesRemaining { get; set; }
     }
 }
