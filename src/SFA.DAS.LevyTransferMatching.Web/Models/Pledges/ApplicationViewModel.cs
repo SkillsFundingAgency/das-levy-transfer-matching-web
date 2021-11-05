@@ -35,7 +35,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public List<string> PledgeLevels { get; set; }
         public List<string> PledgeLocations { get; set; }
         public string Locations { get; set; }
-        public bool IsLocationMatch { get; set; }
 
         public AffordabilityViewModel Affordability { get; set; }
 
