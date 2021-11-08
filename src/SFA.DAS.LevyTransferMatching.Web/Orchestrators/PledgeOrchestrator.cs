@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Domain.Types;
+using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService;
@@ -14,6 +15,7 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
+using SFA.DAS.LevyTransferMatching.Web.Services;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Location;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
@@ -29,8 +31,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         private readonly IUserService _userService;
         private Infrastructure.Configuration.FeatureToggles _featureToggles;
         private readonly IDateTimeService _dateTimeService;
+        private readonly ICsvHelperService _csvService;
 
-        public PledgeOrchestrator(ICacheStorageService cacheStorageService, IPledgeService pledgeService, IEncodingService encodingService, ILocationValidatorService validatorService, IUserService userService, Infrastructure.Configuration.FeatureToggles featureToggles, IDateTimeService dateTimeService)
+        public PledgeOrchestrator(ICacheStorageService cacheStorageService, IPledgeService pledgeService, IEncodingService encodingService, ILocationValidatorService validatorService, IUserService userService, Infrastructure.Configuration.FeatureToggles featureToggles, IDateTimeService dateTimeService, ICsvHelperService csvService)
         {
             _cacheStorageService = cacheStorageService;
             _pledgeService = pledgeService;
@@ -39,6 +42,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             _userService = userService;
             _featureToggles = featureToggles;
             _dateTimeService = dateTimeService;
+            _csvService = csvService;
         }
 
         public InformViewModel GetInformViewModel(string encodedAccountId)
@@ -203,7 +207,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 DasAccountName = response.EmployerAccountName
             };
         }
-        
+
         public async Task<LocationSelectViewModel> GetLocationSelectViewModel(LocationSelectRequest request)
         {
             var cacheItem = await RetrieveLocationSelectionCacheItem(request.CacheKey);
@@ -220,6 +224,52 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
+        public async Task<byte[]> GetPledgeApplicationsDownloadModel(ApplicationsRequest request)
+        {
+            var result = await _pledgeService.GetApplicationsForCsvDownload(request.AccountId, request.PledgeId);
+
+            var pledgeAppModel = new PledgeApplicationsDownloadModel
+            {
+                Applications = result.Applications?.Select(app => new PledgeApplicationDownloadModel
+                {
+                    //Amount = app.Amount,
+                    //Duration = app.Standard.ApprenticeshipFunding.GetEffectiveFundingLine(app.StartDate).Duration,
+                    DateApplied = app.DateApplied,
+                    Status = Enum.Parse<ApplicationStatus>(app.Status),
+                    ApplicationId = app.ApplicationId,
+                    PledgeId = app.PledgeId,
+                    Locations = app.Locations ?? new List<string>(),
+                    EmployerAccountName = app.EmployerAccountName,
+                    HasTrainingProvider = app.HasTrainingProvider,
+                    Sectors = app.Sectors ?? new List<string>(),
+                    AboutOpportunity = app.AboutOpportunity,
+                    AdditionalLocation = app.AdditionalLocation,
+                    AllJobRoles = app.AllJobRoles ?? new List<ReferenceDataItem>(),
+                    AllLevels = app.AllLevels ?? new List<ReferenceDataItem>(),
+                    AllSectors = app.AllSectors ?? new List<ReferenceDataItem>(),
+                    BusinessWebsite = GetUrlWithPrefix(app.BusinessWebsite),
+                    FormattedEmailAddress = String.Join(";", app.EmailAddresses),
+                    FormattedSectors = String.Join(",", app.Sectors ?? new List<string>()),
+                    EstimatedDurationMonths = app.EstimatedDurationMonths,
+                    FirstName = app.FirstName,
+                    LastName = app.LastName,
+                    Level = app.Level,
+                    NumberOfApprentices = app.NumberOfApprentices,
+                    PledgeLocations = app.PledgeLocations,
+                    SpecificLocation = app.SpecificLocation,
+                    StartBy = app.StartBy,
+                    TypeOfJobRole = app.TypeOfJobRole,
+                    EncodedPledgeId = _encodingService.Encode(app.PledgeId, EncodingType.PledgeId),
+                    EncodedApplicationId = _encodingService.Encode(app.ApplicationId, EncodingType.PledgeApplicationId),
+                    FormattedLocations = String.Join(",", app.Locations ?? new List<string>())
+                })
+            };
+
+            var fileContents = _csvService.GenerateCsvFileFromModel(pledgeAppModel);
+
+            return fileContents;
+        }
+
         private LocationSelectPostRequest.SelectValidLocationGroup MapValidLocationGroup(KeyValuePair<int, IEnumerable<string>> kvp)
         {
             return new LocationSelectPostRequest.SelectValidLocationGroup()
@@ -232,7 +282,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     })
                     .ToArray()
             };
-        } 
+        }
 
         public async Task<Dictionary<int, string>> ValidateLocations(LocationPostRequest request, IDictionary<int, IEnumerable<string>> multipleValidLocations)
         {
@@ -421,7 +471,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     DisplaySectors = result.Sector.ToReferenceDataDescriptionList(result.AllSectors),
                     Locations = result.Locations.ToApplicationLocationsString(", ", result.AdditionalLocation),
                     AdditionalLocation = result.AdditionalLocation,
-                    IsLocationMatch = result.Locations.Any() || !result.PledgeLocations.Any(),
+                    IsLocationMatch = (result.Locations != null && result.Locations.Any()) || !result.PledgeLocations.Any(),
                     Affordability = GetAffordabilityViewModel(result.Amount, result.PledgeRemainingAmount, result.NumberOfApprentices, result.MaxFunding, result.EstimatedDurationMonths, result.StartBy),
                     ShowAffordabilityPanel = result.Status == ApplicationStatus.Pending,
                     AllowApproval = result.Status == ApplicationStatus.Pending && result.Amount <= result.PledgeRemainingAmount && isOwnerOrTransactor
@@ -447,9 +497,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         private string GetUrlWithPrefix(string url)
         {
-            if (string.IsNullOrWhiteSpace(url)) return url;
+            if (String.IsNullOrWhiteSpace(url)) return url;
 
-            if(url.StartsWith("http://") || url.StartsWith("https://"))
+            if (url.StartsWith("http://") || url.StartsWith("https://"))
             {
                 return url;
             }

@@ -19,6 +19,7 @@ using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
+using SFA.DAS.LevyTransferMatching.Web.Services;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Location;
 using ApplicationRequest = SFA.DAS.LevyTransferMatching.Web.Models.Pledges.ApplicationRequest;
 using GetApplicationsResponse = SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types.GetApplicationsResponse;
@@ -37,6 +38,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private Mock<ILocationValidatorService> _validatorService;
         private Mock<IUserService> _userService;
         private Mock<IDateTimeService> _dateTimeService;
+        private Mock<ICsvHelperService> _csvService;
         private Infrastructure.Configuration.FeatureToggles _featureToggles;
         private List<ReferenceDataItem> _sectors;
         private List<ReferenceDataItem> _levels;
@@ -69,6 +71,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _validatorService = new Mock<ILocationValidatorService>();
             _userService = new Mock<IUserService>();
             _dateTimeService = new Mock<IDateTimeService>();
+            _csvService = new Mock<ICsvHelperService>();
             _dateTimeService.Setup(x => x.UtcNow).Returns(DateTime.UtcNow);
 
             _featureToggles = new Infrastructure.Configuration.FeatureToggles();
@@ -108,7 +111,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _userService.Setup(x => x.GetUserDisplayName()).Returns(_userDisplayName);
             _userService.Setup(x => x.IsOwnerOrTransactor(0)).Returns(true);
 
-            _orchestrator = new PledgeOrchestrator(_cache.Object, _pledgeService.Object, _encodingService.Object, _validatorService.Object, _userService.Object, _featureToggles, _dateTimeService.Object);
+            _orchestrator = new PledgeOrchestrator(_cache.Object, _pledgeService.Object, _encodingService.Object, _validatorService.Object, _userService.Object, _featureToggles, 
+                _dateTimeService.Object, _csvService.Object);
         }
 
         [Test]
@@ -712,9 +716,19 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         }
 
         [Test]
-        public async Task GetPledgeApplicationsDownloadModel()
+        public async Task GetPledgeApplicationsDownloadModel_Retrieves_ApplicationsFromService()
         {
-            var result = 
+            var accountId = _fixture.Create<int>();
+            var getPledgeApplicationsResponse = _fixture.Create<GetApplicationsResponse>();
+            _pledgeService.Setup(o =>
+                o.GetApplications(It.Is<long>(l => l == accountId), It.Is<int>(p => p == _pledgeId))).ReturnsAsync(getPledgeApplicationsResponse);
+            
+            await _orchestrator.GetPledgeApplicationsDownloadModel(new ApplicationsRequest
+            {
+                AccountId = accountId, PledgeId = _pledgeId
+            });
+
+            _pledgeService.Verify(o => o.GetApplications(It.Is<long>(l => l == accountId), It.Is<int>(p => p == _pledgeId)), Times.Once);
         }
     }
 }
