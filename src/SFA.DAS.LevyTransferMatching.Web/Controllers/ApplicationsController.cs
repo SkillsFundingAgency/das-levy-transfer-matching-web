@@ -62,7 +62,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
             if (request.SelectedAction == ApplicationViewModel.ApprovalAction.Withdraw)
             {
-                return View("Withdrawn");
+                return Redirect($"/accounts/{request.EncodedAccountId}/applications/{request.EncodedApplicationId}/withdrawn");
             }
             
             // TODO: Implemnentation of decline journey
@@ -74,6 +74,20 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         public async Task<IActionResult> Accepted(AcceptedRequest request)
         {
             var viewModel = await _applicationsOrchestrator.GetAcceptedViewModel(request);
+
+            if (viewModel != null)
+            {
+                return View(viewModel);
+            }
+
+            return NotFound();
+        }
+
+        [HttpGet]
+        [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}/withdrawn")]
+        public async Task<IActionResult> Withdrawn(WithdrawnRequest request)
+        {
+            var viewModel = await _applicationsOrchestrator.GetWithdrawnViewModel(request);
 
             if (viewModel != null)
             {

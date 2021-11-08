@@ -1,5 +1,8 @@
-﻿@{
-    ViewData["Title"] = "You have withdrawn your application";
+﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Applications.WithdrawnViewModel
+@inject SFA.DAS.EmployerUrlHelper.ILinkGenerator LinkGenerator
+
+@{
+    ViewData["Title"] = "You have successfully withdrawn your application";
 }
 
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
@@ -9,11 +12,23 @@
             <div class="govuk-grid-column-two-thirds">
 
                 <div class="govuk-panel govuk-panel--confirmation application-complete govuk-!-margin-bottom-9">
-                    <h1 class="govuk-panel__title">You have withdrawn your application</h1>
+                    <h1 class="govuk-panel__title">You have successfully withdrawn your application</h1>
                 </div>
+
+                <h2 class="govuk-heading-m ">What happens next</h2>
+
+                <p class="govuk-!-margin-bottom-0">Your application to <strong>@Model.EmployerNameAndReference</strong> has been withdrawn. You can apply to another opportunity.</p>
+
+                <p class="govuk-!-margin-top-1">
+                    <a href="@Url.Action("Index", "Opportunities")" class="govuk-link">View other opportunities</a>
+                    <br>
+                    or
+                    <br>
+                    <a href="@LinkGenerator.AccountsLink($"accounts/{Model.EncodedAccountId}/teams")" class="govuk-link">Return to my account</a>
+                </p>
 
             </div>
         </div>
 
     </div>
-</main>
+</main> 
