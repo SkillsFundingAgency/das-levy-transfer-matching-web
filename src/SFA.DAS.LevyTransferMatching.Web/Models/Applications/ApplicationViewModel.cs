@@ -38,7 +38,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
         public bool ComplyWithRules { get; set; }
         public bool HasAcceptedTermsAndConditions => SelectedAction != null && TruthfulInformation && ComplyWithRules;
 
-        public bool ConfirmWithdrawal { get; set; }
+        public bool IsDeclineConfirmed { get; set; }
 
         public string EstimatedTotalCost { get; set; }
         public bool RenderCanUseTransferFundsStartButton { get; set; }

@@ -80,7 +80,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Applications
             var request = _fixture
                 .Build<ApplicationPostRequest>()
                 .With(x => x.SelectedAction, ApprovalAction.Decline)
-                .With(x => x.ConfirmWithdrawal, false)
+                .With(x => x.IsDeclineConfirmed, false)
                 .Create();
 
             var actual = _validator.Validate(request);
@@ -94,7 +94,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Applications
             var request = _fixture
                 .Build<ApplicationPostRequest>()
                 .With(x => x.SelectedAction, ApprovalAction.Decline)
-                .With(x => x.ConfirmWithdrawal, true)
+                .With(x => x.IsDeclineConfirmed, true)
                 .Create();
 
             var actual = _validator.Validate(request);
