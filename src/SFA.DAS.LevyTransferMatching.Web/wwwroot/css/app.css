@@ -306,6 +306,10 @@ th.status {
     border-bottom-style: dashed;
 }
 
+.app-criteria-list {
+    color: grey;
+    font-size: 16px;
+}
 .app-section-break--medium {
     border-bottom-width: 2px;
 }
