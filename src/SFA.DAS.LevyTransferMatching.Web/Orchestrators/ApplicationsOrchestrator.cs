@@ -91,8 +91,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             var estimatedTotalCost = result.Standard.ApprenticeshipFunding
                 .GetEffectiveFundingLine(result.StartBy)
-                .CalculateEstimatedTotalCost(result.NumberOfApprentices)
-                .ToString("N0");
+                .CalculateEstimatedTotalCost(result.NumberOfApprentices);
 
             return new ApplicationViewModel()
             {
@@ -108,11 +107,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                  StartBy = result.StartBy,
                  Status = result.Status,
                  EncodedOpportunityId = encodedOpportunityId,
-                 EstimatedTotalCost = estimatedTotalCost,
+                 EstimatedTotalCost = estimatedTotalCost.ToCurrencyString(),
                  CanAcceptFunding = isOwnerOrTransactor && result.Status == ApplicationStatus.Approved,
                  CanUseTransferFunds = isOwnerOrTransactor && result.Status == ApplicationStatus.Accepted,
                  EncodedSenderPublicAccountId = encodedSenderPublicAccountId,
-                 RenderCanUseTransferFundsStartButton = _featureToggles.FeatureToggleRenderCanUseTransferFundsStartButton
+                 RenderCanUseTransferFundsStartButton = _featureToggles.FeatureToggleRenderCanUseTransferFundsStartButton,
+                 DisplayCurrentFundsBalance = result.AmountUsed > 0 || result.NumberOfApprenticesUsed > 0,
+                 AmountUsed = result.AmountUsed.ToCurrencyString(),
+                 AmountRemaining = (estimatedTotalCost - result.AmountUsed) < 0 ? 0.ToCurrencyString() : (estimatedTotalCost - result.AmountUsed).ToCurrencyString(),
+                 NumberOfApprenticesRemaining = (result.NumberOfApprentices - result.NumberOfApprenticesUsed) < 0 ? 0 : (result.NumberOfApprentices - result.NumberOfApprenticesUsed)
             };
         }
 
