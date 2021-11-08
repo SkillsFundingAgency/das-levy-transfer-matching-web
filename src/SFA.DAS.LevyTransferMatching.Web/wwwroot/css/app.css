@@ -299,3 +299,8 @@ th.status {
 .app-icon-list__icon--website {
     background-image: url("/assets/images/icon-website--blue.svg");
 }
+
+.app-criteria-list {
+    color: grey;
+    font-size: 16px;
+}

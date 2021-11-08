@@ -386,7 +386,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     Amount = app.Amount,
                     Duration = app.Standard.ApprenticeshipFunding.GetEffectiveFundingLine(app.StartDate).Duration,
                     CreatedOn = app.CreatedOn,
-                    Status = app.Status
+                    Status = app.Status,
+                    IsLocationMatch = app.IsLocationMatch,
+                    IsSectorMatch = app.IsSectorMatch,
+                    IsJobRoleMatch = app.IsJobRoleMatch,
+                    IsLevelMatch = app.IsLevelMatch
                 })
             };
         }

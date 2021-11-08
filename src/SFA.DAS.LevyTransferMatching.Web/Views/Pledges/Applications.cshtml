@@ -82,30 +82,25 @@
                                 </tr>
                             </thead>
                             <tbody class="govuk-table__body">
-                                @{
-                                    if (Model.Applications != null && Model.Applications.Any())
+                            @{
+                                if (Model.Applications != null && Model.Applications.Any())
+                                {
+                                    foreach (var app in Model.Applications)
                                     {
-                                        foreach (var app in Model.Applications)
-                                        {
-                                            <tr class="govuk-table__row" data-table-row="one">
-                                                <td class="govuk-table__cell"><a href="applications/@app.EncodedApplicationId">@app.DasAccountName</a></td>
-                                                <td class="govuk-table__cell">
-                                                    @app.DisplayAmount
-                                                </td>
-                                                <td class="govuk-table__cell">@app.Duration months</td>
-                                                <td class="govuk-table__cell">
-                                                    <p style="color: grey; padding-top: 5px; font-size: 16px;">
-                                                        • Location <br>
-                                                        • Sector <br>
-                                                        • Type of job role <br>
-                                                        • Level
-                                                    </p>
-                                                </td>
-                                                <td class="govuk-table__cell">@app.CreatedOn.ToLongDateDisplayString()</td>
-                                                <td class="govuk-table__cell"><strong class="@app.Status.GetCssClassForSender()">@app.Status.GetLabelForSender()</strong></td>
-                                            </tr>
-                                        }
+                                        <tr class="govuk-table__row" data-table-row="one">
+                                            <td class="govuk-table__cell"><a href="applications/@app.EncodedApplicationId">@app.DasAccountName</a></td>
+                                            <td class="govuk-table__cell">
+                                                @app.DisplayAmount
+                                            </td>
+                                            <td class="govuk-table__cell">@app.Duration months</td>
+                                            <td class="govuk-table__cell">
+                                                <criteria-list application="@app"></criteria-list>
+                                            </td>
+                                            <td class="govuk-table__cell">@app.CreatedOn.ToLongDateDisplayString()</td>
+                                            <td class="govuk-table__cell"><strong class="@app.Status.GetCssClassForSender()">@app.Status.GetLabelForSender()</strong></td>
+                                        </tr>
                                     }
+                                }
 
                                     else
                                     {
