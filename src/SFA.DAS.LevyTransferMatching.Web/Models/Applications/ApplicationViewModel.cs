@@ -41,6 +41,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
         public string EstimatedTotalCost { get; set; }
         public bool RenderCanUseTransferFundsStartButton { get; set; }
         public bool CanWithdraw { get; set; }
+        public bool IsWithdrawalConfirmed { get; set; }
         public enum ApprovalAction
         {
             Accept,
