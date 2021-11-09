@@ -24,8 +24,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public ApplicationStatus Status { get; set; }
         public string EmployerAccountName { get; set; }
         public IEnumerable<string> Locations { get; set; }
-        public string AdditionalLocation { get; set; }
-        public string SpecificLocation { get; set; }
         public IEnumerable<string> Sectors { get; set; }
         public string TypeOfJobRole { get; set; }
         public int Level { get; set; }
@@ -33,19 +31,20 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public DateTime StartBy { get; set; }
         public bool HasTrainingProvider { get; set; }
         public string AboutOpportunity { get; set; }
-        public int EstimatedDurationMonths { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public IEnumerable<string> EmailAddresses { get; set; }
         public string BusinessWebsite { get; set; }
-        public IEnumerable<string> PledgeLocations { get; set; }
-        public IEnumerable<ReferenceDataItem> AllSectors { get; set; }
-        public IEnumerable<ReferenceDataItem> AllLevels { get; set; }
-        public IEnumerable<ReferenceDataItem> AllJobRoles { get; set; }
         public string ContactName => $"{FirstName} {LastName}";
         public int Duration { get; set; }
         public string FormattedEmailAddress { get; set; }
         public string FormattedSectors { get; set; }
         public string FormattedLocations { get; set; }
+        public bool IsLocationMatch { get; set; }
+        public bool IsSectorMatch { get; set; }
+        public bool IsJobRoleMatch { get; set; }
+        public bool IsLevelMatch { get; set; }
+        public string EstimatedCostThisYear { get; set; }
+        public string TotalEstimatedCost { get; set; }
+        public ApplicationViewModel.AffordabilityViewModel Affordability { get; set; }
     }
 }

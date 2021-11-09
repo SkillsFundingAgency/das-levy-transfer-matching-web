@@ -230,38 +230,46 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             var pledgeAppModel = new PledgeApplicationsDownloadModel
             {
-                Applications = result.Applications?.Select(app => new PledgeApplicationDownloadModel
+                Applications = result.Applications?.Select(app =>
                 {
-                    //Amount = app.Amount,
-                    //Duration = app.Standard.ApprenticeshipFunding.GetEffectiveFundingLine(app.StartDate).Duration,
-                    DateApplied = app.DateApplied,
-                    Status = Enum.Parse<ApplicationStatus>(app.Status),
-                    ApplicationId = app.ApplicationId,
-                    PledgeId = app.PledgeId,
-                    Locations = app.Locations ?? new List<string>(),
-                    EmployerAccountName = app.EmployerAccountName,
-                    HasTrainingProvider = app.HasTrainingProvider,
-                    Sectors = app.Sectors ?? new List<string>(),
-                    AboutOpportunity = app.AboutOpportunity,
-                    AdditionalLocation = app.AdditionalLocation,
-                    AllJobRoles = app.AllJobRoles ?? new List<ReferenceDataItem>(),
-                    AllLevels = app.AllLevels ?? new List<ReferenceDataItem>(),
-                    AllSectors = app.AllSectors ?? new List<ReferenceDataItem>(),
-                    BusinessWebsite = GetUrlWithPrefix(app.BusinessWebsite),
-                    FormattedEmailAddress = String.Join(";", app.EmailAddresses),
-                    FormattedSectors = String.Join(",", app.Sectors ?? new List<string>()),
-                    EstimatedDurationMonths = app.EstimatedDurationMonths,
-                    FirstName = app.FirstName,
-                    LastName = app.LastName,
-                    Level = app.Level,
-                    NumberOfApprentices = app.NumberOfApprentices,
-                    PledgeLocations = app.PledgeLocations,
-                    SpecificLocation = app.SpecificLocation,
-                    StartBy = app.StartBy,
-                    TypeOfJobRole = app.TypeOfJobRole,
-                    EncodedPledgeId = _encodingService.Encode(app.PledgeId, EncodingType.PledgeId),
-                    EncodedApplicationId = _encodingService.Encode(app.ApplicationId, EncodingType.PledgeApplicationId),
-                    FormattedLocations = String.Join(",", app.Locations ?? new List<string>())
+                    var appStandard = app.Standard;
+                    var affordability = GetAffordabilityViewModel(app.Amount, app.PledgeRemainingAmount,
+                        app.NumberOfApprentices, app.MaxFunding, app.EstimatedDurationMonths, app.StartBy);
+
+                    return new PledgeApplicationDownloadModel
+                    {
+                        DateApplied = app.DateApplied,
+                        Status = app.Status,
+                        ApplicationId = app.ApplicationId,
+                        PledgeId = app.PledgeId,
+                        Locations = app.Locations ?? new List<string>(),
+                        EmployerAccountName = app.EmployerAccountName,
+                        HasTrainingProvider = app.HasTrainingProvider,
+                        Sectors = app.Sectors ?? new List<string>(),
+                        AboutOpportunity = app.AboutOpportunity,
+                        BusinessWebsite = GetUrlWithPrefix(app.BusinessWebsite),
+                        FormattedEmailAddress = String.Join(";", app.EmailAddresses),
+                        FormattedSectors = String.Join(",", app.Sectors ?? new List<string>()),
+                        FirstName = app.FirstName,
+                        LastName = app.LastName,
+                        NumberOfApprentices = app.NumberOfApprentices,
+                        StartBy = app.StartBy,
+                        TypeOfJobRole = app.JobRole,
+                        EncodedPledgeId = _encodingService.Encode(app.PledgeId, EncodingType.PledgeId),
+                        EncodedApplicationId =
+                            _encodingService.Encode(app.ApplicationId, EncodingType.PledgeApplicationId),
+                        FormattedLocations = String.Join(",", app.Locations ?? new List<string>()),
+                        IsJobRoleMatch = app.IsJobRoleMatch,
+                        IsLevelMatch = app.IsLevelMatch,
+                        IsLocationMatch = app.IsLocationMatch,
+                        IsSectorMatch = app.IsSectorMatch,
+                        Duration = appStandard.ApprenticeshipFunding.GetEffectiveFundingLine(app.StartBy).Duration,
+                        EstimatedCostThisYear = affordability.EstimatedCostThisYear,
+                        Level = appStandard.Level,
+                        TotalEstimatedCost = appStandard.ApprenticeshipFunding.GetEffectiveFundingLine(app.StartBy).CalculateEstimatedTotalCost(app.NumberOfApprentices).ToString("N0")
+                    };
+
+                    
                 })
             };
 
