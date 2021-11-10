@@ -27,11 +27,7 @@
             </details>
             <p>You can browse all opportunities available.</p>
             <p>Some businesses have chosen not to share their organisation's name publicly so these opportunities just show a reference number. If your application is successful, we'll let you know who the employer willing to fund your apprenticeship training is.</p>
-            <h2 class="govuk-heading-m">@Model.Opportunities.Count() 
-            @if (Model.Opportunities.Count() == 1)
-                { <text>opportunity</text> }
-            else
-                { <text>opportunities</text> }</h2>
+            <h2 class="govuk-heading-m">@Model.Opportunities.Count() @(Model.Opportunities.Count() == 1 ? "opportunity" : "opportunities")</h2>
             <div class="das-search-results">
                 <ol class="das-search-results__list">
                     @foreach (var opportunity in Model.Opportunities)
