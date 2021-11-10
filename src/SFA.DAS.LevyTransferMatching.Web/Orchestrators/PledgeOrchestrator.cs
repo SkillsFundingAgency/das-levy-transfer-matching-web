@@ -196,11 +196,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var response = await _pledgeService.GetApplicationApproved(request.AccountId, request.PledgeId, request.ApplicationId);
 
-            if (response == null)
-            {
-                return null;
-            }
-
             return new ApplicationApprovedViewModel
             {
                 EncodedAccountId = request.EncodedAccountId,
@@ -401,37 +396,32 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             var isOwnerOrTransactor = _userService.IsOwnerOrTransactor(request.AccountId);
 
-            if (result != null)
+            return new ApplicationViewModel
             {
-                return new ApplicationViewModel
-                {
-                    AboutOpportunity = result.AboutOpportunity,
-                    BusinessWebsite = GetUrlWithPrefix(result.BusinessWebsite),
-                    EmailAddresses = result.EmailAddresses,
-                    EmployerAccountName = result.EmployerAccountName,
-                    EstimatedDurationMonths = result.EstimatedDurationMonths,
-                    FirstName = result.FirstName,
-                    HasTrainingProvider = result.HasTrainingProvider,
-                    LastName = result.LastName,
-                    NumberOfApprentices = result.NumberOfApprentices,
-                    StartBy = result.StartBy,
-                    Sectors = result.Sector,
-                    AllSectors = result.AllSectors,
-                    PledgeSectors = result.PledgeSectors,
-                    PledgeJobRoles = result.PledgeJobRoles,
-                    PledgeLevels = result.PledgeLevels,
-                    PledgeLocations = result.PledgeLocations,
-                    Location = result.Location,
-                    JobRole = result.TypeOfJobRole,
-                    Level = result.Level,
-                    DisplaySectors = result.Sector.ToReferenceDataDescriptionList(result.AllSectors),
-                    Affordability = GetAffordabilityViewModel(result.Amount, result.PledgeRemainingAmount, result.NumberOfApprentices, result.MaxFunding, result.EstimatedDurationMonths, result.StartBy),
-                    ShowAffordabilityPanel = result.Status == ApplicationStatus.Pending,
-                    AllowApproval = result.Status == ApplicationStatus.Pending && result.Amount <= result.PledgeRemainingAmount && isOwnerOrTransactor
-                };
-            }
-
-            return null;
+                AboutOpportunity = result.AboutOpportunity,
+                BusinessWebsite = GetUrlWithPrefix(result.BusinessWebsite),
+                EmailAddresses = result.EmailAddresses,
+                EmployerAccountName = result.EmployerAccountName,
+                EstimatedDurationMonths = result.EstimatedDurationMonths,
+                FirstName = result.FirstName,
+                HasTrainingProvider = result.HasTrainingProvider,
+                LastName = result.LastName,
+                NumberOfApprentices = result.NumberOfApprentices,
+                StartBy = result.StartBy,
+                Sectors = result.Sector,
+                AllSectors = result.AllSectors,
+                PledgeSectors = result.PledgeSectors,
+                PledgeJobRoles = result.PledgeJobRoles,
+                PledgeLevels = result.PledgeLevels,
+                PledgeLocations = result.PledgeLocations,
+                Location = result.Location,
+                JobRole = result.TypeOfJobRole,
+                Level = result.Level,
+                DisplaySectors = result.Sector.ToReferenceDataDescriptionList(result.AllSectors),
+                Affordability = GetAffordabilityViewModel(result.Amount, result.PledgeRemainingAmount, result.NumberOfApprentices, result.MaxFunding, result.EstimatedDurationMonths, result.StartBy),
+                ShowAffordabilityPanel = result.Status == ApplicationStatus.Pending,
+                AllowApproval = result.Status == ApplicationStatus.Pending && result.Amount <= result.PledgeRemainingAmount && isOwnerOrTransactor
+            };
         }
 
         public async Task SetApplicationOutcome(ApplicationPostRequest request)

@@ -27,20 +27,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             var viewModel = await _opportunitiesOrchestrator.GetIndexViewModel();
             return View(viewModel);
         }
-        
+
         [Route("opportunities/{encodedPledgeId}")]
         public async Task<IActionResult> Detail(DetailRequest detailRequest)
         {
             var viewModel = await _opportunitiesOrchestrator.GetDetailViewModel(detailRequest.PledgeId);
-        
-            if (viewModel != null)
-            {
-                return View(viewModel);
-            }
 
-            return NotFound();
+            return View(viewModel);
         }
-        
+
         [HttpPost]
         [Route("opportunities/{encodedPledgeId}")]
         public IActionResult Detail(DetailPostRequest detailPostRequest)
@@ -78,11 +73,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         {
             var applyViewModel = await _opportunitiesOrchestrator.GetApplyViewModel(request);
 
-            if (applyViewModel == null)
-            {
-                return NotFound();
-            }
-
             return View(applyViewModel);
         }
 
@@ -107,11 +97,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         {
             var confirmationViewModel = await _opportunitiesOrchestrator.GetConfirmationViewModel(request);
 
-            if (confirmationViewModel == null)
-            {
-                return NotFound();
-            }
-
             return View(confirmationViewModel);
         }
 
@@ -121,11 +106,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         public async Task<IActionResult> MoreDetails(MoreDetailsRequest request)
         {
             var moreDetailsViewModel = await _opportunitiesOrchestrator.GetMoreDetailsViewModel(request);
-
-            if (moreDetailsViewModel == null)
-            {
-                return NotFound();
-            }
 
             return View(moreDetailsViewModel);
         }
@@ -137,8 +117,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         public async Task<IActionResult> MoreDetails(MoreDetailsPostRequest request)
         {
             await _opportunitiesOrchestrator.UpdateCacheItem(request);
-            return RedirectToAction("Apply", new ApplicationRequest 
-            { 
+            return RedirectToAction("Apply", new ApplicationRequest
+            {
                 EncodedAccountId = request.EncodedAccountId,
                 EncodedPledgeId = request.EncodedPledgeId,
                 CacheKey = request.CacheKey
@@ -151,11 +131,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         {
             var applicationDetailsViewModel = await _opportunitiesOrchestrator.GetApplicationViewModel(request);
 
-            if (applicationDetailsViewModel == null)
-            {
-                return NotFound();
-            }
-
             return View(applicationDetailsViewModel);
         }
 
@@ -165,19 +140,20 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         public async Task<IActionResult> ApplicationDetails([FromServices] AsyncValidator<ApplicationDetailsPostRequest> validator, ApplicationDetailsPostRequest request)
         {
             var validationResult = await validator.ValidateAsync(request);
-            if (!validationResult.IsValid)
+            
+            if (validationResult.IsValid)
             {
-                validationResult.AddToModelState(ModelState, string.Empty);
-
-                return RedirectToAction("ApplicationDetails", new ApplicationDetailsRequest()
-                {
-                    EncodedAccountId = request.EncodedAccountId,
-                    EncodedPledgeId = request.EncodedPledgeId,
-                    CacheKey = request.CacheKey
-                });
+                return RedirectToAction("Apply", await _opportunitiesOrchestrator.PostApplicationViewModel(request));
             }
 
-            return RedirectToAction("Apply", await _opportunitiesOrchestrator.PostApplicationViewModel(request));
+            validationResult.AddToModelState(ModelState, string.Empty);
+
+            return RedirectToAction("ApplicationDetails", new ApplicationDetailsRequest()
+            {
+                EncodedAccountId = request.EncodedAccountId,
+                EncodedPledgeId = request.EncodedPledgeId,
+                CacheKey = request.CacheKey
+            });
         }
 
         [Authorize(Policy = PolicyNames.ManageAccount)]
@@ -185,11 +161,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         public async Task<IActionResult> Sector(SectorRequest request)
         {
             var sectorViewModel = await _opportunitiesOrchestrator.GetSectorViewModel(request);
-
-            if (sectorViewModel == null)
-            {
-                return NotFound();
-            }
 
             return View(sectorViewModel);
         }
@@ -216,12 +187,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         public async Task<IActionResult> ContactDetails(ContactDetailsRequest contactDetailsRequest)
         {
             var viewModel = await _opportunitiesOrchestrator.GetContactDetailsViewModel(contactDetailsRequest);
-
-            if (viewModel == null)
-            {
-                return NotFound();
-            }
-
+            
             return View(viewModel);
         }
 
@@ -247,11 +213,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         public async Task<IActionResult> GetFundingEstimate(GetFundingEstimateRequest request)
         {
             var result = await _opportunitiesOrchestrator.GetFundingEstimate(request);
-
-            if (result == null)
-            {
-                return NotFound();
-            }
 
             return Json(result);
         }

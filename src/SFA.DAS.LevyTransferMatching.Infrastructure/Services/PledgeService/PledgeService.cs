@@ -77,24 +77,14 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
         {
             var response = await _client.GetAsync($"accounts/{accountId}/pledges/{pledgeId}/applications");
 
-            return await response.CorrectlyHandleResponse<GetApplicationsResponse>();
+            return await response.HandleDeserialisationOrThrow<GetApplicationsResponse>();
         }
 
         public async Task<GetApplicationResponse> GetApplication(long accountId, int pledgeId, int applicationId, CancellationToken cancellationToken = default)
         {
             var response = await _client.GetAsync($"accounts/{accountId}/pledges/{pledgeId}/applications/{applicationId}", cancellationToken);
-            GetApplicationResponse applicationResponse = null;
 
-            if (response.IsSuccessStatusCode)
-            {
-                applicationResponse = JsonConvert.DeserializeObject<GetApplicationResponse>(await response.Content.ReadAsStringAsync());
-            }
-            else if (response.StatusCode != HttpStatusCode.NotFound)
-            {
-                response.EnsureSuccessStatusCode();
-            }
-
-            return applicationResponse;
+            return await response.HandleDeserialisationOrThrow<GetApplicationResponse>();
         }
 
         public async Task SetApplicationOutcome(long accountId, int applicationId, int pledgeId, SetApplicationOutcomeRequest outcomeRequest)
@@ -107,7 +97,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
         public async Task<GetApplicationApprovedResponse> GetApplicationApproved(long accountId, int pledgeId, int applicationId)
         {
             var response = await _client.GetAsync($"accounts/{accountId}/pledges/{pledgeId}/applications/{applicationId}/approved");
-            return await response.CorrectlyHandleResponse<GetApplicationApprovedResponse>();
+            return await response.HandleDeserialisationOrThrow<GetApplicationApprovedResponse>();
         }
     }
 }

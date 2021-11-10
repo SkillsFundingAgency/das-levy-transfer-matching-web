@@ -25,7 +25,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         public async Task<IActionResult> Applications(GetApplicationsRequest request)
         {
             var viewModel = await _applicationsOrchestrator.GetApplications(request);
-            
+
             return View(viewModel);
         }
 
@@ -35,12 +35,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         {
             var viewModel = await _applicationsOrchestrator.GetApplication(request);
 
-            if (viewModel != null)
-            {
-                return View(viewModel);
-            }
-
-            return NotFound();
+            return View(viewModel);
         }
 
         [HttpPost]
@@ -51,7 +46,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             await _applicationsOrchestrator.SetApplicationAcceptance(request);
 
             if (request.SelectedAction == ApplicationViewModel.ApprovalAction.Accept)
-
                 return Redirect($"/accounts/{request.EncodedAccountId}/applications/{request.EncodedApplicationId}/accepted");
 
             // TODO: Implemnentation of decline journey
@@ -64,12 +58,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         {
             var viewModel = await _applicationsOrchestrator.GetAcceptedViewModel(request);
 
-            if (viewModel != null)
-            {
-                return View(viewModel);
-            }
-
-            return NotFound();
+            return View(viewModel);
         }
     }
 }

@@ -20,7 +20,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
         {
             var response = await _client.GetAsync($"accounts/{accountId}/opportunities/{opportunityId}/apply");
 
-            return await response.CorrectlyHandleResponse<GetApplyResponse>();
+            return await response.HandleDeserialisationOrThrow<GetApplyResponse>();
         }
 
         public async Task<GetIndexResponse> GetIndex()
@@ -34,21 +34,21 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
         {
             var response = await _client.GetAsync($"accounts/{accountId}/opportunities/{id}/apply/application-details{(standardId != default ? $"?standardId={standardId}" : string.Empty)}");
 
-            return await response.CorrectlyHandleResponse<GetApplicationDetailsResponse>();
+            return await response.HandleDeserialisationOrThrow<GetApplicationDetailsResponse>();
         }
 
         public async Task<GetMoreDetailsResponse> GetMoreDetails(long accountId, int pledgeId)
         {
             var response = await _client.GetAsync($"accounts/{accountId}/opportunities/{pledgeId}/apply/more-details");
 
-            return await response.CorrectlyHandleResponse<GetMoreDetailsResponse>();
+            return await response.HandleDeserialisationOrThrow<GetMoreDetailsResponse>();
         }
 
         public async Task<GetSectorResponse> GetSector(long accountId, int pledgeId)
         {
             var response = await _client.GetAsync($"accounts/{accountId}/opportunities/{pledgeId}/apply/sector");
 
-            return await response.CorrectlyHandleResponse<GetSectorResponse>();
+            return await response.HandleDeserialisationOrThrow<GetSectorResponse>();
         }
 
         public async Task<GetSectorResponse> GetSector(long accountId, int pledgeId, string postcode)
@@ -60,20 +60,10 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
 
         public async Task<GetContactDetailsResponse> GetContactDetails(long accountId, int pledgeId)
         {
-            GetContactDetailsResponse getContactDetailsResult = null;
-
+           
             var response = await _client.GetAsync($"accounts/{accountId}/opportunities/{pledgeId}/apply/contact-details");
 
-            if (response.IsSuccessStatusCode)
-            {
-                getContactDetailsResult = JsonConvert.DeserializeObject<GetContactDetailsResponse>(await response.Content.ReadAsStringAsync());
-            }
-            else if (response.StatusCode != HttpStatusCode.NotFound)
-            {
-                response.EnsureSuccessStatusCode();
-            }
-
-            return getContactDetailsResult;
+            return await response.HandleDeserialisationOrThrow<GetContactDetailsResponse>();
         }
 		
 		public async Task<GetConfirmationResponse> GetConfirmation(long accountId, int opportunityId)
@@ -81,7 +71,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
             var response =
                 await _client.GetAsync($"accounts/{accountId}/opportunities/{opportunityId}/apply/confirmation");
 
-            return await response.CorrectlyHandleResponse<GetConfirmationResponse>();
+            return await response.HandleDeserialisationOrThrow<GetConfirmationResponse>();
         }
 
         public async Task<ApplyResponse> PostApplication(long accountId, int opportunityId, ApplyRequest request)
@@ -99,7 +89,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
         {
             var response = await _client.GetAsync($"opportunities/{opportunityId}");
             
-            return await response.CorrectlyHandleResponse<GetDetailResponse>();
+            return await response.HandleDeserialisationOrThrow<GetDetailResponse>();
         }
 
         public async Task<GetSelectAccountResponse> GetSelectAccount(int opportunityId, string userId)

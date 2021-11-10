@@ -2,12 +2,13 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Exceptions;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService
 {
     public static class ResponseHelpers
     {
-        public static async Task<T> CorrectlyHandleResponse<T>(this HttpResponseMessage response) where T : class
+        public static async Task<T> HandleDeserialisationOrThrow<T>(this HttpResponseMessage response) where T : class
         {
             if (response.IsSuccessStatusCode)
             {
@@ -16,7 +17,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
-                return null;
+                throw new NullModelException(nameof(T));
             }
 
             response.EnsureSuccessStatusCode();

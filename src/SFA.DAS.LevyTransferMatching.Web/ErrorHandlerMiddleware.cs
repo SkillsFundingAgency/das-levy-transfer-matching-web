@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Exceptions;
 
 namespace SFA.DAS.LevyTransferMatching.Web
 {
@@ -20,22 +21,26 @@ namespace SFA.DAS.LevyTransferMatching.Web
 
         public async Task Invoke(HttpContext context)
         {
-            bool hasErrored = false;
-            
+            var statusCode = -1;
+
             try
             {
                 await _next(context);
             }
+            catch (NullModelException)
+            {
+                statusCode = 404;
+            }
             catch (Exception e)
             {
-                hasErrored = true;
+                statusCode = 500;
 
                 _logger.LogError(e, "The request failed");
             }
 
-            if (hasErrored)
+            if (statusCode != -1)
             {
-                context.Response.Redirect("/Home/Error/500");
+                context.Response.Redirect($"/Home/Error/{statusCode}");
             }
         }
     }
