@@ -428,20 +428,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                     {
                         Id = 0,
                         StartDate = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1),
-                        Standard = _fixture.Create<StandardsListItemDto>(),
                         Status = ApplicationStatus.Pending
                     }
-                }
-            };
-
-            response.Applications.First().Standard.ApprenticeshipFunding = new List<ApprenticeshipFundingDto>()
-            {
-                new ApprenticeshipFundingDto()
-                {
-                    Duration = 12,
-                    EffectiveFrom = new DateTime(DateTime.UtcNow.AddYears(-1).Year, DateTime.UtcNow.Month, 1),
-                    EffectiveTo = new DateTime(DateTime.UtcNow.AddYears(1).Year, DateTime.UtcNow.Month, 1),
-                    MaxEmployerLevyCap = 100_000
                 }
             };
 
