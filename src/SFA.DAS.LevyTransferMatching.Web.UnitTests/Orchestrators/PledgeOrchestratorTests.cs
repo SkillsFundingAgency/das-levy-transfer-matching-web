@@ -710,24 +710,5 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var result = await _orchestrator.GetApplicationApprovedViewModel(new ApplicationApprovedRequest { EncodedAccountId = _encodedAccountId, EncodedPledgeId = _encodedAccountId, EncodedApplicationId = _encodedApplicationId, AccountId = _accountId, PledgeId = _pledgeId, ApplicationId = _applicationId });
             Assert.AreEqual(_applicationApprovedResponse.EmployerAccountName, result.DasAccountName);
         }
-
-        [Test]
-        public async Task GetApplicationApprovedViewModel_Given_Invalid_Parameters_Returns_Null()
-        {
-            var accountId = _fixture.Create<long>();
-            var pledgeId = _fixture.Create<int>();
-            var applicationId = _fixture.Create<int>();
-
-            _pledgeService.Setup(o => o.GetApplicationApproved(It.Is<long>(l => l == accountId),
-                    It.Is<int>(i => i == pledgeId), It.Is<int>(i => i == applicationId)))
-                .ReturnsAsync((GetApplicationApprovedResponse) null);
-
-            var actual = await _orchestrator.GetApplicationApprovedViewModel(new ApplicationApprovedRequest
-            {
-                AccountId = accountId, PledgeId = pledgeId
-            });
-
-            Assert.IsNull(actual);
-        }
     }
 }

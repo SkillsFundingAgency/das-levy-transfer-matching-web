@@ -79,23 +79,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             Assert.IsNotNull(actualDetailViewModel);
             Assert.AreEqual(expectedDetailViewModel, actualDetailViewModel);
         }
-
-        [Test]
-        public async Task GET_Detail_Opportunity_Doesnt_Exist_Returns_404()
-        {
-            // Arrange
-            var detailRequest = _fixture.Create<DetailRequest>();
-            _orchestrator
-                .Setup(x => x.GetDetailViewModel(It.Is<int>(y => y == detailRequest.PledgeId)))
-                .ReturnsAsync((DetailViewModel)null);
-
-            // Act
-            var notFoundResult = await _opportunitiesController.Detail(detailRequest) as NotFoundResult;
-
-            // Assert
-            Assert.NotNull(notFoundResult);
-        }
-
+        
         [Test]
         public void POST_Detail_No_Selected_Redirects_To_Index()
         {
@@ -228,21 +212,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         }
 
         [Test]
-        public async Task GET_MoreDetails_Given_Incorrect_Parameters_Returns_NotFound()
-        {
-            var request = _fixture.Create<MoreDetailsRequest>();
-            
-            _orchestrator
-                .Setup(x => x.GetMoreDetailsViewModel(request))
-                .ReturnsAsync((MoreDetailsViewModel)null);
-
-            var viewResult = await _opportunitiesController.MoreDetails(request) as NotFoundResult;
-
-            Assert.IsNotNull(viewResult);
-            Assert.AreEqual(404, viewResult.StatusCode);
-        }
-
-        [Test]
         public async Task POST_MoreDetails_Redirects_To_Apply()
         {
             // Arrange
@@ -288,24 +257,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             Assert.NotNull(viewResult);
             Assert.NotNull(contactDetailsViewModel);
         }
-
-        [Test]
-        public async Task GET_ContactDetails_Given_Invalid_Parameters_Returns_Not_Found()
-        {
-            // Arrange
-            ContactDetailsRequest contactDetailsRequest = _fixture.Create<ContactDetailsRequest>();
-
-            _orchestrator.Setup(x => x.GetContactDetailsViewModel(It.Is<ContactDetailsRequest>(y => y == contactDetailsRequest)))
-                .ReturnsAsync((ContactDetailsViewModel) null);
-
-            // Act
-            var viewResult = await _opportunitiesController.ContactDetails(contactDetailsRequest) as NotFoundResult;
-            
-            // Assert
-            Assert.NotNull(viewResult);
-            Assert.AreEqual(404, viewResult.StatusCode);
-        }
-
+        
         [Test]
         public async Task POST_ContactDetails_Cache_Updated_And_Redirects_To_Apply()
         {
@@ -358,21 +310,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             Assert.IsNotNull(actualViewModel);
             Assert.AreEqual(expectedViewModel, actualViewModel);
             _orchestrator.Verify(x => x.GetApplicationViewModel(request), Times.Once);
-        }
-
-        [Test]
-        public async Task GET_ApplicationDetails_Given_Incorrect_Parameters_Returns_Not_Found()
-        {
-            var request = _fixture.Create<ApplicationDetailsRequest>();
-
-            _orchestrator
-                .Setup(x => x.GetApplicationViewModel(request))
-                .ReturnsAsync((ApplicationDetailsViewModel)null);
-
-            var viewResult = await _opportunitiesController.ApplicationDetails(request) as NotFoundResult;
-
-            Assert.IsNotNull(viewResult);
-            Assert.AreEqual(404, viewResult.StatusCode);
         }
 
         [Test]
@@ -531,21 +468,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         }
 
         [Test]
-        public async Task GET_Confirmation_Given_Invalid_Parameters_Returns_Not_Found()
-        {
-            var request = _fixture.Create<ConfirmationRequest>();
-            
-            _orchestrator
-                .Setup(x => x.GetConfirmationViewModel(request))
-                .ReturnsAsync((ConfirmationViewModel)null);
-
-            var viewResult = await _opportunitiesController.Confirmation(request) as NotFoundResult;
-
-            Assert.IsNotNull(viewResult);
-            Assert.AreEqual(404, viewResult.StatusCode);
-        }
-
-        [Test]
         public async Task GET_Sector_Returns_Expected_ViewModel()
         {
             var request = _fixture.Create<SectorRequest>();
@@ -562,21 +484,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             Assert.IsNotNull(actualViewModel);
             Assert.AreEqual(expectedViewModel, actualViewModel);
             _orchestrator.Verify(x => x.GetSectorViewModel(request), Times.Once);
-        }
-
-        [Test]
-        public async Task GET_Sector_Given_Invalid_Parameters_Returns_Not_Found()
-        {
-            var request = _fixture.Create<SectorRequest>();
-
-            _orchestrator
-                .Setup(x => x.GetSectorViewModel(request))
-                .ReturnsAsync((SectorViewModel) null);
-
-            var viewResult = await _opportunitiesController.Sector(request) as NotFoundResult;
-
-            Assert.IsNotNull(viewResult);
-            Assert.AreEqual(404, viewResult.StatusCode);
         }
 
         [Test]
@@ -637,29 +544,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         }
 
         [Test]
-        public async Task GET_Apply_Given_Incorrect_Parameters_Returns_NotFound()
-        {
-            var accountId = _fixture.Create<long>();
-            var pledgeId = _fixture.Create<int>();
-
-            var applicationRequest = new ApplicationRequest
-            {
-                AccountId = accountId,
-                PledgeId = pledgeId
-            };
-
-            _orchestrator.Setup(o =>
-                    o.GetApplyViewModel(It.Is<ApplicationRequest>(y =>
-                        y.AccountId == accountId && y.PledgeId == pledgeId)))
-                .ReturnsAsync((ApplyViewModel)null);
-
-            var viewResult = await _opportunitiesController.Apply(applicationRequest) as NotFoundResult;
-
-            Assert.IsNotNull(viewResult);
-            Assert.AreEqual(404, viewResult.StatusCode);
-        }
-
-        [Test]
         public async Task POST_Apply_Returns_Redirect()
         {
             var request = _fixture.Create<ApplyPostRequest>();
@@ -696,29 +580,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             Assert.IsNotNull(actualViewModel);
             Assert.AreEqual(viewModel, actualViewModel);
             _orchestrator.Verify(x => x.GetFundingEstimate(applicationRequest, It.IsAny<GetApplicationDetailsResponse>()), Times.Once);
-        }
-
-        [Test]
-        public async Task GET_GetFundingEstimate_Given_Incorrect_Parameters_Returns_NotFound()
-        {
-            var accountId = _fixture.Create<int>();
-            var pledgeId = _fixture.Create<int>();
-
-            var applicationRequest = new GetFundingEstimateRequest
-            {
-                AccountId = accountId,
-                PledgeId = pledgeId
-            };
-
-            _orchestrator.Setup(o =>
-                    o.GetFundingEstimate(It.Is<GetFundingEstimateRequest>(y =>
-                        y.AccountId == accountId && y.PledgeId == pledgeId), It.IsAny<GetApplicationDetailsResponse>()))
-                .ReturnsAsync((GetFundingEstimateViewModel)null);
-
-            var viewResult = await _opportunitiesController.GetFundingEstimate(applicationRequest) as NotFoundResult;
-
-            Assert.IsNotNull(viewResult);
-            Assert.AreEqual(404, viewResult.StatusCode);
         }
     }
 }

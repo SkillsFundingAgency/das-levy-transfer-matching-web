@@ -436,20 +436,5 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             Assert.NotNull(viewResult);
             Assert.NotNull(applicationApprovedViewModel);
         }
-
-        [Test]
-        public async Task GET_ApplicationApproved_Given_IncorrectParameters_Returns_Not_Found()
-        {
-            // Arrange
-            var request = _fixture.Create<ApplicationApprovedRequest>();
-            _orchestrator.Setup(x => x.GetApplicationApprovedViewModel(request)).ReturnsAsync((ApplicationApprovedViewModel)null);
-
-            // Act
-            var viewResult = await _pledgesController.ApplicationApproved(request) as NotFoundResult;
-            
-            // Assert
-            Assert.NotNull(viewResult);
-            Assert.AreEqual(404, viewResult.StatusCode);
-        }
     }
 }

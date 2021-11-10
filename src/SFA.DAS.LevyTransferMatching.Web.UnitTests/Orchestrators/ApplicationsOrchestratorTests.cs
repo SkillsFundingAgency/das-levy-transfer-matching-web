@@ -151,25 +151,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             Assert.IsNotNull(viewModel);
             Assert.AreEqual($"{response.EmployerAccountName} ({encodedPledgeId})", viewModel.EmployerNameAndReference);
         }
-
-        [Test]
-        public async Task GetAcceptedViewModel_ApplicationDoesntExist_ReturnsNull()
-        {
-            // Arrange
-            var request = _fixture.Create<AcceptedRequest>();
-
-            _mockApplicationsService
-                .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId), CancellationToken.None))
-                .ReturnsAsync((GetApplicationResponse)null);
-
-            // Act
-            var viewModel = await _applicationsOrchestrator.GetAcceptedViewModel(request);
-
-            // Assert
-            Assert.IsNull(viewModel);
-        }
-
-
+        
         [Test]
         public async Task GetApplicationViewModel_IsOwnerAndTransactorAndStatusEqualsApproved_ReturnsViewModelWithCanAcceptFunding()
         {

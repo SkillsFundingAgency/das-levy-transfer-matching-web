@@ -63,25 +63,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             Assert.NotNull(model);
             Assert.NotNull(applicationViewModel);
         }
-
-        [Test]
-        public async Task GET_Application_ApplicationDoesntExist_ReturnsNotFound()
-        {
-            // Arrange
-            var request = _fixture.Create<ApplicationRequest>();
-            _orchestrator
-                .Setup(x => x.GetApplication(request))
-                .ReturnsAsync((ApplicationViewModel)null);
-
-            // Act
-            var actionResult = await _controller.Application(request);
-            var notFoundResult = actionResult as NotFoundResult;
-
-            // Assert
-            Assert.NotNull(actionResult);
-            Assert.NotNull(notFoundResult);
-        }
-
+        
         [Test]
         public async Task GET_Accepted_ApplicationExists_ReturnsViewAndModel()
         {
@@ -102,24 +84,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             Assert.NotNull(viewResult);
             Assert.NotNull(model);
             Assert.NotNull(acceptedViewModel);
-        }
-
-        [Test]
-        public async Task GET_Accepted_ApplicationDoesntExist_ReturnsNotFound()
-        {
-            // Arrange
-            var request = _fixture.Create<AcceptedRequest>();
-            _orchestrator
-                .Setup(x => x.GetAcceptedViewModel(request))
-                .ReturnsAsync((AcceptedViewModel)null);
-
-            // Act
-            var actionResult = await _controller.Accepted(request);
-            var notFoundResult = actionResult as NotFoundResult;
-
-            // Assert
-            Assert.NotNull(actionResult);
-            Assert.NotNull(notFoundResult);
         }
 
         [Test]
