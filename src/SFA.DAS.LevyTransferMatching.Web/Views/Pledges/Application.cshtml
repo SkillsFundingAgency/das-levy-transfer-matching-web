@@ -124,6 +124,7 @@
     @if (Model.AllowApproval)
     {
         <form method="post">
+            @Html.HiddenFor(m => m.EmployerAccountName)
             <div class="govuk-form-group" das-highlight-error-for="SelectedAction" error-class="govuk-form-group--error">
                 <fieldset class="govuk-fieldset">
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
@@ -140,12 +141,12 @@
                         <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="approval-content">
                             <p><strong>Disclaimer:</strong> The information provided by @Model.EmployerAccountName in their application for this pledge has not been checked and verified by the apprenticeship service.<br />Please carry out your own due diligence when deciding whether to offer a transfer of your levy funds.</p>
                         </div>
-                        @*<div class="govuk-radios__item">
-                                <input class="govuk-radios__input" id="SelectedAction-2" name="SelectedAction" asp-for="SelectedAction" type="radio" value="@reject" das-highlight-error-for="SelectedAction" error-class="govuk-textarea--error" />
-                                <label class="govuk-label govuk-radios__label" for="SelectedAction-2">
-                                    Reject the application
-                                </label>
-                            </div>*@
+                        <div class="govuk-radios__item">
+                            <input class="govuk-radios__input" id="SelectedAction-2" name="SelectedAction" asp-for="SelectedAction" type="radio" value="@reject" das-highlight-error-for="SelectedAction" error-class="govuk-textarea--error" />
+                            <label class="govuk-label govuk-radios__label" for="SelectedAction-2">
+                                Reject the application
+                            </label>
+                        </div>
                     </div>
                 </fieldset>
             </div>
