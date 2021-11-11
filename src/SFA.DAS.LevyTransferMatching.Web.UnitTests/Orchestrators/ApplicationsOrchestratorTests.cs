@@ -50,8 +50,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var request = _fixture.Create<ApplicationRequest>();
             var response = _fixture.Create <GetApplicationResponse>();
 
-            SetCorrectDatesForGetEffectiveFundingLine(response);
-
             var encodedPledgeId = _fixture.Create<string>();
 
             _mockApplicationsService
@@ -185,7 +183,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _mockEncodingService
                 .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
                 .Returns(encodedPledgeId);
-            SetCorrectDatesForGetEffectiveFundingLine(response);
+            
             response.Status = ApplicationStatus.Approved;
             _mockUserService.Setup(o => o.IsOwnerOrTransactor(It.IsAny<long>())).Returns(true);
 
@@ -212,7 +210,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _mockEncodingService
                 .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
                 .Returns(encodedPledgeId);
-            SetCorrectDatesForGetEffectiveFundingLine(response);
+
             response.Status = ApplicationStatus.Accepted;
             _mockUserService.Setup(o => o.IsOwnerOrTransactor(It.IsAny<long>())).Returns(true);
 
@@ -222,16 +220,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             // Assert
             Assert.IsNotNull(viewModel);
             Assert.AreEqual(true, viewModel.CanUseTransferFunds);
-        }
-
-
-        private static void SetCorrectDatesForGetEffectiveFundingLine(GetApplicationResponse response)
-        {
-            // Because -
-            // Random dates don't play well with ApprenticeshipFundingDtoExtensions.GetEffectiveFundingLine
-            response.Standard.ApprenticeshipFunding.First().EffectiveFrom = DateTime.Now.AddMonths(-3);
-            response.Standard.ApprenticeshipFunding.First().EffectiveTo = DateTime.Now.AddYears(2);
-            response.StartBy = DateTime.Now.AddMonths(2);
         }
     }
 }
