@@ -19,12 +19,12 @@
 
                 <p class="govuk-!-margin-bottom-0">Your application to <strong>@Model.EmployerNameAndReference</strong> has been withdrawn. You can apply to another opportunity.</p>
 
-                <p class="govuk-!-margin-top-1">
+                <p class="govuk-!-margin-top-2">
                     <a href="@Url.Action("Index", "Opportunities")" class="govuk-link">View other opportunities</a>
                     <br>
                     or
                     <br>
-                    <a href="@LinkGenerator.AccountsLink($"accounts/{Model.EncodedAccountId}/teams")" class="govuk-link">Return to my account</a>
+                    <a href="@LinkGenerator.AccountsLink($"accounts/{Model.EncodedAccountId}/teams")" class="govuk-link">Continue to my account</a>
                 </p>
 
             </div>
