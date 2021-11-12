@@ -248,8 +248,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         {
             var viewModel = await _orchestrator.GetApplicationApprovedViewModel(request);
 
-            viewModel.WasAutoApproved = request.ApprovedAutomatically;
-            
             return View(viewModel);
         }
     }

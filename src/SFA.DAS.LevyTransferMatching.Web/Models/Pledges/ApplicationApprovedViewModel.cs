@@ -5,6 +5,6 @@
         public string EncodedAccountId { get; set; }
         public string EncodedPledgeId { get; set; }
         public string DasAccountName { get; set; }
-        public bool WasAutoApproved { get; set; }
+        public bool AllowTransferRequestAutoApproval { get; set; }
     }
 }

@@ -200,7 +200,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             {
                 EncodedAccountId = request.EncodedAccountId,
                 EncodedPledgeId = request.EncodedPledgeId,
-                DasAccountName = response.EmployerAccountName
+                DasAccountName = response.EmployerAccountName,
+                AllowTransferRequestAutoApproval = response.AllowTransferRequestAutoApproval
             };
         }
         
