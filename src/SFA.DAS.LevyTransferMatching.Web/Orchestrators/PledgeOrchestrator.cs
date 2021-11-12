@@ -384,7 +384,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     EncodedApplicationId = _encodingService.Encode(app.Id, EncodingType.PledgeApplicationId),
                     DasAccountName = app.DasAccountName,
                     Amount = app.Amount,
-                    Duration = app.Standard.ApprenticeshipFunding.GetEffectiveFundingLine(app.StartDate).Duration,
+                    Duration = app.StandardDuration,
                     CreatedOn = app.CreatedOn,
                     Status = app.Status,
                     IsLocationMatch = app.IsLocationMatch,
@@ -428,7 +428,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     Locations = string.IsNullOrEmpty(result.SpecificLocation) ? result.Locations.ToApplicationLocationsString(", ", result.AdditionalLocation) : result.SpecificLocation,
                     IsLocationMatch = result.Locations.Any() || !result.PledgeLocations.Any(),
                     Affordability = GetAffordabilityViewModel(result.Amount, result.PledgeRemainingAmount, result.NumberOfApprentices, result.MaxFunding, result.EstimatedDurationMonths, result.StartBy),
-                    ShowAffordabilityPanel = result.Status == ApplicationStatus.Pending,
                     AllowApproval = result.Status == ApplicationStatus.Pending && result.Amount <= result.PledgeRemainingAmount && isOwnerOrTransactor
                 };
             }
