@@ -385,7 +385,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     EncodedApplicationId = _encodingService.Encode(app.Id, EncodingType.PledgeApplicationId),
                     DasAccountName = app.DasAccountName,
                     Amount = app.Amount,
-                    Duration = app.Standard.ApprenticeshipFunding.GetEffectiveFundingLine(app.StartDate).Duration,
+                    Duration = app.StandardDuration,
                     CreatedOn = app.CreatedOn,
                     Status = app.Status,
                     IsLocationMatch = app.IsLocationMatch,

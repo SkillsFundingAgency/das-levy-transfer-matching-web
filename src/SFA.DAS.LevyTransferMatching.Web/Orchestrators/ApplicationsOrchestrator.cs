@@ -32,23 +32,16 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var result = await _applicationsService.GetApplications(request.AccountId, cancellationToken);
 
-            var applicationViewModels = result.Applications?.Select(app =>
+            var applicationViewModels = result.Applications?.Select(app => new GetApplicationsViewModel.ApplicationViewModel
             {
-                var duration = app.Standard.ApprenticeshipFunding.GetEffectiveFundingLine(app.StartDate).Duration;
-                return new GetApplicationsViewModel.ApplicationViewModel
-                {
-                    EncodedApplicationId = _encodingService.Encode(app.Id, EncodingType.PledgeApplicationId),
-                    DasAccountName = app.IsNamePublic ? app.DasAccountName : "Opportunity",
-                    Amount = app.Standard.ApprenticeshipFunding.GetEffectiveFundingLine(app.StartDate)
-                        .CalcFundingForDate(app.NumberOfApprentices, app.StartDate),
-                    Duration = duration,
-                    CreatedOn = app.CreatedOn,
-                    Status = app.Status,
-                    NumberOfApprentices = app.NumberOfApprentices,
-                    PledgeReference = _encodingService.Encode(app.PledgeId, EncodingType.PledgeId),
-                    IsNamePublic = app.IsNamePublic,
-                    EstimatedTotalCost = app.Standard.ApprenticeshipFunding.GetEffectiveFundingLine(app.StartDate).CalculateEstimatedTotalCost(app.NumberOfApprentices).ToString("N0")
-                };
+                EncodedApplicationId = _encodingService.Encode(app.Id, EncodingType.PledgeApplicationId),
+                DasAccountName = app.IsNamePublic ? app.DasAccountName : "Opportunity",
+                CreatedOn = app.CreatedOn,
+                Status = app.Status,
+                NumberOfApprentices = app.NumberOfApprentices,
+                PledgeReference = _encodingService.Encode(app.PledgeId, EncodingType.PledgeId),
+                IsNamePublic = app.IsNamePublic,
+                EstimatedTotalCost = app.TotalAmount
             }).ToList();
 
             var viewModel = new GetApplicationsViewModel()
@@ -74,7 +67,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             var encodedOpportunityId = _encodingService.Encode(result.OpportunityId, EncodingType.PledgeId);
             var encodedSenderPublicAccountId = _encodingService.Encode(result.SenderEmployerAccountId, EncodingType.PublicAccountId);
 
-            var opportunitySummaryViewModelOptions = new GetOpportunitySummaryViewModelOptions()
+            var opportunitySummaryViewModelOptions = new GetOpportunitySummaryViewModelOptions
             {
                 Sectors = result.Sectors,
                 JobRoles = result.JobRoles,
@@ -89,10 +82,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 EncodedPledgeId = encodedOpportunityId,
             };
 
-            var estimatedTotalCost = result.Standard.ApprenticeshipFunding
-                .GetEffectiveFundingLine(result.StartBy)
-                .CalculateEstimatedTotalCost(result.NumberOfApprentices);
-
             return new ApplicationViewModel()
             {
                  OpportunitySummaryViewModel = GetOpportunitySummaryViewModel(opportunitySummaryViewModelOptions),
@@ -100,21 +89,21 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                  EncodedAccountId = request.EncodedAccountId,
                  EncodedApplicationId = request.EncodedApplicationId,
                  IsNamePublic = result.IsNamePublic,
-                 JobRole = result.Standard.Title,
-                 Level = result.Standard.Level,
+                 JobRole = result.StandardTitle,
+                 Level = result.StandardLevel,
                  Locations = result.PledgeLocations,
                  NumberOfApprentices = result.NumberOfApprentices,
                  StartBy = result.StartBy,
                  Status = result.Status,
                  EncodedOpportunityId = encodedOpportunityId,
-                 EstimatedTotalCost = estimatedTotalCost.ToCurrencyString(),
+                 EstimatedTotalCost = result.TotalAmount.ToCurrencyString(),
                  CanAcceptFunding = isOwnerOrTransactor && result.Status == ApplicationStatus.Approved,
                  CanUseTransferFunds = isOwnerOrTransactor && result.Status == ApplicationStatus.Accepted,
                  EncodedSenderPublicAccountId = encodedSenderPublicAccountId,
                  RenderCanUseTransferFundsStartButton = _featureToggles.FeatureToggleRenderCanUseTransferFundsStartButton,
                  DisplayCurrentFundsBalance = result.AmountUsed > 0 || result.NumberOfApprenticesUsed > 0,
                  AmountUsed = result.AmountUsed.ToCurrencyString(),
-                 AmountRemaining = (estimatedTotalCost - result.AmountUsed) < 0 ? 0.ToCurrencyString() : (estimatedTotalCost - result.AmountUsed).ToCurrencyString(),
+                 AmountRemaining = (result.TotalAmount - result.AmountUsed) < 0 ? 0.ToCurrencyString() : (result.TotalAmount - result.AmountUsed).ToCurrencyString(),
                  NumberOfApprenticesRemaining = (result.NumberOfApprentices - result.NumberOfApprenticesUsed) < 0 ? 0 : (result.NumberOfApprentices - result.NumberOfApprenticesUsed)
             };
         }
@@ -145,6 +134,25 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             var encodedPledgeId = _encodingService.Encode(result.OpportunityId, EncodingType.PledgeId);
 
             return new AcceptedViewModel()
+            {
+                EncodedAccountId = request.EncodedAccountId,
+                EncodedApplicationId = request.EncodedApplicationId,
+                EmployerNameAndReference = $"{result.EmployerAccountName} ({encodedPledgeId})",
+            };
+        }
+
+        public async Task<DeclinedViewModel> GetDeclinedViewModel(DeclinedRequest request)
+        {
+            var result = await _applicationsService.GetDeclined(request.AccountId, request.ApplicationId);
+
+            if (result == null)
+            {
+                return null;
+            }
+
+            var encodedPledgeId = _encodingService.Encode(result.OpportunityId, EncodingType.PledgeId);
+
+            return new DeclinedViewModel()
             {
                 EncodedAccountId = request.EncodedAccountId,
                 EncodedApplicationId = request.EncodedApplicationId,

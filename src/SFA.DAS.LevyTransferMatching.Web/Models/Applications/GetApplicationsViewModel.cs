@@ -27,14 +27,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
         {
             public string DasAccountName { get; set; }
             public int NumberOfApprentices { get; set; }
-            public int Amount { get; set; }
             public DateTime CreatedOn { get; set; }
-            public int Duration { get; set; }
             public ApplicationStatus Status { get; set; }
             public string EncodedApplicationId { get; set; }
             public string PledgeReference { get; set; }
             public bool IsNamePublic { get; set; }
-            public string EstimatedTotalCost { get; set; }
+            public int EstimatedTotalCost { get; set; }
         }
     }
 }
