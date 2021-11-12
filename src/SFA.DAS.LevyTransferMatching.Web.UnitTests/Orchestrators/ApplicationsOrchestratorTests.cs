@@ -50,8 +50,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var request = _fixture.Create<ApplicationRequest>();
             var response = _fixture.Create <GetApplicationResponse>();
 
-            SetCorrectDatesForGetEffectiveFundingLine(response);
-
             var encodedPledgeId = _fixture.Create<string>();
 
             _mockApplicationsService
@@ -169,6 +167,46 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             Assert.IsNull(viewModel);
         }
 
+        [Test]
+        public async Task GetDeclinedViewModel_ApplicationExists_ReturnsViewModel()
+        {
+            // Arrange
+            var request = _fixture.Create<DeclinedRequest>();
+            var response = _fixture.Create<GetDeclinedResponse>();
+            var encodedPledgeId = _fixture.Create<string>();
+
+            _mockApplicationsService
+                .Setup(x => x.GetDeclined(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId)))
+                .ReturnsAsync(response);
+
+            _mockEncodingService
+                .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
+                .Returns(encodedPledgeId);
+
+            // Act
+            var viewModel = await _applicationsOrchestrator.GetDeclinedViewModel(request);
+
+            // Assert
+            Assert.IsNotNull(viewModel);
+            Assert.AreEqual($"{response.EmployerAccountName} ({encodedPledgeId})", viewModel.EmployerNameAndReference);
+        }
+
+        [Test]
+        public async Task GetDeclinedViewModel_ApplicationDoesntExist_ReturnsNull()
+        {
+            // Arrange
+            var request = _fixture.Create<DeclinedRequest>();
+
+            _mockApplicationsService
+                .Setup(x => x.GetDeclined(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId)))
+                .ReturnsAsync((GetDeclinedResponse)null);
+
+            // Act
+            var viewModel = await _applicationsOrchestrator.GetDeclinedViewModel(request);
+
+            // Assert
+            Assert.IsNull(viewModel);
+        }
 
         [Test]
         public async Task GetApplicationViewModel_IsOwnerAndTransactorAndStatusEqualsApproved_ReturnsViewModelWithCanAcceptFunding()
@@ -185,7 +223,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _mockEncodingService
                 .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
                 .Returns(encodedPledgeId);
-            SetCorrectDatesForGetEffectiveFundingLine(response);
+            
             response.Status = ApplicationStatus.Approved;
             _mockUserService.Setup(o => o.IsOwnerOrTransactor(It.IsAny<long>())).Returns(true);
 
@@ -212,7 +250,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _mockEncodingService
                 .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
                 .Returns(encodedPledgeId);
-            SetCorrectDatesForGetEffectiveFundingLine(response);
+
             response.Status = ApplicationStatus.Accepted;
             _mockUserService.Setup(o => o.IsOwnerOrTransactor(It.IsAny<long>())).Returns(true);
 
@@ -222,16 +260,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             // Assert
             Assert.IsNotNull(viewModel);
             Assert.AreEqual(true, viewModel.CanUseTransferFunds);
-        }
-
-
-        private static void SetCorrectDatesForGetEffectiveFundingLine(GetApplicationResponse response)
-        {
-            // Because -
-            // Random dates don't play well with ApprenticeshipFundingDtoExtensions.GetEffectiveFundingLine
-            response.Standard.ApprenticeshipFunding.First().EffectiveFrom = DateTime.Now.AddMonths(-3);
-            response.Standard.ApprenticeshipFunding.First().EffectiveTo = DateTime.Now.AddYears(2);
-            response.StartBy = DateTime.Now.AddMonths(2);
         }
     }
 }
