@@ -428,20 +428,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                     {
                         Id = 0,
                         StartDate = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1),
-                        Standard = _fixture.Create<StandardsListItemDto>(),
                         Status = ApplicationStatus.Pending
                     }
-                }
-            };
-
-            response.Applications.First().Standard.ApprenticeshipFunding = new List<ApprenticeshipFundingDto>()
-            {
-                new ApprenticeshipFundingDto()
-                {
-                    Duration = 12,
-                    EffectiveFrom = new DateTime(DateTime.UtcNow.AddYears(-1).Year, DateTime.UtcNow.Month, 1),
-                    EffectiveTo = new DateTime(DateTime.UtcNow.AddYears(1).Year, DateTime.UtcNow.Month, 1),
-                    MaxEmployerLevyCap = 100_000
                 }
             };
 
@@ -474,22 +462,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             Assert.IsFalse(string.IsNullOrWhiteSpace(result.JobRole));
             Assert.IsTrue(result.AllowApproval);
-            Assert.IsTrue(result.ShowAffordabilityPanel);
-        }
-
-        [TestCase(ApplicationStatus.Approved)]
-        public async Task GetApplication_Hide_AffordabilityPanel_If_Not_PendingOutcome(ApplicationStatus status)
-        {
-            var response = _fixture.Create<GetApplicationResponse>();
-            response.PledgeRemainingAmount = 1000;
-            response.Amount = 1;
-            response.Status = status;
-
-            _pledgeService.Setup(o => o.GetApplication(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
-
-            var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
-
-            Assert.IsFalse(result.ShowAffordabilityPanel);
         }
 
         [TestCase(100, 0, true)]
