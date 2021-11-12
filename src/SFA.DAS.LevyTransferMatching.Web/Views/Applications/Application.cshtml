@@ -4,11 +4,14 @@
 
 @{
     ViewData["Title"] = Model.Title;
+
+    var accept = SFA.DAS.LevyTransferMatching.Web.Models.Applications.ApplicationPostRequest.ApprovalAction.Accept;
+    var decline = SFA.DAS.LevyTransferMatching.Web.Models.Applications.ApplicationPostRequest.ApprovalAction.Decline;
 }
 
 <a href="@Url.Action("Applications", new { EncodedAccountId = Model.EncodedAccountId })" class="govuk-back-link">Back</a>
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
-
+    <partial name="_ValidationSummary" />
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
@@ -22,6 +25,25 @@
                 </strong>
             </div>
 
+           @if (Model.DisplayCurrentFundsBalance)
+            {
+                <div>
+                    <h2 class="govuk-heading-m">Current funds balance</h2>
+                    <section class="das-highlight">
+                        <dl class="govuk-body app-dl-inline">
+                            <dt class="app-dl-inline__title--strong">Accepted</dt>
+                            <dd class="app-dl-inline__definition">@Model.EstimatedTotalCost</dd>
+                            <dt class="app-dl-inline__title--strong">Used</dt>
+                            <dd class="app-dl-inline__definition">@Model.AmountUsed</dd>
+                            <dt class="app-dl-inline__title--strong">Remaining</dt>
+                            <dd class="app-dl-inline__definition">@Model.AmountRemaining</dd>
+                            <dt class="app-dl-inline__title--strong">Apprentices</dt>
+                            <dd class="app-dl-inline__definition">@Model.NumberOfApprenticesRemaining remaining</dd>
+                        </dl>
+                    </section>
+                </div>
+            }
+
             <div class="accepted-text-hide">
                 <h2 class="govuk-heading-m">About your apprenticeship training</h2>
             </div>
@@ -29,9 +51,13 @@
             <section class="das-highlight">
                 <p><strong>Apprenticeship training course:</strong> @Model.JobRole</p>
                 <p><strong>Number of apprentices:</strong> @Model.NumberOfApprentices</p>
-                <p><strong>Estimated total cost:</strong> £@Model.EstimatedTotalCost</p>
+                <p><strong>Estimated total cost:</strong> @Model.EstimatedTotalCost</p>
                 <p class="govuk-!-margin-bottom-0"><strong>Apprenticeship training to start by:</strong> @Model.StartBy.ToString("MM/yyyy")</p>
             </section>
+
+            <partial name="_ApplicationCanAcceptFundingPartial" model="Model" />
+            
+            <partial name="_ApplicationCanUseTransferFundsPartial" model="Model" />
 
         </div>
 

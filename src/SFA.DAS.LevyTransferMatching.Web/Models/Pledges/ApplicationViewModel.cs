@@ -23,7 +23,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public DateTime CreatedOn { get; set; }
         public int Duration { get; set; }
         public ApplicationStatus Status { get; set; }
-        public string Location { get; set; }
         public string JobRole { get; set; }
         public int Level { get; set; }
         public int EstimatedDurationMonths { get; set; }
@@ -35,10 +34,16 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public List<string> PledgeJobRoles { get; set; }
         public List<string> PledgeLevels { get; set; }
         public List<string> PledgeLocations { get; set; }
+        public string Locations { get; set; }
+
         public AffordabilityViewModel Affordability { get; set; }
 
         public bool AllowApproval { get; set; }
         public bool ShowAffordabilityPanel { get; set; }
+        public bool IsLocationMatch { get; set; }
+        public bool IsSectorMatch { get; set; }
+        public bool IsJobRoleMatch { get; set; }
+        public bool IsLevelMatch { get; set; }
 
         public class AffordabilityViewModel
         {
