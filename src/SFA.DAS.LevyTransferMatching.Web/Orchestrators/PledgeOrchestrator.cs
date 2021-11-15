@@ -9,6 +9,7 @@ using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
@@ -226,56 +227,78 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         public async Task<byte[]> GetPledgeApplicationsDownloadModel(ApplicationsRequest request)
         {
-            var result = await _pledgeService.GetApplicationsForCsvDownload(request.AccountId, request.PledgeId);
+            var result = await _pledgeService.GetApplications(request.AccountId, request.PledgeId);
 
             var pledgeAppModel = new PledgeApplicationsDownloadModel
             {
                 Applications = result.Applications?.Select(app =>
                 {
-                    var appStandard = app.Standard;
                     var affordability = GetAffordabilityViewModel(app.Amount, app.PledgeRemainingAmount,
-                        app.NumberOfApprentices, app.MaxFunding, app.EstimatedDurationMonths, app.StartBy);
+                        app.NumberOfApprentices, app.MaxFunding, app.StandardDuration, app.StartDate);
 
                     return new PledgeApplicationDownloadModel
                     {
-                        DateApplied = app.DateApplied,
+                        DateApplied = app.CreatedOn,
                         Status = app.Status,
-                        ApplicationId = app.ApplicationId,
+                        ApplicationId = app.Id,
                         PledgeId = app.PledgeId,
-                        Locations = app.Locations ?? new List<string>(),
                         EmployerAccountName = app.EmployerAccountName,
                         HasTrainingProvider = app.HasTrainingProvider,
                         Sectors = app.Sectors ?? new List<string>(),
-                        AboutOpportunity = app.AboutOpportunity,
+                        AboutOpportunity = app.Details,
                         BusinessWebsite = GetUrlWithPrefix(app.BusinessWebsite),
                         FormattedEmailAddress = String.Join(";", app.EmailAddresses),
                         FormattedSectors = String.Join(",", app.Sectors ?? new List<string>()),
                         FirstName = app.FirstName,
                         LastName = app.LastName,
                         NumberOfApprentices = app.NumberOfApprentices,
-                        StartBy = app.StartBy,
+                        StartBy = app.StartDate,
                         TypeOfJobRole = app.JobRole,
                         EncodedPledgeId = _encodingService.Encode(app.PledgeId, EncodingType.PledgeId),
-                        EncodedApplicationId =
-                            _encodingService.Encode(app.ApplicationId, EncodingType.PledgeApplicationId),
-                        FormattedLocations = String.Join(",", app.Locations ?? new List<string>()),
+                        EncodedApplicationId = _encodingService.Encode(app.Id, EncodingType.PledgeApplicationId),
                         IsJobRoleMatch = app.IsJobRoleMatch,
                         IsLevelMatch = app.IsLevelMatch,
                         IsLocationMatch = app.IsLocationMatch,
                         IsSectorMatch = app.IsSectorMatch,
-                        Duration = appStandard.ApprenticeshipFunding.GetEffectiveFundingLine(app.StartBy).Duration,
+                        Duration = app.StandardDuration,
                         EstimatedCostThisYear = affordability.EstimatedCostThisYear,
-                        Level = appStandard.Level,
-                        TotalEstimatedCost = appStandard.ApprenticeshipFunding.GetEffectiveFundingLine(app.StartBy).CalculateEstimatedTotalCost(app.NumberOfApprentices).ToString("N0")
+                        Level = app.Level,
+                        TotalEstimatedCost = app.MaxFunding * app.NumberOfApprentices,
+                        AdditionalLocations = app.AdditionalLocations,
+                        SpecificLocation = app.SpecificLocation,
+                        Locations = app.Locations,
+                        PledgeLocations = app.PledgeLocations,
+                        FormattedLocations = GetCommaSeparatedListOfLocations(app.PledgeLocations, app.Locations, app.SpecificLocation, app.AdditionalLocations)
                     };
 
-                    
+
                 })
             };
 
             var fileContents = _csvService.GenerateCsvFileFromModel(pledgeAppModel);
 
             return fileContents;
+        }
+
+        private string GetCommaSeparatedListOfLocations(IEnumerable<GetApplyResponse.PledgeLocation> pledgeLocations, IEnumerable<GetApplicationsResponse.ApplicationLocation> applicationLocations, string specificLocation, string additionalLocations)
+        {
+            var listOfMatchingLocations = (from location in applicationLocations 
+                select pledgeLocations?.FirstOrDefault(o => o.Id == location.PledgeLocationId) 
+                into matchedLocation 
+                where matchedLocation != null && !string.IsNullOrWhiteSpace(matchedLocation.Name)
+                select matchedLocation.Name).ToList();
+
+            if (!string.IsNullOrWhiteSpace(specificLocation))
+            {
+                listOfMatchingLocations.Add(specificLocation);
+            }
+
+            if (!string.IsNullOrWhiteSpace(additionalLocations))
+            {
+                listOfMatchingLocations.Add(additionalLocations);
+            }
+
+            return string.Join(",", listOfMatchingLocations);
         }
 
         private LocationSelectPostRequest.SelectValidLocationGroup MapValidLocationGroup(KeyValuePair<int, IEnumerable<string>> kvp)
@@ -431,23 +454,37 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var result = await _pledgeService.GetApplications(request.AccountId, request.PledgeId);
 
+            var pledgeApplications = await _pledgeService.GetApplications(request.AccountId, request.PledgeId);
+            var viewModels = (from application in result.Applications
+                let pledgeApplication = pledgeApplications.Applications.First(x => x.PledgeId == application.PledgeId)
+                              select new ApplicationViewModel
+                              {
+                                  EncodedApplicationId = _encodingService.Encode(application.Id, EncodingType.PledgeApplicationId),
+                                  DasAccountName = application.DasAccountName,
+                                  Amount = application.Amount,
+                                  Duration = application.StandardDuration,
+                                  CreatedOn = application.CreatedOn,
+                                  Status = application.Status,
+                                  IsLocationMatch = application.IsLocationMatch,
+                                  IsSectorMatch = application.IsSectorMatch,
+                                  IsJobRoleMatch = application.IsJobRoleMatch,
+                                  IsLevelMatch = application.IsLevelMatch,
+                                  StartBy = application.StartDate,
+                                  BusinessWebsite = pledgeApplication.BusinessWebsite,
+                                  LastName = pledgeApplication.LastName,
+                                  FirstName = pledgeApplication.FirstName,
+                                  EmailAddresses = pledgeApplication.EmailAddresses,
+                                  JobRole = pledgeApplication.JobRole,
+                                  PledgeRemainingAmount = pledgeApplication.PledgeRemainingAmount,
+                                  MaxFunding = pledgeApplication.MaxFunding,
+                                  Details = pledgeApplication.Details
+                              }).ToList();
+
             return new ApplicationsViewModel
             {
                 EncodedAccountId = request.EncodedAccountId,
                 EncodedPledgeId = request.EncodedPledgeId,
-                Applications = result.Applications?.Select(app => new ApplicationViewModel
-                {
-                    EncodedApplicationId = _encodingService.Encode(app.Id, EncodingType.PledgeApplicationId),
-                    DasAccountName = app.DasAccountName,
-                    Amount = app.Amount,
-                    Duration = app.Standard.ApprenticeshipFunding.GetEffectiveFundingLine(app.StartDate).Duration,
-                    CreatedOn = app.CreatedOn,
-                    Status = app.Status,
-                    IsLocationMatch = app.IsLocationMatch,
-                    IsSectorMatch = app.IsSectorMatch,
-                    IsJobRoleMatch = app.IsJobRoleMatch,
-                    IsLevelMatch = app.IsLevelMatch
-                })
+                Applications = viewModels
             };
         }
 

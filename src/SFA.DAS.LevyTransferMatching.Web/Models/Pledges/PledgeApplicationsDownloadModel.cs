@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types;
 using SFA.DAS.LevyTransferMatching.Web.Attributes;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
@@ -23,7 +25,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public DateTime DateApplied { get; set; }
         public ApplicationStatus Status { get; set; }
         public string EmployerAccountName { get; set; }
-        public IEnumerable<string> Locations { get; set; }
+        public IEnumerable<GetApplicationsResponse.ApplicationLocation> Locations { get; set; }
+        public IEnumerable<GetApplyResponse.PledgeLocation> PledgeLocations { get; set; }
         public IEnumerable<string> Sectors { get; set; }
         public string TypeOfJobRole { get; set; }
         public int Level { get; set; }
@@ -44,7 +47,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public bool IsJobRoleMatch { get; set; }
         public bool IsLevelMatch { get; set; }
         public string EstimatedCostThisYear { get; set; }
-        public string TotalEstimatedCost { get; set; }
+        public decimal TotalEstimatedCost { get; set; }
+        public string AdditionalLocations { get; set; }
+        public string SpecificLocation { get; set; }
         public ApplicationViewModel.AffordabilityViewModel Affordability { get; set; }
     }
 }
