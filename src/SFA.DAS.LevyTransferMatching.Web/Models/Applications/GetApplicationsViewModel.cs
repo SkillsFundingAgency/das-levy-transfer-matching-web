@@ -21,8 +21,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
              1 => "transfer application",
              _ => "transfers applications"
          };
-
-
+        
         public class ApplicationViewModel
         {
             public string DasAccountName { get; set; }

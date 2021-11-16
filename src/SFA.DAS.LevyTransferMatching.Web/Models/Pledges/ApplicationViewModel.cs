@@ -28,7 +28,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public int EstimatedDurationMonths { get; set; }
         public DateTime StartBy { get; set; }
         public string AboutOpportunity { get; set; }
-        public string EmployerAccountName { get; set; }
         public IEnumerable<ReferenceDataItem> AllSectors { get; set; }
         public List<string> PledgeSectors { get; set; }
         public List<string> PledgeJobRoles { get; set; }
