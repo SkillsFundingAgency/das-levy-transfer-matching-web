@@ -4,5 +4,6 @@
     {
         public bool FeatureToggleCanViewApplicationDetails { get; set; }
         public bool FeatureToggleRenderCanUseTransferFundsStartButton { get; set; }
+        public bool FeatureToggleApplicationApprovalOptions { get; set; }
     }
 }

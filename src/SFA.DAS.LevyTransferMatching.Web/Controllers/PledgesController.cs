@@ -232,6 +232,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Route("{encodedPledgeId}/applications/{encodedApplicationId}")]
         public async Task<IActionResult> Application(ApplicationPostRequest request)
         {
+            if(request.DisplayApplicationApprovalOptions && request.SelectedAction == ApplicationPostRequest.ApprovalAction.Approve)
+            {
+                return RedirectToAction("ApplicationApprovalOptions", new { request.EncodedAccountId, request.EncodedPledgeId, request.EncodedApplicationId, request.EmployerAccountName });
+            }
+
             await _orchestrator.SetApplicationOutcome(request);
 
             if (request.SelectedAction == ApplicationPostRequest.ApprovalAction.Approve)
@@ -248,6 +253,22 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         {
             var viewModel = await _orchestrator.GetApplicationApprovedViewModel(request);
             return View(viewModel);
+        }
+
+        [HttpGet]
+        [Route("{encodedPledgeId}/applications/{encodedApplicationId}/approval-options")]
+        public IActionResult ApplicationApprovalOptions(ApplicationApprovalOptionsRequest request)
+        {
+            var viewModel = _orchestrator.GetApplicationApprovalOptionsViewModel(request);
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [Route("{encodedPledgeId}/applications/{encodedApplicationId}/approval-options")]
+        public async Task<IActionResult> ApplicationApprovalOptions(ApplicationApprovalOptionsPostRequest request)
+        {
+            await _orchestrator.SetApplicationApprovalOptions(request);
+            return RedirectToAction("ApplicationApproved", new { request.EncodedAccountId, request.EncodedPledgeId, request.EncodedApplicationId });
         }
     }
 }

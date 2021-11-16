@@ -31,5 +31,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         Task SetApplicationOutcome(ApplicationPostRequest request);
         Task<LocationSelectViewModel> GetLocationSelectViewModel(LocationSelectRequest request);
+        ApplicationApprovalOptionsViewModel GetApplicationApprovalOptionsViewModel(ApplicationApprovalOptionsRequest request, CancellationToken cancellationToken = default);
+        Task SetApplicationApprovalOptions(ApplicationApprovalOptionsPostRequest request, CancellationToken cancellationToken = default);
     }
 }
