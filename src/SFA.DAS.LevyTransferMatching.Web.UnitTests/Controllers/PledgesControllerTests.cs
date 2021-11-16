@@ -407,12 +407,26 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             Assert.NotNull(viewModel);
         }
 
+        [Test]
+        public async Task POST_Application_Approval_Redirects_To_ApplicationApprovalOptions()
+        {
+            var request = _fixture.Create<ApplicationPostRequest>();
+            request.SelectedAction = ApplicationPostRequest.ApprovalAction.Approve;
+            request.DisplayApplicationApprovalOptions = true;
+            _orchestrator.Setup(x => x.SetApplicationOutcome(It.Is<ApplicationPostRequest>(r => r.AccountId == request.AccountId && r.ApplicationId == request.ApplicationId && r.PledgeId == request.PledgeId))).Returns(Task.CompletedTask);
+
+            var redirectResult = await _pledgesController.Application(request) as RedirectToActionResult;
+
+            Assert.NotNull(redirectResult);
+            Assert.AreEqual("ApplicationApprovalOptions", redirectResult.ActionName);
+        }
 
         [Test]
         public async Task POST_Application_Approval_Redirects_To_ApplicationApproved()
         {
             var request = _fixture.Create<ApplicationPostRequest>();
             request.SelectedAction = ApplicationPostRequest.ApprovalAction.Approve;
+            request.DisplayApplicationApprovalOptions = false;
             _orchestrator.Setup(x => x.SetApplicationOutcome(It.Is<ApplicationPostRequest>(r => r.AccountId == request.AccountId && r.ApplicationId == request.ApplicationId && r.PledgeId == request.PledgeId))).Returns(Task.CompletedTask);
 
             var redirectResult = await _pledgesController.Application(request) as RedirectToActionResult;
@@ -448,6 +462,39 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             // Assert
             Assert.NotNull(viewResult);
             Assert.NotNull(applicationApprovedViewModel);
+        }
+
+        [Test]
+        public void GET_ApplicationApprovalOptions_Returns_Expected_View_With_Expected_ViewModel()
+        {
+            // Arrange
+            var request = _fixture.Create<ApplicationApprovalOptionsRequest>();
+            _orchestrator.Setup(x => x.GetApplicationApprovalOptionsViewModel(request, CancellationToken.None)).Returns(() => new ApplicationApprovalOptionsViewModel());
+
+            // Act
+            var viewResult = _pledgesController.ApplicationApprovalOptions(request) as ViewResult;
+            var applicationApprovalOptionsViewModel = viewResult?.Model as ApplicationApprovalOptionsViewModel;
+
+            // Assert
+            Assert.NotNull(viewResult);
+            Assert.NotNull(applicationApprovalOptionsViewModel);
+        }
+
+        [Test]
+        public async Task POST_ApplicationApprovalOptions_Returns_Expected_Redirect()
+        {
+            // Arrange
+            var request = _fixture.Create<ApplicationApprovalOptionsPostRequest>();
+
+            // Act
+            var actionResult = await _pledgesController.ApplicationApprovalOptions(request) as RedirectToActionResult;
+
+            // Assert
+            Assert.NotNull(actionResult);
+            Assert.AreEqual("ApplicationApproved", actionResult.ActionName);
+            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
+            Assert.AreEqual(request.EncodedPledgeId, actionResult.RouteValues["encodedPledgeId"]);
+            Assert.AreEqual(request.EncodedApplicationId, actionResult.RouteValues["encodedApplicationId"]);
         }
     }
 }
