@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using AutoFixture;
+using NUnit.Framework;
 using SFA.DAS.LevyTransferMatching.Web.Models.Applications;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Applications;
 using static SFA.DAS.LevyTransferMatching.Web.Models.Applications.ApplicationViewModel;
@@ -8,44 +9,111 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Applications
     [TestFixture]
     public class ApplicationPostRequestValidatorTests
     {
+        private Fixture _fixture;
         private ApplicationPostRequestValidator _validator;
 
         [SetUp]
         public void Setup()
         {
+            _fixture = new Fixture();
             _validator = new ApplicationPostRequestValidator();
         }
 
         [Test]
-        public void ValidatorReturnsFalseWhenUserHasNotAcceptedTermsAndConditions()
+        public void ValidatorReturnsFalseWhenNoApprovalActionSelected()
         {
-            var actual = _validator.Validate(CreateApplicationStatusPostRequest(approvalAction: ApprovalAction.Accept));
+            var request = _fixture
+                .Build<ApplicationPostRequest>()
+                .With(x => x.SelectedAction, (ApprovalAction?)null)
+                .Create();
 
-            Assert.AreEqual(false, actual.IsValid);
+            var actual = _validator.Validate(request);
+
+            Assert.IsFalse(actual.IsValid);
         }
 
         [Test]
-        public void ValidatorReturnsFalseWhenUserHasNotAcceptedFunding()
+        public void ValidatorReturnsFalseWhenApprovalActionIsAcceptAndTruthfulInformationIsFalse()
         {
-            var actual = _validator.Validate(CreateApplicationStatusPostRequest(truthfulInformation: true, complyWithRules: true, approvalAction: null, canAcceptFunding: true));
+            var request = _fixture
+                .Build<ApplicationPostRequest>()
+                .With(x => x.SelectedAction, ApprovalAction.Accept)
+                .With(x => x.TruthfulInformation, false)
+                .Create();
 
-            Assert.AreEqual(false, actual.IsValid);
+            var actual = _validator.Validate(request);
+
+            Assert.IsFalse(actual.IsValid);
         }
 
         [Test]
-        public void ValidatorReturnsFalseWhenNoWithdrawalActionSelected()
+        public void ValidatorReturnsFalseWhenApprovalActionIsAcceptAndComplyWithRulesIsFalse()
         {
-            var actual = _validator.Validate(CreateApplicationStatusPostRequest(approvalAction: null, canWithdraw: true));
+            var request = _fixture
+                .Build<ApplicationPostRequest>()
+                .With(x => x.SelectedAction, ApprovalAction.Accept)
+                .With(x => x.ComplyWithRules, false)
+                .Create();
 
-            Assert.AreEqual(false, actual.IsValid);
+            var actual = _validator.Validate(request);
+
+            Assert.IsFalse(actual.IsValid);
+        }
+
+        [Test]
+        public void ValidatorReturnsTrueWhenApprovalActionIsAcceptAndTruthfulInformationAndComplyWithRulesIsTrue()
+        {
+            var request = _fixture
+                .Build<ApplicationPostRequest>()
+                .With(x => x.SelectedAction, ApprovalAction.Accept)
+                .With(x => x.TruthfulInformation, true)
+                .With(x => x.ComplyWithRules, true)
+                .Create();
+
+            var actual = _validator.Validate(request);
+            Assert.IsTrue(actual.IsValid);
+        }
+
+        [Test]
+        public void ValidatorReturnsFalseWhenApprovalActionIsDeclineAndConfirmWithdrawalIsFalse()
+        {
+            var request = _fixture
+                .Build<ApplicationPostRequest>()
+                .With(x => x.SelectedAction, ApprovalAction.Decline)
+                .With(x => x.IsDeclineConfirmed, false)
+                .Create();
+
+            var actual = _validator.Validate(request);
+
+            Assert.IsFalse(actual.IsValid);
+        }
+
+        [Test]
+        public void ValidatorReturnsTrueWhenApprovalActionIsDeclineAndConfirmWithdrawalIsTrue()
+        {
+            var request = _fixture
+                .Build<ApplicationPostRequest>()
+                .With(x => x.SelectedAction, ApprovalAction.Decline)
+                .With(x => x.IsDeclineConfirmed, true)
+                .Create();
+
+            var actual = _validator.Validate(request);
+
+            Assert.IsTrue(actual.IsValid);
         }
 
         [Test]
         public void ValidatorReturnsFalseWhenWithdrawalNotConfirmed()
         {
             var actual = _validator.Validate(CreateApplicationStatusPostRequest(approvalAction: ApprovalAction.Withdraw));
+            Assert.IsFalse(actual.IsValid);
+        }
 
-            Assert.AreEqual(false, actual.IsValid);
+        [Test]
+        public void ValidatorReturnsFalseWhenNoWithdrawalActionSelected()
+        {
+            var actual = _validator.Validate(CreateApplicationStatusPostRequest(approvalAction: null, canWithdraw: true));
+            Assert.IsFalse(actual.IsValid);
         }
 
         private ApplicationPostRequest CreateApplicationStatusPostRequest(bool truthfulInformation = false, bool complyWithRules = false, ApprovalAction? approvalAction = ApprovalAction.Decline, bool canAcceptFunding = false, bool canWithdraw = false, bool isWithdrawalConfirmed = false) =>
