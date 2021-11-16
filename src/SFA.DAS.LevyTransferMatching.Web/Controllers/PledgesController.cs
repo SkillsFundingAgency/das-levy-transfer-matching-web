@@ -219,7 +219,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         {
             var response = await _orchestrator.GetApplicationViewModel(request, cancellationToken);
 
-
             if (response != null)
             {
                 return View(response);

@@ -34,5 +34,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Typ
         public IEnumerable<string> Locations { get; set; }
         public string AdditionalLocation { get; set; }
         public string SpecificLocation { get; set; }
+        public bool AllowTransferRequestAutoApproval { get; set; }
     }
 }

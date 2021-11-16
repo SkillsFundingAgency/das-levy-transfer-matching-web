@@ -33,5 +33,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsServi
         public long SenderEmployerAccountId { get; set; }
         public int AmountUsed { get; set; }
         public int NumberOfApprenticesUsed { get; set; }
+        public bool AllowTransferRequestAutoApproval { get; set; }
     }
 }

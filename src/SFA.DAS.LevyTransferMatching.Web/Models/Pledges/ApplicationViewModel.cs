@@ -43,6 +43,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public bool IsSectorMatch { get; set; }
         public bool IsJobRoleMatch { get; set; }
         public bool IsLevelMatch { get; set; }
+        public bool AllowTransferRequestAutoApproval { get; set; }
 
         public class AffordabilityViewModel
         {
