@@ -9,13 +9,9 @@
 
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
     <partial name="_ValidationSummary" />
-    <div class="govuk-grid-row title-options">
-        <div class="govuk-grid-column-full">
-            <h1 class="govuk-heading-xl">
-                @Model.EmployerAccountName
-            </h1>
-        </div>
-    </div>
+    <h1 class="govuk-heading-xl">
+        @Model.EmployerAccountName
+    </h1>
     <div class="das-highlight">
         <h2 class="govuk-heading-m">Details about the application</h2>
         @*
@@ -41,7 +37,6 @@
 
         <dl class="govuk-body app-dl-icon-list govuk-!-margin-bottom-4">
             <dt class="app-dl-icon-list__title">
-                @if (Model.IsLocationMatch) { <span class="app-dl-icon-list__icon app-dl-icon-list__icon--tick">Match for: </span> }
                 Location
             </dt>
             <dd class="app-dl-icon-list__definition">@Model.Locations</dd>

@@ -30,7 +30,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Typ
             public bool IsJobRoleMatch { get; set; }
             public bool IsLevelMatch { get; set; }
             public string JobRole { get; set; }
-            public StandardsListItemDto Standard { get; set; }
             public int Amount { get; set; }
             public int PledgeRemainingAmount { get; set; }
             public int MaxFunding { get; set; }

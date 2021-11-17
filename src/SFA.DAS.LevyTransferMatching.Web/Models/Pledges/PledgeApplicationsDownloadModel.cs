@@ -50,6 +50,5 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public decimal TotalEstimatedCost { get; set; }
         public string AdditionalLocations { get; set; }
         public string SpecificLocation { get; set; }
-        public ApplicationViewModel.AffordabilityViewModel Affordability { get; set; }
     }
 }

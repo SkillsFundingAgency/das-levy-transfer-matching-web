@@ -231,47 +231,39 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             var pledgeAppModel = new PledgeApplicationsDownloadModel
             {
-                Applications = result.Applications?.Select(app =>
+                Applications = result.Applications?.Select(app => new PledgeApplicationDownloadModel
                 {
-                    var affordability = GetAffordabilityViewModel(app.Amount, app.PledgeRemainingAmount,
-                        app.NumberOfApprentices, app.MaxFunding, app.StandardDuration, app.StartDate);
-
-                    return new PledgeApplicationDownloadModel
-                    {
-                        DateApplied = app.CreatedOn,
-                        Status = app.Status,
-                        ApplicationId = app.Id,
-                        PledgeId = app.PledgeId,
-                        EmployerAccountName = app.EmployerAccountName,
-                        HasTrainingProvider = app.HasTrainingProvider,
-                        Sectors = app.Sectors ?? new List<string>(),
-                        AboutOpportunity = app.Details,
-                        BusinessWebsite = GetUrlWithPrefix(app.BusinessWebsite),
-                        FormattedEmailAddress = String.Join(";", app.EmailAddresses),
-                        FormattedSectors = String.Join(",", app.Sectors ?? new List<string>()),
-                        FirstName = app.FirstName,
-                        LastName = app.LastName,
-                        NumberOfApprentices = app.NumberOfApprentices,
-                        StartBy = app.StartDate,
-                        TypeOfJobRole = app.JobRole,
-                        EncodedPledgeId = _encodingService.Encode(app.PledgeId, EncodingType.PledgeId),
-                        EncodedApplicationId = _encodingService.Encode(app.Id, EncodingType.PledgeApplicationId),
-                        IsJobRoleMatch = app.IsJobRoleMatch,
-                        IsLevelMatch = app.IsLevelMatch,
-                        IsLocationMatch = app.IsLocationMatch,
-                        IsSectorMatch = app.IsSectorMatch,
-                        Duration = app.StandardDuration,
-                        EstimatedCostThisYear = affordability.EstimatedCostThisYear,
-                        Level = app.Level,
-                        TotalEstimatedCost = app.MaxFunding * app.NumberOfApprentices,
-                        AdditionalLocations = app.AdditionalLocations,
-                        SpecificLocation = app.SpecificLocation,
-                        Locations = app.Locations,
-                        PledgeLocations = app.PledgeLocations,
-                        FormattedLocations = GetCommaSeparatedListOfLocations(app.PledgeLocations, app.Locations, app.SpecificLocation, app.AdditionalLocations)
-                    };
-
-
+                    DateApplied = app.CreatedOn,
+                    Status = app.Status,
+                    ApplicationId = app.Id,
+                    PledgeId = app.PledgeId,
+                    EmployerAccountName = app.EmployerAccountName,
+                    HasTrainingProvider = app.HasTrainingProvider,
+                    Sectors = app.Sectors ?? new List<string>(),
+                    AboutOpportunity = app.Details,
+                    BusinessWebsite = GetUrlWithPrefix(app.BusinessWebsite),
+                    FormattedEmailAddress = String.Join(";", app.EmailAddresses),
+                    FormattedSectors = String.Join(",", app.Sectors ?? new List<string>()),
+                    FirstName = app.FirstName,
+                    LastName = app.LastName,
+                    NumberOfApprentices = app.NumberOfApprentices,
+                    StartBy = app.StartDate,
+                    TypeOfJobRole = app.JobRole,
+                    EncodedPledgeId = _encodingService.Encode(app.PledgeId, EncodingType.PledgeId),
+                    EncodedApplicationId = _encodingService.Encode(app.Id, EncodingType.PledgeApplicationId),
+                    IsJobRoleMatch = app.IsJobRoleMatch,
+                    IsLevelMatch = app.IsLevelMatch,
+                    IsLocationMatch = app.IsLocationMatch,
+                    IsSectorMatch = app.IsSectorMatch,
+                    Duration = app.StandardDuration,
+                    EstimatedCostThisYear = app.Amount.ToCurrencyString(),
+                    Level = app.Level,
+                    TotalEstimatedCost = app.MaxFunding,
+                    AdditionalLocations = app.AdditionalLocations,
+                    SpecificLocation = app.SpecificLocation,
+                    Locations = app.Locations,
+                    PledgeLocations = app.PledgeLocations,
+                    FormattedLocations = GetCommaSeparatedListOfLocations(app.PledgeLocations, app.Locations, app.SpecificLocation, app.AdditionalLocations)
                 })
             };
 
@@ -454,9 +446,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var result = await _pledgeService.GetApplications(request.AccountId, request.PledgeId);
 
-            var pledgeApplications = await _pledgeService.GetApplications(request.AccountId, request.PledgeId);
             var viewModels = (from application in result.Applications
-                let pledgeApplication = pledgeApplications.Applications.First(x => x.PledgeId == application.PledgeId)
+                let pledgeApplication = result.Applications.First(x => x.PledgeId == application.PledgeId)
                               select new ApplicationViewModel
                               {
                                   EncodedApplicationId = _encodingService.Encode(application.Id, EncodingType.PledgeApplicationId),
