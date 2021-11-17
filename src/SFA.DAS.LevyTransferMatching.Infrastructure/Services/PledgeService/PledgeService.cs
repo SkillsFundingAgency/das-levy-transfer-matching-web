@@ -80,14 +80,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
             return JsonConvert.DeserializeObject<GetApplicationsResponse>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<GetApplicationsForDownloadResponse> GetApplicationsForCsvDownload(long accountId, int pledgeId)
-        {
-            var response = await _client.GetAsync($"accounts/{accountId}/pledges/{pledgeId}/applications/download");
-            response.EnsureSuccessStatusCode();
-
-            return JsonConvert.DeserializeObject<GetApplicationsForDownloadResponse>(await response.Content.ReadAsStringAsync());
-        }
-
         public async Task<GetApplicationResponse> GetApplication(long accountId, int pledgeId, int applicationId, CancellationToken cancellationToken = default)
         {
             var response = await _client.GetAsync($"accounts/{accountId}/pledges/{pledgeId}/applications/{applicationId}", cancellationToken);
