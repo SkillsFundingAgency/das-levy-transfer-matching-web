@@ -257,10 +257,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
         [HttpGet]
         [Route("{encodedPledgeId}/applications/{encodedApplicationId}/approval-options")]
-        public IActionResult ApplicationApprovalOptions(ApplicationApprovalOptionsRequest request)
+        public async Task<IActionResult> ApplicationApprovalOptions(ApplicationApprovalOptionsRequest request)
         {
-            var viewModel = _orchestrator.GetApplicationApprovalOptionsViewModel(request);
-            return View(viewModel);
+            var viewModel = await _orchestrator.GetApplicationApprovalOptionsViewModel(request);
+
+            if (viewModel.IsApplicationPending)
+                return View(viewModel);
+            else
+                return RedirectToAction("Application", new { request.EncodedAccountId, request.EncodedPledgeId, request.EncodedApplicationId });
         }
 
         [HttpPost]

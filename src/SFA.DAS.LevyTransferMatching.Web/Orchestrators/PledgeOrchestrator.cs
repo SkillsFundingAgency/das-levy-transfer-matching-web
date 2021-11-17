@@ -436,14 +436,17 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             return null;
         }
 
-        public ApplicationApprovalOptionsViewModel GetApplicationApprovalOptionsViewModel(ApplicationApprovalOptionsRequest request, CancellationToken cancellationToken = default)
+        public async Task<ApplicationApprovalOptionsViewModel> GetApplicationApprovalOptionsViewModel(ApplicationApprovalOptionsRequest request, CancellationToken cancellationToken = default)
         {
+            var response = await _pledgeService.GetApplicationApprovalOptions(request.AccountId, request.PledgeId, request.ApplicationId, cancellationToken);
+
             return new ApplicationApprovalOptionsViewModel
             {
                 EncodedAccountId = request.EncodedAccountId,
                 EncodedPledgeId = request.EncodedPledgeId,
                 EncodedApplicationId = request.EncodedApplicationId,
-                EmployerAccountName = request.EmployerAccountName
+                EmployerAccountName = response.EmployerAccountName,
+                IsApplicationPending = response.ApplicationStatus == ApplicationStatus.Pending
             };
         }
 

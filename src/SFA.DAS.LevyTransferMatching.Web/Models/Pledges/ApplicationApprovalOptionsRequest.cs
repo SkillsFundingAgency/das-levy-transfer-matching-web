@@ -8,6 +8,16 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public string EncodedAccountId { get; set; }
         public string EncodedPledgeId { get; set; }
         public string EncodedApplicationId { get; set; }
+
+        [AutoDecode(nameof(EncodedAccountId), EncodingType.AccountId)]
+        public int AccountId { get; set; }
+
+        [AutoDecode("EncodedPledgeId", Encoding.EncodingType.PledgeId)]
+        public int PledgeId { get; set; }
+
+        [AutoDecode(nameof(EncodedApplicationId), EncodingType.PledgeApplicationId)]
+        public int ApplicationId { get; set; }
+
         public string EmployerAccountName { get; set; }
     }
 }

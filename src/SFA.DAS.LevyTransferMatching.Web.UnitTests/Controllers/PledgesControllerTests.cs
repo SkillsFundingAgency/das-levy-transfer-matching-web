@@ -465,19 +465,37 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         }
 
         [Test]
-        public void GET_ApplicationApprovalOptions_Returns_Expected_View_With_Expected_ViewModel()
+        public async Task GET_ApplicationApprovalOptions_Returns_Expected_View_With_Expected_ViewModel()
         {
             // Arrange
             var request = _fixture.Create<ApplicationApprovalOptionsRequest>();
-            _orchestrator.Setup(x => x.GetApplicationApprovalOptionsViewModel(request, CancellationToken.None)).Returns(() => new ApplicationApprovalOptionsViewModel());
+            _orchestrator.Setup(x => x.GetApplicationApprovalOptionsViewModel(request, CancellationToken.None)).ReturnsAsync(() => new ApplicationApprovalOptionsViewModel { IsApplicationPending = true });
 
             // Act
-            var viewResult = _pledgesController.ApplicationApprovalOptions(request) as ViewResult;
+            var viewResult = await _pledgesController.ApplicationApprovalOptions(request) as ViewResult;
             var applicationApprovalOptionsViewModel = viewResult?.Model as ApplicationApprovalOptionsViewModel;
 
             // Assert
             Assert.NotNull(viewResult);
             Assert.NotNull(applicationApprovalOptionsViewModel);
+        }
+
+        [Test]
+        public async Task GET_ApplicationApprovalOptions_Returns_Expected_Redirect()
+        {
+            // Arrange
+            var request = _fixture.Create<ApplicationApprovalOptionsRequest>();
+            _orchestrator.Setup(x => x.GetApplicationApprovalOptionsViewModel(request, CancellationToken.None)).ReturnsAsync(() => new ApplicationApprovalOptionsViewModel { IsApplicationPending = false });
+
+            // Act
+            var actionResult = await _pledgesController.ApplicationApprovalOptions(request) as RedirectToActionResult;
+
+            // Assert
+            Assert.NotNull(actionResult);
+            Assert.AreEqual("Application", actionResult.ActionName);
+            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
+            Assert.AreEqual(request.EncodedPledgeId, actionResult.RouteValues["encodedPledgeId"]);
+            Assert.AreEqual(request.EncodedApplicationId, actionResult.RouteValues["encodedApplicationId"]);
         }
 
         [Test]
