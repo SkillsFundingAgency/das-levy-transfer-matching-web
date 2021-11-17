@@ -7,15 +7,11 @@
 
 <a href="@Url.Action("Applications", "Pledges", new { encodedAccountId = ViewContext.RouteData.Values["encodedAccountId"], EncodedPledgeId = ViewContext.RouteData.Values["EncodedPledgeId"]})" class="govuk-back-link">Back to my transfer applications</a>
 
-<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
+<main class="govuk-main-wrapper" id="main-content">
     <partial name="_ValidationSummary" />
-    <div class="govuk-grid-row title-options">
-        <div class="govuk-grid-column-full">
-            <h1 class="govuk-heading-xl">
-                @Model.EmployerAccountName
-            </h1>
-        </div>
-    </div>
+    <h1 class="govuk-heading-xl">
+        @Model.EmployerAccountName
+    </h1>
     <div class="das-highlight">
         <h2 class="govuk-heading-m">Details about the application</h2>
         @*
@@ -39,17 +35,20 @@
             </ul>
         *@
 
-        <dl class="govuk-body app-dl-inline">
-            <dt class="app-dl-inline__title">Location</dt>
-            <dd class="app-dl-inline__definition--strong">@Model.Location</dd>
-            <dt class="app-dl-inline__title">Sector</dt>
-            <dd class="app-dl-inline__definition--strong">@Model.DisplaySectors</dd>
-            <dt class="app-dl-inline__title">Type of job role</dt>
-            <dd class="app-dl-inline__definition--strong">@Model.JobRole</dd>
-            <dt class="app-dl-inline__title">Level</dt>
-            <dd class="app-dl-inline__definition--strong">@Model.Level</dd>
+        <dl class="govuk-body app-dl-icon-list govuk-!-margin-bottom-4">
+            <dt class="app-dl-icon-list__title">
+                @*@if (Model.IsLocationMatch) { <span class="app-dl-icon-list__icon app-dl-icon-list__icon--tick">Match for: </span> }*@
+                Location
+            </dt>
+            <dd class="app-dl-icon-list__definition">@Model.Locations</dd>
+            <dt class="app-dl-icon-list__title">Sector</dt>
+            <dd class="app-dl-icon-list__definition">@Model.DisplaySectors</dd>
+            <dt class="app-dl-icon-list__title">Type of job role</dt>
+            <dd class="app-dl-icon-list__definition">@Model.JobRole</dd>
+            <dt class="app-dl-icon-list__title">Level</dt>
+            <dd class="app-dl-icon-list__definition">@Model.Level</dd>
         </dl>
-        <br />
+  
         <dl class="govuk-body app-dl-inline">
             <dt class="app-dl-inline__title">Apprentices</dt>
             <dd class="app-dl-inline__definition--strong">@Model.NumberOfApprentices</dd>
@@ -70,34 +69,29 @@
         </div>
     }
 
-    @if (Model.ShowAffordabilityPanel)
-    {
-        <div class="das-highlight">
-            <h1 class="govuk-heading-m">Can I afford to fund this training?</h1>
-            <p>Estimated cost over @Model.EstimatedDurationMonths months: <strong>@Model.Affordability.EstimatedCostOverDuration</strong></p>
-
-            <p>
-                <strong>For @Model.Affordability.YearDescription:</strong>
-                <br />
-                Pledge funds remaining this year: <strong>@Model.Affordability.RemainingFunds</strong>
-                <br />
-                Estimated costs this year: <strong>@Model.Affordability.EstimatedCostThisYear</strong>
-            </p>
-
-            <p>Pledge funds remaining if application is approved: <strong>@Model.Affordability.RemainingFundsIfApproved</strong></p>
-            <details class="govuk-details" data-module="govuk-details">
-                <summary class="govuk-details__summary">
-                    <span class="govuk-details__summary-text">
-                        What is estimated cost?
-                    </span>
-                </summary>
-                <div class="govuk-details__text">
-                    <p>The estimated total cost of training is based on the funding band maximum.</p>
-                    <p>The estimated cost of training for this financial year is based on the funding band maximum, the planned start date of training and the 20% completion payment.</p>
-                </div>
-            </details>
-        </div>
-    }
+    <div class="das-highlight">
+        <h2 class="govuk-heading-m">Can I afford to fund this training?</h2>
+        <p>Estimated cost over @Model.EstimatedDurationMonths months: <strong>@Model.Affordability.EstimatedCostOverDuration</strong></p>
+        <h3 class="govuk-heading-s govuk-!-margin-bottom-0">For @Model.Affordability.YearDescription:</h3>
+        <dl class="app-dl-inline govuk-body govuk-!-margin-bottom-4">
+            <dt class="app-dl-inline__title">Pledge funds remaining this year</dt>
+            <dd class="app-dl-inline__definition">@Model.Affordability.RemainingFunds</dd>
+            <dt class="app-dl-inline__title">Estimated costs this year</dt>
+            <dd class="app-dl-inline__definition">@Model.Affordability.EstimatedCostThisYear</dd>
+        </dl>
+        <p>Pledge funds remaining if application is approved: <strong>@Model.Affordability.RemainingFundsIfApproved</strong></p>
+        <details class="govuk-details" data-module="govuk-details">
+            <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">
+                    What is estimated cost?
+                </span>
+            </summary>
+            <div class="govuk-details__text">
+                <p>The estimated total cost of training is based on the funding band maximum.</p>
+                <p>The estimated cost of training for this financial year is based on the funding band maximum, the planned start date of training and the 20% completion payment.</p>
+            </div>
+        </details>
+    </div>
 
     <div class="das-highlight">
         <h2 class="govuk-heading-m">Contact details</h2>
@@ -130,6 +124,7 @@
     @if (Model.AllowApproval)
     {
         <form method="post">
+            @Html.HiddenFor(m => m.EmployerAccountName)
             <div class="govuk-form-group" das-highlight-error-for="SelectedAction" error-class="govuk-form-group--error">
                 <fieldset class="govuk-fieldset">
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
@@ -146,12 +141,12 @@
                         <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="approval-content">
                             <p><strong>Disclaimer:</strong> The information provided by @Model.EmployerAccountName in their application for this pledge has not been checked and verified by the apprenticeship service.<br />Please carry out your own due diligence when deciding whether to offer a transfer of your levy funds.</p>
                         </div>
-                        @*<div class="govuk-radios__item">
-                                <input class="govuk-radios__input" id="SelectedAction-2" name="SelectedAction" asp-for="SelectedAction" type="radio" value="@reject" das-highlight-error-for="SelectedAction" error-class="govuk-textarea--error" />
-                                <label class="govuk-label govuk-radios__label" for="SelectedAction-2">
-                                    Reject the application
-                                </label>
-                            </div>*@
+                        <div class="govuk-radios__item">
+                            <input class="govuk-radios__input" id="SelectedAction-2" name="SelectedAction" asp-for="SelectedAction" type="radio" value="@reject" das-highlight-error-for="SelectedAction" error-class="govuk-textarea--error" />
+                            <label class="govuk-label govuk-radios__label" for="SelectedAction-2">
+                                Reject the application
+                            </label>
+                        </div>
                     </div>
                 </fieldset>
             </div>

@@ -100,5 +100,31 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
         {
             Assert.IsFalse(string.Empty.IsComplete());
         }
+
+        [TestCase("AdditionalLocation", "Manchester, Coventry, AdditionalLocation")]
+        [TestCase("", "Manchester, Coventry")]
+        public void ToApplicationLocationsString_Returns_Correct_String_With_Matches(string additionalLocation, string expected)
+        {
+            var locations = new List<string>
+            {
+                "Manchester",
+                "Coventry"
+            };
+
+            var locationsString = locations.ToApplicationLocationsString(", ", additionalLocation);
+
+            Assert.AreEqual(expected, locationsString);
+        }
+
+        [Test]
+        public void ToApplicationLocationsString_Returns_Correct_String_With_No_Matches()
+        {
+            var locations = new List<string>();
+            var additionalLocation = "Additional location test";
+
+            var locationsString = locations.ToApplicationLocationsString(", ", additionalLocation);
+
+            Assert.AreEqual(additionalLocation, locationsString);
+        }
     }
 }

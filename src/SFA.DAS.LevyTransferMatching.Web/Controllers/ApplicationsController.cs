@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.LevyTransferMatching.Web.Attributes;
@@ -60,13 +59,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
                 return Redirect($"/accounts/{request.EncodedAccountId}/applications/{request.EncodedApplicationId}/accepted");
             }
 
-            if (request.SelectedAction == ApplicationViewModel.ApprovalAction.Withdraw)
+            else if (request.SelectedAction == ApplicationViewModel.ApprovalAction.Withdraw)
             {
                 return Redirect($"/accounts/{request.EncodedAccountId}/applications/{request.EncodedApplicationId}/withdrawn");
             }
-            
-            // TODO: Implemnentation of decline journey
-            throw new NotImplementedException();
+            else
+            {
+                return Redirect($"/accounts/{request.EncodedAccountId}/applications/{request.EncodedApplicationId}/declined");
+            }
         }
 
         [HttpGet]
@@ -74,6 +74,20 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         public async Task<IActionResult> Accepted(AcceptedRequest request)
         {
             var viewModel = await _applicationsOrchestrator.GetAcceptedViewModel(request);
+
+            if (viewModel != null)
+            {
+                return View(viewModel);
+            }
+
+            return NotFound();
+        }
+
+        [HttpGet]
+        [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}/declined")]
+        public async Task<IActionResult> Declined(DeclinedRequest request)
+        {
+            var viewModel = await _applicationsOrchestrator.GetDeclinedViewModel(request);
 
             if (viewModel != null)
             {
