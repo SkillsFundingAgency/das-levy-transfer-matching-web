@@ -11,5 +11,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsServi
         Task SetApplicationAcceptance(SetApplicationAcceptanceRequest request, CancellationToken cancellationToken = default);
         Task<GetAcceptedResponse> GetAccepted(long accountId, int applicationId);
         Task<GetDeclinedResponse> GetDeclined(long accountId, int applicationId);
+        Task<GetWithdrawnResponse> GetWithdrawn(long accountId, int applicationId);
     }
 }

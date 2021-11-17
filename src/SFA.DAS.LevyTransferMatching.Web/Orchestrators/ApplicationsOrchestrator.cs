@@ -158,5 +158,24 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 EmployerNameAndReference = $"{result.EmployerAccountName} ({encodedPledgeId})",
             };
         }
+
+        public async Task<WithdrawnViewModel> GetWithdrawnViewModel(WithdrawnRequest request)
+        {
+            var result = await _applicationsService.GetWithdrawn(request.AccountId, request.ApplicationId);
+
+            if (result == null)
+            {
+                return null;
+            }
+
+            var encodedPledgeId = _encodingService.Encode(result.OpportunityId, EncodingType.PledgeId);
+
+            return new WithdrawnViewModel()
+            {
+                EncodedAccountId = request.EncodedAccountId,
+                EncodedApplicationId = request.EncodedApplicationId,
+                EmployerNameAndReference = $"{result.EmployerAccountName} ({encodedPledgeId})",
+            };
+        }
     }
 }
