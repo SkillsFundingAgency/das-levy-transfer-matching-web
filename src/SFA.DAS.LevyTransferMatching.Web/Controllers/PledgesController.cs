@@ -234,7 +234,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         {
             if(request.DisplayApplicationApprovalOptions && request.SelectedAction == ApplicationPostRequest.ApprovalAction.Approve)
             {
-                return RedirectToAction("ApplicationApprovalOptions", new { request.EncodedAccountId, request.EncodedPledgeId, request.EncodedApplicationId, request.EmployerAccountName });
+                return RedirectToAction("ApplicationApprovalOptions", new { request.EncodedAccountId, request.EncodedPledgeId, request.EncodedApplicationId });
             }
 
             await _orchestrator.SetApplicationOutcome(request);

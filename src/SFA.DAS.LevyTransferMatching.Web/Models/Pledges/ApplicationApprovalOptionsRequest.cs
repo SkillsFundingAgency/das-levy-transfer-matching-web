@@ -17,7 +17,5 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 
         [AutoDecode(nameof(EncodedApplicationId), EncodingType.PledgeApplicationId)]
         public int ApplicationId { get; set; }
-
-        public string EmployerAccountName { get; set; }
     }
 }
