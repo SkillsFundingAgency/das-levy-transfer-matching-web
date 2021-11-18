@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.Encoding;
@@ -50,5 +51,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public decimal TotalEstimatedCost { get; set; }
         public string AdditionalLocations { get; set; }
         public string SpecificLocation { get; set; }
+        public IEnumerable<dynamic> DynamicLocations { get; set; }
     }
 }

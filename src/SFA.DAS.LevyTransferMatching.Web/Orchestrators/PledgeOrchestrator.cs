@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
@@ -263,7 +264,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     SpecificLocation = app.SpecificLocation,
                     Locations = app.Locations,
                     PledgeLocations = app.PledgeLocations,
-                    FormattedLocations = GetCommaSeparatedListOfLocations(app.PledgeLocations, app.Locations, app.SpecificLocation, app.AdditionalLocations)
+                    DynamicLocations = GetListOfLocations(app.PledgeLocations, app.Locations, app.SpecificLocation, app.AdditionalLocations)
                 })
             };
 
@@ -272,11 +273,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             return fileContents;
         }
 
-        private string GetCommaSeparatedListOfLocations(IEnumerable<GetApplyResponse.PledgeLocation> pledgeLocations, IEnumerable<GetApplicationsResponse.ApplicationLocation> applicationLocations, string specificLocation, string additionalLocations)
+        private IEnumerable<dynamic> GetListOfLocations(IEnumerable<GetApplyResponse.PledgeLocation> pledgeLocations, IEnumerable<GetApplicationsResponse.ApplicationLocation> applicationLocations, string specificLocation, string additionalLocations)
         {
-            var listOfMatchingLocations = (from location in applicationLocations 
-                select pledgeLocations?.FirstOrDefault(o => o.Id == location.PledgeLocationId) 
-                into matchedLocation 
+            var listOfMatchingLocations = (from location in applicationLocations
+                select pledgeLocations?.FirstOrDefault(o => o.Id == location.PledgeLocationId)
+                into matchedLocation
                 where matchedLocation != null && !string.IsNullOrWhiteSpace(matchedLocation.Name)
                 select matchedLocation.Name).ToList();
 
@@ -290,9 +291,18 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 listOfMatchingLocations.Add(additionalLocations);
             }
 
-            return string.Join(",", listOfMatchingLocations);
-        }
+            var locations = new List<dynamic>();
+            
+            foreach (var matchingLocation in listOfMatchingLocations)
+            {
+                dynamic location = new ExpandoObject();
+                location.Name = matchingLocation;
+                locations.Add(location);
+            }
 
+            return locations;
+        }
+        
         private LocationSelectPostRequest.SelectValidLocationGroup MapValidLocationGroup(KeyValuePair<int, IEnumerable<string>> kvp)
         {
             return new LocationSelectPostRequest.SelectValidLocationGroup()

@@ -24,7 +24,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Services
         public void GenerateCsvFileFromModel_When_Given_A_Model_Returns_A_Byte_Array()
         {
             var model = _fixture.Create<PledgeApplicationsDownloadModel>();
-
+            foreach (var pledgeApplicationDownloadModel in model.Applications)
+            {
+                pledgeApplicationDownloadModel.DynamicLocations = null;
+            }
             var actual = _csvService.GenerateCsvFileFromModel(model);
 
             Assert.IsTrue(actual.Length > 0);
