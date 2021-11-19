@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using SFA.DAS.LevyTransferMatching.Domain.Types;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
-using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types
 {
