@@ -201,5 +201,45 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             Assert.NotNull(actionResult);
             Assert.NotNull(notFoundResult);
         }
+
+        [Test]
+        public async Task GET_Withdrawn_ApplicationExists_ReturnsViewAndModel()
+        {
+            // Arrange
+            var request = _fixture.Create<WithdrawnRequest>();
+            _orchestrator
+                .Setup(x => x.GetWithdrawnViewModel(It.Is<WithdrawnRequest>(y => y == request)))
+                .ReturnsAsync(new WithdrawnViewModel());
+
+            // Act
+            var actionResult = await _controller.Withdrawn(request);
+            var viewResult = actionResult as ViewResult;
+            var model = viewResult.Model;
+            var withdrawnViewModel = model as WithdrawnViewModel;
+
+            // Assert
+            Assert.NotNull(actionResult);
+            Assert.NotNull(viewResult);
+            Assert.NotNull(model);
+            Assert.NotNull(withdrawnViewModel);
+        }
+
+        [Test]
+        public async Task GET_Withdrawn_ApplicationDoesntExist_ReturnsNotFound()
+        {
+            // Arrange
+            var request = _fixture.Create<WithdrawnRequest>();
+            _orchestrator
+                .Setup(x => x.GetWithdrawnViewModel(It.Is<WithdrawnRequest>(y => y == request)))
+                .ReturnsAsync((WithdrawnViewModel)null);
+
+            // Act
+            var actionResult = await _controller.Withdrawn(request);
+            var notFoundResult = actionResult as NotFoundResult;
+
+            // Assert
+            Assert.NotNull(actionResult);
+            Assert.NotNull(notFoundResult);
+        }
     }
 }

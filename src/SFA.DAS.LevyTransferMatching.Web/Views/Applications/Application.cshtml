@@ -25,7 +25,7 @@
                 </strong>
             </div>
 
-           @if (Model.DisplayCurrentFundsBalance)
+            @if (Model.DisplayCurrentFundsBalance)
             {
                 <div>
                     <h2 class="govuk-heading-m">Current funds balance</h2>
@@ -56,8 +56,10 @@
             </section>
 
             <partial name="_ApplicationCanAcceptFundingPartial" model="Model" />
-            
+
             <partial name="_ApplicationCanUseTransferFundsPartial" model="Model" />
+
+            <partial name="_ApplicationCanWithdrawPartial" model="Model" />
 
         </div>
 
