@@ -5,10 +5,9 @@
 @{
     ViewData["Title"] = "Pledge Applications";
     var breadCrumbs = new List<Tuple<string, string>>
-{
+    {
         new Tuple<string, string>(LinkGenerator.AccountsLink($"accounts/{Model.EncodedAccountId}/teams"), "Home"),
-        new Tuple<string, string>(LinkGenerator.FinanceLink($"accounts/{Model.EncodedAccountId}/finance"), "Finance"),
-        new Tuple<string, string>(LinkGenerator.FinanceLink($"accounts/{Model.EncodedAccountId}/transfers"), "Transfers"),
+        new Tuple<string, string>(LinkGenerator.FinanceLink($"accounts/{Model.EncodedAccountId}/transfers"), "Your transfers"),
         new Tuple<string, string>($"/accounts/{@Model.EncodedAccountId}/pledges", "My transfer pledges"),
         new Tuple<string, string>("", $"Transfer pledge {@Model.EncodedPledgeId}")
     };
@@ -18,6 +17,22 @@
 
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
     <div class="govuk-width-container">
+       @if (Model.DisplayRejectedBanner)
+        {
+        <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+            <div class="govuk-notification-banner__header">
+                <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+                    Success
+                </h2>
+            </div>
+            <div class="govuk-notification-banner__content">
+                <h3 class="govuk-notification-banner__heading">
+                    Application rejected
+                </h3>
+                <p class="govuk-body">You rejected the @Model.RejectedEmployerName application.</p>
+            </div>
+        </div>
+        }
 
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
@@ -39,14 +54,14 @@
     </details>
     <table class="govuk-table" aria-label="Pledge applications">
         <thead class="govuk-table__head">
-            <tr class="govuk-table__row">
-                <th scope="col" class="govuk-table__header applicant">Applicant</th>
+                            <tr class="govuk-table__row">
+                                <th scope="col" class="govuk-table__header applicant">Applicant</th>
                 <th scope="col" class="govuk-table__header tax-year ">Estimated cost @Model.TaxYear</th>
-                <th scope="col" class="govuk-table__header duration">Typical duration</th>
-                <th scope="col" class="govuk-table__header">Criteria</th>
-                <th scope="col" class="govuk-table__header">Date applied</th>
-                <th scope="col" class="govuk-table__header status">Status</th>
-            </tr>
+                                <th scope="col" class="govuk-table__header duration" >Typical duration</th>
+                                <th scope="col" class="govuk-table__header">Criteria</th>
+                                <th scope="col" class="govuk-table__header">Date applied</th>
+                                <th scope="col" class="govuk-table__header status" >Status</th>
+                            </tr>
         </thead>
         <tbody class="govuk-table__body">
             @{
@@ -69,16 +84,17 @@
                     }
                 }
 
-                else
-                {
-                    <tr class="govuk-table__row" data-table-row="one">
-                        <td colspan="6" class="govuk-table__cell">No applications received yet</td>
-                    </tr>
-                }
-            }
+                                else
+                                {
+                                    <tr class="govuk-table__row" data-table-row="one">
+                                        <td colspan="6" class="govuk-table__cell">No applications received yet</td>
+                                    </tr>
+                                }
+                            }
         </tbody>
     </table>
                 </div>
+                
     <div class="govuk-button-group">
         <form action="/accounts/@Model.EncodedAccountId/pledges/create/inform" method="get">
             <button class="govuk-button">
@@ -86,6 +102,7 @@
             </button>
         </form>
     </div>
+                
     <a href="/accounts/@Model.EncodedAccountId/pledges" class="govuk-back-link">Back to my transfer pledges</a>
 
     @if (Model.Applications.Any())

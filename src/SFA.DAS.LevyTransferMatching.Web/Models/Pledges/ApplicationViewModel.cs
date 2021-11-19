@@ -41,7 +41,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public AffordabilityViewModel Affordability { get; set; }
 
         public bool AllowApproval { get; set; }
-        public bool ShowAffordabilityPanel { get; set; }
         public bool IsSectorMatch { get; set; }
         public bool IsJobRoleMatch { get; set; }
         public bool IsLevelMatch { get; set; }

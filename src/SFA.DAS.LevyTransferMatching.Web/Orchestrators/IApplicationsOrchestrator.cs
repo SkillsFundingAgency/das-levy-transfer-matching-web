@@ -10,5 +10,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         Task<ApplicationViewModel> GetApplication(ApplicationRequest request);
         Task SetApplicationAcceptance(ApplicationPostRequest request);
         Task<AcceptedViewModel> GetAcceptedViewModel(AcceptedRequest request);
+        Task<DeclinedViewModel> GetDeclinedViewModel(DeclinedRequest request);
     }
 }
