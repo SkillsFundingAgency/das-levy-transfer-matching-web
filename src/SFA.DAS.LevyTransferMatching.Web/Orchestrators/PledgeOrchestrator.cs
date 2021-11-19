@@ -488,7 +488,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 DisplayRejectedBanner = request.DisplayRejectedBanner,
                 RejectedEmployerName = request.RejectedEmployerName,
                 Applications = viewModels
-                    Duration = app.Standard.ApprenticeshipFunding.GetEffectiveFundingLine(app.StartDate).Duration,
             };
         }
 
