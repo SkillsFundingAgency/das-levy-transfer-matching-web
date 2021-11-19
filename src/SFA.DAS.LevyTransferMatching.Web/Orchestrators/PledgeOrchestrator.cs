@@ -257,7 +257,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     IsLocationMatch = app.IsLocationMatch,
                     IsSectorMatch = app.IsSectorMatch,
                     Duration = app.StandardDuration,
-                    EstimatedCostThisYear = app.Amount.ToCurrencyString(),
+                    EstimatedCostThisYear = app.Amount,
                     Level = app.Level,
                     TotalEstimatedCost = app.MaxFunding,
                     AdditionalLocations = app.AdditionalLocations,

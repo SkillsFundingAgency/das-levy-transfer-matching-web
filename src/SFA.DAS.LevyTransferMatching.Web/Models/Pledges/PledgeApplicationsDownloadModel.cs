@@ -47,8 +47,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public bool IsSectorMatch { get; set; }
         public bool IsJobRoleMatch { get; set; }
         public bool IsLevelMatch { get; set; }
-        public string EstimatedCostThisYear { get; set; }
-        public decimal TotalEstimatedCost { get; set; }
+        public int EstimatedCostThisYear { get; set; }
+        public int TotalEstimatedCost { get; set; }
         public string AdditionalLocations { get; set; }
         public string SpecificLocation { get; set; }
         public IEnumerable<dynamic> DynamicLocations { get; set; }

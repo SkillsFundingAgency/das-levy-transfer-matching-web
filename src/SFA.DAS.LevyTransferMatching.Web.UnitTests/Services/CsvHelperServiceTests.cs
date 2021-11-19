@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Text;
 using AutoFixture;
 using NUnit.Framework;
@@ -31,6 +32,26 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Services
             var actual = _csvService.GenerateCsvFileFromModel(model);
 
             Assert.IsTrue(actual.Length > 0);
+        }
+
+        [TestCase(0, false)]
+        [TestCase(1, true)]
+        [TestCase(3, true)]
+        public void AddLocationColumns_WhenGivenData_SetsTheExactAmountOfColumnsAcrossAllApplications(int totalLocationColumnsRequired, bool expectedOutcome)
+        {
+            var model = _fixture.Create<PledgeApplicationDownloadModel>();
+            dynamic locationObject = new ExpandoObject();
+            locationObject.Name = "Sheffield";
+            model.DynamicLocations = new List<dynamic>
+            {
+                locationObject
+            };
+
+            dynamic returnModel = new ExpandoObject();
+            CsvHelperService.AddLocationColumns(model, returnModel, totalLocationColumnsRequired);
+
+            var expandoDict = returnModel as IDictionary<string, object>;
+            Assert.AreEqual(expectedOutcome, expandoDict.ContainsKey($"Location{totalLocationColumnsRequired}"));
         }
     }
 }
