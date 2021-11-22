@@ -38,12 +38,24 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
         public bool ComplyWithRules { get; set; }
         public bool HasAcceptedTermsAndConditions => SelectedAction != null && TruthfulInformation && ComplyWithRules;
 
+        public bool IsDeclineConfirmed { get; set; }
+
         public string EstimatedTotalCost { get; set; }
         public bool RenderCanUseTransferFundsStartButton { get; set; }
+        public bool CanWithdraw { get; set; }
+        public bool IsWithdrawalConfirmed { get; set; }
         public enum ApprovalAction
         {
             Accept,
             Decline,
+            Withdraw,
+            None
         }
+
+        public bool DisplayCurrentFundsBalance { get; set; }
+        public string Amount { get; set; }
+        public string AmountUsed { get; set; }
+        public string AmountRemaining { get; set; }
+        public int NumberOfApprenticesRemaining { get; set; }
     }
 }

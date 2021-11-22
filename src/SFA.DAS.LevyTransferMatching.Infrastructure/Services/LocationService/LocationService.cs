@@ -1,10 +1,8 @@
 ﻿using Newtonsoft.Json;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
-using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.LocationService
 {
@@ -30,7 +28,8 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.LocationService
 
         public async Task<LocationInformationDto> GetLocationInformation(string location)
         {
-            var response = await _client.GetAsync($"locations/information?location={location}");
+            var encodedLocation = HttpUtility.UrlEncode(location);
+            var response = await _client.GetAsync($"locations/information?location={encodedLocation}");
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
