@@ -238,7 +238,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     Status = app.Status,
                     ApplicationId = app.Id,
                     PledgeId = app.PledgeId,
-                    EmployerAccountName = app.EmployerAccountName,
+                    EmployerAccountName = app.DasAccountName,
                     HasTrainingProvider = app.HasTrainingProvider,
                     Sectors = app.Sectors ?? new List<string>(),
                     AboutOpportunity = app.Details,
