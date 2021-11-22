@@ -10,6 +10,7 @@
 @if (Model.CanAcceptFunding)
 {
     <form method="post">
+        @Html.HiddenFor(m => m.CanAcceptFunding)
         <h2 class="govuk-heading-m">Do you want to accept this transfer of funds?</h2>
         <div das-highlight-error-for="SelectedAction" error-class="govuk-form-group--error">
             <div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios" das-highlight-error-for="HasAcceptedTermsAndConditions" error-class="govuk-form-group--error">

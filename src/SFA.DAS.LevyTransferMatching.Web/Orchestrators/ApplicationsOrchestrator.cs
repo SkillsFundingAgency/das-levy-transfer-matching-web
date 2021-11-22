@@ -105,7 +105,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                  AmountUsed = result.AmountUsed.ToCurrencyString(),
                  AmountRemaining = (result.TotalAmount - result.AmountUsed) < 0 ? 0.ToCurrencyString() : (result.TotalAmount - result.AmountUsed).ToCurrencyString(),
                  NumberOfApprenticesRemaining = (result.NumberOfApprentices - result.NumberOfApprenticesUsed) < 0 ? 0 : (result.NumberOfApprentices - result.NumberOfApprenticesUsed),
-                 AllowTransferRequestAutoApproval = result.AllowTransferRequestAutoApproval
             };
         }
 
@@ -117,9 +116,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 AccountId = request.AccountId,
                 UserDisplayName = _userService.GetUserDisplayName(),
                 UserId = _userService.GetUserId(),
-                Acceptance = request.SelectedAction == ApplicationViewModel.ApprovalAction.Accept ?
-                    SetApplicationAcceptanceRequest.ApplicationAcceptance.Accept
-                    : SetApplicationAcceptanceRequest.ApplicationAcceptance.Decline,
+                Acceptance = (SetApplicationAcceptanceRequest.ApplicationAcceptance)request.SelectedAction
             });
         }
 
@@ -154,6 +151,25 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             var encodedPledgeId = _encodingService.Encode(result.OpportunityId, EncodingType.PledgeId);
 
             return new DeclinedViewModel()
+            {
+                EncodedAccountId = request.EncodedAccountId,
+                EncodedApplicationId = request.EncodedApplicationId,
+                EmployerNameAndReference = $"{result.EmployerAccountName} ({encodedPledgeId})",
+            };
+        }
+
+        public async Task<WithdrawnViewModel> GetWithdrawnViewModel(WithdrawnRequest request)
+        {
+            var result = await _applicationsService.GetWithdrawn(request.AccountId, request.ApplicationId);
+
+            if (result == null)
+            {
+                return null;
+            }
+
+            var encodedPledgeId = _encodingService.Encode(result.OpportunityId, EncodingType.PledgeId);
+
+            return new WithdrawnViewModel()
             {
                 EncodedAccountId = request.EncodedAccountId,
                 EncodedApplicationId = request.EncodedApplicationId,

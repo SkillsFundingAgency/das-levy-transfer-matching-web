@@ -6,6 +6,7 @@ using static SFA.DAS.LevyTransferMatching.Web.Models.Applications.ApplicationVie
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Applications
 {
+    [TestFixture]
     public class ApplicationPostRequestValidatorTests
     {
         private Fixture _fixture;
@@ -70,7 +71,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Applications
                 .Create();
 
             var actual = _validator.Validate(request);
-
             Assert.IsTrue(actual.IsValid);
         }
 
@@ -101,5 +101,34 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Applications
 
             Assert.IsTrue(actual.IsValid);
         }
+
+        [Test]
+        public void ValidatorReturnsFalseWhenWithdrawalNotConfirmed()
+        {
+            var actual = _validator.Validate(CreateApplicationStatusPostRequest(approvalAction: ApprovalAction.Withdraw));
+            Assert.IsFalse(actual.IsValid);
+        }
+
+        [Test]
+        public void ValidatorReturnsFalseWhenNoWithdrawalActionSelected()
+        {
+            var actual = _validator.Validate(CreateApplicationStatusPostRequest(approvalAction: null, canWithdraw: true));
+            Assert.IsFalse(actual.IsValid);
+        }
+
+        private ApplicationPostRequest CreateApplicationStatusPostRequest(bool truthfulInformation = false, bool complyWithRules = false, ApprovalAction? approvalAction = ApprovalAction.Decline, bool canAcceptFunding = false, bool canWithdraw = false, bool isWithdrawalConfirmed = false) =>
+            new ApplicationPostRequest()
+            {
+                EncodedAccountId = "HGVVMY",
+                AccountId = 1,
+                ApplicationId = 1,
+                TruthfulInformation = truthfulInformation,
+                ComplyWithRules = complyWithRules,
+                EncodedApplicationId = "YTVWM6",
+                SelectedAction = approvalAction,
+                CanAcceptFunding = canAcceptFunding,
+                CanWithdraw = canWithdraw,
+                IsWithdrawalConfirmed = isWithdrawalConfirmed
+            };
     }
 }
