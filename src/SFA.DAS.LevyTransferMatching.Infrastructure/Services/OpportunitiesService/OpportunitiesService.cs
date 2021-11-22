@@ -26,8 +26,8 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
         public async Task<GetIndexResponse> GetIndex()
         {
             var response = await _client.GetAsync($"opportunities");
-            response.EnsureSuccessStatusCode();
-            return JsonConvert.DeserializeObject<GetIndexResponse>(await response.Content.ReadAsStringAsync());
+
+            return await response.HandleDeserialisationOrThrow<GetIndexResponse>();
         }
 
         public async Task<GetApplicationDetailsResponse> GetApplicationDetails(long accountId, int id, string standardId = default)
@@ -54,8 +54,8 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
         public async Task<GetSectorResponse> GetSector(long accountId, int pledgeId, string postcode)
         {
             var response = await _client.GetAsync($"accounts/{accountId}/opportunities/{pledgeId}/apply/sector?postcode={postcode}");
-            response.EnsureSuccessStatusCode();
-            return JsonConvert.DeserializeObject<GetSectorResponse>(await response.Content.ReadAsStringAsync());
+
+            return await response.HandleDeserialisationOrThrow<GetSectorResponse>();
         }
 
         public async Task<GetContactDetailsResponse> GetContactDetails(long accountId, int pledgeId)
@@ -95,8 +95,8 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
         public async Task<GetSelectAccountResponse> GetSelectAccount(int opportunityId, string userId)
         {
             var response = await _client.GetAsync($"opportunities/{opportunityId}/select-account?userId={userId}");
-            response.EnsureSuccessStatusCode();
-            return JsonConvert.DeserializeObject<GetSelectAccountResponse>(await response.Content.ReadAsStringAsync());
+
+            return await response.HandleDeserialisationOrThrow<GetSelectAccountResponse>();
         }
     }
 }
