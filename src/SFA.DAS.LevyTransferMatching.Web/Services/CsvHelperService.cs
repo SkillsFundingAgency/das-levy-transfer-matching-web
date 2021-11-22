@@ -43,31 +43,31 @@ namespace SFA.DAS.LevyTransferMatching.Web.Services
             {
                 dynamic record = new ExpandoObject();
 
-                record.PledgeId = application.EncodedPledgeId;
-                record.ApplicationId = application.EncodedApplicationId;
-                record.DateApplied = application.DateApplied;
-                record.ApplicationStatus = application.Status;
-                record.EmployerName = application.EmployerAccountName;
+                AddProperty(record, "Pledge Id", application.EncodedPledgeId);
+                AddProperty(record, "Application Id", application.EncodedApplicationId);
+                AddProperty(record, "Date Applied", application.DateApplied);
+                AddProperty(record, "Application Status", application.Status);
+                AddProperty(record, "Employer Name", application.EmployerAccountName);
                 
                 AddLocationColumns(application, record, totalLocationColumnsRequired);
 
-                record.LocationMatch = application.IsLocationMatch.ToYesNo();
-                record.Sectors = application.FormattedSectors;
-                record.SectorMatch = application.IsSectorMatch.ToYesNo();
-                record.JobRole = application.TypeOfJobRole;
-                record.JobRoleMatch = application.IsJobRoleMatch.ToYesNo();
-                record.Level = application.Level;
-                record.LevelMatch = application.IsLevelMatch.ToYesNo();
-                record.NumberOfApprentices = application.NumberOfApprentices;
-                record.StartBy = application.StartBy;
-                record.HaveATrainingProvider = application.HasTrainingProvider.ToYesNo();
-                record.About = application.AboutOpportunity;
-                record.Duration = application.Duration;
-                record.TotalEstimatedCost = application.TotalEstimatedCost;
-                record.EstimatedCostThisYear = application.EstimatedCostThisYear;
-                record.ContactName = application.ContactName;
-                record.EmailAddresses = application.FormattedEmailAddress;
-                record.BusinessWebsite = application.BusinessWebsite;
+                AddProperty(record, "Location Match", application.IsLocationMatch.ToYesNo());
+                AddProperty(record, "Sectors", application.FormattedSectors);
+                AddProperty(record, "Sector Match",application.IsSectorMatch.ToYesNo());
+                AddProperty(record, "Job Role", application.TypeOfJobRole);
+                AddProperty(record, "Job Role Match", application.IsJobRoleMatch.ToYesNo());
+                AddProperty(record, "Level", application.Level);
+                AddProperty(record, "Level Match", application.IsLevelMatch.ToYesNo());
+                AddProperty(record, "Number of apprentices", application.NumberOfApprentices);
+                AddProperty(record, "Start By", application.StartBy);
+                AddProperty(record, "Have a training provider", application.HasTrainingProvider.ToYesNo());
+                AddProperty(record, "About", application.AboutOpportunity);
+                AddProperty(record, "Duration (Months)", application.Duration);
+                AddProperty(record, "Total Estimated Cost", application.TotalEstimatedCost);
+                AddProperty(record, "Estimated cost this year", application.EstimatedCostThisYear);
+                AddProperty(record, "Contact Name", application.ContactName);
+                AddProperty(record, "Email Addresses", application.FormattedEmailAddress );
+                AddProperty(record, "Business Website", application.BusinessWebsite); 
 
                 listOfRecords.Add(record);
             }
