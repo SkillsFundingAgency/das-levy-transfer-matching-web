@@ -300,7 +300,30 @@ th.status {
     background-image: url("/assets/images/icon-website--blue.svg");
 }
 
+/* Section break options */  
+
+.app-section-break--dashed {
+    border-bottom-style: dashed;
+}
+
 .app-criteria-list {
     color: grey;
     font-size: 16px;
+}
+.app-section-break--medium {
+    border-bottom-width: 2px;
+}
+
+.app-section-break--heavy {
+    border-bottom-width: 5px;
+}
+
+
+.app-download-link {
+    background-image: url("/assets/images/icon-document--black.svg");
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: top left;
+    padding: .5em .5em .5em 2.4em;
+    display: inline-block;
 }

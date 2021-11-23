@@ -67,13 +67,13 @@ if($help)
 $projectDir = $Env:PROJECTS_DIR
 if([string]::IsNullOrEmpty($projectDir))
 {
-    $projectDir = "E:\ESFA"
+    $projectDir = "C:\Code\Contracting\"
 }
 
 $vsLocation = $Env:VS2019_PATH
 if([string]::IsNullOrEmpty($vsLocation))
 {
-    $vsLocation = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\Common7\IDE\"
+    $vsLocation = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\IDE\"
 }
 
 $dockerLocation = $Env:DOCKER_PATH
@@ -150,10 +150,10 @@ if($clone)
 # Start LTM projects in VS2019
 if($open -and (Test-Path -Path "${vsLocation}" -PathType Container))
 {
-    Start-VisualStudio -projectPath '.\das-levy-transfer-matching-web\das-levy-transfer-matching-web\src\SFA.DAS.LevyTransferMatching.Web.sln'
-    Start-VisualStudio -projectPath '.\das-levy-transfer-matching-api\das-levy-transfer-matching-api\src\SFA.DAS.LevyTransferMatching.Api.sln'
-    Start-VisualStudio -projectPath '.\das-levy-transfer-matching-functions\das-levy-transfer-matching-functions\src\SFA.DAS.LevyTransferMatching.Functions.sln'
+    Start-VisualStudio -projectPath '.\das-levy-transfer-matching-web\src\SFA.DAS.LevyTransferMatching.Web.sln'
+    Start-VisualStudio -projectPath '.\das-levy-transfer-matching-functions\src\SFA.DAS.LevyTransferMatching.Functions.sln'
     Start-VisualStudio -projectPath '.\das-apim-endpoints\src\SFA.DAS.Apim.Endpoints.sln'
+    Start-VisualStudio -projectPath '.\das-levy-transfer-matching-api\src\SFA.DAS.LevyTransferMatching.Api.sln'
     Start-VisualStudio -projectPath '.\das-employerapprenticeshipsservice\src\SFA.DAS.EAS.sln'
     Start-VisualStudio -projectPath '.\das-courses-api\src\SFA.DAS.Courses.sln'
     Start-VisualStudio -projectPath '.\das-location-api\src\SFA.DAS.Location.sln'

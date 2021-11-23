@@ -53,7 +53,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Extensions
         public static string ToApplicationLocationsString(this IEnumerable<string> list, string separator, string additionalLocation)
         {
             string applicationLocationsString = "";
-            if (list.Any())
+            if (list != null && list.Any())
             {
                 list = list.Select(x => x.Contains(',') ? x.Split(',')[0] : x);
                 applicationLocationsString = string.Join(separator, list);
@@ -64,7 +64,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Extensions
             }
             else
             {
-                applicationLocationsString = additionalLocation;
+                applicationLocationsString = additionalLocation ?? string.Empty;
             }
 
             return applicationLocationsString;
