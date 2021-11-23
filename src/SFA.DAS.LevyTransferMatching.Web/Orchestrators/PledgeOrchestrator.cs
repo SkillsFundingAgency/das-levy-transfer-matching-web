@@ -498,37 +498,32 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             var isOwnerOrTransactor = _userService.IsOwnerOrTransactor(request.AccountId);
 
-            if (result != null)
+            return new ApplicationViewModel
             {
-                return new ApplicationViewModel
-                {
-                    AboutOpportunity = result.AboutOpportunity,
-                    BusinessWebsite = GetUrlWithPrefix(result.BusinessWebsite),
-                    EmailAddresses = result.EmailAddresses,
-                    EmployerAccountName = result.EmployerAccountName,
-                    EstimatedDurationMonths = result.EstimatedDurationMonths,
-                    FirstName = result.FirstName,
-                    HasTrainingProvider = result.HasTrainingProvider,
-                    LastName = result.LastName,
-                    NumberOfApprentices = result.NumberOfApprentices,
-                    StartBy = result.StartBy,
-                    Sectors = result.Sector,
-                    AllSectors = result.AllSectors,
-                    PledgeSectors = result.PledgeSectors,
-                    PledgeJobRoles = result.PledgeJobRoles,
-                    PledgeLevels = result.PledgeLevels,
-                    PledgeLocations = result.PledgeLocations,
-                    JobRole = result.TypeOfJobRole,
-                    Level = result.Level,
-                    DisplaySectors = result.Sector.ToReferenceDataDescriptionList(result.AllSectors),
+                AboutOpportunity = result.AboutOpportunity,
+                BusinessWebsite = GetUrlWithPrefix(result.BusinessWebsite),
+                EmailAddresses = result.EmailAddresses,
+                EmployerAccountName = result.EmployerAccountName,
+                EstimatedDurationMonths = result.EstimatedDurationMonths,
+                FirstName = result.FirstName,
+                HasTrainingProvider = result.HasTrainingProvider,
+                LastName = result.LastName,
+                NumberOfApprentices = result.NumberOfApprentices,
+                StartBy = result.StartBy,
+                Sectors = result.Sector,
+                AllSectors = result.AllSectors,
+                PledgeSectors = result.PledgeSectors,
+                PledgeJobRoles = result.PledgeJobRoles,
+                PledgeLevels = result.PledgeLevels,
+                PledgeLocations = result.PledgeLocations,
+                JobRole = result.TypeOfJobRole,
+                Level = result.Level,
+                DisplaySectors = result.Sector.ToReferenceDataDescriptionList(result.AllSectors),
                     Locations = string.IsNullOrEmpty(result.SpecificLocation) ? result.Locations.ToApplicationLocationsString(", ", result.AdditionalLocation) : result.SpecificLocation,
                     IsLocationMatch = (result.Locations != null && result.Locations.Any()) || !result.PledgeLocations.Any(),
-                    Affordability = GetAffordabilityViewModel(result.Amount, result.PledgeRemainingAmount, result.NumberOfApprentices, result.MaxFunding, result.EstimatedDurationMonths, result.StartBy),
-                    AllowApproval = result.Status == ApplicationStatus.Pending && result.Amount <= result.PledgeRemainingAmount && isOwnerOrTransactor
-                };
-            }
-
-            return null;
+                Affordability = GetAffordabilityViewModel(result.Amount, result.PledgeRemainingAmount, result.NumberOfApprentices, result.MaxFunding, result.EstimatedDurationMonths, result.StartBy),
+                AllowApproval = result.Status == ApplicationStatus.Pending && result.Amount <= result.PledgeRemainingAmount && isOwnerOrTransactor
+            };
         }
 
         public async Task SetApplicationOutcome(ApplicationPostRequest request)

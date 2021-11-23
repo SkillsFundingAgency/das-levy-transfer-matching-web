@@ -10,8 +10,21 @@ using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
 using System.Collections.Generic;
+using System.Linq.Expressions;
+using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
+using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
+using SFA.DAS.LevyTransferMatching.Web.UnitTests.Helpers;
+using ApplicationRequest = SFA.DAS.LevyTransferMatching.Web.Models.Opportunities.ApplicationRequest;
+using ConfirmationRequest = SFA.DAS.LevyTransferMatching.Web.Models.Opportunities.ConfirmationRequest;
+using ConfirmationViewModel = SFA.DAS.LevyTransferMatching.Web.Models.Opportunities.ConfirmationViewModel;
+using DetailRequest = SFA.DAS.LevyTransferMatching.Web.Models.Opportunities.DetailRequest;
+using DetailViewModel = SFA.DAS.LevyTransferMatching.Web.Models.Opportunities.DetailViewModel;
+using NotFoundResult = Microsoft.AspNetCore.Mvc.NotFoundResult;
+using SectorPostRequest = SFA.DAS.LevyTransferMatching.Web.Models.Opportunities.SectorPostRequest;
+using SectorRequest = SFA.DAS.LevyTransferMatching.Web.Models.Opportunities.SectorRequest;
+using SectorViewModel = SFA.DAS.LevyTransferMatching.Web.Models.Opportunities.SectorViewModel;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
 {
@@ -68,23 +81,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         }
         
         [Test]
-        public async Task GET_Detail_Opportunity_Doesnt_Exist_Returns_404()
-        {
-            // Arrange
-            var detailRequest = _fixture.Create<DetailRequest>();
-
-            _orchestrator
-                .Setup(x => x.GetDetailViewModel(It.Is<int>(y => y == detailRequest.PledgeId)))
-                .ReturnsAsync((DetailViewModel)null);
-
-            // Act
-            var notFoundResult = await _opportunitiesController.Detail(detailRequest) as NotFoundResult;
-
-            // Assert
-            Assert.NotNull(notFoundResult);
-        }
-
-        [Test]
         public void POST_Detail_No_Selected_Redirects_To_Index()
         {
             // Arrange
@@ -135,14 +131,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
                 .Setup(x => x.GetSelectAccountViewModel(It.Is<SelectAccountRequest>(y => y == selectAccountRequest)))
                 .ReturnsAsync(viewModel);
 
-            string encodedPledgeId = _fixture.Create<string>();
-
             var actionResult = await _opportunitiesController.SelectAccount(selectAccountRequest);
             var redirectToActionResult = actionResult as RedirectToActionResult;
 
             Assert.IsNotNull(actionResult);
             Assert.IsNotNull(redirectToActionResult);
-            
+
             Assert.AreEqual(redirectToActionResult.ActionName, nameof(OpportunitiesController.Apply));
         }
 
@@ -158,8 +152,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             _orchestrator
                 .Setup(x => x.GetSelectAccountViewModel(It.Is<SelectAccountRequest>(y => y == selectAccountRequest)))
                 .ReturnsAsync(expectedViewModel);
-
-            string encodedPledgeId = _fixture.Create<string>();
 
             var actionResult = await _opportunitiesController.SelectAccount(selectAccountRequest);
             var viewResult = actionResult as ViewResult;
@@ -186,8 +178,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             _orchestrator
                 .Setup(x => x.GetSelectAccountViewModel(It.Is<SelectAccountRequest>(y => y == selectAccountRequest)))
                 .ReturnsAsync(expectedViewModel);
-
-            string encodedPledgeId = _fixture.Create<string>();
 
             var actionResult = await _opportunitiesController.SelectAccount(selectAccountRequest);
             var viewResult = actionResult as ViewResult;
@@ -216,7 +206,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var actualViewModel = viewResult.Model as MoreDetailsViewModel;
 
             Assert.IsNotNull(viewResult);
-            Assert.IsNotNull(actualViewModel);            
+            Assert.IsNotNull(actualViewModel);
             Assert.AreEqual(expectedViewModel, actualViewModel);
             _orchestrator.Verify(x => x.GetMoreDetailsViewModel(request), Times.Once);
         }
@@ -267,7 +257,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             Assert.NotNull(viewResult);
             Assert.NotNull(contactDetailsViewModel);
         }
-
+        
         [Test]
         public async Task POST_ContactDetails_Cache_Updated_And_Redirects_To_Apply()
         {
@@ -283,12 +273,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             };
 
             bool cacheUpdated = false;
+
             _orchestrator
-                .Setup(x => x.UpdateCacheItem(It.Is<ContactDetailsPostRequest>(y => y == contactDetailsPostRequest)))
-                .Callback(() =>
-                {
-                    cacheUpdated = true;
-                });
+               .Setup(x => x.UpdateCacheItem(It.Is<ContactDetailsPostRequest>(y => y == contactDetailsPostRequest)))
+               .Callback(() =>
+               {
+                   cacheUpdated = true;
+               });
 
             // Assert
             var redirectToActionResult = await _opportunitiesController.ContactDetails(contactDetailsPostRequest) as RedirectToActionResult;
@@ -350,6 +341,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             };
 
             var opportunitiesService = new Mock<IOpportunitiesService>();
+
             opportunitiesService.Setup(x => x.GetApplicationDetails(1, 1, selectedStandardId)).ReturnsAsync(new GetApplicationDetailsResponse()
             {
                 Opportunity = new GetApplicationDetailsResponse.OpportunityData()
@@ -374,7 +366,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
                     }
                 }
             });
-
 
             _orchestrator.Setup(x => x.PostApplicationViewModel(request)).ReturnsAsync(applicationRequest);
 
@@ -445,6 +436,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
 
 
             _orchestrator.Setup(x => x.PostApplicationViewModel(request)).ReturnsAsync(applicationRequest);
+
 
             // Assert
             var redirectToActionResult = (await _opportunitiesController.ApplicationDetails(new ApplicationDetailsPostRequestAsyncValidator(opportunitiesService.Object), request)) as RedirectToActionResult;
@@ -522,6 +514,72 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             Assert.AreEqual(redirectToActionResult.RouteValues["EncodedAccountId"], encodedAccountId);
             Assert.AreEqual(redirectToActionResult.RouteValues["CacheKey"], cacheKey);
             _orchestrator.Verify(x => x.UpdateCacheItem(request), Times.Once);
+        }
+
+        [Test]
+        public async Task GET_Apply_Returns_View_Model()
+        {
+            var accountId = _fixture.Create<long>();
+            var pledgeId = _fixture.Create<int>();
+            var viewModel = _fixture.Create<ApplyViewModel>();
+
+            var applicationRequest = new ApplicationRequest
+            {
+                AccountId = accountId,
+                PledgeId = pledgeId
+            };
+
+            _orchestrator.Setup(o =>
+                    o.GetApplyViewModel(It.Is<ApplicationRequest>(y =>
+                        y.AccountId == accountId && y.PledgeId == pledgeId)))
+                .ReturnsAsync(viewModel);
+
+            var viewResult = await _opportunitiesController.Apply(applicationRequest) as ViewResult;
+            var actualViewModel = viewResult.Model as ApplyViewModel;
+
+            Assert.IsNotNull(viewResult);
+            Assert.IsNotNull(actualViewModel);
+            Assert.AreEqual(viewModel, actualViewModel);
+            _orchestrator.Verify(x => x.GetApplyViewModel(applicationRequest), Times.Once);
+        }
+
+        [Test]
+        public async Task POST_Apply_Returns_Redirect()
+        {
+            var request = _fixture.Create<ApplyPostRequest>();
+
+            var response = await _opportunitiesController.Apply(request) as RedirectToActionResult;
+
+            _orchestrator.Verify(o => o.SubmitApplication(It.Is<ApplyPostRequest>(o => o == request)), Times.Once);
+            Assert.IsNotNull(response);
+            Assert.AreEqual("Confirmation", response.ActionName);
+        }
+
+        [Test]
+        public async Task GET_GetFundingEstimate_Returns_View_Model()
+        {
+            var accountId = _fixture.Create<int>();
+            var pledgeId = _fixture.Create<int>();
+            var viewModel = _fixture.Create<GetFundingEstimateViewModel>();
+
+            var applicationRequest = new GetFundingEstimateRequest()
+            {
+                AccountId = accountId,
+                PledgeId = pledgeId
+            };
+
+            _orchestrator.Setup(o =>
+                    o.GetFundingEstimate(It.Is<GetFundingEstimateRequest>(y =>
+                        y.AccountId == accountId && y.PledgeId == pledgeId), It.IsAny<GetApplicationDetailsResponse>()))
+                .ReturnsAsync(viewModel);
+
+            var viewResult = await _opportunitiesController.GetFundingEstimate(applicationRequest) as JsonResult;
+            var actualViewModel = viewResult.Value as GetFundingEstimateViewModel;
+
+            Assert.IsNotNull(viewResult);
+            Assert.IsNotNull(actualViewModel);
+            Assert.AreEqual(viewModel, actualViewModel);
+            _orchestrator.Verify(x => x.GetFundingEstimate(applicationRequest, It.IsAny<GetApplicationDetailsResponse>()), Times.Once);
         }
     }
 }

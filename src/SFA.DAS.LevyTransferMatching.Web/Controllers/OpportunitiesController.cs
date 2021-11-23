@@ -27,34 +27,25 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             var viewModel = await _opportunitiesOrchestrator.GetIndexViewModel();
             return View(viewModel);
         }
-        
+
         [Route("opportunities/{encodedPledgeId}")]
         public async Task<IActionResult> Detail(DetailRequest detailRequest)
         {
             var viewModel = await _opportunitiesOrchestrator.GetDetailViewModel(detailRequest.PledgeId);
-        
-            if (viewModel != null)
-            {
-                return View(viewModel);
-            }
-            else
-            {
-                return NotFound();
-            }
+
+            return View(viewModel);
         }
-        
+
         [HttpPost]
         [Route("opportunities/{encodedPledgeId}")]
         public IActionResult Detail(DetailPostRequest detailPostRequest)
         {
-            if (detailPostRequest.HasConfirmed.Value)
+            if (detailPostRequest.HasConfirmed != null && detailPostRequest.HasConfirmed.Value)
             {
                 return RedirectToAction(nameof(SelectAccount), new { EncodedOpportunityId = detailPostRequest.EncodedPledgeId });
             }
-            else
-            {
-                return RedirectToAction(nameof(Index));
-            }
+
+            return RedirectToAction(nameof(Index));
         }
 
         [HideAccountNavigation(false, hideNavigationLinks: true)]
@@ -80,7 +71,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Route("accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/apply")]
         public async Task<IActionResult> Apply(ApplicationRequest request)
         {
-            return View(await _opportunitiesOrchestrator.GetApplyViewModel(request));
+            var applyViewModel = await _opportunitiesOrchestrator.GetApplyViewModel(request);
+
+            return View(applyViewModel);
         }
 
         [Authorize(Policy = PolicyNames.ManageAccount)]
@@ -102,7 +95,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Route("/accounts/{encodedAccountId}/opportunities/{EncodedPledgeId}/apply/confirmation")]
         public async Task<IActionResult> Confirmation(ConfirmationRequest request)
         {
-            return View(await _opportunitiesOrchestrator.GetConfirmationViewModel(request));
+            var confirmationViewModel = await _opportunitiesOrchestrator.GetConfirmationViewModel(request);
+
+            return View(confirmationViewModel);
         }
 
         [HideAccountNavigation(false)]
@@ -110,7 +105,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Route("/accounts/{encodedAccountId}/opportunities/{EncodedPledgeId}/apply/more-details")]
         public async Task<IActionResult> MoreDetails(MoreDetailsRequest request)
         {
-            return View(await _opportunitiesOrchestrator.GetMoreDetailsViewModel(request));
+            var moreDetailsViewModel = await _opportunitiesOrchestrator.GetMoreDetailsViewModel(request);
+
+            return View(moreDetailsViewModel);
         }
 
         [HideAccountNavigation(false)]
@@ -120,8 +117,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         public async Task<IActionResult> MoreDetails(MoreDetailsPostRequest request)
         {
             await _opportunitiesOrchestrator.UpdateCacheItem(request);
-            return RedirectToAction("Apply", new ApplicationRequest 
-            { 
+            return RedirectToAction("Apply", new ApplicationRequest
+            {
                 EncodedAccountId = request.EncodedAccountId,
                 EncodedPledgeId = request.EncodedPledgeId,
                 CacheKey = request.CacheKey
@@ -132,7 +129,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/apply/application-details")]
         public async Task<IActionResult> ApplicationDetails(ApplicationDetailsRequest request)
         {
-            return View(await _opportunitiesOrchestrator.GetApplicationViewModel(request));
+            var applicationDetailsViewModel = await _opportunitiesOrchestrator.GetApplicationViewModel(request);
+
+            return View(applicationDetailsViewModel);
         }
 
         [Authorize(Policy = PolicyNames.ManageAccount)]
@@ -141,26 +140,29 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         public async Task<IActionResult> ApplicationDetails([FromServices] AsyncValidator<ApplicationDetailsPostRequest> validator, ApplicationDetailsPostRequest request)
         {
             var validationResult = await validator.ValidateAsync(request);
-            if (!validationResult.IsValid)
+            
+            if (validationResult.IsValid)
             {
-                validationResult.AddToModelState(ModelState, string.Empty);
-
-                return RedirectToAction("ApplicationDetails", new ApplicationDetailsRequest()
-                {
-                    EncodedAccountId = request.EncodedAccountId,
-                    EncodedPledgeId = request.EncodedPledgeId,
-                    CacheKey = request.CacheKey
-                });
+                return RedirectToAction("Apply", await _opportunitiesOrchestrator.PostApplicationViewModel(request));
             }
 
-            return RedirectToAction("Apply", await _opportunitiesOrchestrator.PostApplicationViewModel(request));
+            validationResult.AddToModelState(ModelState, string.Empty);
+
+            return RedirectToAction("ApplicationDetails", new ApplicationDetailsRequest()
+            {
+                EncodedAccountId = request.EncodedAccountId,
+                EncodedPledgeId = request.EncodedPledgeId,
+                CacheKey = request.CacheKey
+            });
         }
 
         [Authorize(Policy = PolicyNames.ManageAccount)]
         [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/apply/sector")]
         public async Task<IActionResult> Sector(SectorRequest request)
         {
-            return View(await _opportunitiesOrchestrator.GetSectorViewModel(request));
+            var sectorViewModel = await _opportunitiesOrchestrator.GetSectorViewModel(request);
+
+            return View(sectorViewModel);
         }
 
         [Authorize(Policy = PolicyNames.ManageAccount)]
@@ -185,7 +187,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         public async Task<IActionResult> ContactDetails(ContactDetailsRequest contactDetailsRequest)
         {
             var viewModel = await _opportunitiesOrchestrator.GetContactDetailsViewModel(contactDetailsRequest);
-
+            
             return View(viewModel);
         }
 

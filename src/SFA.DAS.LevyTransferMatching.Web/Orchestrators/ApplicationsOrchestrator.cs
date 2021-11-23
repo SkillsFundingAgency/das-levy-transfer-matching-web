@@ -125,11 +125,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var result = await _applicationsService.GetAccepted(request.AccountId, request.ApplicationId);
 
-            if (result == null)
-            {
-                return null;
-            }
-
             var encodedPledgeId = _encodingService.Encode(result.OpportunityId, EncodingType.PledgeId);
 
             return new AcceptedViewModel()
@@ -144,11 +139,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var result = await _applicationsService.GetDeclined(request.AccountId, request.ApplicationId);
 
-            if (result == null)
-            {
-                return null;
-            }
-
             var encodedPledgeId = _encodingService.Encode(result.OpportunityId, EncodingType.PledgeId);
 
             return new DeclinedViewModel()
@@ -162,11 +152,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         public async Task<WithdrawnViewModel> GetWithdrawnViewModel(WithdrawnRequest request)
         {
             var result = await _applicationsService.GetWithdrawn(request.AccountId, request.ApplicationId);
-
-            if (result == null)
-            {
-                return null;
-            }
 
             var encodedPledgeId = _encodingService.Encode(result.OpportunityId, EncodingType.PledgeId);
 

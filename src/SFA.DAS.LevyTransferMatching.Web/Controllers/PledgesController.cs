@@ -228,13 +228,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         {
             var response = await _orchestrator.GetApplicationViewModel(request, cancellationToken);
 
-
-            if (response != null)
-            {
-                return View(response);
-            }
-
-            return NotFound();
+            return View(response);
         }
 
         [HttpPost]
@@ -256,6 +250,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         public async Task<IActionResult> ApplicationApproved(ApplicationApprovedRequest request)
         {
             var viewModel = await _orchestrator.GetApplicationApprovedViewModel(request);
+
             return View(viewModel);
         }
     }

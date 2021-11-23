@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService.Types;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService
 {
@@ -19,29 +20,14 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsServi
         public async Task<GetApplicationsResponse> GetApplications(long accountId, CancellationToken cancellationToken = default)
         {
             var response = await _httpClient.GetAsync($"accounts/{accountId}/applications", cancellationToken);
-            response.EnsureSuccessStatusCode();
-
-            return JsonConvert.DeserializeObject<GetApplicationsResponse>(await response.Content.ReadAsStringAsync());
+            return await response.HandleDeserialisationOrThrow<GetApplicationsResponse>();
         }
 
         public async Task<GetApplicationResponse> GetApplication(long accountId, int applicationId, CancellationToken cancellationToken = default)
         {
             var response = await _httpClient.GetAsync($"accounts/{accountId}/applications/{applicationId}", cancellationToken);
 
-            Types.GetApplicationResponse getApplicationResponse = null; 
-            if (response.IsSuccessStatusCode)
-            {
-                getApplicationResponse = JsonConvert.DeserializeObject<GetApplicationResponse>(await response.Content.ReadAsStringAsync());
-            }
-            else
-            {
-                if (response.StatusCode != HttpStatusCode.NotFound)
-                {
-                    response.EnsureSuccessStatusCode();
-                }
-            }
-
-            return getApplicationResponse;
+            return await response.HandleDeserialisationOrThrow<GetApplicationResponse>();
         }
 
         public async Task SetApplicationAcceptance(SetApplicationAcceptanceRequest request, CancellationToken cancellationToken = default)
@@ -57,54 +43,20 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsServi
         {
             var response = await _httpClient.GetAsync($"accounts/{accountId}/applications/{applicationId}/accepted");
 
-            GetAcceptedResponse getAcceptedResponse = null;
-            if (response.IsSuccessStatusCode)
-            {
-                getAcceptedResponse = JsonConvert.DeserializeObject<GetAcceptedResponse>(await response.Content.ReadAsStringAsync());
-            }
-            else
-            {
-                if (response.StatusCode != HttpStatusCode.NotFound)
-                {
-                    response.EnsureSuccessStatusCode();
-                }
-            }
-
-            return getAcceptedResponse;
+            return await response.HandleDeserialisationOrThrow<GetAcceptedResponse>();
         }
-
         public async Task<GetDeclinedResponse> GetDeclined(long accountId, int applicationId)
         {
             var response = await _httpClient.GetAsync($"accounts/{accountId}/applications/{applicationId}/declined");
 
-            GetDeclinedResponse getDeclinedResponse = null;
-            if (response.IsSuccessStatusCode)
-            {
-                getDeclinedResponse = JsonConvert.DeserializeObject<GetDeclinedResponse>(await response.Content.ReadAsStringAsync());
-            }
-            else if (response.StatusCode != HttpStatusCode.NotFound)
-            {
-                response.EnsureSuccessStatusCode();
-            }
-
-            return getDeclinedResponse;
+            return await response.HandleDeserialisationOrThrow<GetDeclinedResponse>();
         }
 
         public async Task<GetWithdrawnResponse> GetWithdrawn(long accountId, int applicationId)
         {
             var response = await _httpClient.GetAsync($"accounts/{accountId}/applications/{applicationId}/withdrawn");
 
-            GetWithdrawnResponse getWithdrawnResponse = null;
-            if (response.IsSuccessStatusCode)
-            {
-                getWithdrawnResponse = JsonConvert.DeserializeObject<GetWithdrawnResponse>(await response.Content.ReadAsStringAsync());
-            }
-            else if (response.StatusCode != HttpStatusCode.NotFound)
-            {
-                response.EnsureSuccessStatusCode();
-            }
-
-            return getWithdrawnResponse;
+            return await response.HandleDeserialisationOrThrow<GetWithdrawnResponse>();
         }
     }
 }

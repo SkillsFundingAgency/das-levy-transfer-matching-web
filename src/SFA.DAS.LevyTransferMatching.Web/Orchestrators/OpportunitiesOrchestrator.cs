@@ -36,9 +36,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var response = await _opportunitiesService.GetDetail(pledgeId);
 
-            if (response.Opportunity == null)
-                return null;
-
             var encodedPledgeId = _encodingService.Encode(response.Opportunity.Id, EncodingType.PledgeId);
 
             var opportunitySummaryViewModelOptions = new GetOpportunitySummaryViewModelOptions()
@@ -119,6 +116,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         public async Task<ConfirmationViewModel> GetConfirmationViewModel(ConfirmationRequest request)
         {
             var result = await _opportunitiesService.GetConfirmation(request.AccountId, request.PledgeId);
+
             return new ConfirmationViewModel
             {
                 AccountName = result.AccountName,
@@ -229,11 +227,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         public async Task<ContactDetailsViewModel> GetContactDetailsViewModel(ContactDetailsRequest contactDetailsRequest)
         {
             var getContactDetailsResult = await _opportunitiesService.GetContactDetails(contactDetailsRequest.AccountId, contactDetailsRequest.PledgeId);
-
-            if (getContactDetailsResult == null)
-            {
-                return null;
-            }
 
             var opportunitySummaryViewModelOptions = new GetOpportunitySummaryViewModelOptions()
             {

@@ -24,7 +24,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         public async Task<IActionResult> Applications(GetApplicationsRequest request)
         {
             var viewModel = await _applicationsOrchestrator.GetApplications(request);
-            
+
             return View(viewModel);
         }
 
@@ -34,12 +34,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         {
             var viewModel = await _applicationsOrchestrator.GetApplication(request);
 
-            if (viewModel != null)
-            {
-                return View(viewModel);
-            }
-
-            return NotFound();
+            return View(viewModel);
         }
 
         [HttpPost]
@@ -54,18 +49,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
             await _applicationsOrchestrator.SetApplicationAcceptance(request);
 
-            if (request.SelectedAction == ApplicationViewModel.ApprovalAction.Accept)
+            switch (request.SelectedAction)
             {
-                return Redirect($"/accounts/{request.EncodedAccountId}/applications/{request.EncodedApplicationId}/accepted");
-            }
-
-            else if (request.SelectedAction == ApplicationViewModel.ApprovalAction.Withdraw)
-            {
-                return Redirect($"/accounts/{request.EncodedAccountId}/applications/{request.EncodedApplicationId}/withdrawn");
-            }
-            else
-            {
-                return Redirect($"/accounts/{request.EncodedAccountId}/applications/{request.EncodedApplicationId}/declined");
+                case ApplicationViewModel.ApprovalAction.Accept:
+                    return Redirect($"/accounts/{request.EncodedAccountId}/applications/{request.EncodedApplicationId}/accepted");
+                case ApplicationViewModel.ApprovalAction.Withdraw:
+                    return Redirect($"/accounts/{request.EncodedAccountId}/applications/{request.EncodedApplicationId}/withdrawn");
+                default:
+                    return Redirect($"/accounts/{request.EncodedAccountId}/applications/{request.EncodedApplicationId}/declined");
             }
         }
 
@@ -75,12 +66,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         {
             var viewModel = await _applicationsOrchestrator.GetAcceptedViewModel(request);
 
-            if (viewModel != null)
-            {
-                return View(viewModel);
-            }
-
-            return NotFound();
+            return View(viewModel);
         }
 
         [HttpGet]
@@ -89,12 +75,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         {
             var viewModel = await _applicationsOrchestrator.GetDeclinedViewModel(request);
 
-            if (viewModel != null)
-            {
-                return View(viewModel);
-            }
-
-            return NotFound();
+            return View(viewModel);
         }
 
         [HttpGet]
@@ -103,12 +84,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         {
             var viewModel = await _applicationsOrchestrator.GetWithdrawnViewModel(request);
 
-            if (viewModel != null)
-            {
-                return View(viewModel);
-            }
-
-            return NotFound();
+            return View(viewModel);
         }
     }
 }

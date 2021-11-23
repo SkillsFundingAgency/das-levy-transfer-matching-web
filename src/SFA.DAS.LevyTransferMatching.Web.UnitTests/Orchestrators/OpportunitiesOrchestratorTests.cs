@@ -6,6 +6,7 @@ using AutoFixture;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Encoding;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
@@ -74,24 +75,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             CollectionAssert.AreEqual(_getIndexResponse.Opportunities.Select(x => x.JobRoles.ToReferenceDataDescriptionList(_getIndexResponse.JobRoles)), viewModel.Opportunities.Select(x => x.JobRoles));
             CollectionAssert.AreEqual(_getIndexResponse.Opportunities.Select(x => x.Levels.ToReferenceDataDescriptionList(_getIndexResponse.Levels, descriptionSource: y => y.ShortDescription)), viewModel.Opportunities.Select(x => x.Levels));
         }
-
-        [Test]
-        public async Task GetDetailViewModel_Opportunity_Not_Found_Returns_Null()
-        {
-            // Arrange
-            int id = _fixture.Create<int>();
-
-            _opportunitiesService
-                .Setup(x => x.GetDetail(It.Is<int>(y => y == id)))
-                .ReturnsAsync(new GetDetailResponse());
-
-            // Act
-            var result = await _orchestrator.GetDetailViewModel(id);
-
-            // Assert
-            Assert.IsNull(result);
-        }
-
+        
         [Test]
         public async Task GetDetailViewModel_Opportunity_Found_Model_Populated()
         {
@@ -176,24 +160,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             Assert.AreEqual(2, viewModel.Accounts.Count());
             Assert.AreEqual(selectAccountRequest.EncodedOpportunityId, viewModel.EncodedOpportunityId);
         }
-
-        [Test]
-        public async Task GetContactDetailsViewModel_No_Opportunity_Found_Returns_Null()
-        {
-            // Arrange
-            ContactDetailsRequest contactDetailsRequest = _fixture.Create<ContactDetailsRequest>();
-
-            _opportunitiesService
-                .Setup(x => x.GetContactDetails(It.Is<long>(y => y == contactDetailsRequest.AccountId), It.Is<int>(y => y == contactDetailsRequest.PledgeId)))
-                .ReturnsAsync((GetContactDetailsResponse)null);
-
-            // Act
-            ContactDetailsViewModel contactDetailsViewModel = await _orchestrator.GetContactDetailsViewModel(contactDetailsRequest);
-
-            // Assert
-            Assert.IsNull(contactDetailsViewModel);
-        }
-
+        
         [Test]
         public async Task GetContactDetailsViewModel_Not_In_Cache_AdditionalEmailAddresses_Populated_Correctly()
         {
@@ -290,7 +257,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _cacheStorageService.Verify(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()), Times.Once);
             _opportunitiesService.Verify(x => x.GetMoreDetails(request.AccountId, request.PledgeId), Times.Once);
         }
-
+        
         [Test]
         public async Task GetApplicationViewModel_Is_Correct()
         {
@@ -331,7 +298,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _cacheStorageService.Verify(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()), Times.Once);
             _opportunitiesService.Verify(x => x.GetApplicationDetails(1, 1, default), Times.Once);
         }
-
+        
         [Test]
         public async Task GetApplyViewModel_Returns_Empty_Value_For_Null_HasTrainingProvider()
         {
@@ -368,7 +335,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             Assert.AreEqual("No", result.HaveTrainingProvider);
         }
-
+        
         [Test]
         public async Task GetConfirmationViewModel_Returns_Expected_Model()
         {
@@ -498,6 +465,31 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             _cacheStorageService.Verify(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()), Times.Once);
             _opportunitiesService.Verify(x => x.GetSector(1, 1), Times.Once);
+        }
+
+        [Test]
+        public async Task GetFundingEstimate_When_Given_Valid_Details_Returns_View_Model()
+        {
+            var accountId = _fixture.Create<int>();
+            var opportunityId = _fixture.Create<int>();
+            var request = _fixture.Create<GetFundingEstimateRequest>();
+            var response = _fixture.Create<GetApplicationDetailsResponse>();
+            request.StartDate = DateTime.Now;
+
+            response.Standards.First().ApprenticeshipFunding.First().EffectiveFrom = DateTime.Now.AddMonths(-3);
+            response.Standards.First().ApprenticeshipFunding.First().EffectiveTo = DateTime.Now.AddMonths(10);
+
+            response.Standards = new List<StandardsListItemDto> {response.Standards.First()};
+            request.AccountId = accountId;
+            request.PledgeId = opportunityId;
+
+            _opportunitiesService.Setup(o => o.GetApplicationDetails(It.Is<long>(l => l == accountId),
+                    It.Is<int>(i => i == opportunityId), It.IsAny<string>()))
+                .ReturnsAsync(response);
+
+            var orchestratorResponse = await _orchestrator.GetFundingEstimate(request);
+
+            Assert.IsNotNull(orchestratorResponse);
         }
     }
 }
