@@ -213,6 +213,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         }
 
         [HttpGet]
+        [Route("{encodedPledgeId}/applications/download")]
+        public async Task<IActionResult> DownloadApplicationsCsv(ApplicationsRequest request)
+        {
+            var response = await _orchestrator.GetPledgeApplicationsDownloadModel(request);
+
+            return new FileContentResult(response, "text/csv");
+        }
+
+        [HttpGet]
         [Route("{encodedPledgeId}/applications/{encodedApplicationId}")]
         public async Task<IActionResult> Application(ApplicationRequest request,
             CancellationToken cancellationToken = default)

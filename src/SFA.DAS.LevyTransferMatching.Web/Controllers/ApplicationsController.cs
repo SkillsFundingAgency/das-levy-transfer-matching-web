@@ -47,11 +47,21 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}")]
         public async Task<IActionResult> Application(ApplicationPostRequest request)
         {
+            if (request.SelectedAction == ApplicationViewModel.ApprovalAction.None)
+            {
+                return RedirectToAction("Applications", new { EncodedAccountId = request.EncodedAccountId });
+            }
+
             await _applicationsOrchestrator.SetApplicationAcceptance(request);
 
             if (request.SelectedAction == ApplicationViewModel.ApprovalAction.Accept)
             {
                 return Redirect($"/accounts/{request.EncodedAccountId}/applications/{request.EncodedApplicationId}/accepted");
+            }
+
+            else if (request.SelectedAction == ApplicationViewModel.ApprovalAction.Withdraw)
+            {
+                return Redirect($"/accounts/{request.EncodedAccountId}/applications/{request.EncodedApplicationId}/withdrawn");
             }
             else
             {
@@ -78,6 +88,20 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         public async Task<IActionResult> Declined(DeclinedRequest request)
         {
             var viewModel = await _applicationsOrchestrator.GetDeclinedViewModel(request);
+
+            if (viewModel != null)
+            {
+                return View(viewModel);
+            }
+
+            return NotFound();
+        }
+
+        [HttpGet]
+        [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}/withdrawn")]
+        public async Task<IActionResult> Withdrawn(WithdrawnRequest request)
+        {
+            var viewModel = await _applicationsOrchestrator.GetWithdrawnViewModel(request);
 
             if (viewModel != null)
             {

@@ -7,10 +7,25 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Applications
     {
         public ApplicationPostRequestValidator()
         {
+            RuleFor(o => o.IsWithdrawalConfirmed)
+                .Equal(true)
+                .WithMessage("You must confirm that you want to withdraw the application")
+                .When(o => o.SelectedAction == ApplicationViewModel.ApprovalAction.Withdraw);
+
             RuleFor(o => o.SelectedAction)
-                .Equal(ApplicationViewModel.ApprovalAction.Accept)
+                .NotNull()
+                .WithMessage("You must select to either withdraw the application or keep the application")
+                .When(o => o.CanWithdraw);
+
+            RuleFor(o => o.SelectedAction)
+                .NotNull()
                 .WithMessage("You must choose to either accept or decline funding for this application")
-                .When(o => o.SelectedAction == null);
+                .When(o => o.CanAcceptFunding);
+
+            //RuleFor(o => o.SelectedAction)
+            //    .Equal(ApplicationViewModel.ApprovalAction.Accept)
+            //    .WithMessage("You must choose to either accept or decline funding for this application")
+            //    .When(o => o.SelectedAction == null);
 
             RuleFor(o => o.HasAcceptedTermsAndConditions)
                 .Equal(true)
