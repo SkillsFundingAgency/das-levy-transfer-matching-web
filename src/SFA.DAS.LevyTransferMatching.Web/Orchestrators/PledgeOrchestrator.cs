@@ -526,11 +526,38 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     IsLocationMatch = (result.Locations != null && result.Locations.Any()) || !result.PledgeLocations.Any(),
                     Affordability = GetAffordabilityViewModel(result.Amount, result.PledgeRemainingAmount, result.NumberOfApprentices, result.MaxFunding, result.EstimatedDurationMonths, result.StartBy),
                     AllowApproval = result.Status == ApplicationStatus.Pending && result.Amount <= result.PledgeRemainingAmount && isOwnerOrTransactor,
-                    AllowTransferRequestAutoApproval = result.AutomaticApproval
+                    DisplayApplicationApprovalOptions = _featureToggles.FeatureToggleApplicationApprovalOptions,
+					AllowTransferRequestAutoApproval = result.AutomaticApproval
                 };
             }
 
             return null;
+        }
+
+        public async Task<ApplicationApprovalOptionsViewModel> GetApplicationApprovalOptionsViewModel(ApplicationApprovalOptionsRequest request, CancellationToken cancellationToken = default)
+        {
+            var response = await _pledgeService.GetApplicationApprovalOptions(request.AccountId, request.PledgeId, request.ApplicationId, cancellationToken);
+
+            return new ApplicationApprovalOptionsViewModel
+            {
+                EncodedAccountId = request.EncodedAccountId,
+                EncodedPledgeId = request.EncodedPledgeId,
+                EncodedApplicationId = request.EncodedApplicationId,
+                EmployerAccountName = response.EmployerAccountName,
+                IsApplicationPending = response.ApplicationStatus == ApplicationStatus.Pending
+            };
+        }
+
+        public async Task SetApplicationApprovalOptions(ApplicationApprovalOptionsPostRequest request, CancellationToken cancellationToken = default)
+        {
+            var serviceRequest = new SetApplicationApprovalOptionsRequest
+            {
+                UserId = _userService.GetUserId(),
+                UserDisplayName = _userService.GetUserDisplayName(),
+                AutomaticApproval = request.AutomaticApproval.Value
+            };
+
+            await _pledgeService.SetApplicationApprovalOptions(request.AccountId, request.ApplicationId, request.PledgeId, serviceRequest);
         }
 
         public async Task SetApplicationOutcome(ApplicationPostRequest request)
