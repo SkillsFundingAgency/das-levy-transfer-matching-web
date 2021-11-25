@@ -207,7 +207,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 EncodedAccountId = request.EncodedAccountId,
                 EncodedPledgeId = request.EncodedPledgeId,
                 DasAccountName = response.EmployerAccountName,
-                AllowTransferRequestAutoApproval = response.AllowTransferRequestAutoApproval
+                AllowTransferRequestAutoApproval = response.AutomaticApproval
             };
         }
 
@@ -526,7 +526,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     IsLocationMatch = (result.Locations != null && result.Locations.Any()) || !result.PledgeLocations.Any(),
                     Affordability = GetAffordabilityViewModel(result.Amount, result.PledgeRemainingAmount, result.NumberOfApprentices, result.MaxFunding, result.EstimatedDurationMonths, result.StartBy),
                     AllowApproval = result.Status == ApplicationStatus.Pending && result.Amount <= result.PledgeRemainingAmount && isOwnerOrTransactor,
-                    AllowTransferRequestAutoApproval = result.AllowTransferRequestAutoApproval
+                    AllowTransferRequestAutoApproval = result.AutomaticApproval
                 };
             }
 
