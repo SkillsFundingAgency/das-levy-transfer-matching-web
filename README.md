@@ -66,7 +66,7 @@ AppSettings.json file
       },
       "AllowedHosts": "*",
       "ConfigurationStorageConnectionString": "UseDevelopmentStorage=true",
-      "ConfigNames": "SFA.DAS.LevyTransferMatching.Web,SFA.DAS.EmployerUrlHelper:EmployerUrlHelper,SFA.DAS.Employer.Shared.UI,SFA.DAS.Encoding:EncodingService,SFA.DAS.EmployerAccountAPI:EmployerAccountApi",
+      "ConfigNames": "SFA.DAS.LevyTransferMatching.Web,SFA.DAS.EmployerUrlHelper:EmployerUrlHelper,SFA.DAS.Employer.Shared.UI,SFA.DAS.Encoding:EncodingService",
       "Environment": "LOCAL",
       "Version": "1.0",
       "APPINSIGHTS_INSTRUMENTATIONKEY": "",

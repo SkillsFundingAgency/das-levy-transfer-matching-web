@@ -1,4 +1,5 @@
-﻿using SFA.DAS.Encoding;
+﻿using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Web.Attributes;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
@@ -17,5 +18,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 
         [AutoDecode(nameof(EncodedApplicationId), EncodingType.PledgeApplicationId)]
         public int ApplicationId { get; set; }
+        [FromQuery]public bool ApprovedAutomatically { get; set; }
     }
 }
