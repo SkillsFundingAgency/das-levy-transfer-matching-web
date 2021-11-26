@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService.Types;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Extensions
 {

@@ -1,8 +1,9 @@
 ﻿namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types
 {
-    public class GetApplicationApprovedResponse
+    public class SetApplicationApprovalOptionsRequest
     {
-        public string EmployerAccountName { get; set; }
+        public string UserId { get; set; }
+        public string UserDisplayName { get; set; }
         public bool AutomaticApproval { get; set; }
     }
 }

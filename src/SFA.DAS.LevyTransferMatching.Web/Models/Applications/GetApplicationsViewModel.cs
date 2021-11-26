@@ -21,8 +21,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
              1 => "transfer application",
              _ => "transfers applications"
          };
-
-
+        
         public class ApplicationViewModel
         {
             public string DasAccountName { get; set; }
@@ -32,7 +31,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
             public string EncodedApplicationId { get; set; }
             public string PledgeReference { get; set; }
             public bool IsNamePublic { get; set; }
-            public int EstimatedTotalCost { get; set; }
+            public string EstimatedTotalCost { get; set; }
         }
     }
 }

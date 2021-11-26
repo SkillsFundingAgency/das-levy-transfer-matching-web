@@ -110,5 +110,19 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
             response.EnsureSuccessStatusCode();
             return JsonConvert.DeserializeObject<GetApplicationApprovedResponse>(await response.Content.ReadAsStringAsync());
         }
+
+        public async Task<GetApplicationApprovalOptionsResponse> GetApplicationApprovalOptions(long accountId, int pledgeId, int applicationId, CancellationToken cancellationToken = default)
+        {
+            var response = await _client.GetAsync($"accounts/{accountId}/pledges/{pledgeId}/applications/{applicationId}/approval-options", cancellationToken);
+            response.EnsureSuccessStatusCode();
+            return JsonConvert.DeserializeObject<GetApplicationApprovalOptionsResponse>(await response.Content.ReadAsStringAsync());
+        }
+
+        public async Task SetApplicationApprovalOptions(long accountId, int applicationId, int pledgeId, SetApplicationApprovalOptionsRequest request)
+        {
+            var json = JsonConvert.SerializeObject(request);
+            var response = await _client.PostAsync($"accounts/{accountId}/pledges/{pledgeId}/applications/{applicationId}/approval-options", new StringContent(json, System.Text.Encoding.UTF8, "application/json"));
+            response.EnsureSuccessStatusCode();
+        }
     }
 }
