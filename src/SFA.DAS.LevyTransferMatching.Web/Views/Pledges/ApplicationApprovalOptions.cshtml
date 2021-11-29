@@ -1,0 +1,58 @@
+﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.ApplicationApprovalOptionsViewModel
+
+@{
+    ViewData["Title"] = "Approving the apprenticeship details";
+}
+
+<a href="@Url.Action("Application", "Pledges", new { Model.EncodedAccountId, Model.EncodedPledgeId, Model.EncodedApplicationId })" class="govuk-back-link">Back</a>
+
+
+<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
+    <partial name="_ValidationSummary" />
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">Approving the apprenticeship details</h1>
+
+            <p>
+                You have chosen to approve the application. The apprenticeship details will be added by <strong>@Model.EmployerAccountName</strong> to use the funds. You have two approval options to choose from:
+            </p>
+
+            <form method="post">
+                <div class="govuk-form-group" das-highlight-error-for="AutomaticApproval" error-class="govuk-form-group--error">
+                    <fieldset class="govuk-fieldset">
+                        <legend class="govuk-visually-hidden">Application approval options</legend>
+                        <span das-validation-for="AutomaticApproval" class="govuk-error-message"></span>
+                        <div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios">
+                            <div class="govuk-radios__item">
+                                <input class="govuk-radios__input" id="AutomaticApproval" name="AutomaticApproval" asp-for="AutomaticApproval" type="radio" value="false" das-highlight-error-for="AutomaticApproval" error-class="govuk-textarea--error" data-aria-controls="approval-content" />
+                                <label class="govuk-label govuk-radios__label" for="AutomaticApproval">
+                                    <strong>Check and review apprenticeship details</strong>
+                                </label>
+                                <ul class="govuk-list govuk-list--bullet">
+                                    <li>you may get multiple prompts if the employer adds the apprenticeship details in batches</li>
+                                    <li>you will be able to check the standard, the cost and dates</li>
+                                </ul>
+                            </div>
+                            <div class="govuk-radios__item">
+                                <input class="govuk-radios__input" id="AutomaticApproval-2" name="AutomaticApproval" asp-for="AutomaticApproval" type="radio" value="true" das-highlight-error-for="AutomaticApproval" error-class="govuk-textarea--error" />
+                                <label class="govuk-label govuk-radios__label" for="AutomaticApproval-2">
+                                    <strong>Automatically approve the apprenticeship details</strong>
+                                </label>
+                                <ul class="govuk-list govuk-list--bullet">
+                                    <li>you will not check and review the apprenticeship details such as the apprenticeship standard, the cost or the start date</li>
+                                    <li>the employer or training provider can choose a different apprenticeship standard, but the cost of the apprenticeship details cannot exceed the agreed transfer amount in the application</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="govuk-button-group">
+                    <button id="pledge-criteria-continue" class="govuk-button" data-module="govuk-button">
+                        Continue
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</main>
