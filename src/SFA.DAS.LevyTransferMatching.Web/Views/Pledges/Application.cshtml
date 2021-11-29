@@ -7,7 +7,7 @@
 
 <a href="@Url.Action("Applications", "Pledges", new { encodedAccountId = ViewContext.RouteData.Values["encodedAccountId"], EncodedPledgeId = ViewContext.RouteData.Values["EncodedPledgeId"]})" class="govuk-back-link">Back to my transfer applications</a>
 
-<main class="govuk-main-wrapper" id="main-content">
+<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
     <partial name="_ValidationSummary" />
     <h1 class="govuk-heading-xl">
         @Model.EmployerAccountName
@@ -37,7 +37,6 @@
 
         <dl class="govuk-body app-dl-icon-list govuk-!-margin-bottom-4">
             <dt class="app-dl-icon-list__title">
-                @*@if (Model.IsLocationMatch) { <span class="app-dl-icon-list__icon app-dl-icon-list__icon--tick">Match for: </span> }*@
                 Location
             </dt>
             <dd class="app-dl-icon-list__definition">@Model.Locations</dd>
@@ -125,6 +124,7 @@
     {
         <form method="post">
             @Html.HiddenFor(m => m.EmployerAccountName)
+            @Html.HiddenFor(m => m.DisplayApplicationApprovalOptions)
             <div class="govuk-form-group" das-highlight-error-for="SelectedAction" error-class="govuk-form-group--error">
                 <fieldset class="govuk-fieldset">
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">

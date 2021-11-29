@@ -213,12 +213,20 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         }
 
         [HttpGet]
+        [Route("{encodedPledgeId}/applications/download")]
+        public async Task<IActionResult> DownloadApplicationsCsv(ApplicationsRequest request)
+        {
+            var response = await _orchestrator.GetPledgeApplicationsDownloadModel(request);
+
+            return new FileContentResult(response, "text/csv");
+        }
+
+        [HttpGet]
         [Route("{encodedPledgeId}/applications/{encodedApplicationId}")]
         public async Task<IActionResult> Application(ApplicationRequest request,
             CancellationToken cancellationToken = default)
         {
             var response = await _orchestrator.GetApplicationViewModel(request, cancellationToken);
-
 
             if (response != null)
             {
@@ -232,6 +240,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Route("{encodedPledgeId}/applications/{encodedApplicationId}")]
         public async Task<IActionResult> Application(ApplicationPostRequest request)
         {
+            if(request.DisplayApplicationApprovalOptions && request.SelectedAction == ApplicationPostRequest.ApprovalAction.Approve)
+            {
+                return RedirectToAction("ApplicationApprovalOptions", new { request.EncodedAccountId, request.EncodedPledgeId, request.EncodedApplicationId });
+            }
+
             await _orchestrator.SetApplicationOutcome(request);
 
             if (request.SelectedAction == ApplicationPostRequest.ApprovalAction.Approve)
@@ -247,7 +260,28 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         public async Task<IActionResult> ApplicationApproved(ApplicationApprovedRequest request)
         {
             var viewModel = await _orchestrator.GetApplicationApprovedViewModel(request);
+
             return View(viewModel);
+        }
+
+        [HttpGet]
+        [Route("{encodedPledgeId}/applications/{encodedApplicationId}/approval-options")]
+        public async Task<IActionResult> ApplicationApprovalOptions(ApplicationApprovalOptionsRequest request)
+        {
+            var viewModel = await _orchestrator.GetApplicationApprovalOptionsViewModel(request);
+
+            if (viewModel.IsApplicationPending)
+                return View(viewModel);
+            else
+                return RedirectToAction("Application", new { request.EncodedAccountId, request.EncodedPledgeId, request.EncodedApplicationId });
+        }
+
+        [HttpPost]
+        [Route("{encodedPledgeId}/applications/{encodedApplicationId}/approval-options")]
+        public async Task<IActionResult> ApplicationApprovalOptions(ApplicationApprovalOptionsPostRequest request)
+        {
+            await _orchestrator.SetApplicationApprovalOptions(request);
+            return RedirectToAction("ApplicationApproved", new { request.EncodedAccountId, request.EncodedPledgeId, request.EncodedApplicationId });
         }
     }
 }

@@ -24,6 +24,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 
         public string EmployerAccountName { get; set; }
 
+        public bool DisplayApplicationApprovalOptions { get; set; }
+
         public enum ApprovalAction
         {
             Approve,

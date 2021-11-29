@@ -28,21 +28,22 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public int EstimatedDurationMonths { get; set; }
         public DateTime StartBy { get; set; }
         public string AboutOpportunity { get; set; }
-        public string EmployerAccountName { get; set; }
         public IEnumerable<ReferenceDataItem> AllSectors { get; set; }
         public List<string> PledgeSectors { get; set; }
         public List<string> PledgeJobRoles { get; set; }
         public List<string> PledgeLevels { get; set; }
         public List<string> PledgeLocations { get; set; }
         public string Locations { get; set; }
-
+        public bool IsLocationMatch { get; set; }
+        public int PledgeRemainingAmount { get; set; }
+        public int MaxFunding { get; set; }
         public AffordabilityViewModel Affordability { get; set; }
 
         public bool AllowApproval { get; set; }
-        public bool IsLocationMatch { get; set; }
         public bool IsSectorMatch { get; set; }
         public bool IsJobRoleMatch { get; set; }
         public bool IsLevelMatch { get; set; }
+        public bool AllowTransferRequestAutoApproval { get; set; }
 
         public class AffordabilityViewModel
         {

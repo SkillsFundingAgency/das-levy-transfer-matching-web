@@ -4,7 +4,6 @@ using SFA.DAS.Http;
 using SFA.DAS.LevyTransferMatching.Domain.Interfaces;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Api;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountsService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsersReadStore;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CosmosDb;
@@ -21,6 +20,7 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using Microsoft.AspNetCore.Http;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService;
+using SFA.DAS.LevyTransferMatching.Web.Services;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Location;
 
 namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
@@ -44,11 +44,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
             services.AddTransient<IOpportunitiesOrchestrator, OpportunitiesOrchestrator>();
             services.AddTransient<ILocationOrchestrator, LocationOrchestrator>();
             services.AddTransient<IApplicationsOrchestrator, ApplicationsOrchestrator>();
+            services.AddTransient<ICsvHelperService, CsvHelperService>();
             services.AddTransient<IUserService>((s) => new UserService(s.GetService<IHttpContextAccessor>()));
 
             services.AddSingleton<IDateTimeService, DateTimeService>();
 
-            services.AddClient<IAccountsService>((c, s) => new AccountsService(c));
             services.AddClient<IPledgeService>((c, s) => new PledgeService(c));
             services.AddClient<IOpportunitiesService>((c, s) => new OpportunitiesService(c));
             services.AddClient<ILocationService>((c, s) => new LocationService(c));
