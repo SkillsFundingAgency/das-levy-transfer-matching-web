@@ -45,11 +45,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities
                         return false;
                     }
 
-                    return result.Opportunity.RemainingAmount >= selectedStandard.ApprenticeshipFunding
-                            .GetEffectiveFundingLine(model.StartDate.Value)
-                            .CalcFundingForDate(model.ParsedNumberOfApprentices, model.StartDate.Value);
+                    return model.StartDate.HasValue
+                            ?
+                                result.Opportunity.RemainingAmount >= selectedStandard.ApprenticeshipFunding
+                                .GetEffectiveFundingLine(model.StartDate.Value)
+                                .CalcFundingForDate(model.ParsedNumberOfApprentices, model.StartDate.Value)
+                            : true;
                 })
-                .When(x => x.StartDate.HasValue && x.StartDate >= new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1) && x.StartDate <= DateTime.Now.FinancialYearEnd())
                 .WithMessage(NumApprenticesError)
             ;
 
