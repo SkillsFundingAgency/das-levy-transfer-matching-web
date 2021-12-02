@@ -77,11 +77,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Services
 
         public static void AddLocationColumns(PledgeApplicationDownloadModel application, dynamic record, int totalLocationColumnsRequired)
         {
-            if (totalLocationColumnsRequired == 0)
-            {
-                return;
-            }
-
             for (int i = 0; i < application?.DynamicLocations?.Count(); i++)
             {
                 var fieldName = $"Location{i + 1}";
