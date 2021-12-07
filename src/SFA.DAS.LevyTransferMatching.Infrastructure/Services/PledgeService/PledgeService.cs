@@ -44,9 +44,9 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
             return JsonConvert.DeserializeObject<GetCreateResponse>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<GetAmountResponse> GetAmount(string encodedAccountId)
+        public async Task<GetAmountResponse> GetAmount(long accountId)
         {
-            var response = await _client.GetAsync($"accounts/{encodedAccountId}/pledges/create/amount");
+            var response = await _client.GetAsync($"accounts/{accountId}/pledges/create/amount");
             response.EnsureSuccessStatusCode();
             return JsonConvert.DeserializeObject<GetAmountResponse>(await response.Content.ReadAsStringAsync());
         }
