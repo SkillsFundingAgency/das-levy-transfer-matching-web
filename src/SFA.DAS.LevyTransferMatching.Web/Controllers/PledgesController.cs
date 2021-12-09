@@ -39,6 +39,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             return View(viewModel);
         }
 
+        [Authorize(Policy = PolicyNames.ManageAccount)]
+        [Route("create/close/{encodedPledgeId}")]
+        public IActionResult Close(string encodedAccountId, string encodedPledgeId)
+        {
+            var viewModel = _orchestrator.GetCloseViewModel(encodedAccountId, encodedPledgeId);
+            return View(viewModel);
+        }
+
         [Route("{EncodedPledgeId}/detail")]
         public IActionResult Detail(DetailRequest request)
         {

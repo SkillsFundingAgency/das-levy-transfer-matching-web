@@ -1,0 +1,76 @@
+﻿@using SFA.DAS.LevyTransferMatching.Web.Extensions
+@using SFA.DAS.LevyTransferMatching.Web.Models.Pledges
+@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.CloseViewModel
+
+@{
+    ViewData["Title"] = "Close pledge";
+}
+
+<a href="@Url.FinanceLink($"accounts/{Model.EncodedAccountId}/transfers")" class="govuk-back-link">Back</a>
+
+@*<a href="@Url.FinanceLink($"accounts/{Model.EncodedAccountId}/pledges/{Model.EncodedPledgeId}/applications")" class="govuk-back-link">Back</a>*@
+
+<main class="govuk-main-wrapper" id="main-content" role="main">
+
+    <partial name="_ValidationSummary" />
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <h1 class="govuk-heading-xl">Close pledge @Model.EncodedPledgeId </h1>
+
+
+            <form method="post">
+                <div class="govuk-form-group" das-highlight-error-for="HasConfirmed" error-class="govuk-form-group--error" id="HasConfirmed">
+                    <fieldset class="govuk-fieldset">
+
+                        <legend class="govuk-fieldset__legend">
+                            <h1 class="govuk-fieldset__heading govuk-label--s">Would you like to continue and close this pledge?</h1>
+                        </legend>
+
+                        <span das-validation-for="HasConfirmed" class="govuk-error-message"></span>
+
+                        <div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios">
+
+                            <div class="govuk-radios__item">
+                                <input class="govuk-radios__input" id="close-pledge-yes" asp-for="HasConfirmed" value="true" type="radio" data-aria-controls="conditional-close-pledge-yes" das-highlight-error-for="HasConfirmed" error-class="govuk-textarea--error">
+                                <label class="govuk-label govuk-radios__label" for="close-pledge-yes">Yes, close pledge @Model.EncodedPledgeId</label>
+                            </div>
+
+                            <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-close-pledge-yes">
+
+                                <div class="govuk-form-group">
+
+                                    <div class="govuk-form-group">
+
+                                        <label class="govuk-label">
+                                            <p><strong>Disclaimer: </strong></p>
+                                            <p>Your pledge will no longer be shown publicly, and businesses won't be able to apply for funding from it.</p>
+                                            <p>This pledge will continue to fund all applications you have already approved, including applications you have approved but the applicant has not yet accepted funding.</p>
+                                            <p>Though closed, you will still be able to view, approve and reject any applications you have received for this pledge.</p>
+                                        </label>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            <div class="govuk-radios__item">
+                                <input class="govuk-radios__input" id="close-pledge-no" asp-for="HasConfirmed" value="false" type="radio" das-highlight-error-for="HasConfirmed" error-class="govuk-textarea--error">
+                                <label class="govuk-label govuk-radios__label" for="close-pledge-no">No, keep pledge @Model.EncodedPledgeId active</label>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <div class="govuk-button-group">
+                    <button class="govuk-button" data-module="govuk-button" id="close-application-continue">Continue</button>
+                    <a class="govuk-link" href="@Url.FinanceLink($"accounts/{Model.EncodedAccountId}/transfers")">Cancel</a>
+
+                    @*<a class="govuk-link" href="@Url.FinanceLink($"accounts/{Model.EncodedAccountId}/pledges/{Model.EncodedPledgeId}/applications")">Cancel</a>*@
+                </div>
+            </form>
+        </div>
+    </div>
+
+</main>

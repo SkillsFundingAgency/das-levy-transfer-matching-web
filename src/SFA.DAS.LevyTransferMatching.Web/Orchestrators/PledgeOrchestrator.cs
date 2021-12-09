@@ -56,6 +56,16 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
+        public CloseViewModel GetCloseViewModel(string encodedAccountId, string encodedPledgeId)
+        {
+            return new CloseViewModel
+            {
+                EncodedAccountId = encodedAccountId,
+                EncodedPledgeId = encodedPledgeId,
+                CacheKey = Guid.NewGuid()
+            };
+        }
+
         public async Task<PledgesViewModel> GetPledgesViewModel(PledgesRequest request)
         {
             var pledgesResponse = await _pledgeService.GetPledges(request.AccountId);

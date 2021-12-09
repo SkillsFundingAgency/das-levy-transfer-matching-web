@@ -8,6 +8,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
     public interface IPledgeOrchestrator
     {
         InformViewModel GetInformViewModel(string encodedAccountId);
+        CloseViewModel GetCloseViewModel(string encodedAccountId, string encodedPledgeId);
         Task<PledgesViewModel> GetPledgesViewModel(PledgesRequest request);
         DetailViewModel GetDetailViewModel(DetailRequest request);
         Task<CreateViewModel> GetCreateViewModel(CreateRequest request);
