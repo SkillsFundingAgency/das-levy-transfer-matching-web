@@ -112,11 +112,15 @@
             </button>
         </form>
 
-        <form action="/accounts/@Model.EncodedAccountId/pledges/create/close/@Model.EncodedPledgeId" method="get">
-            <button class="govuk-button govuk-link-secondary govuk-button--warning accepted-journey-cancel-button no-margin-top">
+        @if (Model.UserCanClosePledge)
+        {
+            <form action="/accounts/@Model.EncodedAccountId/pledges/create/close/@Model.EncodedPledgeId" method="get">
+                <button class="govuk-button govuk-link-secondary govuk-button--warning accepted-journey-cancel-button no-margin-top">
                 Close pledge
             </button>
-        </form>
+            </form>
+        }
+
     </div>
 
     <a href="/accounts/@Model.EncodedAccountId/pledges" class="govuk-back-link">Back to my transfer pledges</a>

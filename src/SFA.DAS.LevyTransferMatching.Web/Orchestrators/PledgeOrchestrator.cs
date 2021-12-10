@@ -495,6 +495,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             return new ApplicationsViewModel
             {
                 EncodedAccountId = request.EncodedAccountId,
+                UserCanClosePledge = _userService.IsOwnerOrTransactor(request.AccountId),
                 EncodedPledgeId = request.EncodedPledgeId,
                 DisplayRejectedBanner = request.DisplayRejectedBanner,
                 RejectedEmployerName = request.RejectedEmployerName,
