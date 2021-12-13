@@ -452,6 +452,31 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
         }
 
+        [TestCase(true, true)]
+        [TestCase(false, false)]
+        public async Task GetApplications_Returns_Valid_ViewModel_With_UserCanClosePledge(bool OwnerOrTransactorStatus, bool expectWhetherUserCanClosePledges)
+        {
+            var response = new GetApplicationsResponse()
+            {
+                Applications = new List<GetApplicationsResponse.Application>()
+                {
+                    new GetApplicationsResponse.Application()
+                    {
+                        Id = 0,
+                        StartDate = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1),
+                        Status = ApplicationStatus.Pending
+                    }
+                }
+            };
+
+            _userService.Setup(x => x.IsOwnerOrTransactor(0)).Returns(OwnerOrTransactorStatus);
+            _pledgeService.Setup(x => x.GetApplications(0, 0)).ReturnsAsync(response);
+           
+            var result = await _orchestrator.GetApplications(new ApplicationsRequest() { EncodedAccountId = _encodedAccountId, EncodedPledgeId = _encodedPledgeId });
+
+            Assert.AreEqual(expectWhetherUserCanClosePledges, result.UserCanClosePledge);
+        }
+
         [Test]
         public async Task GetApplication_Returns_ValidViewModel()
         {
