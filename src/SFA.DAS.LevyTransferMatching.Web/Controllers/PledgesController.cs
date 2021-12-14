@@ -59,8 +59,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             }
             else
             {
-                return RedirectToAction(nameof(Applications), new { AccountId = closePostRequest.AccountId, EncodedAccountId = closePostRequest.EncodedAccountId,
-                                                                    EncodedPledgeId = closePostRequest.EncodedPledgeId, PledgeId = closePostRequest.PledgeId });
+                return RedirectToAction(nameof(Applications), new { EncodedAccountId = closePostRequest.EncodedAccountId, EncodedPledgeId = closePostRequest.EncodedPledgeId });
             }
         }
 
