@@ -47,6 +47,22 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             return View(viewModel);
         }
 
+        [HttpPost]
+        [Route("create/close/{encodedPledgeId}")]
+        public IActionResult Close(ClosePostRequest closePostRequest)
+        {
+            if (closePostRequest.HasConfirmed.Value)
+            {
+                // TODO Implement
+                return null;
+                // return RedirectToAction(nameof(Applications), new { EncodedOpportunityId = closePostRequest.EncodedPledgeId });
+            }
+            else
+            {
+                return RedirectToAction(nameof(Applications), new { EncodedAccountId = closePostRequest.EncodedAccountId, EncodedPledgeId = closePostRequest.EncodedPledgeId });
+            }
+        }
+
         [Route("{EncodedPledgeId}/detail")]
         public IActionResult Detail(DetailRequest request)
         {

@@ -1,14 +1,10 @@
-﻿@using SFA.DAS.LevyTransferMatching.Web.Extensions
-@using SFA.DAS.LevyTransferMatching.Web.Models.Pledges
-@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.CloseViewModel
+﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.CloseViewModel
 
 @{
     ViewData["Title"] = "Close pledge";
 }
 
-<a href="@Url.FinanceLink($"accounts/{Model.EncodedAccountId}/transfers")" class="govuk-back-link">Back</a>
-
-@*<a href="@Url.FinanceLink($"accounts/{Model.EncodedAccountId}/pledges/{Model.EncodedPledgeId}/applications")" class="govuk-back-link">Back</a>*@
+<a href="@Url.Action("Applications", new { EncodedAccountId = Model.EncodedAccountId, EncodedPledgeId = Model.EncodedPledgeId })" class="govuk-back-link">Back</a>
 
 <main class="govuk-main-wrapper" id="main-content" role="main">
 
@@ -65,9 +61,7 @@
 
                 <div class="govuk-button-group">
                     <button class="govuk-button" data-module="govuk-button" id="close-application-continue">Continue</button>
-                    <a class="govuk-link" href="@Url.FinanceLink($"accounts/{Model.EncodedAccountId}/transfers")">Cancel</a>
-
-                    @*<a class="govuk-link" href="@Url.FinanceLink($"accounts/{Model.EncodedAccountId}/pledges/{Model.EncodedPledgeId}/applications")">Cancel</a>*@
+                    <a class="govuk-link" href="@Url.Action("Applications", new { EncodedAccountId = Model.EncodedAccountId, EncodedPledgeId = Model.EncodedPledgeId })">Cancel</a>
                 </div>
             </form>
         </div>
