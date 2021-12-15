@@ -39,6 +39,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             return View(viewModel);
         }
 
+        [HttpGet]
         [Authorize(Policy = PolicyNames.ManageAccount)]
         [Route("close/{encodedPledgeId}")]
         public IActionResult Close(string encodedAccountId, string encodedPledgeId)
@@ -48,19 +49,23 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         }
 
         [HttpPost]
-        [Route("create/close/{encodedPledgeId}")]
+        [Route("close/{encodedPledgeId}")]
         public IActionResult Close(ClosePostRequest closePostRequest)
         {
-            if (closePostRequest.HasConfirmed.Value)
+            if (closePostRequest.HasConfirmed.HasValue)
             {
-                // TODO Implement
-                return null;
-                // return RedirectToAction(nameof(Applications), new { EncodedOpportunityId = closePostRequest.EncodedPledgeId });
+                if (closePostRequest.HasConfirmed.Value)
+                {
+                    //TODO: Update SQL database that this pledge ID is now closed
+
+                    return RedirectToAction(nameof(Pledges), new { EncodedAccountId = closePostRequest.EncodedAccountId });
+                }
+                else
+                {
+                    return RedirectToAction(nameof(Applications), new { EncodedAccountId = closePostRequest.EncodedAccountId, EncodedPledgeId = closePostRequest.EncodedPledgeId });
+                }
             }
-            else
-            {
-                return RedirectToAction(nameof(Applications), new { EncodedAccountId = closePostRequest.EncodedAccountId, EncodedPledgeId = closePostRequest.EncodedPledgeId });
-            }
+            return RedirectToAction(nameof(Close), new { EncodedAccountId = closePostRequest.EncodedAccountId, EncodedPledgeId = closePostRequest.EncodedPledgeId });
         }
 
         [Route("{EncodedPledgeId}/detail")]

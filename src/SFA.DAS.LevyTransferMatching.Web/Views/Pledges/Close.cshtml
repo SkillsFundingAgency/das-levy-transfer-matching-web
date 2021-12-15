@@ -60,7 +60,12 @@
                 </div>
 
                 <div class="govuk-button-group">
-                    <button class="govuk-button" data-module="govuk-button" id="close-application-continue">Continue</button>
+
+                    @if (Model.UserCanClosePledge)
+                    {
+                      <button class="govuk-button" data-module="govuk-button" id="close-application-continue" type="submit">Continue</button>
+                    }
+
                     <a class="govuk-link" href="@Url.Action("Applications", new { EncodedAccountId = Model.EncodedAccountId, EncodedPledgeId = Model.EncodedPledgeId })">Cancel</a>
                 </div>
             </form>

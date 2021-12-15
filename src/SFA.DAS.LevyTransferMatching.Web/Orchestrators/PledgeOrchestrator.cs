@@ -62,7 +62,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             {
                 EncodedAccountId = encodedAccountId,
                 EncodedPledgeId = encodedPledgeId,
-                CacheKey = Guid.NewGuid()
+                CacheKey = Guid.NewGuid(),
+                UserCanClosePledge = _userService.IsUserChangeAuthorized()
             };
         }
 

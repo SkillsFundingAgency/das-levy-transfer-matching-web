@@ -10,5 +10,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 
         [AutoDecode(nameof(EncodedPledgeId), Encoding.EncodingType.PledgeId)]
         public int PledgeId { get; set; }
+
+        public bool UserCanClosePledge { get; set; }
     }
 }
