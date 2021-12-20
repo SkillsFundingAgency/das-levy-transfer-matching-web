@@ -50,15 +50,21 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
         [HttpPost]
         [Route("close/{encodedPledgeId}")]
-        public IActionResult Close(ClosePostRequest closePostRequest)
+        public async Task<IActionResult> Close(ClosePostRequest closePostRequest)
         {
             if (closePostRequest.HasConfirmed.HasValue)
             {
                 if (closePostRequest.HasConfirmed.Value)
                 {
-                    //TODO: Update SQL database that this pledge ID is now closed
+               
+                    var pledgeCloseStatus = await _orchestrator.ClosePledge(closePostRequest.PledgeId);
 
-                    return RedirectToAction(nameof(Pledges), new { EncodedAccountId = closePostRequest.EncodedAccountId });
+                    
+                    if (pledgeCloseStatus.HasConfirmed == true) {
+                        // Display a Banner, true means pledge staus is now set to 1
+                        // then load the list of pledges
+                        return RedirectToAction(nameof(Pledges), new { EncodedAccountId = closePostRequest.EncodedAccountId });
+                    }
                 }
                 else
                 {

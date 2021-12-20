@@ -35,5 +35,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 		Task<ApplicationApprovalOptionsViewModel> GetApplicationApprovalOptionsViewModel(ApplicationApprovalOptionsRequest request, CancellationToken cancellationToken = default);
         Task SetApplicationApprovalOptions(ApplicationApprovalOptionsPostRequest request, CancellationToken cancellationToken = default);
         Task<byte[]> GetPledgeApplicationsDownloadModel(ApplicationsRequest request);
+
+        Task<CloseViewModel> ClosePledge(int pledgeId);
     }
 }
