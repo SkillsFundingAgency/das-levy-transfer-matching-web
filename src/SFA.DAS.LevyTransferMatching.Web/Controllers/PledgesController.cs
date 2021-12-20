@@ -55,15 +55,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             if (closePostRequest.HasConfirmed.HasValue)
             {
                 if (closePostRequest.HasConfirmed.Value)
-                {
-               
+                {               
                     var pledgeCloseStatus = await _orchestrator.ClosePledge(closePostRequest.PledgeId);
-
                     
-                    if (pledgeCloseStatus.HasConfirmed == true) {
-                        // Display a Banner, true means pledge staus is now set to 1
-                        // then load the list of pledges
-                        return RedirectToAction(nameof(Pledges), new { EncodedAccountId = closePostRequest.EncodedAccountId });
+                    if (pledgeCloseStatus.HasConfirmed == true) 
+                    {
+                        return RedirectToAction(nameof(Pledges), new { EncodedAccountId = closePostRequest.EncodedAccountId, PledgeClosedShowBanner = true, PledgeClosedEncodedPledgeId = closePostRequest.EncodedPledgeId });
                     }
                 }
                 else

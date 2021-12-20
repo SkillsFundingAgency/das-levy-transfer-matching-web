@@ -2,5 +2,7 @@
 {
     public class PledgesRequest : BasePledgesRequest
     {
+        public bool PledgeClosedShowBanner { get; set; }
+        public string PledgeClosedEncodedPledgeId { get; set; }
     }
 }
