@@ -83,7 +83,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),
                     Amount = x.Amount,
                     RemainingAmount = x.RemainingAmount,
-                    ApplicationCount = x.ApplicationCount
+                    ApplicationCount = x.ApplicationCount,
+                    IsPledgeClosed = x.IsPledgeClosed
                 })
             };
         }
@@ -512,6 +513,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 EncodedPledgeId = request.EncodedPledgeId,
                 DisplayRejectedBanner = request.DisplayRejectedBanner,
                 RejectedEmployerName = request.RejectedEmployerName,
+                IsPledgeClosed = request.IsPledgeClosed,
                 Applications = viewModels
             };
         }

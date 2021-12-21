@@ -112,7 +112,7 @@
             </button>
         </form>
 
-        @if (Model.UserCanClosePledge)
+        @if (Model.UserCanClosePledge && !Model.IsPledgeClosed)
         {
             <form action="/accounts/@Model.EncodedAccountId/pledges/close/@Model.EncodedPledgeId" method="get">
                 <button class="govuk-button govuk-link-secondary govuk-button--warning accepted-journey-cancel-button no-margin-top">
