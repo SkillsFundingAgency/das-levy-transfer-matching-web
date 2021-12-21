@@ -216,7 +216,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             var response = await _pledgeService.ClosePledge(pledgeId);
             var closeViewModel = new CloseViewModel
             {
-                HasConfirmed = response.Updated,
+                PledgeClosed = response.Updated,
             };
             return closeViewModel;
         }

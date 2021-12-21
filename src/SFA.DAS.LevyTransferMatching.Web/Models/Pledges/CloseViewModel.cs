@@ -12,5 +12,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public int PledgeId { get; set; }
 
         public bool UserCanClosePledge { get; set; }
+
+        public bool PledgeClosed { get; set; }
     }
 }
