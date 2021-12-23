@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Authentication;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
@@ -41,7 +42,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
         [HttpGet]
         [Authorize(Policy = PolicyNames.ManageAccount)]
-        [Route("close/{encodedPledgeId}")]
+        [Route("{encodedPledgeId}/close")]
         public IActionResult Close(string encodedAccountId, string encodedPledgeId)
         {
             var viewModel = _orchestrator.GetCloseViewModel(encodedAccountId, encodedPledgeId);
@@ -49,26 +50,20 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         }
 
         [HttpPost]
-        [Route("close/{encodedPledgeId}")]
+        [Route("{encodedPledgeId}/close")]
         public async Task<IActionResult> Close(ClosePostRequest closePostRequest)
         {
-            if (closePostRequest.HasConfirmed.HasValue)
+            if (closePostRequest.HasConfirmed.Value)
             {
-                if (closePostRequest.HasConfirmed.Value)
-                {               
-                    var pledgeCloseStatus = await _orchestrator.ClosePledge(closePostRequest.PledgeId);
-                    
-                    if (pledgeCloseStatus.PledgeClosed) 
-                    {
-                        return RedirectToAction(nameof(Pledges), new { EncodedAccountId = closePostRequest.EncodedAccountId, PledgeClosedShowBanner = true, PledgeClosedEncodedPledgeId = closePostRequest.EncodedPledgeId });
-                    }
-                }
-                else
+                var pledgeCloseStatus = await _orchestrator.ClosePledge(closePostRequest.PledgeId);
+
+                if (pledgeCloseStatus.PledgeClosed)
                 {
-                    return RedirectToAction(nameof(Applications), new { EncodedAccountId = closePostRequest.EncodedAccountId, EncodedPledgeId = closePostRequest.EncodedPledgeId });
+                    TempData.AddFlashMessage("Transfer pledge closed", $"You closed the transfer pledge {closePostRequest.EncodedPledgeId}.", TempDataDictionaryExtensions.FlashMessageLevel.Success);
+                    return RedirectToAction(nameof(Pledges), new { EncodedAccountId = closePostRequest.EncodedAccountId });
                 }
             }
-            return RedirectToAction(nameof(Close), new { EncodedAccountId = closePostRequest.EncodedAccountId, EncodedPledgeId = closePostRequest.EncodedPledgeId });
+            return RedirectToAction(nameof(Applications), new { EncodedAccountId = closePostRequest.EncodedAccountId, EncodedPledgeId = closePostRequest.EncodedPledgeId });
         }
 
         [Route("{EncodedPledgeId}/detail")]

@@ -13,6 +13,5 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public bool DisplayRejectedBanner { get; set; }
         public string RejectedEmployerName { get; set; }
         public bool UserCanClosePledge { get; set; }
-        public bool IsPledgeClosed { get; set; }
     }
 }

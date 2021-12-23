@@ -76,15 +76,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             {
                 EncodedAccountId = request.EncodedAccountId,
                 RenderCreatePledgeButton = renderCreatePledgesButton,
-                PledgeClosedEncodedPledgeId = request.PledgeClosedEncodedPledgeId,
-                PledgeClosedShowBanner = request.PledgeClosedShowBanner,
                 Pledges = pledgesResponse.Pledges.Select(x => new PledgesViewModel.Pledge
                 {
                     ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),
                     Amount = x.Amount,
                     RemainingAmount = x.RemainingAmount,
-                    ApplicationCount = x.ApplicationCount,
-                    IsPledgeClosed = x.IsPledgeClosed
+                    ApplicationCount = x.ApplicationCount
                 })
             };
         }
@@ -509,11 +506,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             return new ApplicationsViewModel
             {
                 EncodedAccountId = request.EncodedAccountId,
-                UserCanClosePledge = _userService.IsOwnerOrTransactor(request.AccountId),
+                UserCanClosePledge = result.PledgeStatus != PledgeStatus.Closed && _userService.IsOwnerOrTransactor(request.AccountId),
                 EncodedPledgeId = request.EncodedPledgeId,
                 DisplayRejectedBanner = request.DisplayRejectedBanner,
                 RejectedEmployerName = request.RejectedEmployerName,
-                IsPledgeClosed = request.IsPledgeClosed,
                 Applications = viewModels
             };
         }
