@@ -29,7 +29,7 @@
                                 Additional city or town
                             </label>
                             <span class="govuk-error-message">@Html.ValidationMessageFor(x => x.Locations[i])</span>
-                            <input class="govuk-input app-location-autocomplete" type="text" asp-for="Locations[i]" das-highlight-error-for="Locations[i]" error-class="govuk-input--error" autocomplete="off" />
+                            <input class="govuk-input app-location-autocomplete" type="text" asp-for="Locations[i]" das-highlight-error-for="Locations[i]" error-class="govuk-input--error" autocomplete="disabled" />
                         </div>
                     }
                 </fieldset>

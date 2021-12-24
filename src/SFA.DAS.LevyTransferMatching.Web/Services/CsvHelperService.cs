@@ -82,6 +82,16 @@ namespace SFA.DAS.LevyTransferMatching.Web.Services
                 return;
             }
 
+            if (application?.DynamicLocations?.Count() == 0 && totalLocationColumnsRequired > 0)
+            {
+                for (int i = 0; i < totalLocationColumnsRequired; i++)
+                {
+                    var fieldName = $"Location{i + 1}";
+                    AddProperty(record, fieldName, string.Empty);
+                }
+                return;
+            }
+
             for (int i = 0; i < application?.DynamicLocations?.Count(); i++)
             {
                 var fieldName = $"Location{i + 1}";
