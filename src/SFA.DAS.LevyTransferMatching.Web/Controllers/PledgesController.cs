@@ -55,13 +55,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         {
             if (closePostRequest.HasConfirmed.Value)
             {
-                var pledgeCloseStatus = await _orchestrator.ClosePledge(closePostRequest.PledgeId);
-
-                if (pledgeCloseStatus.PledgeClosed)
-                {
-                    TempData.AddFlashMessage("Transfer pledge closed", $"You closed the transfer pledge {closePostRequest.EncodedPledgeId}.", TempDataDictionaryExtensions.FlashMessageLevel.Success);
-                    return RedirectToAction(nameof(Pledges), new { EncodedAccountId = closePostRequest.EncodedAccountId });
-                }
+               await _orchestrator.ClosePledge(closePostRequest);
+               
+               TempData.AddFlashMessage("Transfer pledge closed", $"You closed the transfer pledge {closePostRequest.EncodedPledgeId}.", TempDataDictionaryExtensions.FlashMessageLevel.Success);
+               return RedirectToAction(nameof(Pledges), new { EncodedAccountId = closePostRequest.EncodedAccountId });
             }
             return RedirectToAction(nameof(Applications), new { EncodedAccountId = closePostRequest.EncodedAccountId, EncodedPledgeId = closePostRequest.EncodedPledgeId });
         }

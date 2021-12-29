@@ -209,14 +209,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
-        public async Task<CloseViewModel> ClosePledge(int pledgeId)
+        public async Task ClosePledge(ClosePostRequest request)
         {
-            var response = await _pledgeService.ClosePledge(pledgeId);
-            var closeViewModel = new CloseViewModel
+            var closePledgeRequest = new ClosePledgeRequest
             {
-                PledgeClosed = response.Updated,
+                UserId = _userService.GetUserId(),
+                UserDisplayName = _userService.GetUserDisplayName()
             };
-            return closeViewModel;
+
+          await _pledgeService.ClosePledge(request.AccountId, request.PledgeId, closePledgeRequest);            
         }
 
         public async Task<ApplicationApprovedViewModel> GetApplicationApprovedViewModel(ApplicationApprovedRequest request)
