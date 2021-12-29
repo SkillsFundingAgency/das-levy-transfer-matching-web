@@ -559,6 +559,20 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                     )));
         }
 
+        [Test]
+        public async Task Close_Pledge_Request()
+        {
+            var request = _fixture.Create<ClosePostRequest>();
+
+            await _orchestrator.ClosePledge(request);
+
+            _pledgeService.Verify(x => x.ClosePledge(request.AccountId,
+                request.PledgeId,
+                It.Is<ClosePledgeRequest>(r =>
+                    r.UserId == _userId &&
+                    r.UserDisplayName == _userDisplayName)));
+        }
+
         [TestCase("www.contoso.com", "http://www.contoso.com")]
         [TestCase("http://www.contoso.com", "http://www.contoso.com")]
         [TestCase("https://www.contoso.com", "https://www.contoso.com")]
