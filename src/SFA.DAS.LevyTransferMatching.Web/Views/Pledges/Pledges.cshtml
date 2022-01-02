@@ -1,4 +1,5 @@
-﻿@using SFA.DAS.LevyTransferMatching.Web.Models.Pledges
+﻿@using SFA.DAS.LevyTransferMatching.Domain.Extensions
+@using SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 @model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.PledgesViewModel
 
 @{
@@ -34,6 +35,7 @@
                             <th scope="col" class="govuk-table__header govuk-table__header--numeric">Total</th>
                             <th scope="col" class="govuk-table__header govuk-table__header--numeric">Remaining funds</th>
                             <th scope="col" class="govuk-table__header govuk-table__header--numeric">Applications</th>
+                            <th scope="col" class="govuk-table__header govuk-table__header--numeric">Status</th>
                         </tr>
                     </thead>
                     <tbody class="govuk-table__body">
@@ -46,6 +48,7 @@
                                 <td class="govuk-table__cell govuk-table__cell--numeric">£@pledge.Amount.ToString("N0")</td>
                                 <td class="govuk-table__cell govuk-table__cell--numeric">£@pledge.RemainingAmount.ToString("N0")</td>
                                 <td class="govuk-table__cell govuk-table__cell--numeric">@pledge.ApplicationCount</td>
+                                <td class="govuk-table__cell govuk-table__cell--numeric"><strong class="@pledge.Status.GetCssClassForPledgeStatus()">@pledge.Status.GetLabelForPledgeStatus()</strong></td>
                             </tr>
                         }
                     </tbody>
