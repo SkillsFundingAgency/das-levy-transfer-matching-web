@@ -69,7 +69,6 @@
                 <th scope="col" class="govuk-table__header tax-year ">Estimated cost @Model.TaxYear</th>
                                 <th scope="col" class="govuk-table__header duration" >Typical duration</th>
                                 <th scope="col" class="govuk-table__header">Criteria</th>
-                                <th scope="col" class="govuk-table__header">Date applied</th>
                                 <th scope="col" class="govuk-table__header status" >Status</th>
                             </tr>
         </thead>
@@ -88,7 +87,6 @@
                             <td class="govuk-table__cell">
                                                 <criteria-list application="@app"></criteria-list>
                             </td>
-                            <td class="govuk-table__cell">@app.CreatedOn.ToLongDateDisplayString()</td>
                             <td class="govuk-table__cell"><strong class="@app.Status.GetCssClassForSender()">@app.Status.GetLabelForSender()</strong></td>
                         </tr>
                     }
