@@ -98,7 +98,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                 Levels = _levels
             });
 
-            _pledgeService.Setup(x => x.GetAmount(_encodedAccountId)).ReturnsAsync(_amountResponse);
+            _pledgeService.Setup(x => x.GetAmount(_accountId)).ReturnsAsync(_amountResponse);
             _pledgeService.Setup(x => x.GetSector(_accountId)).ReturnsAsync(_sectorResponse);
             _pledgeService.Setup(x => x.GetJobRole(_accountId)).ReturnsAsync(_jobRoleResponse);
             _pledgeService.Setup(x => x.GetLevel(_accountId)).ReturnsAsync(_levelResponse);
@@ -232,16 +232,16 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         }
 
         [Test]
-        public async Task GetAmountViewModel_EncodedId_Is_Correct()
+        public async Task GetAmountViewModel_AccountId_Is_Correct()
         {
-            var result = await _orchestrator.GetAmountViewModel(new AmountRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
-            Assert.AreEqual(_encodedAccountId, result.EncodedAccountId);
+            var result = await _orchestrator.GetAmountViewModel(new AmountRequest { AccountId = _accountId, CacheKey = _cacheKey });
+            Assert.AreEqual(_accountId, result.AccountId);
         }
 
         [Test]
         public async Task GetAmountViewModel_CacheKey_Is_Correct()
         {
-            var result = await _orchestrator.GetAmountViewModel(new AmountRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
+            var result = await _orchestrator.GetAmountViewModel(new AmountRequest { AccountId = _accountId, CacheKey = _cacheKey });
             Assert.AreEqual(_cacheKey, result.CacheKey);
         }
 
@@ -251,7 +251,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var cacheItem = _fixture.Create<CreatePledgeCacheItem>();
             _cache.Setup(x => x.RetrieveFromCache<CreatePledgeCacheItem>(_cacheKey.ToString())).ReturnsAsync(cacheItem);
 
-            var result = await _orchestrator.GetAmountViewModel(new AmountRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
+            var result = await _orchestrator.GetAmountViewModel(new AmountRequest { AccountId = _accountId, CacheKey = _cacheKey });
             Assert.AreEqual(cacheItem.Amount.ToString(), result.Amount);
         }
 
@@ -261,7 +261,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var cacheItem = _fixture.Create<CreatePledgeCacheItem>();
             _cache.Setup(x => x.RetrieveFromCache<CreatePledgeCacheItem>(_cacheKey.ToString())).ReturnsAsync(cacheItem);
 
-            var result = await _orchestrator.GetAmountViewModel(new AmountRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
+            var result = await _orchestrator.GetAmountViewModel(new AmountRequest { AccountId = _accountId, CacheKey = _cacheKey });
             Assert.AreEqual(cacheItem.IsNamePublic, result.IsNamePublic);
         }
 

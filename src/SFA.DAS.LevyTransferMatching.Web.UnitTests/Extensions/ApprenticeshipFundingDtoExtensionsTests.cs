@@ -78,11 +78,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
             {
                 Duration = 15,
                 MaxEmployerLevyCap = 11_000,
-                EffectiveFrom = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.AddMonths(-1).Month, 1),
+                EffectiveFrom = new DateTime(2021, 12, 1),
                 EffectiveTo = null
             };
 
-            var result = sut.CalcFundingForDate(1, new DateTime(DateTime.UtcNow.Year, 9, 1));
+            var result = sut.CalcFundingForDate(1, new DateTime(2021, 9, 1));
 
             Assert.AreEqual(4_100, result);
         }
@@ -94,11 +94,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
             {
                 Duration = 24,
                 MaxEmployerLevyCap = 20_000,
-                EffectiveFrom = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.AddMonths(-1).Month, 1),
+                EffectiveFrom = new DateTime(2021, 12, 1),
                 EffectiveTo = null
             };
 
-            var result = sut.CalcFundingForDate(2, new DateTime(DateTime.UtcNow.Year, 10, 1));
+            var result = sut.CalcFundingForDate(2, new DateTime(2021, 10, 1));
 
             Assert.AreEqual(8_000, result);
         }

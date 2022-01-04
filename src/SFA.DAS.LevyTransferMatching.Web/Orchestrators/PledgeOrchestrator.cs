@@ -110,7 +110,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         public async Task<AmountViewModel> GetAmountViewModel(AmountRequest request)
         {
             var cacheItemTask = RetrievePledgeCacheItem(request.CacheKey);
-            var accountDataTask = _pledgeService.GetAmount(request.EncodedAccountId);
+            var accountDataTask = _pledgeService.GetAmount(request.AccountId);
 
             await Task.WhenAll(cacheItemTask, accountDataTask);
             var cacheItem = cacheItemTask.Result;
@@ -118,6 +118,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             return new AmountViewModel
             {
+                AccountId = request.AccountId,
                 EncodedAccountId = request.EncodedAccountId,
                 CacheKey = request.CacheKey,
                 Amount = cacheItem.Amount.ToString(),
