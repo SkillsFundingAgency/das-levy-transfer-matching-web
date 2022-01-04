@@ -78,7 +78,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
             {
                 Duration = 15,
                 MaxEmployerLevyCap = 11_000,
-                EffectiveFrom = new DateTime(2021, DateTime.UtcNow.AddMonths(-1).Month, 1),
+                EffectiveFrom = new DateTime(2021, 12, 1),
                 EffectiveTo = null
             };
 
@@ -94,7 +94,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
             {
                 Duration = 24,
                 MaxEmployerLevyCap = 20_000,
-                EffectiveFrom = new DateTime(2021, DateTime.UtcNow.AddMonths(-1).Month, 1),
+                EffectiveFrom = new DateTime(2021, 12, 1),
                 EffectiveTo = null
             };
 
