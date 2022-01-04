@@ -119,6 +119,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             return new AmountViewModel
             {
                 AccountId = request.AccountId,
+                EncodedAccountId = request.EncodedAccountId,
                 CacheKey = request.CacheKey,
                 Amount = cacheItem.Amount.ToString(),
                 RemainingTransferAllowance = accountData.RemainingTransferAllowance.ToString("N0"),
