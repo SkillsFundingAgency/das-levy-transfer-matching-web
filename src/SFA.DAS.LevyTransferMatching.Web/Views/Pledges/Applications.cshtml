@@ -53,6 +53,28 @@
             </div>
         </div>
 
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                 <div class="govuk-button-group">
+                    <form action="/accounts/@Model.EncodedAccountId/pledges/create/inform" method="get">
+                        <button class="govuk-button">
+                            Create a new transfer pledge
+                        </button>
+                    </form>
+
+                    @if (Model.UserCanClosePledge)
+                    {
+                        <form action="/accounts/@Model.EncodedAccountId/pledges/@Model.EncodedPledgeId/close" method="get">
+                            <button class="govuk-button govuk-link-secondary govuk-button--warning accepted-journey-cancel-button no-margin-top">
+                            Close pledge
+                            </button>
+                        </form>
+                    }
+
+                </div>
+            </div>
+        </div>
+
         <details class="govuk-details">
             <summary class="govuk-details__summary">
                 <span class="govuk-details__summary-text">Information about the applications</span>
@@ -105,25 +127,6 @@
         </table>
     </div>
 
-    <div class="govuk-button-group">
-        <form action="/accounts/@Model.EncodedAccountId/pledges/create/inform" method="get">
-            <button class="govuk-button">
-                Create a new transfer pledge
-            </button>
-        </form>
-
-        @if (Model.UserCanClosePledge)
-        {
-            <form action="/accounts/@Model.EncodedAccountId/pledges/@Model.EncodedPledgeId/close" method="get">
-                <button class="govuk-button govuk-link-secondary govuk-button--warning accepted-journey-cancel-button no-margin-top">
-                Close pledge
-                </button>
-            </form>
-        }
-
-    </div>
-
     <a href="/accounts/@Model.EncodedAccountId/pledges" class="govuk-back-link">Back to my transfer pledges</a>
-
 
 </main>
