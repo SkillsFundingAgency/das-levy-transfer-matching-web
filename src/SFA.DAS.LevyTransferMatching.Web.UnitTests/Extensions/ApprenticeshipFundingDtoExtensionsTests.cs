@@ -18,15 +18,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
                 {
                     Duration = 12,
                     MaxEmployerLevyCap = 9_000,
-                    EffectiveFrom = new DateTime(DateTime.UtcNow.AddYears(-1).Year, DateTime.UtcNow.Month, 1),
+                    EffectiveFrom = new DateTime(2021, 1, 1),
                     EffectiveTo = null
                 },
                 new ApprenticeshipFundingDto()
                 {
                     Duration = 15,
                     MaxEmployerLevyCap = 12_000,
-                    EffectiveFrom = new DateTime(DateTime.UtcNow.AddYears(-2).Year, DateTime.UtcNow.AddMonths(-1).Month, 1),
-                    EffectiveTo = new DateTime(DateTime.UtcNow.AddYears(-1).Year, DateTime.UtcNow.AddMonths(-1).Month, 30)
+                    EffectiveFrom = new DateTime(2020, 12, 1),
+                    EffectiveTo = new DateTime(2021,12, 30)
                 }
             }.AsEnumerable();
 
@@ -34,7 +34,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
 
             Assert.IsNotNull(result);
             Assert.AreEqual(12, result.Duration);
-            Assert.AreEqual(new DateTime(DateTime.UtcNow.AddYears(-1).Year, DateTime.UtcNow.Month, 1), result.EffectiveFrom);
+            Assert.AreEqual(new DateTime(2021, 1, 1), result.EffectiveFrom);
             Assert.IsNull(result.EffectiveTo);
             Assert.AreEqual(9_000, result.MaxEmployerLevyCap);
         }
@@ -78,7 +78,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
             {
                 Duration = 15,
                 MaxEmployerLevyCap = 11_000,
-                EffectiveFrom = new DateTime(2021, DateTime.UtcNow.AddMonths(-1).Month, 1),
+                EffectiveFrom = new DateTime(2021, 12, 1),
                 EffectiveTo = null
             };
 
@@ -94,7 +94,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
             {
                 Duration = 24,
                 MaxEmployerLevyCap = 20_000,
-                EffectiveFrom = new DateTime(2021, DateTime.UtcNow.AddMonths(-1).Month, 1),
+                EffectiveFrom = new DateTime(2021, 12, 1),
                 EffectiveTo = null
             };
 
@@ -110,7 +110,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
             {
                 Duration = 12,
                 MaxEmployerLevyCap = 12_000,
-                EffectiveFrom = new DateTime(2021, DateTime.UtcNow.AddMonths(-1).Month, 1),
+                EffectiveFrom = new DateTime(2021, 12, 1),
                 EffectiveTo = null
             };
 
@@ -126,7 +126,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
             var dto = new ApprenticeshipFundingDto
             {
                 Duration = 24,
-                EffectiveFrom = new DateTime(2021, DateTime.UtcNow.AddMonths(-1).Month, 1),
+                EffectiveFrom = new DateTime(2021, 12, 1),
                 EffectiveTo = null,
                 MaxEmployerLevyCap = maxLevyCap
             };
