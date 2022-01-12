@@ -1,7 +1,4 @@
 ﻿using SFA.DAS.LevyTransferMatching.Domain.Types;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SFA.DAS.LevyTransferMatching.Domain.Extensions
 {
@@ -22,7 +19,7 @@ namespace SFA.DAS.LevyTransferMatching.Domain.Extensions
         {
             switch (status)
             {
-                case PledgeStatus.Active: return "govuk-tag govuk-tag--blue";
+                case PledgeStatus.Active: return "govuk-tag govuk-tag--dark-blue";
                 case PledgeStatus.Closed: return "govuk-tag govuk-tag--grey";
                 default:
                     return string.Empty;
