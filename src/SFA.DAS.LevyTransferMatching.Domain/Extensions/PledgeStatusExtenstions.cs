@@ -4,7 +4,7 @@ namespace SFA.DAS.LevyTransferMatching.Domain.Extensions
 {
     public static class PledgeStatusExtenstions
     {
-        public static string GetLabelForPledgeStatus(this PledgeStatus status)
+        public static string GetLabel(this PledgeStatus status)
         {
             switch (status)
             {
@@ -15,7 +15,7 @@ namespace SFA.DAS.LevyTransferMatching.Domain.Extensions
             }
         }
 
-        public static string GetCssClassForPledgeStatus(this PledgeStatus status)
+        public static string GetCssClass(this PledgeStatus status)
         {
             switch (status)
             {

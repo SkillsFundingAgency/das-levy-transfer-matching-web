@@ -48,7 +48,7 @@
                                 <td class="govuk-table__cell govuk-table__cell--numeric">£@pledge.Amount.ToString("N0")</td>
                                 <td class="govuk-table__cell govuk-table__cell--numeric">£@pledge.RemainingAmount.ToString("N0")</td>
                                 <td class="govuk-table__cell govuk-table__cell--numeric">@pledge.ApplicationCount</td>
-                                <td class="govuk-table__cell"><strong class="@pledge.Status.GetCssClassForPledgeStatus()">@pledge.Status.GetLabelForPledgeStatus()</strong></td>
+                                <td class="govuk-table__cell"><strong class="@pledge.Status.GetCssClass()">@pledge.Status.GetLabel()</strong></td>
                             </tr>
                         }
                     </tbody>
