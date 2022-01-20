@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Web.Authentication;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
@@ -205,8 +206,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
         [HttpGet]
         [Route("{encodedPledgeId}/applications")]
-        public async Task<IActionResult> Applications(ApplicationsRequest request)
+        public async Task<IActionResult> Applications(ApplicationsRequest request, SortColumn? sortColumn = null, SortOrder? sortOrder = null)
         {
+            request.SortColumn = sortColumn;
+            request.SortOrder = sortOrder;
             var response = await _orchestrator.GetApplications(request);
 
             return View(response);
