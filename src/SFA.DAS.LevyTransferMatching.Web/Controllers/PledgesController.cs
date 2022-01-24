@@ -206,10 +206,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
         [HttpGet]
         [Route("{encodedPledgeId}/applications")]
-        public async Task<IActionResult> Applications(ApplicationsRequest request, SortColumn? sortColumn = null, SortOrder? sortOrder = null)
+        public async Task<IActionResult> Applications(ApplicationsRequest request)
         {
-            request.SortColumn = sortColumn;
-            request.SortOrder = sortOrder;
             var response = await _orchestrator.GetApplications(request);
 
             return View(response);
