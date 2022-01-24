@@ -100,19 +100,22 @@
                                         <td colspan="6" class="govuk-table__cell">No applications received yet</td>
                                     </tr>
                                 }
-                            }
+            }
         </tbody>
     </table>
-                </div>
-                
-    <div class="govuk-button-group">
-        <form action="/accounts/@Model.EncodedAccountId/pledges/create/inform" method="get">
-            <button class="govuk-button">
-                Create a new transfer pledge
-            </button>
-        </form>
     </div>
-                
+              
+    @if (Model.RenderCreatePledgeButton)
+    {
+        <div class="govuk-button-group">
+            <form action="/accounts/@Model.EncodedAccountId/pledges/create/inform" method="get">
+                <button class="govuk-button">
+                    Create a new transfer pledge
+                </button>
+            </form>
+        </div>
+    }
+
     <a href="/accounts/@Model.EncodedAccountId/pledges" class="govuk-back-link">Back to my transfer pledges</a>
 
         
