@@ -125,6 +125,22 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 IsNamePublic = cacheItem.IsNamePublic,
                 DasAccountName = accountData.DasAccountName
             };
+        }        
+        
+        public async Task<RejectInformViewModel> GetRejectInformViewModel(RejectInformRequest request)
+        {
+            var cacheItemTask = RetrieveRejectApplicationCacheItem(request.CacheKey);
+
+            await Task.WhenAll(cacheItemTask); // TODO Remove WhenAll if only one
+            var cacheItem = cacheItemTask.Result;
+
+            return new RejectInformViewModel
+            {
+                EncodedAccountId = request.EncodedAccountId,
+                CacheKey = request.CacheKey,
+                AccountId = request.AccountId,
+                ApplicationsToReject = cacheItem.ApplicationsToReject
+            };
         }
 
         public async Task<SectorViewModel> GetSectorViewModel(SectorRequest request)
@@ -184,6 +200,17 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             await _cacheStorageService.DeleteFromCache(request.CacheKey.ToString());
 
             return _encodingService.Encode(pledgeId, EncodingType.PledgeId);
+        }
+        public async Task RejectApplications(RejectApplicationPostRequest request)
+        { // TODO - Only for Jawwad to find this method
+            var applicationRejectRequest = new RejectApplicationRequest
+            {
+                ApplicationsToReject = request.ApplicationsToReject,
+                UserId = _userService.GetUserId(),
+                UserDisplayName = _userService.GetUserDisplayName(),
+            };
+
+            await _pledgeService.RejectApplications(applicationRejectRequest, request.AccountId, request.PledgeId);
         }
 
         public async Task<LocationViewModel> GetLocationViewModel(LocationRequest request)
@@ -338,6 +365,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
         }
 
+        public async Task UpdateCacheItem(RejectInformRequest request)
+        {
+            var cacheItem = await RetrieveRejectApplicationCacheItem(request.CacheKey);
+
+            cacheItem.ApplicationsToReject = request.ApplicationsToReject;
+
+            await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
+        }
+
         public async Task UpdateCacheItem(SectorPostRequest request)
         {
             var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
@@ -418,6 +454,19 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             if (result == null)
             {
                 result = new CreatePledgeCacheItem(key);
+                await _cacheStorageService.SaveToCache(key.ToString(), result, 1);
+            }
+
+            return result;
+        }
+
+        private async Task<RejectApplicationCacheItem> RetrieveRejectApplicationCacheItem(Guid key)
+        {
+            var result = await _cacheStorageService.RetrieveFromCache<RejectApplicationCacheItem>(key.ToString());
+
+            if (result == null)
+            {
+                result = new RejectApplicationCacheItem(key);
                 await _cacheStorageService.SaveToCache(key.ToString(), result, 1);
             }
 

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.LevyTransferMatching.Web.Attributes;
 using SFA.DAS.LevyTransferMatching.Web.Authentication;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
@@ -211,6 +212,56 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
             return View(response);
         }
+
+        [Authorize(Policy = PolicyNames.ManageAccount)]
+        [HttpPost]
+        [Route("{encodedPledgeId}/applications")]
+        public IActionResult Applications(ApplicationsPostRequest request)
+        {
+            return RedirectToAction(nameof(RejectApplications), request); // TODO query string gets filled with values - Remove them from query string
+        }
+
+        [HideAccountNavigation(false, hideNavigationLinks: true)]
+        [Authorize]
+        [Route("{encodedPledgeId}/applications/rejectapplications")]
+        public async Task<IActionResult> RejectApplications(ApplicationsPostRequest request)
+        {
+            return View(request);
+            //var viewModel = await _orchestrator.GetSelectAccountViewModel(request);
+
+            //if (viewModel.Accounts.Count() != 1) return View(viewModel);
+
+            //return RedirectToAction("Apply", new
+            //{
+            //    CacheKey = Guid.NewGuid(),
+            //    EncodedAccountId = viewModel.Accounts.Single().EncodedAccountId,
+            //    EncodedPledgeId = request.EncodedOpportunityId,
+            //});
+        }
+
+        [HideAccountNavigation(false, hideNavigationLinks: true)]
+        [Authorize]
+        [Route("{encodedPledgeId}/applications/rejectapplications")]
+        [HttpPost]
+        public async Task<IActionResult> RejectApplications(RejectApplicationPostRequest request)
+        {
+            if (request.RejectConfirm)
+            {
+                await _orchestrator.RejectApplications(request);
+            }
+            return RedirectToAction(nameof(Applications), request);
+        }
+
+        //[Authorize(Policy = PolicyNames.ManageAccount)]
+        //[Route("reject/inform")]
+        //public async Task<IActionResult> RejectInform(RejectInformRequest request)
+        //{
+        //    return null;
+        //    //await _orchestrator.UpdateCacheItem(request); // TODO update here?
+
+        //    //var viewModel = await _orchestrator.GetRejectInformViewModel(request);
+        //    //return View(viewModel);
+        //}
 
         [HttpGet]
         [Route("{encodedPledgeId}/applications/download")]

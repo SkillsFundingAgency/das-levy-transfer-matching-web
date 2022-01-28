@@ -4,16 +4,21 @@ using System.Collections.Generic;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 {
-    public class ApplicationsRequest
+    public class ApplicationsPostRequest
     {
+        // TODO remove unused fields at the end
         public string EncodedAccountId { get; set; }
+
         [AutoDecode(nameof(EncodedAccountId), EncodingType.AccountId)]
-        public int AccountId { get; set; }
+        public long AccountId { get; set; }
+
         public string EncodedPledgeId { get; set; }
-        [AutoDecode("EncodedPledgeId", Encoding.EncodingType.PledgeId)]
+
+        [AutoDecode(nameof(EncodedPledgeId), EncodingType.PledgeId)]
         public int PledgeId { get; set; }
-        public bool DisplayRejectedBanner { get; set; }
-        public string RejectedEmployerName { get; set; }
+
         public List<string> ApplicationsToReject { get; set; }
+
+        public bool RejectConfirm { get; set; }
     }
 }

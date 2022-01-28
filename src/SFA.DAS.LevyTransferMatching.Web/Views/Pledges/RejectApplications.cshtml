@@ -1,0 +1,54 @@
+﻿@*TODO - Change this object to a view model*@
+@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.ApplicationsPostRequest
+
+@{
+    ViewData["Title"] = "Pledges";
+}
+
+<a href="@Url.Action("Applications", Model)" class="govuk-back-link">Back</a> @*TODO query string gets filled with values - Remove them from query string*@
+
+<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
+
+    <div class="govuk-width-container">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-xl">Rejecting the apprenticeship application(s)</h1>
+             
+                <form method="post">
+                    <section class="employer-details side-panel applications_for_approval">
+                        <p class="govuk-heading-s">Applications for rejection</p>
+                        <ul class="govuk-list govuk-list--bullet">
+                            
+                            @foreach (var app in Model.ApplicationsToReject)
+                            {
+                                <li class="application_rejection" style="display: list-item;">@app.Split("-")[1]</li>
+                            }
+                        </ul>
+                    </section>
+
+                    <div class="govuk-form-group" >
+                        <fieldset class="govuk-fieldset" aria-describedby="contact-hint">
+                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                                <h2 class="govuk-heading-m no-margin-bottom">What would you like to do?</h2>
+                            </legend>
+                            <div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios">
+                                <div class="govuk-radios__item">
+                                    <input class="govuk-radios__input" id="reject_application_reject" name="RejectConfirm" type="radio" value="true">
+                                    <label class="govuk-label govuk-radios__label" for="reject_application_reject">Reject the application(s)</label>
+                                </div>
+                                <div class="govuk-radios__item">
+                                    <input class="govuk-radios__input" id="reject_application_cancel" name="RejectConfirm" type="radio" value="false">
+                                    <label class="govuk-label govuk-radios__label" for="reject_application_cancel">Cancel, return to applications</label>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+
+                    <button class="govuk-button" data-module="govuk-button" id="reject_application" type="submit">Continue</button>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+</main>
