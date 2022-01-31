@@ -506,6 +506,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     AboutOpportunity = result.AboutOpportunity,
                     BusinessWebsite = GetUrlWithPrefix(result.BusinessWebsite),
                     EmailAddresses = result.EmailAddresses,
+                    CreatedOn = result.CreatedOn,
                     EmployerAccountName = result.EmployerAccountName,
                     EstimatedDurationMonths = result.EstimatedDurationMonths,
                     FirstName = result.FirstName,
