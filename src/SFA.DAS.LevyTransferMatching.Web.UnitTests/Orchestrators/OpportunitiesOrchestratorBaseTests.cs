@@ -175,7 +175,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var jobRoleDescriptions = JobRoleReferenceDataItems
                 .Where(x => opportunity.JobRoles.Contains(x.Id))
                 .Select(x => x.Description);
-            Assert.AreEqual(result.JobRoleList, string.Join(", ", jobRoleDescriptions));
+            Assert.AreEqual(result.JobRoleList, string.Join("; ", jobRoleDescriptions));
 
             var levelDescriptions = LevelReferenceDataItems
                 .Where(x => opportunity.Levels.Contains(x.Id))
@@ -185,7 +185,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var sectorDescriptions = SectorReferenceDataItems
                 .Where(x => opportunity.Sectors.Contains(x.Id))
                 .Select(x => x.Description);
-            Assert.AreEqual(result.SectorList, string.Join(", ", sectorDescriptions));
+            Assert.AreEqual(result.SectorList, string.Join("; ", sectorDescriptions));
 
             Assert.AreEqual(result.YearDescription, $"{CurrentDateTime.ToTaxYear("yyyy")}/{CurrentDateTime.AddYears(1).ToTaxYear("yy")}");
 

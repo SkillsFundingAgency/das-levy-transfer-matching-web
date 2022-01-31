@@ -522,7 +522,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     PledgeLocations = result.PledgeLocations,
                     JobRole = result.TypeOfJobRole,
                     Level = result.Level,
-                    DisplaySectors = result.Sector.ToReferenceDataDescriptionList(result.AllSectors),
+                    DisplaySectors = result.Sector.ToReferenceDataDescriptionList(result.AllSectors, "; "),
                     Locations = string.IsNullOrEmpty(result.SpecificLocation) ? result.Locations.ToApplicationLocationsString(", ", result.AdditionalLocation) : result.SpecificLocation,
                     IsLocationMatch = (result.Locations != null && result.Locations.Any()) || !result.PledgeLocations.Any(),
                     Affordability = GetAffordabilityViewModel(result.Amount, result.PledgeRemainingAmount, result.NumberOfApprentices, result.MaxFunding, result.EstimatedDurationMonths, result.StartBy),
