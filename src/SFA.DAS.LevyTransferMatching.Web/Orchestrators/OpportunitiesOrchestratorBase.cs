@@ -18,8 +18,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         public OpportunitySummaryViewModel GetOpportunitySummaryViewModel(GetOpportunitySummaryViewModelOptions options)
         {
-            var sectorList = options.Sectors.ToReferenceDataDescriptionList(options.AllSectors);
-            var jobRoleList = options.JobRoles.ToReferenceDataDescriptionList(options.AllJobRoles);
+            var sectorList = options.Sectors.ToReferenceDataDescriptionList(options.AllSectors, "; ");
+            var jobRoleList = options.JobRoles.ToReferenceDataDescriptionList(options.AllJobRoles, "; ");
             var levelList = options.Levels.ToReferenceDataDescriptionList(options.AllLevels, descriptionSource: x => x.ShortDescription);
             var locationList = options.Locations.ToLocationsList();
 

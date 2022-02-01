@@ -57,6 +57,8 @@
             <dd class="app-dl-inline__definition--strong">@Model.StartBy.ToString("MMMMM yyyy")</dd>
             <dt class="app-dl-inline__title">Do they have a training provider</dt>
             <dd class="app-dl-inline__definition--strong">@Model.HasTrainingProvider.ToYesNo()</dd>
+            <dt class="app-dl-inline__title">Date applied</dt>
+            <dd class="app-dl-inline__definition--strong">@Model.CreatedOn.ToLongDateDisplayString()</dd>
         </dl>
     </div>
 
