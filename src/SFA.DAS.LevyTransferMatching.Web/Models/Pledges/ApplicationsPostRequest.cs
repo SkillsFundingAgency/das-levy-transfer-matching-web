@@ -6,7 +6,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 {
     public class ApplicationsPostRequest
     {
-        // TODO remove unused fields at the end
         public string EncodedAccountId { get; set; }
 
         [AutoDecode(nameof(EncodedAccountId), EncodingType.AccountId)]

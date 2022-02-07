@@ -209,7 +209,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         public async Task<IActionResult> Applications(ApplicationsRequest request)
         {
             var response = await _orchestrator.GetApplications(request);
-
             return View(response);
         }
 
@@ -224,19 +223,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [HideAccountNavigation(false, hideNavigationLinks: true)]
         [Authorize]
         [Route("{encodedPledgeId}/applications/rejectapplications")]
-        public async Task<IActionResult> RejectApplications(ApplicationsPostRequest request)
+        public IActionResult RejectApplications(RejectApplicationsViewModel request)
         {
             return View(request);
-            //var viewModel = await _orchestrator.GetSelectAccountViewModel(request);
-
-            //if (viewModel.Accounts.Count() != 1) return View(viewModel);
-
-            //return RedirectToAction("Apply", new
-            //{
-            //    CacheKey = Guid.NewGuid(),
-            //    EncodedAccountId = viewModel.Accounts.Single().EncodedAccountId,
-            //    EncodedPledgeId = request.EncodedOpportunityId,
-            //});
         }
 
         [HideAccountNavigation(false, hideNavigationLinks: true)]
@@ -245,22 +234,35 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> RejectApplications(RejectApplicationPostRequest request)
         {
+            var applicationsRequest = new ApplicationsRequest
+            {
+                AccountId = request.AccountId,
+                EncodedAccountId = request.EncodedAccountId,
+                EncodedPledgeId = request.EncodedPledgeId,
+                PledgeId = request.PledgeId,
+                ApplicationsToReject = request.ApplicationsToReject,
+            };
+
             if (request.RejectConfirm)
             {
                 await _orchestrator.RejectApplications(request);
+                applicationsRequest.DisplayRejectedApplicationsBanner = true;
+                return RedirectToAction(nameof(Applications), applicationsRequest);
             }
-            return RedirectToAction(nameof(Applications), request);
+            
+            applicationsRequest.DisplayRejectedApplicationsBanner = false;
+            return RedirectToAction(nameof(Applications), applicationsRequest);
         }
 
         //[Authorize(Policy = PolicyNames.ManageAccount)]
         //[Route("reject/inform")]
         //public async Task<IActionResult> RejectInform(RejectInformRequest request)
         //{
-        //    return null;
-        //    //await _orchestrator.UpdateCacheItem(request); // TODO update here?
+        //    //return null;
+        //    await _orchestrator.UpdateCacheItem(request); // TODO update here?
 
-        //    //var viewModel = await _orchestrator.GetRejectInformViewModel(request);
-        //    //return View(viewModel);
+        //    var viewModel = await _orchestrator.GetRejectInformViewModel(request);
+        //    return View(viewModel);
         //}
 
         [HttpGet]

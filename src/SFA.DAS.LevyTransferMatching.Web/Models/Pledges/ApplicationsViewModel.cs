@@ -12,5 +12,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public IEnumerable<ApplicationViewModel> Applications { get; set; }
         public bool DisplayRejectedBanner { get; set; }
         public string RejectedEmployerName { get; set; }
+        public bool DisplayRejectedApplicationsBanner { get; set; }
+        public int NumberOfRejectedApplications {get; set; }
     }
 }

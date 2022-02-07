@@ -202,7 +202,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             return _encodingService.Encode(pledgeId, EncodingType.PledgeId);
         }
         public async Task RejectApplications(RejectApplicationPostRequest request)
-        { // TODO - Only for Jawwad to find this method
+        { 
             var applicationRejectRequest = new RejectApplicationRequest
             {
                 ApplicationsToReject = request.ApplicationsToReject,
@@ -528,7 +528,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                                   JobRole = pledgeApplication.JobRole,
                                   PledgeRemainingAmount = pledgeApplication.PledgeRemainingAmount,
                                   MaxFunding = pledgeApplication.MaxFunding,
-                                  Details = pledgeApplication.Details
+                                  Details = pledgeApplication.Details,
+                                  ApplicationId = application.Id,
                               }).ToList();
 
             return new ApplicationsViewModel
@@ -537,7 +538,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 EncodedPledgeId = request.EncodedPledgeId,
                 DisplayRejectedBanner = request.DisplayRejectedBanner,
                 RejectedEmployerName = request.RejectedEmployerName,
-                Applications = viewModels
+                Applications = viewModels,
+                DisplayRejectedApplicationsBanner = request.DisplayRejectedApplicationsBanner,
+                NumberOfRejectedApplications = request.ApplicationsToReject?.Count ?? 0
             };
         }
 

@@ -36,6 +36,23 @@
                 </div>
             }
 
+            @if (Model.DisplayRejectedApplicationsBanner)
+            {
+                <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+                    <div class="govuk-notification-banner__header">
+                        <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+                            Success
+                        </h2>
+                    </div>
+                    <div class="govuk-notification-banner__content">
+                        <h3 class="govuk-notification-banner__heading">
+                            Number of rejected applications: @Model.NumberOfRejectedApplications
+                        </h3>
+                        @*<p class="govuk-body">You rejected the @Model.RejectedEmployerName application.</p>*@
+                    </div>
+                </div>
+            }
+
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds">
 
@@ -89,7 +106,7 @@
                                         {
                                             <div class="govuk-checkboxes govuk-checkboxes--small">
                                                 <div class="govuk-checkboxes__item">
-                                                    <input class="govuk-checkboxes__input" id="application_select_@app.ApplicationId" name="ApplicationsToReject" type="checkbox" value="@app.EncodedApplicationId-@app.DasAccountName">
+                                                    <input class="govuk-checkboxes__input" id="application_select_@app.ApplicationId" name="ApplicationsToReject" type="checkbox" value="@app.ApplicationId-@app.DasAccountName">
                                                     <label class="govuk-label govuk-checkboxes__label" for="application_select_@app.ApplicationId"> </label>
                                                 </div>
                                             </div>
