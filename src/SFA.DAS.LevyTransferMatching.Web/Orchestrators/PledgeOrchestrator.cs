@@ -56,6 +56,17 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
+        public CloseViewModel GetCloseViewModel(string encodedAccountId, string encodedPledgeId)
+        {
+            return new CloseViewModel
+            {
+                EncodedAccountId = encodedAccountId,
+                EncodedPledgeId = encodedPledgeId,
+                CacheKey = Guid.NewGuid(),
+                UserCanClosePledge = _userService.IsUserChangeAuthorized()
+            };
+        }
+
         public async Task<PledgesViewModel> GetPledgesViewModel(PledgesRequest request)
         {
             var pledgesResponse = await _pledgeService.GetPledges(request.AccountId);
@@ -197,6 +208,17 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 CacheKey = request.CacheKey,
                 Locations = cacheItem.Locations?.ToList()
             };
+        }
+
+        public async Task ClosePledge(ClosePostRequest request)
+        {
+            var closePledgeRequest = new ClosePledgeRequest
+            {
+                UserId = _userService.GetUserId(),
+                UserDisplayName = _userService.GetUserDisplayName()
+            };
+
+          await _pledgeService.ClosePledge(request.AccountId, request.PledgeId, closePledgeRequest);            
         }
 
         public async Task<ApplicationApprovedViewModel> GetApplicationApprovedViewModel(ApplicationApprovedRequest request)
@@ -486,6 +508,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             return new ApplicationsViewModel
             {
                 EncodedAccountId = request.EncodedAccountId,
+                UserCanClosePledge = result.PledgeStatus != PledgeStatus.Closed && _userService.IsOwnerOrTransactor(request.AccountId),
                 EncodedPledgeId = request.EncodedPledgeId,
                 DisplayRejectedBanner = request.DisplayRejectedBanner,
                 RejectedEmployerName = request.RejectedEmployerName,

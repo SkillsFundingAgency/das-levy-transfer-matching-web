@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.LevyTransferMatching.Web.Controllers;
@@ -120,6 +121,46 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             Assert.NotNull(actionResult);
             Assert.AreEqual("Create", actionResult.ActionName);
             Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
+        }
+
+        [Test]
+        public async Task POST_Close_Returns_Expected_Redirect_To_Pledges()
+        {
+            // Arrange
+            var request = _fixture.Build<ClosePostRequest>()
+                .With(x => x.HasConfirmed, true)
+                .Create();
+
+            _orchestrator.Setup(x => x.ClosePledge(request)).Returns(Task.CompletedTask);
+
+            var mockTempData = new Mock<ITempDataDictionary>();
+            _pledgesController.TempData = mockTempData.Object;
+
+            // Act
+            var actionResult = await _pledgesController.Close(request) as RedirectToActionResult;
+
+            // Assert
+            Assert.NotNull(actionResult);
+            Assert.AreEqual("Pledges", actionResult.ActionName);
+            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["EncodedAccountId"]);
+        }
+
+        [Test]
+        public async Task POST_Close_Returns_Expected_Redirect_To_Applications()
+        {
+            // Arrange
+            var request = _fixture.Build<ClosePostRequest>()
+                .With(x => x.HasConfirmed, false)
+                .Create();
+
+            // Act
+            var actionResult = await _pledgesController.Close(request) as RedirectToActionResult;
+
+            // Assert
+            Assert.NotNull(actionResult);
+            Assert.AreEqual("Applications", actionResult.ActionName);
+            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["EncodedAccountId"]);
+            Assert.AreEqual(request.EncodedPledgeId, actionResult.RouteValues["EncodedPledgeId"]);
         }
 
         [Test]
