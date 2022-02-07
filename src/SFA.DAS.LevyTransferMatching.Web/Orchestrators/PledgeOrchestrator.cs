@@ -81,7 +81,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),
                     Amount = x.Amount,
                     RemainingAmount = x.RemainingAmount,
-                    ApplicationCount = x.ApplicationCount
+                    ApplicationCount = x.ApplicationCount,
+                    Status = x.Status
                 })
             };
         }
