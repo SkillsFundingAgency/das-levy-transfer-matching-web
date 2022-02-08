@@ -48,7 +48,6 @@
                         <h3 class="govuk-notification-banner__heading">
                             Number of rejected applications: @Model.NumberOfRejectedApplications
                         </h3>
-                        @*<p class="govuk-body">You rejected the @Model.RejectedEmployerName application.</p>*@
                     </div>
                 </div>
             }
@@ -73,14 +72,15 @@
             </div>
 
          <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                 <div class="govuk-button-group">
+                 <div class="govuk-grid-column-two-thirds">
+                 
                     <form action="/accounts/@Model.EncodedAccountId/pledges/create/inform" method="get">
                         <button class="govuk-button">
                             Create a new transfer pledge
                         </button>
                     </form>
-
+                 </div>
+                 <div class="govuk-grid-column-one-third">
                     @if (Model.UserCanClosePledge)
                     {
                         <form action="/accounts/@Model.EncodedAccountId/pledges/@Model.EncodedPledgeId/close" method="get">
@@ -89,9 +89,8 @@
                             </button>
                         </form>
                     }
-
-                </div>
-            </div>
+                 </div>
+            
         </div>
             <details class="govuk-details">
                 <summary class="govuk-details__summary">
