@@ -245,7 +245,8 @@ th.tax-year {
     width: 120px;
 }
 
-th.duration {
+th.duration,
+th.criteria {
     width: 120px;
 }
 
