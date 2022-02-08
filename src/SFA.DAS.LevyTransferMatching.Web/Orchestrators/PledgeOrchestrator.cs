@@ -525,6 +525,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     DisplaySectors = result.Sector.ToReferenceDataDescriptionList(result.AllSectors, "; "),
                     Locations = string.IsNullOrEmpty(result.SpecificLocation) ? result.Locations.ToApplicationLocationsString(", ", result.AdditionalLocation) : result.SpecificLocation,
                     IsLocationMatch = (result.Locations != null && result.Locations.Any()) || !result.PledgeLocations.Any(),
+                    IsJobRoleMatch = (result.PledgeJobRoles != null && !result.PledgeJobRoles.Any())
+                                    || result.PledgeJobRoles.Any(r => r == result.TypeOfJobRole),
+                    IsLevelMatch = !result.PledgeLevels.Any()
+                                    || result.PledgeLevels.Select(x => char.GetNumericValue(x.Last())).Contains(result.Level),
+                    IsSectorMatch = !result.PledgeSectors.Any() 
+                                    || result.PledgeSectors.Any(x => result.Sector.Contains(x)),
                     Affordability = GetAffordabilityViewModel(result.Amount, result.PledgeRemainingAmount, result.NumberOfApprentices, result.MaxFunding, result.EstimatedDurationMonths, result.StartBy),
                     AllowApproval = result.Status == ApplicationStatus.Pending && result.Amount <= result.PledgeRemainingAmount && isOwnerOrTransactor,
                     DisplayApplicationApprovalOptions = _featureToggles.FeatureToggleApplicationApprovalOptions,

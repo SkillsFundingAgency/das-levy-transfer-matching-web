@@ -45,6 +45,39 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public bool IsLevelMatch { get; set; }
         public bool AllowTransferRequestAutoApproval { get; set; }
 
+        public string PercentageMatch
+        {
+            get
+            {
+                int matches = 0;
+                if (this.IsLocationMatch)
+                {
+                    matches++;
+                }
+                if (this.IsSectorMatch)
+                {
+                    matches++;
+                }
+                if (this.IsJobRoleMatch)
+                {
+                    matches++;
+                }
+                if (this.IsLevelMatch)
+                {
+                    matches++;
+                }
+                switch (matches)
+                {
+                    case 0: return "0% match";
+                    case 1: return "25% match";
+                    case 2: return "50% match";
+                    case 3: return "75% match";
+                    case 4: return "100% match";
+                    default: return "0% match";
+                }
+            }
+        }
+
         public class AffordabilityViewModel
         {
             public string RemainingFunds { get; set; }
