@@ -14,28 +14,7 @@
     </h1>
     <div class="das-highlight">
         <h2 class="govuk-heading-m">Details about the application</h2>
-        <h4>@Model.PercentageMatch</h4>
-        @*
-            commenting out the styles as they have been removed as part of TM-98, however the design was done by James so it's production ready and when picked up in a later task can be easily handled
-        *@
-        @*<p><strong class="govuk-tag govuk-tag--@Model.MatchPercentageCssClass">@Model.MatchPercentage Match</strong></p>
-
-            <ul class="govuk-list app-icon-list">
-                <li class="app-icon-list__list-item">
-                    <span class="app-icon-list__icon @Model.LocationCssClass">No match on </span>Location: <strong>@Model.Location</strong>
-                </li>
-                <li class="app-icon-list__list-item">
-                    <span class="app-icon-list__icon @Model.SectorCssClass">No match on </span>Sector: <strong>@Model.DisplaySectors</strong>
-                </li>
-                <li class="app-icon-list__list-item">
-                    <span class="app-icon-list__icon" @Model.JobRoleCssClass>No match on </span>Type of job role: <strong>@Model.JobRole</strong>
-                </li>
-                <li class="app-icon-list__list-item">
-                    <span class="app-icon-list__icon @Model.LevelCssClass">Match for: </span>Level: <strong>@Model.Level</strong>
-                </li>
-            </ul>
-        *@
-
+        <p><strong class="govuk-tag govuk-tag--@Model.PercentageMatchCssClass">@Model.PercentageMatch Match</strong></p>
         <dl class="govuk-body app-dl-icon-list govuk-!-margin-bottom-4">
             <dt class="app-dl-icon-list__title">
                 Location
@@ -48,7 +27,6 @@
             <dt class="app-dl-icon-list__title">Level</dt>
             <dd class="app-dl-icon-list__definition">@Model.Level</dd>
         </dl>
-  
         <dl class="govuk-body app-dl-inline">
             <dt class="app-dl-inline__title">Apprentices</dt>
             <dd class="app-dl-inline__definition--strong">@Model.NumberOfApprentices</dd>

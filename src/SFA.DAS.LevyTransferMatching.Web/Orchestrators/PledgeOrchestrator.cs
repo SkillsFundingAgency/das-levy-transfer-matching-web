@@ -524,7 +524,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     Level = result.Level,
                     DisplaySectors = result.Sector.ToReferenceDataDescriptionList(result.AllSectors, "; "),
                     Locations = string.IsNullOrEmpty(result.SpecificLocation) ? result.Locations.ToApplicationLocationsString(", ", result.AdditionalLocation) : result.SpecificLocation,
-                    IsLocationMatch = (result.Locations != null && result.Locations.Any()) || !result.PledgeLocations.Any(),
+                    IsLocationMatch = (!result.PledgeLocations.Any()) 
+                                    || result.PledgeLocations.Any(x => result.Locations.Contains(x)),
                     IsJobRoleMatch = (result.PledgeJobRoles != null && !result.PledgeJobRoles.Any())
                                     || result.PledgeJobRoles.Any(r => r == result.TypeOfJobRole),
                     IsLevelMatch = !result.PledgeLevels.Any()
