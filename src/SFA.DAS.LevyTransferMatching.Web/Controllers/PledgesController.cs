@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Attributes;
 using SFA.DAS.LevyTransferMatching.Web.Authentication;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
@@ -38,6 +39,29 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         {
             var viewModel = _orchestrator.GetInformViewModel(encodedAccountId);
             return View(viewModel);
+        }
+
+        [HttpGet]
+        [Authorize(Policy = PolicyNames.ManageAccount)]
+        [Route("{encodedPledgeId}/close")]
+        public IActionResult Close(string encodedAccountId, string encodedPledgeId)
+        {
+            var viewModel = _orchestrator.GetCloseViewModel(encodedAccountId, encodedPledgeId);
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [Route("{encodedPledgeId}/close")]
+        public async Task<IActionResult> Close(ClosePostRequest closePostRequest)
+        {
+            if (closePostRequest.HasConfirmed.Value)
+            {
+               await _orchestrator.ClosePledge(closePostRequest);
+               
+               TempData.AddFlashMessage("Transfer pledge closed", $"You closed the transfer pledge {closePostRequest.EncodedPledgeId}.", TempDataDictionaryExtensions.FlashMessageLevel.Success);
+               return RedirectToAction(nameof(Pledges), new { EncodedAccountId = closePostRequest.EncodedAccountId });
+            }
+            return RedirectToAction(nameof(Applications), new { EncodedAccountId = closePostRequest.EncodedAccountId, EncodedPledgeId = closePostRequest.EncodedPledgeId });
         }
 
         [Route("{EncodedPledgeId}/detail")]
