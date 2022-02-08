@@ -1,12 +1,11 @@
-﻿using System;
-using System.Net;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types;
+using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
 {
@@ -109,6 +108,13 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
             var response = await _client.GetAsync($"accounts/{accountId}/pledges/{pledgeId}/applications/{applicationId}/approved");
             response.EnsureSuccessStatusCode();
             return JsonConvert.DeserializeObject<GetApplicationApprovedResponse>(await response.Content.ReadAsStringAsync());
+        }
+
+        public async Task ClosePledge(long accountId, int pledgeId, ClosePledgeRequest request)
+        {
+            var json = JsonConvert.SerializeObject(request);
+            var response = await _client.PostAsync($"accounts/{accountId}/pledges/{pledgeId}/close", new StringContent(json, System.Text.Encoding.UTF8, "application/json"));
+            response.EnsureSuccessStatusCode();
         }
 
         public async Task<GetApplicationApprovalOptionsResponse> GetApplicationApprovalOptions(long accountId, int pledgeId, int applicationId, CancellationToken cancellationToken = default)
