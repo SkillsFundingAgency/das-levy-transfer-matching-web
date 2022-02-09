@@ -79,8 +79,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                         Amount = x.Amount,
                         EmployerName = x.IsNamePublic? x.DasAccountName : "Opportunity",
                         ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),
-                        Sectors = x.Sectors.ToReferenceDataDescriptionList(response.Sectors),
-                        JobRoles = x.JobRoles.ToReferenceDataDescriptionList(response.JobRoles),
+                        Sectors = x.Sectors.ToReferenceDataDescriptionList(response.Sectors, "; "),
+                        JobRoles = x.JobRoles.ToReferenceDataDescriptionList(response.JobRoles, "; "),
                         Levels = x.Levels.ToReferenceDataDescriptionList(response.Levels, descriptionSource: y => y.ShortDescription),
                         Locations = x.Locations.ToLocationsList()
                     }).ToList()

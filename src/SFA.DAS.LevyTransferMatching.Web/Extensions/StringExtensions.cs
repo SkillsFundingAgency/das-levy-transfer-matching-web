@@ -13,6 +13,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Extensions
 
         public static string ToReferenceDataDescriptionList(this IEnumerable<string> selectedReferenceDataItemIds, IEnumerable<ReferenceDataItem> allReferenceDataItems, Func<ReferenceDataItem, string> descriptionSource = null)
         {
+            return ToReferenceDataDescriptionList(selectedReferenceDataItemIds, allReferenceDataItems, ", ", descriptionSource);
+        }
+
+        public static string ToReferenceDataDescriptionList(this IEnumerable<string> selectedReferenceDataItemIds, IEnumerable<ReferenceDataItem> allReferenceDataItems, string separator, Func<ReferenceDataItem, string> descriptionSource = null)
+        {
             string descriptions = null;
 
             if (allReferenceDataItems.Count() == selectedReferenceDataItemIds.Count() || selectedReferenceDataItemIds.Count() <= 0)
@@ -25,7 +30,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Extensions
                     .Where(x => selectedReferenceDataItemIds.Contains(x.Id))
                     .Select(x => descriptionSource == null ? x.Description : descriptionSource(x));
 
-                descriptions = string.Join(", ", selectedReferenceDataDescriptions);
+                descriptions = string.Join(separator, selectedReferenceDataDescriptions);
             }
 
             return descriptions;
