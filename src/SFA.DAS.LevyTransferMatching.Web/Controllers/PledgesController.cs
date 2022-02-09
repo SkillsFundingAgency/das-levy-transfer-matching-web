@@ -245,7 +245,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             {
                 return RedirectToAction(nameof(Applications), new { EncodedAccountId = request.EncodedAccountId, EncodedPledgeId = request.EncodedPledgeId });
             }
-            return RedirectToAction(nameof(RejectApplications), new { ApplicationsToReject = request.ApplicationsToReject });
+            return RedirectToAction(nameof(RejectApplications), request);
         }
 
         [HideAccountNavigation(false, hideNavigationLinks: true)]
