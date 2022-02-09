@@ -241,7 +241,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Route("{encodedPledgeId}/applications")]
         public IActionResult Applications(ApplicationsPostRequest request)
         {
-            return RedirectToAction(nameof(RejectApplications), request); // TODO query string gets filled with values - Remove them from query string
+            if(request.ApplicationsToReject == null)
+            {
+                return RedirectToAction(nameof(Applications), new { EncodedAccountId = request.EncodedAccountId, EncodedPledgeId = request.EncodedPledgeId });
+            }
+            return RedirectToAction(nameof(RejectApplications), new { ApplicationsToReject = request.ApplicationsToReject });
         }
 
         [HideAccountNavigation(false, hideNavigationLinks: true)]
@@ -258,36 +262,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> RejectApplications(RejectApplicationPostRequest request)
         {
-            var applicationsRequest = new ApplicationsRequest
-            {
-                AccountId = request.AccountId,
-                EncodedAccountId = request.EncodedAccountId,
-                EncodedPledgeId = request.EncodedPledgeId,
-                PledgeId = request.PledgeId,
-                ApplicationsToReject = request.ApplicationsToReject,
-            };
-
             if (request.RejectConfirm)
             {
                 await _orchestrator.RejectApplications(request);
-                applicationsRequest.DisplayRejectedApplicationsBanner = true;
-                return RedirectToAction(nameof(Applications), applicationsRequest);
+                TempData.AddFlashMessage($"{request.ApplicationsToReject?.Count} applications have been rejected", string.Empty, TempDataDictionaryExtensions.FlashMessageLevel.Success);
             }
-            
-            applicationsRequest.DisplayRejectedApplicationsBanner = false;
-            return RedirectToAction(nameof(Applications), applicationsRequest);
+            return RedirectToAction(nameof(Applications), new { EncodedAccountId = request.EncodedAccountId, EncodedPledgeId = request.EncodedPledgeId });
         }
-
-        //[Authorize(Policy = PolicyNames.ManageAccount)]
-        //[Route("reject/inform")]
-        //public async Task<IActionResult> RejectInform(RejectInformRequest request)
-        //{
-        //    //return null;
-        //    await _orchestrator.UpdateCacheItem(request); // TODO update here?
-
-        //    var viewModel = await _orchestrator.GetRejectInformViewModel(request);
-        //    return View(viewModel);
-        //}
 
         [HttpGet]
         [Route("{encodedPledgeId}/applications/download")]

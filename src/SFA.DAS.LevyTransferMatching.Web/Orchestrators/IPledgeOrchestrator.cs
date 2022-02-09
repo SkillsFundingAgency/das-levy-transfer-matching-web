@@ -13,14 +13,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         DetailViewModel GetDetailViewModel(DetailRequest request);
         Task<CreateViewModel> GetCreateViewModel(CreateRequest request);
         Task<AmountViewModel> GetAmountViewModel(AmountRequest request);
-        Task<RejectInformViewModel> GetRejectInformViewModel(RejectInformRequest request);
         Task<SectorViewModel> GetSectorViewModel(SectorRequest request);
         Task<JobRoleViewModel> GetJobRoleViewModel(JobRoleRequest request);
         Task<LocationViewModel> GetLocationViewModel(LocationRequest request);
         Task<ApplicationApprovedViewModel> GetApplicationApprovedViewModel(ApplicationApprovedRequest request);
         Task<Dictionary<int, string>> ValidateLocations(LocationPostRequest request, IDictionary<int, IEnumerable<string>> multipleValidLocations);
-        Task UpdateCacheItem(AmountPostRequest request);
-        Task UpdateCacheItem(RejectInformRequest request);
+        Task UpdateCacheItem(AmountPostRequest request);       
         Task UpdateCacheItem(SectorPostRequest request);
         Task UpdateCacheItem(JobRolePostRequest request);
         Task UpdateCacheItem(LevelPostRequest request);
