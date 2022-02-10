@@ -7,10 +7,8 @@ using Microsoft.AspNetCore.Razor.TagHelpers;
 using SFA.DAS.LevyTransferMatching.Domain.Extensions;
 using SFA.DAS.LevyTransferMatching.Domain.Types;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Helpers
 {
@@ -84,15 +82,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
 
         private SortOrder GetSortOrderFromQueryString()
         {
-            if (ViewContext.HttpContext.Request.Query.ContainsKey("SortOrder"))
+            if (ViewContext.HttpContext.Request.Query.TryGetValue("SortOrder", out var sortOrderValue) && Enum.TryParse<SortOrder>(sortOrderValue, true, out var parsedSortOrder))
             {
-                if (ViewContext.HttpContext.Request.Query.TryGetValue("SortOrder", out var sortOrderValue))
-                {
-                    if (Enum.TryParse<SortOrder>(sortOrderValue, true, out var parsedSortOrder))
-                    {
-                        return parsedSortOrder;
-                    }
-                }
+                return parsedSortOrder;
             }
 
             return DefaultSortOrder;
@@ -100,12 +92,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
 
         private SortColumn GetColumnFromQueryString()
         {
-            if (ViewContext.HttpContext.Request.Query.TryGetValue("SortColumn", out var sortColumn))
+            if (ViewContext.HttpContext.Request.Query.TryGetValue("SortColumn", out var sortColumn) && Enum.TryParse<SortColumn>(sortColumn, true, out var parsedSortColumn))
             {
-                if (Enum.TryParse<SortColumn>(sortColumn, true, out var parsedSortColumn))
-                {
-                    return parsedSortColumn;
-                }
+                return parsedSortColumn;
             }
 
             return DefaultSortColumn;
