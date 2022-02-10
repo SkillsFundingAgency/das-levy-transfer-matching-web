@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Razor.TagHelpers;
 using SFA.DAS.LevyTransferMatching.Domain.Extensions;
 using SFA.DAS.LevyTransferMatching.Domain.Types;
 using System;
-using System.Linq;
 using System.Text;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Helpers
