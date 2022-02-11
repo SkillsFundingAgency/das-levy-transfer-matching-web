@@ -56,11 +56,14 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                  <div class="govuk-button-group">
-                    <form action="/accounts/@Model.EncodedAccountId/pledges/create/inform" method="get">
-                        <button class="govuk-button">
-                            Create a new transfer pledge
-                        </button>
-                    </form>
+                    @if (Model.RenderCreatePledgeButton)
+                    {
+                        <form action="/accounts/@Model.EncodedAccountId/pledges/create/inform" method="get">
+                            <button class="govuk-button">
+                                Create a new transfer pledge
+                            </button>
+                        </form>
+                    }
 
                     @if (Model.UserCanClosePledge)
                     {
