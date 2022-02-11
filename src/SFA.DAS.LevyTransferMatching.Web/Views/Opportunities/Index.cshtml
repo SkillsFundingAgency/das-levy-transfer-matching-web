@@ -36,12 +36,15 @@
                         Your business sector
                     </summary>
                     <div class="govuk-details__text">
-                        <div>
-                            <checkbox-list asp-for="Sectors" source="@Model.Sectors" css-class="govuk-checkboxes govuk-checkboxes--small"></checkbox-list>
+                        <div class="govuk-form-group">
+                            <fieldset class="govuk-fieldset">
+                                <legend class="govuk-visually-hidden">Select one or more business sectors to filter by  </legend>
+                                <checkbox-list asp-for="Sectors" source="@Model.Sectors" css-class="govuk-checkboxes govuk-checkboxes--small"></checkbox-list>
+                            </fieldset>
                         </div>
                     </div>
                 </details>
-                <button class="govuk-button" data-module="govuk-button" id="opportunity-filter-sector">Update Results</button>
+                <button class="govuk-button" data-module="govuk-button" id="opportunity-filter-sector">Update results</button>
             </div>
             <div class="govuk-grid-column-two-thirds">
                 <h2 class="govuk-heading-m">@Model.Opportunities.Count() @(Model.Opportunities.Count() == 1 ? "opportunity" : "opportunities")</h2>
