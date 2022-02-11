@@ -35,7 +35,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         public async Task GET_Index_Returns_Expected_View_With_Expected_ViewModel()
         {
             // Arrange
-            _orchestrator.Setup(x => x.GetIndexViewModel()).ReturnsAsync(() => new IndexViewModel());
+            _orchestrator.Setup(x => x.GetIndexViewModel(new IndexRequest() { })).ReturnsAsync(() => new IndexViewModel());
 
             // Act
             var viewResult = await _opportunitiesController.Index() as ViewResult;

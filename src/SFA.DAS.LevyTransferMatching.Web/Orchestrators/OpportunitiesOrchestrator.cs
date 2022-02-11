@@ -67,10 +67,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
-        public async Task<IndexViewModel> GetIndexViewModel()
+        public async Task<IndexViewModel> GetIndexViewModel(IndexRequest request)
         {
             var response = await _opportunitiesService.GetIndex();
 
+            if (request.Sectors?.Any() == true)
+            { 
+                response.Opportunities = response.Opportunities.FindAll(x => x.Sectors.Any(y => (request.Sectors.Contains(y)))); 
+            }
+            
             return new IndexViewModel
             { 
                 Opportunities = response?.Opportunities
@@ -83,7 +88,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                         JobRoles = x.JobRoles.ToReferenceDataDescriptionList(response.JobRoles, "; "),
                         Levels = x.Levels.ToReferenceDataDescriptionList(response.Levels, descriptionSource: y => y.ShortDescription),
                         Locations = x.Locations.ToLocationsList()
-                    }).ToList()
+                    }).ToList(),
+                Sectors = response?.Sectors
             };
         }
 
