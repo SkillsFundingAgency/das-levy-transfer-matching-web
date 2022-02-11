@@ -276,7 +276,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
                 return RedirectToAction("ApplicationApproved", new { request.EncodedAccountId, request.EncodedPledgeId, request.EncodedApplicationId });
             }
 
-            return RedirectToAction("Applications", new { request.EncodedAccountId, request.EncodedPledgeId, DisplayRejectedBanner = true, RejectedEmployerName = request.EmployerAccountName });
+            TempData.AddFlashMessage("Application rejected", $"You rejected the {request.EmployerAccountName} application.", TempDataDictionaryExtensions.FlashMessageLevel.Success);
+            return RedirectToAction("Applications", new { request.EncodedAccountId, request.EncodedPledgeId });
         }
 
         [HttpGet]

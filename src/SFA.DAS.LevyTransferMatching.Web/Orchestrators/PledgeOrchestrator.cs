@@ -510,8 +510,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 EncodedAccountId = request.EncodedAccountId,
                 UserCanClosePledge = result.PledgeStatus != PledgeStatus.Closed && _userService.IsOwnerOrTransactor(request.AccountId),
                 EncodedPledgeId = request.EncodedPledgeId,
-                DisplayRejectedBanner = request.DisplayRejectedBanner,
-                RejectedEmployerName = request.RejectedEmployerName,
                 Applications = viewModels
             };
         }

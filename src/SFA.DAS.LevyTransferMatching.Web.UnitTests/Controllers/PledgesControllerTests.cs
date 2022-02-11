@@ -479,6 +479,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         [Test]
         public async Task POST_Application_Rejection_Redirects_To_Applications()
         {
+            var mockTempData = new Mock<ITempDataDictionary>();
+            _pledgesController.TempData = mockTempData.Object;
+
             var request = _fixture.Create<ApplicationPostRequest>();
             request.SelectedAction = ApplicationPostRequest.ApprovalAction.Reject;
             _orchestrator.Setup(x => x.SetApplicationOutcome(It.Is<ApplicationPostRequest>(r => r.AccountId == request.AccountId && r.ApplicationId == request.ApplicationId && r.PledgeId == request.PledgeId))).Returns(Task.CompletedTask);
