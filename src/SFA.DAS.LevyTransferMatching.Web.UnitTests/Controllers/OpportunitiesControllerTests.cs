@@ -11,6 +11,7 @@ using SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
 using System.Collections.Generic;
 using System.Threading;
+using Newtonsoft.Json;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
 using ApplyRequest = SFA.DAS.LevyTransferMatching.Web.Models.Opportunities.ApplyRequest;
@@ -500,6 +501,21 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var result = await _opportunitiesController.Apply(request) as RedirectToActionResult;
             Assert.IsNotNull(result);
             Assert.AreEqual("Confirmation", result.ActionName);
+        }
+
+
+        [Test]
+        public async Task GET_GetFundingEstimate_Returns_Expected_Json_Result()
+        {
+            var expectedViewModel = new GetFundingEstimateViewModel();
+
+            _orchestrator.Setup(x => x.GetFundingEstimate(It.IsAny<GetFundingEstimateRequest>(), null))
+                .ReturnsAsync(expectedViewModel);
+
+            var jsonResult = await _opportunitiesController.GetFundingEstimate(new GetFundingEstimateRequest()) as JsonResult;
+
+            Assert.IsNotNull(jsonResult);
+            Assert.AreEqual(expectedViewModel, jsonResult.Value);
         }
 
         [Test]
