@@ -556,5 +556,17 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             Assert.AreEqual(request.EncodedPledgeId, actionResult.RouteValues["encodedPledgeId"]);
             Assert.AreEqual(request.EncodedApplicationId, actionResult.RouteValues["encodedApplicationId"]);
         }
+
+        [Test]
+        public async Task GET_Confirmation_Returns_Expected_View()
+        {
+            var request = _fixture.Create<ConfirmationRequest>();
+
+            var viewResult = await _pledgesController.Confirmation(request) as ViewResult;
+            var viewmodel = viewResult?.Model as ConfirmationViewModel;
+
+            Assert.NotNull(viewResult);
+            Assert.NotNull(viewmodel);
+        }
     }
 }
