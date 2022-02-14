@@ -10,8 +10,10 @@ using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
 using System.Collections.Generic;
+using System.Threading;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
+using ApplyRequest = SFA.DAS.LevyTransferMatching.Web.Models.Opportunities.ApplyRequest;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
 {
@@ -473,6 +475,31 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             Assert.IsNotNull(viewResult);
             Assert.IsNotNull(actualViewModel);
             Assert.AreEqual(expectedViewModel, actualViewModel);
+        }
+
+        [Test]
+        public async Task GET_Apply_Returns_Expected_View()
+        {
+            var expectedViewModel = new ApplyViewModel();
+
+            _orchestrator.Setup(x => x.GetApplyViewModel(It.IsAny<ApplicationRequest>()))
+                .ReturnsAsync(expectedViewModel);
+
+            var viewResult = await _opportunitiesController.Apply(new ApplicationRequest()) as ViewResult;
+            
+            Assert.IsNotNull(viewResult);
+            var actualViewModel = viewResult.Model as ApplyViewModel;
+            Assert.IsNotNull(actualViewModel);
+            Assert.AreEqual(expectedViewModel, actualViewModel);
+        }
+
+        [Test]
+        public async Task POST_Apply_Redirects_To_Confirmation()
+        {
+            var request = new ApplyPostRequest();
+            var result = await _opportunitiesController.Apply(request) as RedirectToActionResult;
+            Assert.IsNotNull(result);
+            Assert.AreEqual("Confirmation", result.ActionName);
         }
 
         [Test]
