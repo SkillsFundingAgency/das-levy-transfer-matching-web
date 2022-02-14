@@ -124,6 +124,22 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         }
 
         [Test]
+        public void GET_Close_Returns_Expected_View()
+        {
+            // Arrange
+            var request = _fixture.Create<CloseRequest>();
+            _orchestrator.Setup(x => x.GetCloseViewModel(request)).Returns(() => new CloseViewModel());
+
+            // Act
+            var viewResult = _pledgesController.Close(request) as ViewResult;
+            var actualViewModel = viewResult?.Model as CloseViewModel;
+
+            // Assert
+            Assert.NotNull(viewResult);
+            Assert.NotNull(actualViewModel);
+        }
+
+        [Test]
         public async Task POST_Close_Returns_Expected_Redirect_To_Pledges()
         {
             // Arrange
@@ -143,24 +159,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             Assert.NotNull(actionResult);
             Assert.AreEqual("Pledges", actionResult.ActionName);
             Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["EncodedAccountId"]);
-        }
-
-        [Test]
-        public async Task POST_Close_Returns_Expected_Redirect_To_Applications()
-        {
-            // Arrange
-            var request = _fixture.Build<ClosePostRequest>()
-                .With(x => x.HasConfirmed, false)
-                .Create();
-
-            // Act
-            var actionResult = await _pledgesController.Close(request) as RedirectToActionResult;
-
-            // Assert
-            Assert.NotNull(actionResult);
-            Assert.AreEqual("Applications", actionResult.ActionName);
-            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["EncodedAccountId"]);
-            Assert.AreEqual(request.EncodedPledgeId, actionResult.RouteValues["EncodedPledgeId"]);
         }
 
         [Test]
