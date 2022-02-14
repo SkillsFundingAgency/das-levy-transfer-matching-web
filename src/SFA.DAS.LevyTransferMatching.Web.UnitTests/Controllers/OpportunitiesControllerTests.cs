@@ -35,7 +35,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         public async Task GET_Index_Returns_Expected_View_With_Expected_ViewModel()
         {
             // Arrange
-            _orchestrator.Setup(x => x.GetIndexViewModel(new IndexRequest() { })).ReturnsAsync(() => new IndexViewModel());
+            _orchestrator.Setup(x => x.GetIndexViewModel()).ReturnsAsync(() => new IndexViewModel());
 
             // Act
             var viewResult = await _opportunitiesController.Index() as ViewResult;
@@ -44,6 +44,29 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             // Assert
             Assert.NotNull(viewResult);
             Assert.NotNull(indexViewModel);
+        }
+
+        [Test]
+        public async Task POST_Index_Returns_Expected_View_With_Expected_ViewModel()
+        {
+            // Arrange
+            var encodedAccountId = _fixture.Create<string>();
+            var cacheKey = _fixture.Create<Guid>();
+            var indexRequest = new IndexRequest()
+            {
+                EncodedAccountId = encodedAccountId,
+                CacheKey = cacheKey
+            };
+            _orchestrator.Setup(x => x.GetIndexViewModel(indexRequest)).ReturnsAsync(() => new IndexViewModel());
+            
+            // Act
+            var viewResult = await _opportunitiesController.Index(indexRequest) as ViewResult;
+            var indexViewModel = viewResult?.Model as IndexViewModel;
+
+            // Assert
+            Assert.NotNull(viewResult);
+            Assert.NotNull(indexViewModel);
+
         }
 
         [Test]

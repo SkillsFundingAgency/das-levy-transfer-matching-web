@@ -61,7 +61,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var encodedId = _fixture.Create<string>();
             _encodingService.Setup(x => x.Encode(It.IsAny<long>(), EncodingType.PledgeId)).Returns(encodedId);
 
-            var viewModel = await _orchestrator.GetIndexViewModel(new IndexRequest() { });
+            var viewModel = await _orchestrator.GetIndexViewModel();
 
             for (int i = 0; i < _getIndexResponse.Opportunities.Count; i++)
             {
