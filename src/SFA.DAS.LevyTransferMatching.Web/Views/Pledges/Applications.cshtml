@@ -41,12 +41,15 @@
 
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <div class="govuk-button-group">
-                    <form action="/accounts/@Model.EncodedAccountId/pledges/create/inform" method="get">
-                        <button class="govuk-button">
-                            Create a new transfer pledge
-                        </button>
-                    </form>
+                 <div class="govuk-button-group">
+                    @if (Model.RenderCreatePledgeButton)
+                    {
+                        <form action="/accounts/@Model.EncodedAccountId/pledges/create/inform" method="get">
+                            <button class="govuk-button">
+                                Create a new transfer pledge
+                            </button>
+                        </form>
+                    }
 
                     @if (Model.UserCanClosePledge)
                     {
@@ -82,36 +85,47 @@
             </tr>
             </thead>
             <tbody class="govuk-table__body">
-            @{
-                if (Model.Applications != null && Model.Applications.Any())
-                {
-                    foreach (var app in Model.Applications)
+                @{
+                    if (Model.Applications != null && Model.Applications.Any())
+                    {
+                        foreach (var app in Model.Applications)
+                        {
+                            <tr class="govuk-table__row" data-table-row="one">
+                                <td class="govuk-table__cell"><a href="applications/@app.EncodedApplicationId" class="govuk-link">@app.DasAccountName</a></td>
+                                <td class="govuk-table__cell">
+                                    @app.DisplayAmount
+                                </td>
+                                <td class="govuk-table__cell">@app.Duration months</td>
+                                <td class="govuk-table__cell">
+                                    <criteria-list application="@app"></criteria-list>
+                                </td>
+                                <td class="govuk-table__cell">@app.CreatedOn.ToLongDateDisplayString()</td>
+                                <td class="govuk-table__cell"><strong class="@app.Status.GetCssClassForSender()">@app.Status.GetLabelForSender()</strong></td>
+                            </tr>
+                        }
+                    }
+
+                    else
                     {
                         <tr class="govuk-table__row" data-table-row="one">
-                            <td class="govuk-table__cell"><a href="applications/@app.EncodedApplicationId" class="govuk-link">@app.DasAccountName</a></td>
-                            <td class="govuk-table__cell">
-                                @app.DisplayAmount
-                            </td>
-                            <td class="govuk-table__cell">@app.Duration months</td>
-                            <td class="govuk-table__cell">
-                                <criteria-list application="@app"></criteria-list>
-                            </td>
-                            <td class="govuk-table__cell">@app.CreatedOn.ToLongDateDisplayString()</td>
-                            <td class="govuk-table__cell"><strong class="@app.Status.GetCssClassForSender()">@app.Status.GetLabelForSender()</strong></td>
+                            <td colspan="6" class="govuk-table__cell">No applications received yet</td>
                         </tr>
                     }
-                }
-
-                else
-                {
-                    <tr class="govuk-table__row" data-table-row="one">
-                        <td colspan="6" class="govuk-table__cell">No applications received yet</td>
-                    </tr>
-                }
             }
-            </tbody>
-        </table>
+        </tbody>
+    </table>
     </div>
+              
+    @if (Model.RenderCreatePledgeButton)
+    {
+        <div class="govuk-button-group">
+            <form action="/accounts/@Model.EncodedAccountId/pledges/create/inform" method="get">
+                <button class="govuk-button">
+                    Create a new transfer pledge
+                </button>
+            </form>
+        </div>
+    }
 
     <a href="/accounts/@Model.EncodedAccountId/pledges" class="govuk-back-link">Back to my transfer pledges</a>
 
