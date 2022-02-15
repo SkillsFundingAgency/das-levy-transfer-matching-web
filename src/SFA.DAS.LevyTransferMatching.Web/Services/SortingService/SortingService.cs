@@ -1,4 +1,5 @@
-﻿using SFA.DAS.LevyTransferMatching.Domain.Types;
+﻿using SFA.DAS.LevyTransferMatching.Domain.Extensions;
+using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using System.Collections.Generic;
@@ -62,9 +63,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Services.SortingService
         public IOrderedEnumerable<ApplicationViewModel> SortByStatus(List<ApplicationViewModel> applications, SortOrder sortOrder)
         {
             if (sortOrder == SortOrder.Ascending)
-                return applications.OrderBy(x => x.Status);
+                return applications.OrderBy(x => x.Status.GetLabelForSender());
             else
-                return applications.OrderByDescending(x => x.Status);
+                return applications.OrderByDescending(x => x.Status.GetLabelForSender());
         }
 
         public IOrderedEnumerable<ApplicationViewModel> SortByDateApplied(List<ApplicationViewModel> applications)
