@@ -452,6 +452,31 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
         }
 
+        [Test]
+        public async Task GetRejectApplicationsViewModel_Returns_A_Valid_ViewModel()
+        {
+            var request = new ApplicationsPostRequest {
+                EncodedAccountId = _encodedAccountId,
+                EncodedPledgeId = _encodedPledgeId
+            };
+            request.ApplicationsToReject = new List<int> { 5 };
+
+            var response = _fixture.Create<GetApplicationResponse>();            
+            response.EmployerAccountName = "Mega Corp";
+
+            _pledgeService.Setup(o => o.GetApplication(request.AccountId, request.PledgeId, request.ApplicationsToReject[0], CancellationToken.None)).ReturnsAsync(response);
+
+            var result = await _orchestrator.GetRejectApplicationsViewModel(request);
+
+            Assert.AreEqual(_encodedAccountId, result.EncodedAccountId);
+            Assert.AreEqual(_encodedPledgeId, result.EncodedPledgeId);
+
+            result.DasAccountNames.ToList().ForEach(application =>
+            {
+                Assert.AreEqual("Mega Corp", application);
+            });
+        }
+
         [TestCase(true, true)]
         [TestCase(false, false)]
         public async Task GetApplications_Returns_Valid_ViewModel_With_UserCanClosePledge(bool ownerOrTransactorStatus, bool expectWhetherUserCanClosePledges)

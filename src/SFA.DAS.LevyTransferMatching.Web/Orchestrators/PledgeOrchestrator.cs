@@ -197,18 +197,38 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             return _encodingService.Encode(pledgeId, EncodingType.PledgeId);
         }
-        public async Task RejectApplications(RejectApplicationPostRequest request)
+        public async Task RejectApplications(RejectApplicationsPostRequest request)
         { 
-            var applicationRejectRequest = new RejectApplicationRequest
+            var rejectApplicationsRequest = new RejectApplicationsRequest
             {
                 ApplicationsToReject = request.ApplicationsToReject,
                 UserId = _userService.GetUserId(),
                 UserDisplayName = _userService.GetUserDisplayName(),
             };
 
-            await _pledgeService.RejectApplications(applicationRejectRequest, request.AccountId, request.PledgeId);
+            await _pledgeService.RejectApplications(rejectApplicationsRequest, request.AccountId, request.PledgeId);
         }
 
+        public async Task<RejectApplicationsViewModel> GetRejectApplicationsViewModel(ApplicationsPostRequest request)
+        {
+            var rejectApplicationsViewModel = new RejectApplicationsViewModel
+            {
+                ApplicationsToReject = request.ApplicationsToReject,
+                EncodedAccountId = request.EncodedAccountId,
+                EncodedPledgeId = request.EncodedPledgeId
+            };
+
+            foreach (var applicationId in request.ApplicationsToReject) 
+            {
+                var application = await _pledgeService.GetApplication(request.AccountId, request.PledgeId, applicationId);
+                if (application != null)
+                {
+                    rejectApplicationsViewModel.DasAccountNames.Add(application.EmployerAccountName);
+                }
+            }
+            
+            return rejectApplicationsViewModel;
+        }
         public async Task<LocationViewModel> GetLocationViewModel(LocationRequest request)
         {
             var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);

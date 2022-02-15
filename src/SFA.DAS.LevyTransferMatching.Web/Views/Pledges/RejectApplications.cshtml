@@ -1,10 +1,10 @@
 ﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.RejectApplicationsViewModel
 
 @{
-    ViewData["Title"] = "Pledges";
+    ViewData["Title"] = "Reject Applications";
 }
 
-<a href="@Url.Action("Applications", Model)" class="govuk-back-link">Back</a>
+<a href="@Url.Action("Applications","Pledges", new { EncodedAccountId = Model.EncodedAccountId, EncodedPledgeId = Model.EncodedPledgeId })" class="govuk-back-link">Back</a>
 
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
 
@@ -14,13 +14,12 @@
                 <h1 class="govuk-heading-xl">Rejecting the apprenticeship application(s)</h1>
              
                 <form method="post">
-                    <section class="employer-details side-panel applications_for_approval">
+                    <section class="das-highlight">
                         <p class="govuk-heading-s">Applications for rejection</p>
                         <ul class="govuk-list govuk-list--bullet">
-                            
-                            @foreach (var app in Model.ApplicationsToReject)
+                            @foreach (var applicantionName in Model.DasAccountNames)
                             {
-                                <li class="application_rejection" style="display: list-item;">@app.Split("-")[1]</li>
+                                <li class="application_rejection" style="display: list-item;">@applicantionName</li>
                             }
                         </ul>
                     </section>

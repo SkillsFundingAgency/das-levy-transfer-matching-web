@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 {
-    public class RejectApplicationPostRequest
+    public class RejectApplicationsPostRequest
     {
         public string EncodedAccountId { get; set; }
 
@@ -16,7 +16,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         [AutoDecode(nameof(EncodedPledgeId), EncodingType.PledgeId)]
         public int PledgeId { get; set; }
 
-        public List<string> ApplicationsToReject { get; set; }
+        public List<int> ApplicationsToReject { get; set; }
 
         public bool RejectConfirm { get; set; }
     }

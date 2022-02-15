@@ -65,8 +65,7 @@
                                 Create a new transfer pledge
                             </button>
                         </form>
-                     @*</div>
-                     <div class="govuk-grid-column-one-third">*@
+                   
                         @if (Model.UserCanClosePledge)
                         {
                             <form action="/accounts/@Model.EncodedAccountId/pledges/@Model.EncodedPledgeId/close" method="get">
@@ -110,13 +109,12 @@
                                 foreach (var app in Model.Applications)
                                 {
                                     <tr class="govuk-table__row" data-table-row="one">
-
                                         <td class="govuk-table__cell sorting_1">
                                             @if (app.Status == SFA.DAS.LevyTransferMatching.Domain.Types.ApplicationStatus.Pending)
                                             {
                                                 <div class="govuk-checkboxes govuk-checkboxes--small">
                                                     <div class="govuk-checkboxes__item">
-                                                        <input class="govuk-checkboxes__input" id="application_select_@app.ApplicationId" name="ApplicationsToReject" type="checkbox" value="@app.ApplicationId-@app.DasAccountName">
+                                                        <input class="govuk-checkboxes__input" id="application_select_@app.ApplicationId" name="ApplicationsToReject" type="checkbox" value="@app.ApplicationId">
                                                         <label class="govuk-label govuk-checkboxes__label" for="application_select_@app.ApplicationId"> </label>
                                                     </div>
                                                 </div>
@@ -146,20 +144,15 @@
                         }
                     </tbody>
                 </table>
-        
-           
-                <div class="sticky-footer" style="display: block;">
-                    <div class="govuk-width-container">
-                        <div class="govuk-grid-row">
-                            <div class="govuk-grid-column-full">
-                                <div class="govuk-form-group">
-                                    <p>
-                                        Reject selected applications:
-                                        <button class="govuk-button" data-module="govuk-button" id="applications-action" type="submit">Continue</button>
-                                    </p>
-                                </div>
-                            </div>
+                
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-full">
+                        <section class="das-highlight">
+                        <div class="govuk-button-group">
+                            <p class="govuk-caption-m govuk-!-padding-right-3">Reject selected applications:</p>
+                            <button class="govuk-button" data-module="govuk-button" id="applications-action" type="submit">Continue</button>
                         </div>
+                        </section>
                     </div>
                 </div>
 

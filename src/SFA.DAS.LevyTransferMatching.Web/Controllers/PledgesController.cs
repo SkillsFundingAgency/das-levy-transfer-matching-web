@@ -241,31 +241,39 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Route("{encodedPledgeId}/applications")]
         public IActionResult Applications(ApplicationsPostRequest request)
         {
-            if(request.ApplicationsToReject == null)
-            {
-                return RedirectToAction(nameof(Applications), new { EncodedAccountId = request.EncodedAccountId, EncodedPledgeId = request.EncodedPledgeId });
-            }
-            return RedirectToAction(nameof(RejectApplications), request);
+            return RedirectToAction(nameof(RejectApplications), new { request.EncodedAccountId, request.EncodedPledgeId, request.ApplicationsToReject });
         }
 
-        [HideAccountNavigation(false, hideNavigationLinks: true)]
+        
         [Authorize]
-        [Route("{encodedPledgeId}/applications/rejectapplications")]
-        public IActionResult RejectApplications(RejectApplicationsViewModel request)
+        [Route("{encodedPledgeId}/applications/reject-applications")]
+        public async Task<IActionResult> RejectApplications(ApplicationsPostRequest request)
         {
-            return View(request);
+            var getRejectApplicationsViewModel = await _orchestrator.GetRejectApplicationsViewModel(request);
+            return View(getRejectApplicationsViewModel);
         }
 
-        [HideAccountNavigation(false, hideNavigationLinks: true)]
         [Authorize]
-        [Route("{encodedPledgeId}/applications/rejectapplications")]
+        [Route("{encodedPledgeId}/applications/reject-applications")]
         [HttpPost]
-        public async Task<IActionResult> RejectApplications(RejectApplicationPostRequest request)
+        public async Task<IActionResult> RejectApplications(RejectApplicationsPostRequest request)
         {
+            string numberOfApplicationsRejectedBanner = string.Empty;
+
             if (request.RejectConfirm)
             {
                 await _orchestrator.RejectApplications(request);
-                TempData.AddFlashMessage($"{request.ApplicationsToReject?.Count} applications have been rejected", string.Empty, TempDataDictionaryExtensions.FlashMessageLevel.Success);
+
+                if (request.ApplicationsToReject?.Count == 1)
+                {
+                    numberOfApplicationsRejectedBanner = $"{request.ApplicationsToReject?.Count} application has been rejected";
+                }
+                else if (request.ApplicationsToReject?.Count > 1)
+                {
+                    numberOfApplicationsRejectedBanner = $"{request.ApplicationsToReject?.Count} applications have been rejected";
+                }
+
+                TempData.AddFlashMessage(numberOfApplicationsRejectedBanner, string.Empty, TempDataDictionaryExtensions.FlashMessageLevel.Success);
             }
             return RedirectToAction(nameof(Applications), new { EncodedAccountId = request.EncodedAccountId, EncodedPledgeId = request.EncodedPledgeId });
         }

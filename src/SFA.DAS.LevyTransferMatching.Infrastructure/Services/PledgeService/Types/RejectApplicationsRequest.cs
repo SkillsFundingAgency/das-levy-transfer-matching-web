@@ -2,9 +2,9 @@
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types
 {
-    public class RejectApplicationRequest
+    public class RejectApplicationsRequest
     {
-        public List<string> ApplicationsToReject { get; set; }
+        public List<int> ApplicationsToReject { get; set; }
         public string UserId { get; set; }
         public string UserDisplayName { get; set; }
     }

@@ -29,10 +29,10 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
             return long.Parse(id);
         }
 
-        public async Task RejectApplications(RejectApplicationRequest request, long accountId, int pledgeId)
+        public async Task RejectApplications(RejectApplicationsRequest request, long accountId, int pledgeId)
         {
             var json = JsonConvert.SerializeObject(request, new StringEnumConverter());
-            var response = await _client.PostAsync($"accounts/{accountId}/pledges/{pledgeId}/rejectapplications", new StringContent(json, System.Text.Encoding.UTF8, "application/json"));
+            var response = await _client.PostAsync($"accounts/{accountId}/pledges/{pledgeId}/reject-applications", new StringContent(json, System.Text.Encoding.UTF8, "application/json"));
             response.EnsureSuccessStatusCode();
         }
 

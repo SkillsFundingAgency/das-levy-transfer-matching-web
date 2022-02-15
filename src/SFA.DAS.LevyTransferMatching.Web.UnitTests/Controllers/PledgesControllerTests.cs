@@ -490,27 +490,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         }
 
         [Test]
-        public void POST_Applications_Rejection_Redirects_To_List_of_Applications_When_No_Selection__Is_Made()
-        {
-            // Arrange
-            var request = _fixture.Create<ApplicationsPostRequest>();
-            request.ApplicationsToReject = null;
-
-            //Act
-            var redirectResult = _pledgesController.Applications(request) as RedirectToActionResult;
-
-            //Accert
-            Assert.NotNull(redirectResult);
-            Assert.AreEqual("Applications", redirectResult.ActionName);
-        }
-
-        [Test]
         public void POST_Applications_Rejection_Redirects_To_Reject_Applications_Options()
         {
             // Arrange
             var request = _fixture.Create<ApplicationsPostRequest>();
-            var listOfApplications = new List<string>();
-            listOfApplications.Add("5-4BGAF");
+            var listOfApplications = new List<int>();
+            listOfApplications.Add(5);
             request.ApplicationsToReject = listOfApplications;
 
             // Act
@@ -525,9 +510,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         public async Task POST_Reject_Applications_Action_Redirects_To_Updated_List_Of_Applications_On_Confirm()
         {
             // Arrange
-            var request = _fixture.Create<RejectApplicationPostRequest>();
-            var listOfApplications = new List<string>();
-            listOfApplications.Add("5-4BGAF");
+            var request = _fixture.Create<RejectApplicationsPostRequest>();
+            var listOfApplications = new List<int>();
+            listOfApplications.Add(5);
             request.ApplicationsToReject = listOfApplications;
             request.RejectConfirm = true;
 
