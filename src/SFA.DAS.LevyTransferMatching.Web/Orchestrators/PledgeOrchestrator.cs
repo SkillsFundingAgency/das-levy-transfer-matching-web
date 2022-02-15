@@ -483,6 +483,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var result = await _pledgeService.GetApplications(request.AccountId, request.PledgeId);
 
+            var isOwnerOrTransactor = _userService.IsOwnerOrTransactor(request.AccountId);
+
             var viewModels = (from application in result.Applications
                 let pledgeApplication = result.Applications.First(x => x.PledgeId == application.PledgeId)
                               select new ApplicationViewModel
@@ -511,10 +513,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             return new ApplicationsViewModel
             {
                 EncodedAccountId = request.EncodedAccountId,
-                UserCanClosePledge = result.PledgeStatus != PledgeStatus.Closed && _userService.IsOwnerOrTransactor(request.AccountId),
+                UserCanClosePledge = result.PledgeStatus != PledgeStatus.Closed && isOwnerOrTransactor,
                 EncodedPledgeId = request.EncodedPledgeId,
                 DisplayRejectedBanner = request.DisplayRejectedBanner,
                 RejectedEmployerName = request.RejectedEmployerName,
+                RenderCreatePledgeButton = isOwnerOrTransactor,
                 Applications = _sortingService.SortApplications(viewModels, request.SortColumn, request.SortOrder)
             };
         }
