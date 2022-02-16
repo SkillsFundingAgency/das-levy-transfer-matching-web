@@ -122,7 +122,7 @@
         }
     </div>
 
-    @if (Model.AllowApproval)
+    @if (Model.AllowApproval || Model.AllowRejection)
     {
         <form method="post">
             @Html.HiddenFor(m => m.EmployerAccountName)
@@ -134,24 +134,30 @@
                     </legend>
                     <span das-validation-for="SelectedAction" class="govuk-error-message"></span>
                     <div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios">
-                        <div class="govuk-radios__item">
-                            <input class="govuk-radios__input" id="SelectedAction" name="SelectedAction" asp-for="SelectedAction" type="radio" value="@approve" das-highlight-error-for="SelectedAction" error-class="govuk-textarea--error" data-aria-controls="approval-content" />
-                            <label class="govuk-label govuk-radios__label" for="SelectedAction">
-                                Approve the application
-                            </label>
-                        </div>
-                        <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="approval-content">
-                            <p><strong>Disclaimer:</strong></p>
-                            <p>The information provided by @Model.EmployerAccountName in their application for this pledge has not been checked and verified by the apprenticeship service.</p>
-                            <p>You may wish to undertake your own in-house governance process before committing to fund a transfer. The receiving employer will provide you with their contact details as part of their application in order to do this.</p>
-                            <p>Before this is confirmed, you will need to choose how to approve the apprentice details on the next page.</p>
-                        </div>
-                        <div class="govuk-radios__item">
-                            <input class="govuk-radios__input" id="SelectedAction-2" name="SelectedAction" asp-for="SelectedAction" type="radio" value="@reject" das-highlight-error-for="SelectedAction" error-class="govuk-textarea--error" />
-                            <label class="govuk-label govuk-radios__label" for="SelectedAction-2">
-                                Reject the application
-                            </label>
-                        </div>
+                        @if (Model.AllowApproval)
+                        {
+                            <div class="govuk-radios__item">
+                                <input class="govuk-radios__input" id="SelectedAction" name="SelectedAction" asp-for="SelectedAction" type="radio" value="@approve" das-highlight-error-for="SelectedAction" error-class="govuk-textarea--error" data-aria-controls="approval-content"/>
+                                <label class="govuk-label govuk-radios__label" for="SelectedAction">
+                                    Approve the application
+                                </label>
+                            </div>
+                            <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="approval-content">
+                                <p><strong>Disclaimer:</strong></p>
+                                <p>The information provided by @Model.EmployerAccountName in their application for this pledge has not been checked and verified by the apprenticeship service.</p>
+                                <p>You may wish to undertake your own in-house governance process before committing to fund a transfer. The receiving employer will provide you with their contact details as part of their application in order to do this.</p>
+                                <p>Before this is confirmed, you will need to choose how to approve the apprentice details on the next page.</p>
+                            </div>
+                        }
+                        @if (Model.AllowRejection)
+                        {
+                            <div class="govuk-radios__item">
+                                <input class="govuk-radios__input" id="@Model.RejectOptionElementId" name="SelectedAction" asp-for="SelectedAction" type="radio" value="@reject" das-highlight-error-for="SelectedAction" error-class="govuk-textarea--error"/>
+                                <label class="govuk-label govuk-radios__label" for="@Model.RejectOptionElementId">
+                                    Reject the application
+                                </label>
+                            </div>
+                        }
                     </div>
                 </fieldset>
             </div>
