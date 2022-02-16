@@ -16,17 +16,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
     {
         private const string CssClass = "govuk-link das-table__sort";
 
-        [HtmlAttributeName("selected-tab")]
-        public string SelectedTab { get; set; }
-
         [HtmlAttributeName("column-name")]
         public SortColumn ColumnName { get; set; }
 
         [HtmlAttributeName("column-label")]
         public string Label { get; set; }
 
-        [HtmlAttributeName("default-sort-column")]
-        public SortColumn DefaultSortColumn { get; set; }
+        [HtmlAttributeName("default")]
+        public bool IsDefault { get; set; }
 
         [HtmlAttributeName("default-order")]
         public SortOrder DefaultSortOrder { get; set; }
@@ -47,13 +44,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
             var action = ViewContext.RouteData.Values["action"] as string;
             var controller = ViewContext.RouteData.Values["controller"] as string;
 
-            var sortColumn = GetColumnFromQueryString();
+            var sortColumn = GetSortColumnFromQueryString();
             var sortOrder = GetSortOrderFromQueryString();
-            var isSortColumn = sortColumn == ColumnName;
+            var isSortColumn = sortColumn == ColumnName || (sortColumn == SortColumn.Default && IsDefault);
 
             var values = new
             {
-                SelectedTab = SelectedTab,
                 SearchTerm = GetSearchTermFromQueryString(),
                 SortColumn = ColumnName,
                 SortOrder = isSortColumn ? sortOrder.Reverse().ToString() : DefaultSortOrder.ToString()
@@ -89,14 +85,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
             return DefaultSortOrder;
         }
 
-        private SortColumn GetColumnFromQueryString()
+        private SortColumn GetSortColumnFromQueryString()
         {
             if (ViewContext.HttpContext.Request.Query.TryGetValue("SortColumn", out var sortColumn) && Enum.TryParse<SortColumn>(sortColumn, true, out var parsedSortColumn))
             {
                 return parsedSortColumn;
             }
 
-            return DefaultSortColumn;
+            return SortColumn.Default;
         }
 
         private string GetSearchTermFromQueryString()

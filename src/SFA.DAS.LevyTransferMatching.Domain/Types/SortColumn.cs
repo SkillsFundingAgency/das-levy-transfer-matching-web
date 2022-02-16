@@ -2,6 +2,7 @@
 {
     public enum SortColumn
     {
+        Default,
         Applicant,
         EstimatedTotalCost,
         TypicalDuration,
