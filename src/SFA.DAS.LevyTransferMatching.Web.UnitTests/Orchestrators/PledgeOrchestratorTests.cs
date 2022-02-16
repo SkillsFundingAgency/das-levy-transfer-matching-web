@@ -578,7 +578,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
         [TestCase(true, "SelectedAction-2")]
         [TestCase(false, "SelectedAction")]
-        public async Task GetApplication_RejectOption_Element_Id_Is_Default_If_It_Is_The_Ony_Option(bool allowApproval, string expectedRejectOptionElementId)
+        public async Task GetApplication_RejectOption_ElementId_Depends_On_Availability_Of_Approval_Option(bool allowApproval, string expectedRejectOptionElementId)
         {
             var response = _fixture.Create<GetApplicationResponse>();
             response.PledgeRemainingAmount = 100;
