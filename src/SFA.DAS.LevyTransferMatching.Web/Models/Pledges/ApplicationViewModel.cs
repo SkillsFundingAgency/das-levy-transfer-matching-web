@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
+using SFA.DAS.LevyTransferMatching.Web.Extensions;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 {
@@ -44,41 +45,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public bool IsJobRoleMatch { get; set; }
         public bool IsLevelMatch { get; set; }
         public bool AllowTransferRequestAutoApproval { get; set; }
-        public string PercentageMatchCssClass => CalculateMatchCss();
-        public string PercentageMatch => CalculateMatchPercentage();
-
-        private string CalculateMatchPercentage()
-        {
-            int matches = 0;
-            if (this.IsLocationMatch) matches++;
-            if (this.IsSectorMatch) matches++;
-            if (this.IsJobRoleMatch) matches++;
-            if (this.IsLevelMatch) matches++;
-            switch (matches)
-            {
-                case 0: return "0%";
-                case 1: return "25%";
-                case 2: return "50%";
-                case 3: return "75%";
-                case 4: return "100%";
-                default: return "0%";
-            }
-        }
-        private string CalculateMatchCss()
-        {
-            int matches = 0;
-            if (this.IsLocationMatch) matches++;
-            if (this.IsSectorMatch) matches++;
-            if (this.IsJobRoleMatch) matches++;
-            if (this.IsLevelMatch) matches++;
-            switch (matches)
-            {
-                case 0: case 1: return "pink";
-                case 2: case 3: return "yellow";
-                case 4: return "turquoise";
-                default: return "pink";
-            }
-        }
+        public string PercentageMatchCssClass => this.GetMatchPercentageCss();
+        public string PercentageMatch => this.CalculateMatchPercentage();
 
         public class AffordabilityViewModel
         {

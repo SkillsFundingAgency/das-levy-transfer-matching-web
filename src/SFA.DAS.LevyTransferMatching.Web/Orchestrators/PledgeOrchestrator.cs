@@ -524,14 +524,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     Level = result.Level,
                     DisplaySectors = result.Sector.ToReferenceDataDescriptionList(result.AllSectors, "; "),
                     Locations = string.IsNullOrEmpty(result.SpecificLocation) ? result.Locations.ToApplicationLocationsString(", ", result.AdditionalLocation) : result.SpecificLocation,
-                    IsLocationMatch = (!result.PledgeLocations.Any()) 
-                                    || result.PledgeLocations.Any(x => result.Locations.Contains(x)),
-                    IsJobRoleMatch = (result.PledgeJobRoles != null && !result.PledgeJobRoles.Any())
-                                    || result.PledgeJobRoles.Any(r => r == result.TypeOfJobRole),
-                    IsLevelMatch = !result.PledgeLevels.Any()
-                                    || result.PledgeLevels.Select(x => char.GetNumericValue(x.Last())).Contains(result.Level),
-                    IsSectorMatch = !result.PledgeSectors.Any() 
-                                    || result.PledgeSectors.Any(x => result.Sector.Contains(x)),
+                    IsJobRoleMatch = result.IsJobRoleMatch, //!result.PledgeJobRoles.Any() || result.PledgeJobRoles.Any(r => r == result.TypeOfJobRole),
+                    IsLevelMatch = result.IsLevelMatch, //!result.PledgeLevels.Any() || result.PledgeLevels.Select(x => char.GetNumericValue(x.Last())).Contains(result.Level),
+                    IsLocationMatch = result.IsLocationMatch, //(!result.PledgeLocations.Any()) || result.PledgeLocations.Any(x => result.Locations.Contains(x)),
+                    IsSectorMatch = result.IsSectorMatch, //!result.PledgeSectors.Any() || result.PledgeSectors.Any(x => result.Sector.Contains(x)),
                     Affordability = GetAffordabilityViewModel(result.Amount, result.PledgeRemainingAmount, result.NumberOfApprentices, result.MaxFunding, result.EstimatedDurationMonths, result.StartBy),
                     AllowApproval = result.Status == ApplicationStatus.Pending && result.Amount <= result.PledgeRemainingAmount && isOwnerOrTransactor,
                     DisplayApplicationApprovalOptions = _featureToggles.FeatureToggleApplicationApprovalOptions,
