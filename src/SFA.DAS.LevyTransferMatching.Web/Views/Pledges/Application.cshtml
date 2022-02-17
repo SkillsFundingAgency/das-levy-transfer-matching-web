@@ -14,17 +14,50 @@
     </h1>
     <div class="das-highlight">
         <h2 class="govuk-heading-m">Details about the application</h2>
-        <p><strong class="govuk-tag govuk-tag--@Model.PercentageMatchCssClass">@Model.PercentageMatch Match</strong></p>
-        <dl class="govuk-body app-dl-icon-list govuk-!-margin-bottom-4">
+        <p><strong class="govuk-tag govuk-tag--@Model.PercentageMatchCssClass">@Model.MatchPercentage% Match</strong></p>
+        <dl class="govuk-list app-dl-icon-list govuk-!-margin-bottom-4">
             <dt class="app-dl-icon-list__title">
+                @{ if (Model.MatchLocation) {
+                        <span class="app-dl-icon-list__icon app-dl-icon-list__icon--tick">
+                            Match on:
+                        </span>
+                    }
+                }
                 Location
             </dt>
             <dd class="app-dl-icon-list__definition">@Model.Locations</dd>
-            <dt class="app-dl-icon-list__title">Sector</dt>
+            <dt class="app-dl-icon-list__title">
+                @{ if (Model.MatchSector)
+                    {
+                        <span class="app-dl-icon-list__icon app-dl-icon-list__icon--tick">
+                            Match on:
+                        </span>
+                    }
+                }
+                Sector
+            </dt>
             <dd class="app-dl-icon-list__definition">@Model.DisplaySectors</dd>
-            <dt class="app-dl-icon-list__title">Type of job role</dt>
+            <dt class="app-dl-icon-list__title">
+                @{ if (Model.MatchJobRole)
+                    {
+                        <span class="app-dl-icon-list__icon app-dl-icon-list__icon--tick">
+                            Match on:
+                        </span>
+                    }
+                }
+                Type of job role
+            </dt>
             <dd class="app-dl-icon-list__definition">@Model.JobRole</dd>
-            <dt class="app-dl-icon-list__title">Level</dt>
+            <dt class="app-dl-icon-list__title">
+                @{ if (Model.MatchLevel)
+                    {
+                        <span class="app-dl-icon-list__icon app-dl-icon-list__icon--tick">
+                            Match on:
+                        </span>
+                    }
+                }
+                Level
+            </dt>
             <dd class="app-dl-icon-list__definition">@Model.Level</dd>
         </dl>
         <dl class="govuk-body app-dl-inline">

@@ -702,64 +702,21 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _pledgeService.Verify(o => o.GetApplications(It.Is<long>(l => l == accountId), It.Is<int>(p => p == _pledgeId)), Times.Once);
         }
 
-        [TestCase(new[] { "Birmingham", "London" }, "Birmingham", true)]
-        [TestCase(new[] { "Birmingham", "London" }, "Manchester", false)]
+        [TestCase(0, "pink")]
+        [TestCase(25, "pink")]
+        [TestCase(50, "yellow")]
+        [TestCase(75, "yellow")]
+        [TestCase(100, "turquoise")]
         [Test]
-        public async Task GetApplication_IsLocationMatch_Is_Correct(string [] pledgeLocation, string applicationLocaiton, bool expectedResult)
+        public async Task GetApplication_PercentageMatchCssClass_Is_Correct(int matchPercentage, string expectedResult)
         {
             var response = _fixture.Create<GetApplicationResponse>();
-            response.Locations = new List<string> { applicationLocaiton };
-            response.PledgeLocations = pledgeLocation.ToList();
+            response.MatchPercentage = matchPercentage;
             _pledgeService.Setup(o => o.GetApplication(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
 
             var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
 
-            Assert.AreEqual(result.IsLocationMatch, expectedResult);
-        }
-
-        [TestCase(new[] { "Construction", "Health and science" }, "Construction", true)]
-        [TestCase(new[] { "Construction", "Health and science" }, "Digital", false)]
-        [Test]
-        public async Task GetApplication_IsJobRoleMatch_Is_Correct(string [] pledgeJobRole, string applicationJobRole, bool expectedResult)
-        {
-            var response = _fixture.Create<GetApplicationResponse>();
-            response.PledgeJobRoles = pledgeJobRole.ToList();
-            response.TypeOfJobRole = applicationJobRole;
-            _pledgeService.Setup(o => o.GetApplication(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
-
-            var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
-
-            Assert.AreEqual(result.IsJobRoleMatch, expectedResult);
-        }
-
-        [TestCase(new[] { "Care Services", "Protective services" }, "Care Services", true)]
-        [TestCase(new[] { "Care Services", "Protective services" }, "Charity", false)]
-        [Test]
-        public async Task GetApplication_IsSectorMatch_Is_Correct(string [] pledgeSector, string applicationSector, bool expectedResult)
-        {
-            var response = _fixture.Create<GetApplicationResponse>();
-            response.PledgeSectors = pledgeSector.ToList();
-            response.Sector = new List<string> { applicationSector };
-            _pledgeService.Setup(o => o.GetApplication(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
-
-            var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
-
-            Assert.AreEqual(result.IsSectorMatch, expectedResult);
-        }
-
-        [TestCase(new[] { "3", "2" }, 3, true)]
-        [TestCase(new[] { "3", "2" }, 4, false)]
-        [Test]
-        public async Task GetApplication_IsLevelMatch_Is_Correct(string [] pledgeLevel, int applicationLevel, bool expectedResult)
-        {
-            var response = _fixture.Create<GetApplicationResponse>();
-            response.PledgeLevels = pledgeLevel.ToList(); 
-            response.Level = applicationLevel;
-            _pledgeService.Setup(o => o.GetApplication(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
-
-            var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
-
-            Assert.AreEqual(result.IsLevelMatch, expectedResult);
+            Assert.AreEqual(result.PercentageMatchCssClass, expectedResult);
         }
     }
 }

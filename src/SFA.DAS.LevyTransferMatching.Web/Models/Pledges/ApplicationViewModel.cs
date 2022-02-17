@@ -35,18 +35,18 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public List<string> PledgeLevels { get; set; }
         public List<string> PledgeLocations { get; set; }
         public string Locations { get; set; }
-        public bool IsLocationMatch { get; set; }
+        public bool MatchSector { get; set; }
+        public bool MatchJobRole { get; set; }
+        public bool MatchLevel { get; set; }
+        public bool MatchLocation { get; set; }
+        public int MatchPercentage { get; set; }
         public int PledgeRemainingAmount { get; set; }
         public int MaxFunding { get; set; }
         public AffordabilityViewModel Affordability { get; set; }
 
         public bool AllowApproval { get; set; }
-        public bool IsSectorMatch { get; set; }
-        public bool IsJobRoleMatch { get; set; }
-        public bool IsLevelMatch { get; set; }
         public bool AllowTransferRequestAutoApproval { get; set; }
         public string PercentageMatchCssClass => this.GetMatchPercentageCss();
-        public string PercentageMatch => this.CalculateMatchPercentage();
 
         public class AffordabilityViewModel
         {

@@ -23,10 +23,11 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Typ
             public string LastName { get; set; }
             public IEnumerable<string> EmailAddresses { get; set; }
             public string BusinessWebsite { get; set; }
-            public bool IsLocationMatch { get; set; }
-            public bool IsSectorMatch { get; set; }
-            public bool IsJobRoleMatch { get; set; }
-            public bool IsLevelMatch { get; set; }
+            public bool MatchSector { get; set; }
+            public bool MatchJobRole { get; set; }
+            public bool MatchLevel { get; set; }
+            public bool MatchLocation { get; set; }
+            public int MatchPercentage { get; set; }
             public string JobRole { get; set; }
             public int Amount { get; set; }
             public int PledgeRemainingAmount { get; set; }
