@@ -19,6 +19,7 @@ using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Services;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Location;
+using SFA.DAS.LevyTransferMatching.Web.Services.SortingService;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
@@ -34,8 +35,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         private Infrastructure.Configuration.FeatureToggles _featureToggles;
         private readonly IDateTimeService _dateTimeService;
         private readonly ICsvHelperService _csvService;
+        private readonly ISortingService _sortingService;
 
-        public PledgeOrchestrator(ICacheStorageService cacheStorageService, IPledgeService pledgeService, IEncodingService encodingService, ILocationValidatorService validatorService, IUserService userService, Infrastructure.Configuration.FeatureToggles featureToggles, IDateTimeService dateTimeService, ICsvHelperService csvService)
+        public PledgeOrchestrator(ICacheStorageService cacheStorageService, IPledgeService pledgeService, IEncodingService encodingService, ILocationValidatorService validatorService, IUserService userService, Infrastructure.Configuration.FeatureToggles featureToggles, IDateTimeService dateTimeService, ICsvHelperService csvService, ISortingService sortingService)
         {
             _cacheStorageService = cacheStorageService;
             _pledgeService = pledgeService;
@@ -45,6 +47,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             _featureToggles = featureToggles;
             _dateTimeService = dateTimeService;
             _csvService = csvService;
+            _sortingService = sortingService;
         }
 
         public InformViewModel GetInformViewModel(string encodedAccountId)
@@ -515,7 +518,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 DisplayRejectedBanner = request.DisplayRejectedBanner,
                 RejectedEmployerName = request.RejectedEmployerName,
                 RenderCreatePledgeButton = isOwnerOrTransactor,
-                Applications = viewModels
+                Applications = _sortingService.SortApplications(viewModels, request.SortColumn, request.SortOrder)
             };
         }
 
