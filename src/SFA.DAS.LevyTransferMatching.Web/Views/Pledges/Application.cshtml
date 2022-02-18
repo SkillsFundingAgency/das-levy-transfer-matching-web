@@ -17,7 +17,7 @@
         <p><strong class="govuk-tag govuk-tag--@Model.PercentageMatchCssClass">@Model.MatchPercentage% Match</strong></p>
         <dl class="govuk-list app-dl-icon-list govuk-!-margin-bottom-4">
             <dt class="app-dl-icon-list__title">
-                @{ if (Model.MatchLocation) {
+                @{ if (Model.IsLocationMatch) {
                         <span class="app-dl-icon-list__icon app-dl-icon-list__icon--tick">
                             Match on:
                         </span>
@@ -27,7 +27,7 @@
             </dt>
             <dd class="app-dl-icon-list__definition">@Model.Locations</dd>
             <dt class="app-dl-icon-list__title">
-                @{ if (Model.MatchSector)
+                @{ if (Model.IsSectorMatch)
                     {
                         <span class="app-dl-icon-list__icon app-dl-icon-list__icon--tick">
                             Match on:
@@ -38,7 +38,7 @@
             </dt>
             <dd class="app-dl-icon-list__definition">@Model.DisplaySectors</dd>
             <dt class="app-dl-icon-list__title">
-                @{ if (Model.MatchJobRole)
+                @{ if (Model.IsJobRoleMatch)
                     {
                         <span class="app-dl-icon-list__icon app-dl-icon-list__icon--tick">
                             Match on:
@@ -49,7 +49,7 @@
             </dt>
             <dd class="app-dl-icon-list__definition">@Model.JobRole</dd>
             <dt class="app-dl-icon-list__title">
-                @{ if (Model.MatchLevel)
+                @{ if (Model.IsLevelMatch)
                     {
                         <span class="app-dl-icon-list__icon app-dl-icon-list__icon--tick">
                             Match on:

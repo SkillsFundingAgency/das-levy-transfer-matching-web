@@ -46,10 +46,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.TagHelpers
         {
             var application = new ApplicationViewModel
             {
-                MatchLocation = isLocationMatch,
-                MatchSector = isSectorMatch,
-                MatchJobRole = isJobRoleMatch,
-                MatchLevel = isLevelMatch,
+                IsLocationMatch = isLocationMatch,
+                IsSectorMatch = isSectorMatch,
+                IsJobRoleMatch = isJobRoleMatch,
+                IsLevelMatch = isLevelMatch,
                 MatchPercentage = matchPercentage
             };
             

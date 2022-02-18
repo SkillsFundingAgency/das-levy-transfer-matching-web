@@ -17,27 +17,41 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
         {
             var content = new StringBuilder();
             var matchesList = new StringBuilder();
-
-            if (Application.MatchLocation)
+            int matches = 0;
+            if (Application.IsLocationMatch)
             {
+                matches++;
                 matchesList.Append("<li>Location</li>");
             }
-            if (Application.MatchSector)
+            if (Application.IsSectorMatch)
             {
+                matches++;
                 matchesList.Append("<li>Sector</li>");
             }
-            if (Application.MatchJobRole)
+            if (Application.IsJobRoleMatch)
             {
+                matches++;
                 matchesList.Append("<li>Job Role</li>");
             }
-            if (Application.MatchLevel)
+            if (Application.IsLevelMatch)
             {
+                matches++;
                 matchesList.Append("<li>Level</li>");
             }
 
-            content.Append("<p class=\"govuk-!-margin-bottom-1\">" + Application.MatchPercentage + "% match</p>");
+            string matchPercentageText = "";
+            switch (matches)
+            {
+                case 0: matchPercentageText = "0% match"; break;
+                case 1: matchPercentageText = "25% match"; break;
+                case 2: matchPercentageText = "50% match"; break;
+                case 3: matchPercentageText = "75% match"; break;
+                case 4: matchPercentageText = "100% match"; break;
+            }
 
-            if (Application.MatchPercentage > 0)
+            content.Append("<p class=\"govuk-!-margin-bottom-1\">" + matchPercentageText + "</p>");
+
+            if (matches > 0)
             {
                 content.Append("<ul class=\"app-criteria-list govuk-list govuk-list--bullet\">");
                 content.Append(matchesList.ToString());
