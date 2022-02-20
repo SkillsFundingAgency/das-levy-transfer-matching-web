@@ -7,7 +7,7 @@
 <a href="@Url.Action("Applications","Pledges", new { EncodedAccountId = Model.EncodedAccountId, EncodedPledgeId = Model.EncodedPledgeId })" class="govuk-back-link">Back</a>
 
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
-
+    <partial name="_ValidationSummary" />
     <div class="govuk-width-container">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
@@ -17,9 +17,9 @@
                     <section class="das-highlight">
                         <p class="govuk-heading-s">Applications for rejection</p>
                         <ul class="govuk-list govuk-list--bullet">
-                            @foreach (var applicantionName in Model.DasAccountNames)
+                            @foreach (var accountName in Model.DasAccountNames)
                             {
-                                <li class="application_rejection" style="display: list-item;">@applicantionName</li>
+                                <li class="application_rejection" style="display: list-item;">@accountName</li>
                             }
                         </ul>
                     </section>
@@ -43,7 +43,6 @@
                     </div>
 
                     <button class="govuk-button" data-module="govuk-button" id="reject_application" type="submit">Continue</button>
-
                 </form>
 
             </div>

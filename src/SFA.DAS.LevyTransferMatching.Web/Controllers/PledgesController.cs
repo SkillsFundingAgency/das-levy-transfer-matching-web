@@ -1,17 +1,15 @@
-﻿using System;
+﻿using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.LevyTransferMatching.Web.Authentication;
+using SFA.DAS.LevyTransferMatching.Web.Extensions;
+using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
+using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
+using SFA.DAS.LevyTransferMatching.Web.ValidatorInterceptors;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.LevyTransferMatching.Web.Extensions;
-using SFA.DAS.LevyTransferMatching.Web.Attributes;
-using SFA.DAS.LevyTransferMatching.Web.Authentication;
-using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
-using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
-using SFA.DAS.LevyTransferMatching.Web.ValidatorInterceptors;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
@@ -243,14 +241,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         {
             return RedirectToAction(nameof(RejectApplications), new { request.EncodedAccountId, request.EncodedPledgeId, request.ApplicationsToReject });
         }
-
         
         [Authorize]
+        [HttpGet]
         [Route("{encodedPledgeId}/applications/reject-applications")]
-        public async Task<IActionResult> RejectApplications(ApplicationsPostRequest request)
+        public async Task<IActionResult> RejectApplications(RejectApplicationsRequest request)
         {
-            var getRejectApplicationsViewModel = await _orchestrator.GetRejectApplicationsViewModel(request);
-            return View(getRejectApplicationsViewModel);
+            var rejectApplicationsViewModel = await _orchestrator.GetRejectApplicationsViewModel(request);
+            return View(rejectApplicationsViewModel);
         }
 
         [Authorize]
@@ -258,24 +256,20 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> RejectApplications(RejectApplicationsPostRequest request)
         {
-            string numberOfApplicationsRejectedBanner = string.Empty;
-
             if (request.RejectConfirm)
             {
                 await _orchestrator.RejectApplications(request);
-
-                if (request.ApplicationsToReject?.Count == 1)
-                {
-                    numberOfApplicationsRejectedBanner = $"{request.ApplicationsToReject?.Count} application has been rejected";
-                }
-                else if (request.ApplicationsToReject?.Count > 1)
-                {
-                    numberOfApplicationsRejectedBanner = $"{request.ApplicationsToReject?.Count} applications have been rejected";
-                }
-
-                TempData.AddFlashMessage(numberOfApplicationsRejectedBanner, string.Empty, TempDataDictionaryExtensions.FlashMessageLevel.Success);
+                SetRejectedApplicationsBanner(request.ApplicationsToReject.Count);
             }
             return RedirectToAction(nameof(Applications), new { EncodedAccountId = request.EncodedAccountId, EncodedPledgeId = request.EncodedPledgeId });
+        }
+        
+        private void SetRejectedApplicationsBanner(int rejectedApplications)
+        {
+            var bannerMessage = rejectedApplications > 1 ? $"{rejectedApplications} applications have been rejected" :
+                $"{rejectedApplications} application has been rejected";
+
+            TempData.AddFlashMessage(bannerMessage, string.Empty, TempDataDictionaryExtensions.FlashMessageLevel.Success);
         }
 
         [HttpGet]

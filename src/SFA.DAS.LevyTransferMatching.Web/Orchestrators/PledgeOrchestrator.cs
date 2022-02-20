@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Threading;
-using SFA.DAS.Encoding;
+﻿using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Domain.Types;
-using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
@@ -19,6 +11,13 @@ using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Services;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Location;
+using System;
+using System.Collections.Generic;
+using System.Dynamic;
+using System.Globalization;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
@@ -199,34 +198,38 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         }
         public async Task RejectApplications(RejectApplicationsPostRequest request)
         { 
-            var rejectApplicationsRequest = new RejectApplicationsRequest
+            var serviceRequest = new SetRejectApplicationsRequest
             {
-                ApplicationsToReject = request.ApplicationsToReject,
                 UserId = _userService.GetUserId(),
                 UserDisplayName = _userService.GetUserDisplayName(),
             };
+            serviceRequest.ApplicationsToReject.AddRange(from applicationId in request.ApplicationsToReject
+                                                         select (int)_encodingService.Decode(applicationId,
+                                                         EncodingType.PledgeApplicationId));
 
-            await _pledgeService.RejectApplications(rejectApplicationsRequest, request.AccountId, request.PledgeId);
+            await _pledgeService.RejectApplications(serviceRequest, request.AccountId, request.PledgeId);
         }
 
-        public async Task<RejectApplicationsViewModel> GetRejectApplicationsViewModel(ApplicationsPostRequest request)
+        public async Task<RejectApplicationsViewModel> GetRejectApplicationsViewModel(RejectApplicationsRequest request)
         {
             var rejectApplicationsViewModel = new RejectApplicationsViewModel
             {
-                ApplicationsToReject = request.ApplicationsToReject,
                 EncodedAccountId = request.EncodedAccountId,
                 EncodedPledgeId = request.EncodedPledgeId
             };
 
-            foreach (var applicationId in request.ApplicationsToReject) 
+            var applicationsList = await _pledgeService.GetApplicationsDasNames(request.AccountId, request.PledgeId);
+
+            if (!applicationsList.Applications.Any())
             {
-                var application = await _pledgeService.GetApplication(request.AccountId, request.PledgeId, applicationId);
-                if (application != null)
-                {
-                    rejectApplicationsViewModel.DasAccountNames.Add(application.EmployerAccountName);
-                }
+                return rejectApplicationsViewModel;
             }
-            
+
+            rejectApplicationsViewModel.DasAccountNames.AddRange(from rejectedAppplication in request.ApplicationsToReject
+                                                                 from application in applicationsList.Applications
+                                                                 where application.Id == (int)_encodingService.Decode(rejectedAppplication, 
+                                                                 EncodingType.PledgeApplicationId)
+                                                                 select application.DasAccountName);
             return rejectApplicationsViewModel;
         }
         public async Task<LocationViewModel> GetLocationViewModel(LocationRequest request)

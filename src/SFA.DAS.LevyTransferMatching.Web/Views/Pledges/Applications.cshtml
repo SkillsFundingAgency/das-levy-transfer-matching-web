@@ -82,7 +82,7 @@
             </div>
         </div>
 
-            <form class="" method="post" id="applications_actions_form">
+            <form method="post" id="applications_actions_form">
                 
                 <details class="govuk-details">
                     <summary class="govuk-details__summary">
@@ -118,8 +118,8 @@
                                             {
                                                 <div class="govuk-checkboxes govuk-checkboxes--small">
                                                     <div class="govuk-checkboxes__item">
-                                                        <input class="govuk-checkboxes__input" id="application_select_@app.ApplicationId" name="ApplicationsToReject" type="checkbox" value="@app.ApplicationId">
-                                                        <label class="govuk-label govuk-checkboxes__label" for="application_select_@app.ApplicationId"> </label>
+                                                        <input class="govuk-checkboxes__input" id="application_select_@app.EncodedApplicationId" name="ApplicationsToReject" type="checkbox" value="@app.EncodedApplicationId">
+                                                        <label class="govuk-label govuk-checkboxes__label" for="application_select_@app.EncodedApplicationId"> </label>
                                                     </div>
                                                 </div>
                                             }

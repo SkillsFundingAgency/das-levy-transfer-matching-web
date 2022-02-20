@@ -455,16 +455,30 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         [Test]
         public async Task GetRejectApplicationsViewModel_Returns_A_Valid_ViewModel()
         {
-            var request = new ApplicationsPostRequest {
+            var request = new RejectApplicationsRequest {
                 EncodedAccountId = _encodedAccountId,
                 EncodedPledgeId = _encodedPledgeId
             };
-            request.ApplicationsToReject = new List<int> { 5 };
+            request.ApplicationsToReject = new List<string> { "9RMK6Y"};
+            
+            var response = _fixture.Create<GetApplicationsAccountNamesResponse>();
+            response.Applications = new List<GetApplicationsAccountNamesResponse.Application>()
+            {
+                new GetApplicationsAccountNamesResponse.Application()
+                {
+                     Id = 4,
+                     DasAccountName = "Mega Corp"
+                },
+                new GetApplicationsAccountNamesResponse.Application()
+                {
+                     Id = 5,
+                     DasAccountName = "Mega Corp"
+                }
+            };
 
-            var response = _fixture.Create<GetApplicationResponse>();            
-            response.EmployerAccountName = "Mega Corp";
-
-            _pledgeService.Setup(o => o.GetApplication(request.AccountId, request.PledgeId, request.ApplicationsToReject[0], CancellationToken.None)).ReturnsAsync(response);
+            _pledgeService.Setup(o => o.GetApplicationsDasNames(request.AccountId, request.PledgeId)).ReturnsAsync(response);
+            
+            _encodingService.Setup(x => x.Decode("9RMK6Y", EncodingType.PledgeApplicationId)).Returns(4);
 
             var result = await _orchestrator.GetRejectApplicationsViewModel(request);
 

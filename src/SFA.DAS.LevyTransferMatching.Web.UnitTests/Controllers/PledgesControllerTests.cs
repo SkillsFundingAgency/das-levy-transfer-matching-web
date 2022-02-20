@@ -494,8 +494,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         {
             // Arrange
             var request = _fixture.Create<ApplicationsPostRequest>();
-            var listOfApplications = new List<int>();
-            listOfApplications.Add(5);
+            var listOfApplications = new List<string>
+            {
+                "9RMK6Y"
+            };
             request.ApplicationsToReject = listOfApplications;
 
             // Act
@@ -511,8 +513,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         {
             // Arrange
             var request = _fixture.Create<RejectApplicationsPostRequest>();
-            var listOfApplications = new List<int>();
-            listOfApplications.Add(5);
+            var listOfApplications = new List<string>
+            {
+                "9RMK6Y"
+            };
             request.ApplicationsToReject = listOfApplications;
             request.RejectConfirm = true;
 
@@ -520,7 +524,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             _pledgesController.TempData = mockTempData.Object;
 
             _orchestrator.Setup(x => x.RejectApplications(request)).Returns(Task.CompletedTask);
-            
+
             // Act
             var redirectResult = await _pledgesController.RejectApplications(request) as RedirectToActionResult;
 
