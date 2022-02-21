@@ -13,21 +13,16 @@
                 <span class="govuk-caption-m">Find a business to transfer your levy to</span>
                 <h1 class="govuk-heading-xl">Provide more detail about your apprenticeship</h1>
                 <p>This information will help the business offering the funding opportunity to make a decision about accepting your application.</p>
-                <p>Think about:</p>
+                <p>In the box below, tell us about:</p>
                 <ul class="govuk-list govuk-list--bullet">
-                    <li>why you want to employ an apprentice</li>
-                    <li>what the apprentice will help your business to achieve</li>
-                    <li>any long term plans for your apprentice</li>
+                    <li>your organisation</li>
+                    <li>why you want an apprentice</li>
+                    <li>how you will support the apprentice</li>
                 </ul>
                 <div class="govuk-character-count" data-module="govuk-character-count" data-maxwords="200">
                     <div class="govuk-form-group" das-highlight-error-for="Details" error-class="govuk-form-group--error" id="more-details">
-                        <h1 id="Details" class="govuk-label-wrapper">
-                            <label class="govuk-label govuk-label--l" for="more-detail">
-                                Can you provide more detail?
-                            </label>
-                        </h1>
                         <div id="more-detail-hint" class="govuk-hint">
-                            Do not include personal or financial information, like your National Insurance number or credit card details.
+                            Do not include personal or financial information like your bank account details.
                         </div>
                         <span das-validation-for="Details" class="govuk-error-message"></span>
                         @Html.TextAreaFor(m => m.Details, new { @class = "govuk-textarea govuk-js-character-count", @id = "more-detail", @name = "more-detail", @rows = "5", @aria_describedby = "more-detail-hint more-detail-info" })

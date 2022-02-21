@@ -4,6 +4,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -92,6 +93,7 @@ namespace SFA.DAS.LevyTransferMatching.Web
             services.AddEmployerSharedUI(Configuration);
             services.AddEmployerUrlHelper();
             services.AddAsyncValidators();
+            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 
             #if DEBUG
             services.AddControllersWithViews().AddRazorRuntimeCompilation();

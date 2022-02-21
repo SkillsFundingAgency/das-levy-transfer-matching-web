@@ -150,7 +150,14 @@
                             </h2>
                         </div>
                         <div class="govuk-grid-column-one-quarter">
-                            <strong class="govuk-tag govuk-tag--grey app-task-list__group-header-tag">Optional</strong>
+                            @if (!string.IsNullOrEmpty(Model.MoreDetail) && Model.MoreDetail.Trim() != "-")
+                            {
+                                <strong class="govuk-tag app-task-list__group-header-tag">Completed</strong>
+                            }
+                            else
+                            {
+                                <strong class="govuk-tag govuk-tag--grey app-task-list__group-header-tag">Not started</strong>
+                            }
                         </div>
                     </div>
                     <ul class="das-task-list__items">
