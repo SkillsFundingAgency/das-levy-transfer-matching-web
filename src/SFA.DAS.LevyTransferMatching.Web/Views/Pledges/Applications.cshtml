@@ -52,6 +52,14 @@
 
             </div>
         </div>
+        
+        @if (Model.Applications.Any())
+        {
+            <div class="govuk-inset-text">
+                <p>Applications awaiting approval are at the top of the status list. These are waiting for you to review and approve or reject. Applicants appreciate a response from you in order to manage their apprenticeships.</p>
+            </div>
+        }
+
 
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
@@ -78,15 +86,6 @@
             </div>
         </div>
 
-        <details class="govuk-details">
-            <summary class="govuk-details__summary">
-                <span class="govuk-details__summary-text">Information about the applications</span>
-            </summary>
-            <div class="govuk-details__text">
-                <h2 class="govuk-heading-s govuk-!-margin-bottom-0">Estimated cost in this financial year</h2>
-                <p>This is an estimate of the cost of training for each application in this financial year. It is based on the funding band maximum and the planned start date of training.</p>
-            </div>
-        </details>
         <table class="govuk-table" aria-label="Pledge applications">
             <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
@@ -94,16 +93,16 @@
                         <sortable-column column-name="Applicant" column-label="Applicant" default="false" default-order="Ascending"></sortable-column>
                     </th>
                     <th scope="col" class="govuk-table__header tax-year">
-                        <sortable-column column-name="EstimatedTotalCost" column-label="Estimated cost @Model.TaxYear" default="false" default-order="Descending"></sortable-column>
+                        <sortable-column column-name="CurrentFinancialYearAmount" column-label="Estimated cost @Model.TaxYear" default="false" default-order="Descending"></sortable-column>
                     </th>
                     <th scope="col" class="govuk-table__header duration" >
-                        <sortable-column column-name="TypicalDuration" column-label="Typical duration" default="false" default-order="Descending"></sortable-column>
+                        <sortable-column column-name="Duration" column-label="Typical duration" default="false" default-order="Descending"></sortable-column>
                     </th>
                     <th scope="col" class="govuk-table__header criteria">
-                        <sortable-column column-name="Criteria" column-label="Criteria" default="false" default-order="Descending"></sortable-column>
+                        <sortable-column column-name="CriteriaMatch" column-label="Criteria" default="false" default-order="Descending"></sortable-column>
                     </th>
                     <th scope="col" class="govuk-table__header status" >
-                        <sortable-column column-name="Status" column-label="Status" default="false" default-order="Ascending"></sortable-column>
+                        <sortable-column column-name="Status" column-label="Status" default="false" default-order="Descending"></sortable-column>
                     </th>
                 </tr>
             </thead>

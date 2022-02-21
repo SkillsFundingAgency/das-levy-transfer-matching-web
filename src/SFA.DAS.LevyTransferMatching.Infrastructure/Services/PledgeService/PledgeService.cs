@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using SFA.DAS.LevyTransferMatching.Domain.Types;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
 {
@@ -71,12 +72,23 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
             return JsonConvert.DeserializeObject<GetLevelResponse>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<GetApplicationsResponse> GetApplications(long accountId, int pledgeId)
+        public async Task<GetApplicationsResponse> GetApplications(long accountId, int pledgeId, SortColumn? sortOrder, SortOrder? sortDirection)
         {
-            var response = await _client.GetAsync($"accounts/{accountId}/pledges/{pledgeId}/applications");
+            var sort = GetApplicationsSortParameters(sortOrder, sortDirection);
+            var response = await _client.GetAsync($"accounts/{accountId}/pledges/{pledgeId}/applications{sort}");
             response.EnsureSuccessStatusCode();
 
             return JsonConvert.DeserializeObject<GetApplicationsResponse>(await response.Content.ReadAsStringAsync());
+        }
+
+        public static string GetApplicationsSortParameters(SortColumn? sortColumn, SortOrder? sortDirection)
+        {
+            if (sortColumn.HasValue && sortDirection.HasValue && sortColumn != SortColumn.Default)
+            {
+                return $"?sortOrder={sortColumn.Value}&sortDirection={sortDirection.Value}";
+            }
+
+            return $"?sortOrder=status&sortDirection=ascending";
         }
 
         public async Task<GetApplicationResponse> GetApplication(long accountId, int pledgeId, int applicationId, CancellationToken cancellationToken = default)
