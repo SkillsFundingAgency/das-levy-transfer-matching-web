@@ -20,6 +20,7 @@ using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using SFA.DAS.LevyTransferMatching.Web.Services;
+using SFA.DAS.LevyTransferMatching.Web.Services.SortingService;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Location;
 using ApplicationRequest = SFA.DAS.LevyTransferMatching.Web.Models.Pledges.ApplicationRequest;
 using GetApplicationsResponse = SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types.GetApplicationsResponse;
@@ -39,6 +40,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private Mock<IUserService> _userService;
         private Mock<IDateTimeService> _dateTimeService;
         private Mock<ICsvHelperService> _csvService;
+        private Mock<ISortingService> _sortingService;
         private Infrastructure.Configuration.FeatureToggles _featureToggles;
         private List<ReferenceDataItem> _sectors;
         private List<ReferenceDataItem> _levels;
@@ -72,6 +74,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _userService = new Mock<IUserService>();
             _dateTimeService = new Mock<IDateTimeService>();
             _csvService = new Mock<ICsvHelperService>();
+            _sortingService = new Mock<ISortingService>();
             _dateTimeService.Setup(x => x.UtcNow).Returns(DateTime.UtcNow);
 
             _featureToggles = new Infrastructure.Configuration.FeatureToggles();
@@ -111,8 +114,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _userService.Setup(x => x.GetUserDisplayName()).Returns(_userDisplayName);
             _userService.Setup(x => x.IsOwnerOrTransactor(0)).Returns(true);
 
+            _sortingService.Setup(x => x.SortApplications(It.IsAny<List<ApplicationViewModel>>(), null, null)).Returns((List<ApplicationViewModel> list, SortColumn sortColumn, SortOrder sortOrder) => list);
+
             _orchestrator = new PledgeOrchestrator(_cache.Object, _pledgeService.Object, _encodingService.Object, _validatorService.Object, _userService.Object, _featureToggles, 
-                _dateTimeService.Object, _csvService.Object);
+                _dateTimeService.Object, _csvService.Object, _sortingService.Object);
         }
 
         [Test]

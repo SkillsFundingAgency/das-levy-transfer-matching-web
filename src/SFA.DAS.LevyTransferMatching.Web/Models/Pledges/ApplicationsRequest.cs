@@ -1,4 +1,5 @@
 ﻿using SFA.DAS.Encoding;
+using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Web.Attributes;
 using System.Collections.Generic;
 
@@ -14,5 +15,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public int PledgeId { get; set; }
         public bool DisplayRejectedBanner { get; set; }
         public string RejectedEmployerName { get; set; }
+        public SortColumn? SortColumn { get; set; }
+        public SortOrder? SortOrder { get; set; }
     }
 }
