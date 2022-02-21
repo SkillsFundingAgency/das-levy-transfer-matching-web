@@ -9,7 +9,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Pledges
         {
             RuleFor(x => x.RejectConfirm)
                 .NotNull()
-                .WithMessage("You need to select yes if you want to continue and reject selected applications");
+                .WithMessage("You must choose to either reject the selected applications or return to the list of applications");
         }
     }
 }

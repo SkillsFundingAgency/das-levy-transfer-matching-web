@@ -24,19 +24,23 @@
                         </ul>
                     </section>
 
-                    <div class="govuk-form-group" >
+                    <div class="govuk-form-group" das-highlight-error-for="RejectConfirm" error-class="govuk-form-group--error" id="RejectConfirm">
                         <fieldset class="govuk-fieldset" aria-describedby="contact-hint">
                             <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
                                 <h2 class="govuk-heading-m no-margin-bottom">What would you like to do?</h2>
                             </legend>
+                            
+                            <span das-validation-for="RejectConfirm" class="govuk-error-message"></span>
+
                             <div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios">
                                 <div class="govuk-radios__item">
-                                    <input class="govuk-radios__input" id="reject_application_reject" name="RejectConfirm" type="radio" value="true">
-                                    <label class="govuk-label govuk-radios__label" for="reject_application_reject">Reject the application(s)</label>
+                                    <input class="govuk-radios__input" id="reject-application-reject" data-aria-controls="conditional-reject-application-reject" asp-for="RejectConfirm" value="true" type="radio" das-highlight-error-for="RejectConfirm" error-class="govuk-textarea--error">
+                                    <label class="govuk-label govuk-radios__label" for="reject-application-reject">Reject the application(s)</label>
                                 </div>
+
                                 <div class="govuk-radios__item">
-                                    <input class="govuk-radios__input" id="reject_application_cancel" name="RejectConfirm" type="radio" value="false">
-                                    <label class="govuk-label govuk-radios__label" for="reject_application_cancel">Cancel, return to applications</label>
+                                    <input class="govuk-radios__input" id="reject-application-cancel" asp-for="RejectConfirm" value="false" type="radio" das-highlight-error-for="RejectConfirm" error-class="govuk-textarea--error">
+                                    <label class="govuk-label govuk-radios__label" for="reject-application-cancel">Cancel, return to applications</label>
                                 </div>
                             </div>
                         </fieldset>

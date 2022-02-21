@@ -260,7 +260,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> RejectApplications(RejectApplicationsPostRequest request)
         {
-            if (request.RejectConfirm)
+            if (request.RejectConfirm.Value)
             {
                 await _orchestrator.RejectApplications(request);
                 SetRejectedApplicationsBanner(request.ApplicationsToReject.Count);

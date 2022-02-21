@@ -7,7 +7,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Pledges
     {
         public ApplicationsPostRequestValidator()
         {
-            RuleFor(x => x.ApplicationsToReject).NotNull().WithMessage("You must choose applications from the list to reject");
+            RuleFor(x => x.ApplicationsToReject).NotNull().WithMessage("You must choose the applications you want to reject");
         }
     }
 }
