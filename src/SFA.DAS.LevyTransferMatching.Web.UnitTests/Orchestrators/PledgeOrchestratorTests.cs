@@ -8,7 +8,6 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Domain.Types;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
@@ -535,6 +534,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             Assert.IsFalse(string.IsNullOrWhiteSpace(result.JobRole));
             Assert.IsTrue(result.AllowApproval);
+            Assert.IsTrue(result.AllowRejection);
         }
 
         [TestCase(100, 0, true)]
@@ -555,6 +555,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
 
         [TestCase(ApplicationStatus.Approved)]
+        [TestCase(ApplicationStatus.Accepted)]
+        [TestCase(ApplicationStatus.Declined)]
+        [TestCase(ApplicationStatus.Withdrawn)]
         public async Task GetApplication_DisallowApproval_If_Application_Is_Not_Pending_Outcome(ApplicationStatus status)
         {
             var response = _fixture.Create<GetApplicationResponse>();
@@ -566,6 +569,23 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
 
             Assert.IsFalse(result.AllowApproval);
+        }
+
+        [TestCase(ApplicationStatus.Approved)]
+        [TestCase(ApplicationStatus.Accepted)]
+        [TestCase(ApplicationStatus.Declined)]
+        [TestCase(ApplicationStatus.Withdrawn)]
+        public async Task GetApplication_DisallowRejection_If_Application_Is_Not_Pending_Outcome(ApplicationStatus status)
+        {
+            var response = _fixture.Create<GetApplicationResponse>();
+            response.PledgeRemainingAmount = 1000;
+            response.Amount = 1;
+            response.Status = status;
+            _pledgeService.Setup(o => o.GetApplication(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
+
+            var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
+
+            Assert.IsFalse(result.AllowRejection);
         }
 
         [Test]
@@ -582,6 +602,37 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
 
             Assert.IsFalse(result.AllowApproval);
+        }
+
+        [Test]
+        public async Task GetApplication_DisallowRejection_If_Application_Is_User_Is_Not_Owner_Or_Transactor_Of_Account()
+        {
+            var response = _fixture.Create<GetApplicationResponse>();
+            response.PledgeRemainingAmount = 1000;
+            response.Amount = 1;
+            response.Status = ApplicationStatus.Pending;
+            _pledgeService.Setup(o => o.GetApplication(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
+
+            _userService.Setup(x => x.IsOwnerOrTransactor(0)).Returns(false);
+
+            var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
+
+            Assert.IsFalse(result.AllowRejection);
+        }
+
+        [TestCase(true, "SelectedAction-2")]
+        [TestCase(false, "SelectedAction")]
+        public async Task GetApplication_RejectOption_ElementId_Depends_On_Availability_Of_Approval_Option(bool allowApproval, string expectedRejectOptionElementId)
+        {
+            var response = _fixture.Create<GetApplicationResponse>();
+            response.PledgeRemainingAmount = 100;
+            response.Amount = allowApproval ? 100 : 200;
+            response.Status = ApplicationStatus.Pending;
+            _pledgeService.Setup(o => o.GetApplication(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
+
+            var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
+
+            Assert.AreEqual(expectedRejectOptionElementId, result.RejectOptionElementId);
         }
 
         [Test]
