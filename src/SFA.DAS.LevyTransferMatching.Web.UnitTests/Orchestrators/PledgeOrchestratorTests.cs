@@ -466,22 +466,22 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             };
             request.ApplicationsToReject = new List<string> { "9RMK6Y"};
             
-            var response = _fixture.Create<GetApplicationsAccountNamesResponse>();
-            response.Applications = new List<GetApplicationsAccountNamesResponse.Application>()
+            var response = _fixture.Create<GetRejectApplicationsResponse>();
+            response.Applications = new List<GetRejectApplicationsResponse.Application>()
             {
-                new GetApplicationsAccountNamesResponse.Application()
+                new GetRejectApplicationsResponse.Application()
                 {
                      Id = 4,
                      DasAccountName = "Mega Corp"
                 },
-                new GetApplicationsAccountNamesResponse.Application()
+                new GetRejectApplicationsResponse.Application()
                 {
                      Id = 5,
                      DasAccountName = "Mega Corp"
                 }
             };
 
-            _pledgeService.Setup(o => o.GetApplicationsDasNames(request.AccountId, request.PledgeId)).ReturnsAsync(response);
+            _pledgeService.Setup(o => o.GetRejectApplications(request.AccountId, request.PledgeId)).ReturnsAsync(response);
             
             _encodingService.Setup(x => x.Decode("9RMK6Y", EncodingType.PledgeApplicationId)).Returns(4);
 

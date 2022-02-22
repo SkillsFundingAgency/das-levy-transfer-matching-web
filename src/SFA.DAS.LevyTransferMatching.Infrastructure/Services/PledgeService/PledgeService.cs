@@ -86,12 +86,12 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
             return JsonConvert.DeserializeObject<GetApplicationsResponse>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<GetApplicationsAccountNamesResponse> GetApplicationsDasNames(long accountId, int pledgeId)
+        public async Task<GetRejectApplicationsResponse> GetRejectApplications(long accountId, int pledgeId)
         {
-            var response = await _client.GetAsync($"accounts/{accountId}/pledges/{pledgeId}/applications-account-names");
+            var response = await _client.GetAsync($"accounts/{accountId}/pledges/{pledgeId}/reject-applications");
             response.EnsureSuccessStatusCode();
 
-            return JsonConvert.DeserializeObject<GetApplicationsAccountNamesResponse>(await response.Content.ReadAsStringAsync());
+            return JsonConvert.DeserializeObject<GetRejectApplicationsResponse>(await response.Content.ReadAsStringAsync());
         }
 
         public async Task<GetApplicationResponse> GetApplication(long accountId, int pledgeId, int applicationId, CancellationToken cancellationToken = default)

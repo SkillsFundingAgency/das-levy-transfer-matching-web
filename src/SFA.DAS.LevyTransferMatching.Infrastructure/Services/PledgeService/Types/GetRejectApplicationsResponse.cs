@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types
 {
-    public class GetApplicationsAccountNamesResponse
+    public class GetRejectApplicationsResponse
     {
         public IEnumerable<Application> Applications { get; set; }
 

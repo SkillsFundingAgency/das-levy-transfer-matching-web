@@ -213,7 +213,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         public async Task<RejectApplicationsViewModel> GetRejectApplicationsViewModel(RejectApplicationsRequest request)
         {
-            var applicationsList = await _pledgeService.GetApplicationsDasNames(request.AccountId, request.PledgeId);
+            var applicationsList = await _pledgeService.GetRejectApplications(request.AccountId, request.PledgeId);
 
             if(!applicationsList.Applications.Any())
             {
@@ -659,7 +659,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
-        private List<string> GetRejectedApplicationsDasNames(List<string> rejectedApplications, GetApplicationsAccountNamesResponse applicationsWithDasNames)
+        private List<string> GetRejectedApplicationsDasNames(List<string> rejectedApplications, GetRejectApplicationsResponse applicationsWithDasNames)
         {
             var getDasAccountNames = new List<string>();
 

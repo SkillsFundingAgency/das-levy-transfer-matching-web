@@ -21,6 +21,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
         Task<GetApplicationApprovalOptionsResponse> GetApplicationApprovalOptions(long accountId, int pledgeId, int applicationId, CancellationToken cancellationToken = default);
         Task SetApplicationApprovalOptions(long accountId, int applicationId, int pledgeId, SetApplicationApprovalOptionsRequest request);
         Task ClosePledge(long accountId, int pledgeId, ClosePledgeRequest request);
-        Task<GetApplicationsAccountNamesResponse> GetApplicationsDasNames(long accountId, int pledgeId);
+        Task<GetRejectApplicationsResponse> GetRejectApplications(long accountId, int pledgeId);
     }
 }
