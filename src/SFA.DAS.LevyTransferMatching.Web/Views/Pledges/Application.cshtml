@@ -76,21 +76,13 @@
         <h3 class="govuk-heading-s govuk-!-margin-bottom-0">For @Model.Affordability.YearDescription:</h3>
         <dl class="app-dl-inline govuk-body govuk-!-margin-bottom-4">
             <dt class="app-dl-inline__title">Pledge funds remaining this year</dt>
-            <dd class="app-dl-inline__definition">@Model.Affordability.RemainingFunds</dd>
+            <dd class="app-dl-inline__definition"><strong>@Model.Affordability.RemainingFunds</strong></dd>
             <dt class="app-dl-inline__title">Estimated costs this year</dt>
-            <dd class="app-dl-inline__definition">@Model.Affordability.EstimatedCostThisYear</dd>
+            <dd class="app-dl-inline__definition"><strong>@Model.Affordability.EstimatedCostThisYear</strong></dd>
         </dl>
         <p>Pledge funds remaining if application is approved: <strong>@Model.Affordability.RemainingFundsIfApproved</strong></p>
-        <details class="govuk-details" data-module="govuk-details">
-            <summary class="govuk-details__summary">
-                <span class="govuk-details__summary-text">
-                    What is estimated cost?
-                </span>
-            </summary>
-            <div class="govuk-details__text">
-                <p>The estimated total cost of training is based on the funding band maximum, the planned start date of training and the 20% completion payment.</p>
-            </div>
-        </details>
+        <h3 class="govuk-heading-s govuk-!-margin-bottom-0">What is estimated cost?</h3>
+        <p>The estimated total cost of training is based on the funding band maximum, the planned start date of training and the 20% completion payment.</p>
     </div>
 
     <div class="das-highlight">
