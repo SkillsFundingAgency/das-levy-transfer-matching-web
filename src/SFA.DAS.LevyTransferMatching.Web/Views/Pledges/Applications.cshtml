@@ -56,11 +56,14 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                  <div class="govuk-button-group">
-                    <form action="/accounts/@Model.EncodedAccountId/pledges/create/inform" method="get">
-                        <button class="govuk-button">
-                            Create a new transfer pledge
-                        </button>
-                    </form>
+                    @if (Model.RenderCreatePledgeButton)
+                    {
+                        <form action="/accounts/@Model.EncodedAccountId/pledges/create/inform" method="get">
+                            <button class="govuk-button">
+                                Create a new transfer pledge
+                            </button>
+                        </form>
+                    }
 
                     @if (Model.UserCanClosePledge)
                     {
@@ -87,12 +90,21 @@
         <table class="govuk-table" aria-label="Pledge applications">
             <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
-                    <th scope="col" class="govuk-table__header applicant">Applicant</th>
-                    <th scope="col" class="govuk-table__header tax-year ">Estimated cost @Model.TaxYear</th>
-                    <th scope="col" class="govuk-table__header duration">Typical duration</th>
-                    <th scope="col" class="govuk-table__header criteria">Criteria</th>
-                    <th scope="col" class="govuk-table__header">Date applied</th>
-                    <th scope="col" class="govuk-table__header status">Status</th>
+                    <th scope="col" class="govuk-table__header applicant">
+                        <sortable-column column-name="Applicant" column-label="Applicant" default="false" default-order="Ascending"></sortable-column>
+                    </th>
+                    <th scope="col" class="govuk-table__header tax-year">
+                        <sortable-column column-name="EstimatedTotalCost" column-label="Estimated cost @Model.TaxYear" default="false" default-order="Descending"></sortable-column>
+                    </th>
+                    <th scope="col" class="govuk-table__header duration" >
+                        <sortable-column column-name="TypicalDuration" column-label="Typical duration" default="false" default-order="Descending"></sortable-column>
+                    </th>
+                    <th scope="col" class="govuk-table__header criteria">
+                        <sortable-column column-name="Criteria" column-label="Criteria" default="false" default-order="Descending"></sortable-column>
+                    </th>
+                    <th scope="col" class="govuk-table__header status" >
+                        <sortable-column column-name="Status" column-label="Status" default="false" default-order="Ascending"></sortable-column>
+                    </th>
                 </tr>
             </thead>
             <tbody class="govuk-table__body">
@@ -110,7 +122,6 @@
                                 <td class="govuk-table__cell">
                                     <criteria-list application="@app"></criteria-list>
                                 </td>
-                                <td class="govuk-table__cell">@app.CreatedOn.ToLongDateDisplayString()</td>
                                 <td class="govuk-table__cell"><strong class="@app.Status.GetCssClassForSender()">@app.Status.GetLabelForSender()</strong></td>
                             </tr>
                         }
@@ -122,10 +133,21 @@
                             <td colspan="6" class="govuk-table__cell">No applications received yet</td>
                         </tr>
                     }
-                }
-            </tbody>
-        </table>
+            }
+        </tbody>
+    </table>
     </div>
+              
+    @if (Model.RenderCreatePledgeButton)
+    {
+        <div class="govuk-button-group">
+            <form action="/accounts/@Model.EncodedAccountId/pledges/create/inform" method="get">
+                <button class="govuk-button">
+                    Create a new transfer pledge
+                </button>
+            </form>
+        </div>
+    }
 
     <a href="/accounts/@Model.EncodedAccountId/pledges" class="govuk-back-link">Back to my transfer pledges</a>
 
