@@ -200,40 +200,32 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             return _encodingService.Encode(pledgeId, EncodingType.PledgeId);
         }
         public async Task RejectApplications(RejectApplicationsPostRequest request)
-        { 
+        {
             var serviceRequest = new SetRejectApplicationsRequest
             {
                 UserId = _userService.GetUserId(),
                 UserDisplayName = _userService.GetUserDisplayName(),
+                ApplicationsToReject = GetDecodedApplicationsIds(request.ApplicationsToReject).ToList()
             };
-            serviceRequest.ApplicationsToReject.AddRange(from applicationId in request.ApplicationsToReject
-                                                         select (int)_encodingService.Decode(applicationId,
-                                                         EncodingType.PledgeApplicationId));
 
             await _pledgeService.RejectApplications(serviceRequest, request.AccountId, request.PledgeId);
         }
 
         public async Task<RejectApplicationsViewModel> GetRejectApplicationsViewModel(RejectApplicationsRequest request)
         {
-            var rejectApplicationsViewModel = new RejectApplicationsViewModel
-            {
-                EncodedAccountId = request.EncodedAccountId,
-                EncodedPledgeId = request.EncodedPledgeId
-            };
-
             var applicationsList = await _pledgeService.GetApplicationsDasNames(request.AccountId, request.PledgeId);
 
-            if (!applicationsList.Applications.Any())
+            if(!applicationsList.Applications.Any())
             {
-                return rejectApplicationsViewModel;
+                return new RejectApplicationsViewModel { EncodedAccountId = request.EncodedAccountId, EncodedPledgeId = request.EncodedPledgeId };
             }
 
-            rejectApplicationsViewModel.DasAccountNames.AddRange(from rejectedAppplication in request.ApplicationsToReject
-                                                                 from application in applicationsList.Applications
-                                                                 where application.Id == (int)_encodingService.Decode(rejectedAppplication, 
-                                                                 EncodingType.PledgeApplicationId)
-                                                                 select application.DasAccountName);
-            return rejectApplicationsViewModel;
+            return new RejectApplicationsViewModel
+            {
+                EncodedAccountId = request.EncodedAccountId,
+                EncodedPledgeId = request.EncodedPledgeId,
+                DasAccountNames = GetRejectedApplicationsDasNames(request.ApplicationsToReject, applicationsList).ToList()
+            };
         }
         public async Task<LocationViewModel> GetLocationViewModel(LocationRequest request)
         {
@@ -665,6 +657,34 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 EstimatedCostOverDuration = estimatedCostOverDuration.ToCurrencyString(),
                 YearDescription = _dateTimeService.UtcNow.ToTaxYearDescription()
             };
+        }
+
+        private List<string> GetRejectedApplicationsDasNames(List<string> rejectedApplications, GetApplicationsAccountNamesResponse applicationsWithDasNames)
+        {
+            var getDasAccountNames = new List<string>();
+
+            foreach (var appplicationId in rejectedApplications)
+            {
+                foreach (var application in applicationsWithDasNames.Applications)
+                {
+                    if (application.Id == (int)_encodingService.Decode(appplicationId, EncodingType.PledgeApplicationId))
+                    {
+                        getDasAccountNames.Add(application.DasAccountName);
+                    }
+                }
+            }
+            return getDasAccountNames;
+        }
+
+        private IEnumerable<int> GetDecodedApplicationsIds(List<string> applicationsIds)
+        {
+            var decodedApplicationsIds = new List<int>();
+            foreach (var applicationId in applicationsIds)
+            {
+                decodedApplicationsIds.Add((int)_encodingService.Decode(applicationId,
+                                                     EncodingType.PledgeApplicationId));
+            }
+            return decodedApplicationsIds;
         }
     }
 }
