@@ -92,23 +92,26 @@
                     </div>
                 </details>
                 <div class="govuk-form-group" das-highlight-error-for="ApplicationsToReject" error-class="govuk-form-group--error" id="ApplicationsToReject">
+                    <fieldset class="govuk-fieldset">
+                        <legend class="govuk-visually-hidden">Select the applications that you want to reject</legend>
+                    
                 <table class="govuk-table" aria-label="Pledge applications">
                     <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
-                            <th scope="col" class="govuk-table__header"> </th>
-                            <th scope="col" class="govuk-table__header applicant">
+                            <th scope="col" class="govuk-table__header das-table-cell-width-5"></th>
+                            <th scope="col" class="govuk-table__header das-table-cell-width-25">
                                 <sortable-column column-name="Applicant" column-label="Applicant" default="false" default-order="Ascending"></sortable-column>
                             </th>
-                            <th scope="col" class="govuk-table__header tax-year">
+                            <th scope="col" class="govuk-table__header das-table-cell-width-15">
                                 <sortable-column column-name="EstimatedTotalCost" column-label="Estimated cost @Model.TaxYear" default="false" default-order="Descending"></sortable-column>
                             </th>
-                            <th scope="col" class="govuk-table__header duration" >
+                            <th scope="col" class="govuk-table__header das-table-cell-width-15">
                                 <sortable-column column-name="TypicalDuration" column-label="Typical duration" default="false" default-order="Descending"></sortable-column>
                             </th>
-                            <th scope="col" class="govuk-table__header criteria">
+                            <th scope="col" class="govuk-table__header das-table-cell-width-20">
                                 <sortable-column column-name="Criteria" column-label="Criteria" default="false" default-order="Descending"></sortable-column>
                             </th>
-                            <th scope="col" class="govuk-table__header status" >
+                            <th scope="col" class="govuk-table__header das-table-cell-width-20">
                                 <sortable-column column-name="Status" column-label="Status" default="false" default-order="Ascending"></sortable-column>
                             </th>
                         </tr>
@@ -119,14 +122,16 @@
                             {
                                 foreach (var app in Model.Applications)
                                 {
-                                    <tr class="govuk-table__row" data-table-row="one">
-                                        <td class="govuk-table__cell sorting_1">
+                                    <tr class="govuk-table__row">
+                                        <td class="govuk-table__cell">
                                             @if (app.Status == SFA.DAS.LevyTransferMatching.Domain.Types.ApplicationStatus.Pending)
                                             {
                                                 <div class="govuk-checkboxes govuk-checkboxes--small" das-highlight-error-for="@app.EncodedApplicationId" error-class="govuk-form-group--error">
                                                     <div class="govuk-checkboxes__item">
                                                         <input class="govuk-checkboxes__input" id="application_select_@app.EncodedApplicationId" error-class="govuk-input--error"  name="ApplicationsToReject" type="checkbox" value="@app.EncodedApplicationId">
-                                                        <label class="govuk-label govuk-checkboxes__label"> </label>
+                                                        <label class="govuk-label govuk-checkboxes__label" for="application_select_@app.EncodedApplicationId">
+                                                            <span class="govuk-visually-hidden">@app.DasAccountName</span>
+                                                        </label>
                                                     </div>
                                                 </div>
                                             }
@@ -153,6 +158,7 @@
                          }
                       </tbody>
                  </table>
+                 </fieldset>
               </div>  
                 <div class="govuk-grid-row">
                     <div class="govuk-grid-column-full">
