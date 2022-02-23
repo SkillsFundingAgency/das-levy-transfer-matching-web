@@ -42,9 +42,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [HttpGet]
         [Authorize(Policy = PolicyNames.ManageAccount)]
         [Route("{encodedPledgeId}/close")]
-        public IActionResult Close(string encodedAccountId, string encodedPledgeId)
+        public IActionResult Close(CloseRequest request)
         {
-            var viewModel = _orchestrator.GetCloseViewModel(encodedAccountId, encodedPledgeId);
+            var viewModel = _orchestrator.GetCloseViewModel(request);
             return View(viewModel);
         }
 
@@ -54,10 +54,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         {
             if (closePostRequest.HasConfirmed.Value)
             {
-               await _orchestrator.ClosePledge(closePostRequest);
-               
-               TempData.AddFlashMessage("Transfer pledge closed", $"You closed the transfer pledge {closePostRequest.EncodedPledgeId}.", TempDataDictionaryExtensions.FlashMessageLevel.Success);
-               return RedirectToAction(nameof(Pledges), new { EncodedAccountId = closePostRequest.EncodedAccountId });
+                await _orchestrator.ClosePledge(closePostRequest);
+
+                TempData.AddFlashMessage("Transfer pledge closed", $"You closed the transfer pledge {closePostRequest.EncodedPledgeId}.", TempDataDictionaryExtensions.FlashMessageLevel.Success);
+                return RedirectToAction(nameof(Pledges), new { EncodedAccountId = closePostRequest.EncodedAccountId });
             }
             return RedirectToAction(nameof(Applications), new { EncodedAccountId = closePostRequest.EncodedAccountId, EncodedPledgeId = closePostRequest.EncodedPledgeId });
         }
@@ -275,7 +275,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
                 return RedirectToAction("ApplicationApproved", new { request.EncodedAccountId, request.EncodedPledgeId, request.EncodedApplicationId });
             }
 
-            return RedirectToAction("Applications", new { request.EncodedAccountId, request.EncodedPledgeId, DisplayRejectedBanner = true, RejectedEmployerName = request.EmployerAccountName });
+            TempData.AddFlashMessage("Application rejected", $"You rejected the {request.EmployerAccountName} application.", TempDataDictionaryExtensions.FlashMessageLevel.Success);
+            return RedirectToAction("Applications", new { request.EncodedAccountId, request.EncodedPledgeId });
         }
 
         [HttpGet]

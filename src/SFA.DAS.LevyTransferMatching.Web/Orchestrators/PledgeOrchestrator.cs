@@ -59,12 +59,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
-        public CloseViewModel GetCloseViewModel(string encodedAccountId, string encodedPledgeId)
+        public CloseViewModel GetCloseViewModel(CloseRequest request)
         {
             return new CloseViewModel
             {
-                EncodedAccountId = encodedAccountId,
-                EncodedPledgeId = encodedPledgeId,
+                EncodedAccountId = request.EncodedAccountId,
+                EncodedPledgeId = request.EncodedPledgeId,
                 CacheKey = Guid.NewGuid(),
                 UserCanClosePledge = _userService.IsUserChangeAuthorized()
             };
@@ -515,8 +515,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 EncodedAccountId = request.EncodedAccountId,
                 UserCanClosePledge = result.PledgeStatus != PledgeStatus.Closed && isOwnerOrTransactor,
                 EncodedPledgeId = request.EncodedPledgeId,
-                DisplayRejectedBanner = request.DisplayRejectedBanner,
-                RejectedEmployerName = request.RejectedEmployerName,
                 RenderCreatePledgeButton = isOwnerOrTransactor,
                 Applications = _sortingService.SortApplications(viewModels, request.SortColumn, request.SortOrder)
             };
