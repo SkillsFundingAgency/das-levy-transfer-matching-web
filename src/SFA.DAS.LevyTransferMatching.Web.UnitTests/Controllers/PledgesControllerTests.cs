@@ -10,6 +10,7 @@ using NUnit.Framework;
 using SFA.DAS.LevyTransferMatching.Web.Controllers;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
+using SFA.DAS.LevyTransferMatching.Web.Orchestrators.Pledge;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
 {
@@ -97,10 +98,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         {
             // Arrange
             var request = _fixture.Create<AmountRequest>();
-            _orchestrator.Setup(x => x.GetAmountViewModel(request)).ReturnsAsync(() => new AmountViewModel());
+            var orchestrator = new Mock<IAmountOrchestrator>();
+            orchestrator.Setup(x => x.GetAmountViewModel(request)).ReturnsAsync(() => new AmountViewModel());
 
             // Act
-            var viewResult = await _pledgesController.Amount(request) as ViewResult;
+            var viewResult = await _pledgesController.Amount(orchestrator.Object, request) as ViewResult;
             var amountViewModel = viewResult?.Model as AmountViewModel;
 
             // Assert
@@ -113,9 +115,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         {
             // Arrange
             var request = _fixture.Create<AmountPostRequest>();
+            var orchestrator = new Mock<IAmountOrchestrator>();
 
             // Act
-            var actionResult = await _pledgesController.Amount(request) as RedirectToActionResult;
+            var actionResult = await _pledgesController.Amount(orchestrator.Object, request) as RedirectToActionResult;
 
             // Assert
             Assert.NotNull(actionResult);
