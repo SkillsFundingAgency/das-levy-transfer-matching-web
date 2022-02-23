@@ -9,6 +9,7 @@ using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Authentication;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
+using SFA.DAS.LevyTransferMatching.Web.Orchestrators.Pledge;
 using SFA.DAS.LevyTransferMatching.Web.ValidatorInterceptors;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
@@ -88,18 +89,18 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
         [Authorize(Policy = PolicyNames.ManageAccount)]
         [Route("create/amount")]
-        public async  Task<IActionResult> Amount(AmountRequest request)
+        public async  Task<IActionResult> Amount([FromServices] IAmountOrchestrator orchestrator, AmountRequest request)
         {
-            var viewModel = await _orchestrator.GetAmountViewModel(request);
+            var viewModel = await orchestrator.GetAmountViewModel(request);
             return View(viewModel);
         }
 
         [Authorize(Policy = PolicyNames.ManageAccount)]
         [HttpPost]
         [Route("create/amount")]
-        public async Task<IActionResult> Amount(AmountPostRequest request)
+        public async Task<IActionResult> Amount([FromServices] IAmountOrchestrator orchestrator, AmountPostRequest request)
         {
-            await _orchestrator.UpdateCacheItem(request);
+            await orchestrator.UpdateCacheItem(request);
             return RedirectToAction("Create", new { request.EncodedAccountId, request.CacheKey });
         }
 

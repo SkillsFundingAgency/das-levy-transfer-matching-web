@@ -122,26 +122,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
-        public async Task<AmountViewModel> GetAmountViewModel(AmountRequest request)
-        {
-            var cacheItemTask = RetrievePledgeCacheItem(request.CacheKey);
-            var accountDataTask = _pledgeService.GetAmount(request.EncodedAccountId);
-
-            await Task.WhenAll(cacheItemTask, accountDataTask);
-            var cacheItem = cacheItemTask.Result;
-            var accountData = accountDataTask.Result;
-
-            return new AmountViewModel
-            {
-                EncodedAccountId = request.EncodedAccountId,
-                CacheKey = request.CacheKey,
-                Amount = cacheItem.Amount.ToString(),
-                RemainingTransferAllowance = accountData.RemainingTransferAllowance.ToString("N0"),
-                IsNamePublic = cacheItem.IsNamePublic,
-                DasAccountName = accountData.DasAccountName
-            };
-        }
-
         public async Task<SectorViewModel> GetSectorViewModel(SectorRequest request)
         {
             var cacheItemTask = RetrievePledgeCacheItem(request.CacheKey);
@@ -351,17 +331,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             await UpdateCacheItem(request.CacheKey, multipleValidLocations);
 
             return errors;
-        }
-
-        public async Task UpdateCacheItem(AmountPostRequest request)
-        {
-            var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
-
-            cacheItem.Amount = int.Parse(request.Amount, NumberStyles.AllowThousands, CultureInfo.InvariantCulture);
-            cacheItem.IsNamePublic = request.IsNamePublic.Value;
-            cacheItem.DasAccountName = request.DasAccountName;
-
-            await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
         }
 
         public async Task UpdateCacheItem(SectorPostRequest request)
