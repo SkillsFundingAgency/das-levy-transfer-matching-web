@@ -40,10 +40,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public AffordabilityViewModel Affordability { get; set; }
 
         public bool AllowApproval { get; set; }
+        public bool AllowRejection { get; set; }
+        public string RejectOptionElementId => AllowApproval ? "SelectedAction-2" : "SelectedAction";
         public bool IsSectorMatch { get; set; }
         public bool IsJobRoleMatch { get; set; }
         public bool IsLevelMatch { get; set; }
-        public bool AllowTransferRequestAutoApproval { get; set; }
 
         public class AffordabilityViewModel
         {
