@@ -8,23 +8,23 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators.Pledge
 {
     public abstract class PledgeBaseOrchestrator
     {
-        protected readonly ICacheStorageService _cacheStorageService;
+        protected readonly ICacheStorageService CacheStorageService;
         protected readonly IPledgeService PledgeService;
 
         protected PledgeBaseOrchestrator(ICacheStorageService cacheStorageService, IPledgeService pledgeService)
         {
-            _cacheStorageService = cacheStorageService;
+            CacheStorageService = cacheStorageService;
             PledgeService = pledgeService;
         }
 
         protected async Task<CreatePledgeCacheItem> RetrievePledgeCacheItem(Guid key)
         {
-            var result = await _cacheStorageService.RetrieveFromCache<CreatePledgeCacheItem>(key.ToString());
+            var result = await CacheStorageService.RetrieveFromCache<CreatePledgeCacheItem>(key.ToString());
 
             if (result == null)
             {
                 result = new CreatePledgeCacheItem(key);
-                await _cacheStorageService.SaveToCache(key.ToString(), result, 1);
+                await CacheStorageService.SaveToCache(key.ToString(), result, 1);
             }
 
             return result;

@@ -46,7 +46,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
             services.AddTransient<IOpportunitiesOrchestrator, OpportunitiesOrchestrator>();
             services.AddTransient<ILocationOrchestrator, LocationOrchestrator>();
             services.AddTransient<IApplicationsOrchestrator, ApplicationsOrchestrator>();
+            
             services.AddTransient<IAmountOrchestrator, AmountOrchestrator>();
+            services.AddTransient<IDownloadApplicationsOrchestrator, DownloadApplicationsOrchestrator>();
+            
             services.AddTransient<ICsvHelperService, CsvHelperService>();
             services.AddTransient<IUserService>((s) => new UserService(s.GetService<IHttpContextAccessor>()));
             services.AddTransient<ISortingService, SortingService>();

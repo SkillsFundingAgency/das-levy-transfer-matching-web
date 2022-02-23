@@ -74,5 +74,17 @@ namespace SFA.DAS.LevyTransferMatching.Web.Extensions
 
             return applicationLocationsString;
         }
+
+        public static string WithUrlPrefix(this string value)
+        {
+            if (String.IsNullOrWhiteSpace(value)) return value;
+
+            if (value.StartsWith("http://") || value.StartsWith("https://"))
+            {
+                return value;
+            }
+
+            return $"http://{value}";
+        }
     }
 }

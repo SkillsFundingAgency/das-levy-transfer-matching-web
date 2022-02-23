@@ -38,7 +38,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private Mock<ILocationValidatorService> _validatorService;
         private Mock<IUserService> _userService;
         private Mock<IDateTimeService> _dateTimeService;
-        private Mock<ICsvHelperService> _csvService;
+        
         private Mock<ISortingService> _sortingService;
         private Infrastructure.Configuration.FeatureToggles _featureToggles;
         private List<ReferenceDataItem> _sectors;
@@ -72,7 +72,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _validatorService = new Mock<ILocationValidatorService>();
             _userService = new Mock<IUserService>();
             _dateTimeService = new Mock<IDateTimeService>();
-            _csvService = new Mock<ICsvHelperService>();
+            
             _sortingService = new Mock<ISortingService>();
             _dateTimeService.Setup(x => x.UtcNow).Returns(DateTime.UtcNow);
 
@@ -116,7 +116,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _sortingService.Setup(x => x.SortApplications(It.IsAny<List<ApplicationViewModel>>(), null, null)).Returns((List<ApplicationViewModel> list, SortColumn sortColumn, SortOrder sortOrder) => list);
 
             _orchestrator = new PledgeOrchestrator(_cache.Object, _pledgeService.Object, _encodingService.Object, _validatorService.Object, _userService.Object, _featureToggles, 
-                _dateTimeService.Object, _csvService.Object, _sortingService.Object);
+                _dateTimeService.Object, _sortingService.Object);
         }
 
         [Test]
@@ -746,22 +746,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         {
             var result = await _orchestrator.GetApplicationApprovedViewModel(new ApplicationApprovedRequest { EncodedAccountId = _encodedAccountId, EncodedPledgeId = _encodedAccountId, EncodedApplicationId = _encodedApplicationId, AccountId = _accountId, PledgeId = _pledgeId, ApplicationId = _applicationId });
             Assert.AreEqual(_applicationApprovedResponse.EmployerAccountName, result.DasAccountName);
-        }
-
-        [Test]
-        public async Task GetPledgeApplicationsDownloadModel_Retrieves_ApplicationsFromService()
-        {
-            var accountId = _fixture.Create<int>();
-            var getPledgeApplicationsResponse = _fixture.Create<GetApplicationsResponse>();
-            _pledgeService.Setup(o =>
-                o.GetApplications(It.Is<long>(l => l == accountId), It.Is<int>(p => p == _pledgeId))).ReturnsAsync(getPledgeApplicationsResponse);
-            
-            await _orchestrator.GetPledgeApplicationsDownloadModel(new ApplicationsRequest
-            {
-                AccountId = accountId, PledgeId = _pledgeId
-            });
-
-            _pledgeService.Verify(o => o.GetApplications(It.Is<long>(l => l == accountId), It.Is<int>(p => p == _pledgeId)), Times.Once);
         }
     }
 }

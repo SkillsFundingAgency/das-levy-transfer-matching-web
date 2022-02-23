@@ -20,7 +20,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators.Pledge
         public AmountOrchestrator(ICacheStorageService cacheStorageService, IPledgeService pledgeService)
             : base(cacheStorageService, pledgeService)
         {
-
         }
 
         public async Task<AmountViewModel> GetAmountViewModel(AmountRequest request)
@@ -51,7 +50,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators.Pledge
             cacheItem.IsNamePublic = request.IsNamePublic.Value;
             cacheItem.DasAccountName = request.DasAccountName;
 
-            await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
+            await CacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
         }
     }
 }
