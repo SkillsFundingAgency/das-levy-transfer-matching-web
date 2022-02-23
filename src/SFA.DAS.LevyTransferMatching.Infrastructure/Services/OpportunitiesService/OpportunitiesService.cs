@@ -1,8 +1,10 @@
-﻿using System.Net;
+﻿using Newtonsoft.Json;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
+using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Helpers;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService
 {
@@ -22,9 +24,9 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
             return JsonConvert.DeserializeObject<GetApplyResponse>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<GetIndexResponse> GetIndex()
+        public async Task<GetIndexResponse> GetIndex(IEnumerable<string> sectors)
         {
-            var response = await _client.GetAsync($"opportunities");
+            var response = await _client.GetAsync($"opportunities{QuerystringHelper.GetFormattedQuerystring("?","sectors",sectors)}");
             response.EnsureSuccessStatusCode();
             return JsonConvert.DeserializeObject<GetIndexResponse>(await response.Content.ReadAsStringAsync());
         }
@@ -85,8 +87,8 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
 
             return getContactDetailsResult;
         }
-		
-		public async Task<GetConfirmationResponse> GetConfirmation(long accountId, int opportunityId)
+
+        public async Task<GetConfirmationResponse> GetConfirmation(long accountId, int opportunityId)
         {
             var response =
                 await _client.GetAsync($"accounts/{accountId}/opportunities/{opportunityId}/apply/confirmation");

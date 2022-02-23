@@ -4,6 +4,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
 {
     public class IndexRequest : ApplyRequest
     {
-        public List<string> Sectors { get; set; }
+        public IEnumerable<string> Sectors { get; set; }
     }
 }

@@ -30,6 +30,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private Mock<ICacheStorageService> _cacheStorageService;
 
         private GetIndexResponse _getIndexResponse;
+        private IndexRequest _indexRequest;
         private string _userId;
         private string _userDisplayName;
 
@@ -49,7 +50,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _userService.Setup(x => x.GetUserDisplayName()).Returns(_userDisplayName);
 
             _getIndexResponse = _fixture.Create<GetIndexResponse>();
-            _opportunitiesService.Setup(x => x.GetIndex()).ReturnsAsync(_getIndexResponse);
+            _indexRequest = _fixture.Create<IndexRequest>();
+            _opportunitiesService.Setup(x => x.GetIndex(_indexRequest.Sectors)).ReturnsAsync(_getIndexResponse);
             _encodingService.Setup(x => x.Encode(It.IsAny<long>(), EncodingType.PledgeId)).Returns("test");
 
             _orchestrator = new OpportunitiesOrchestrator(DateTimeService.Object, _opportunitiesService.Object, _userService.Object, _encodingService.Object, _cacheStorageService.Object);
@@ -61,7 +63,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var encodedId = _fixture.Create<string>();
             _encodingService.Setup(x => x.Encode(It.IsAny<long>(), EncodingType.PledgeId)).Returns(encodedId);
 
-            var viewModel = await _orchestrator.GetIndexViewModel();
+            var viewModel = await _orchestrator.GetIndexViewModel(_indexRequest);
 
             for (int i = 0; i < _getIndexResponse.Opportunities.Count; i++)
             {

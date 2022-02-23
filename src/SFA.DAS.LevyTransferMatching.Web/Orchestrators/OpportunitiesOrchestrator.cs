@@ -67,35 +67,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
-        public async Task<IndexViewModel> GetIndexViewModel()
-        {
-            var response = await _opportunitiesService.GetIndex();
-            
-            return new IndexViewModel
-            { 
-                Opportunities = response?.Opportunities
-                    .Select(x => new IndexViewModel.Opportunity
-                    {
-                        Amount = x.Amount,
-                        EmployerName = x.IsNamePublic? x.DasAccountName : "Opportunity",
-                        ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),
-                        Sectors = x.Sectors.ToReferenceDataDescriptionList(response.Sectors, "; "),
-                        JobRoles = x.JobRoles.ToReferenceDataDescriptionList(response.JobRoles, "; "),
-                        Levels = x.Levels.ToReferenceDataDescriptionList(response.Levels, descriptionSource: y => y.ShortDescription),
-                        Locations = x.Locations.ToLocationsList()
-                    }).ToList(),
-                Sectors = response?.Sectors
-            };
-        }
-
         public async Task<IndexViewModel> GetIndexViewModel(IndexRequest request)
         {
-            var response = await _opportunitiesService.GetIndex();
-
-            if (request.Sectors?.Any() == true)
-            {
-                response.Opportunities = response.Opportunities.FindAll(x => x.Sectors.Any(y => (request.Sectors.Contains(y))));
-            }
+            var response = await _opportunitiesService.GetIndex(request.Sectors);
 
             return new IndexViewModel
             {

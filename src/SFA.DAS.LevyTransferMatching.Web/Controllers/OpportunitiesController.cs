@@ -22,13 +22,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             _opportunitiesOrchestrator = opportunitiesOrchestrator;
         }
 
-        public async Task<IActionResult> Index()
-        {
-            var viewModel = await _opportunitiesOrchestrator.GetIndexViewModel();
-            return View(viewModel);
-        }
-
-        [HttpPost]
         public async Task<IActionResult> Index(IndexRequest request)
         {
             var viewModel = await _opportunitiesOrchestrator.GetIndexViewModel(request);

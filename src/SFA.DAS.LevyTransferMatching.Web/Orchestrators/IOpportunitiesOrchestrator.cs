@@ -1,12 +1,11 @@
-﻿using System.Threading.Tasks;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
+﻿using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
     public interface IOpportunitiesOrchestrator
     {
-        Task<IndexViewModel> GetIndexViewModel();
         Task<IndexViewModel> GetIndexViewModel(IndexRequest request);
         Task<DetailViewModel> GetDetailViewModel(int pledgeId);
         Task<MoreDetailsViewModel> GetMoreDetailsViewModel(MoreDetailsRequest request);
@@ -23,6 +22,5 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         Task UpdateCacheItem(ContactDetailsPostRequest contactDetailsPostRequest);
         Task<ConfirmationViewModel> GetConfirmationViewModel(ConfirmationRequest request);
         Task SubmitApplication(ApplyPostRequest request);
-
     }
 }
