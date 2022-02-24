@@ -551,8 +551,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     IsLocationMatch = (result.Locations != null && result.Locations.Any()) || !result.PledgeLocations.Any(),
                     Affordability = GetAffordabilityViewModel(result.Amount, result.PledgeRemainingAmount, result.NumberOfApprentices, result.MaxFunding, result.EstimatedDurationMonths, result.StartBy),
                     AllowApproval = result.Status == ApplicationStatus.Pending && result.Amount <= result.PledgeRemainingAmount && isOwnerOrTransactor,
-                    DisplayApplicationApprovalOptions = _featureToggles.FeatureToggleApplicationApprovalOptions,
-					AllowTransferRequestAutoApproval = result.AutomaticApproval
+                    AllowRejection = result.Status == ApplicationStatus.Pending && isOwnerOrTransactor,
+                    DisplayApplicationApprovalOptions = _featureToggles.FeatureToggleApplicationApprovalOptions
                 };
             }
 

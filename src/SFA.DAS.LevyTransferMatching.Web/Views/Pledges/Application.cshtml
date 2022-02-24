@@ -76,22 +76,13 @@
         <h3 class="govuk-heading-s govuk-!-margin-bottom-0">For @Model.Affordability.YearDescription:</h3>
         <dl class="app-dl-inline govuk-body govuk-!-margin-bottom-4">
             <dt class="app-dl-inline__title">Pledge funds remaining this year</dt>
-            <dd class="app-dl-inline__definition">@Model.Affordability.RemainingFunds</dd>
+            <dd class="app-dl-inline__definition"><strong>@Model.Affordability.RemainingFunds</strong></dd>
             <dt class="app-dl-inline__title">Estimated costs this year</dt>
-            <dd class="app-dl-inline__definition">@Model.Affordability.EstimatedCostThisYear</dd>
+            <dd class="app-dl-inline__definition"><strong>@Model.Affordability.EstimatedCostThisYear</strong></dd>
         </dl>
         <p>Pledge funds remaining if application is approved: <strong>@Model.Affordability.RemainingFundsIfApproved</strong></p>
-        <details class="govuk-details" data-module="govuk-details">
-            <summary class="govuk-details__summary">
-                <span class="govuk-details__summary-text">
-                    What is estimated cost?
-                </span>
-            </summary>
-            <div class="govuk-details__text">
-                <p>The estimated total cost of training is based on the funding band maximum.</p>
-                <p>The estimated cost of training for this financial year is based on the funding band maximum, the planned start date of training and the 20% completion payment.</p>
-            </div>
-        </details>
+        <h3 class="govuk-heading-s govuk-!-margin-bottom-0">What is estimated cost?</h3>
+        <p>The estimated total cost of training is based on the funding band maximum, the planned start date of training and the 20% completion payment.</p>
     </div>
 
     <div class="das-highlight">
@@ -122,7 +113,7 @@
         }
     </div>
 
-    @if (Model.AllowApproval)
+    @if (Model.AllowApproval || Model.AllowRejection)
     {
         <form method="post">
             @Html.HiddenFor(m => m.EmployerAccountName)
@@ -134,24 +125,30 @@
                     </legend>
                     <span das-validation-for="SelectedAction" class="govuk-error-message"></span>
                     <div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios">
-                        <div class="govuk-radios__item">
-                            <input class="govuk-radios__input" id="SelectedAction" name="SelectedAction" asp-for="SelectedAction" type="radio" value="@approve" das-highlight-error-for="SelectedAction" error-class="govuk-textarea--error" data-aria-controls="approval-content" />
-                            <label class="govuk-label govuk-radios__label" for="SelectedAction">
-                                Approve the application
-                            </label>
-                        </div>
-                        <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="approval-content">
-                            <p><strong>Disclaimer:</strong></p>
-                            <p>The information provided by @Model.EmployerAccountName in their application for this pledge has not been checked and verified by the apprenticeship service.</p>
-                            <p>You may wish to undertake your own in-house governance process before committing to fund a transfer. The receiving employer will provide you with their contact details as part of their application in order to do this.</p>
-                            <p>Before this is confirmed, you will need to choose how to approve the apprentice details on the next page.</p>
-                        </div>
-                        <div class="govuk-radios__item">
-                            <input class="govuk-radios__input" id="SelectedAction-2" name="SelectedAction" asp-for="SelectedAction" type="radio" value="@reject" das-highlight-error-for="SelectedAction" error-class="govuk-textarea--error" />
-                            <label class="govuk-label govuk-radios__label" for="SelectedAction-2">
-                                Reject the application
-                            </label>
-                        </div>
+                        @if (Model.AllowApproval)
+                        {
+                            <div class="govuk-radios__item">
+                                <input class="govuk-radios__input" id="SelectedAction" name="SelectedAction" asp-for="SelectedAction" type="radio" value="@approve" das-highlight-error-for="SelectedAction" error-class="govuk-textarea--error" data-aria-controls="approval-content"/>
+                                <label class="govuk-label govuk-radios__label" for="SelectedAction">
+                                    Approve the application
+                                </label>
+                            </div>
+                            <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="approval-content">
+                                <p><strong>Disclaimer:</strong></p>
+                                <p>The information provided by @Model.EmployerAccountName in their application for this pledge has not been checked and verified by the apprenticeship service.</p>
+                                <p>You may wish to undertake your own in-house governance process before committing to fund a transfer. The receiving employer will provide you with their contact details as part of their application in order to do this.</p>
+                                <p>Before this is confirmed, you will need to choose how to approve the apprentice details on the next page.</p>
+                            </div>
+                        }
+                        @if (Model.AllowRejection)
+                        {
+                            <div class="govuk-radios__item">
+                                <input class="govuk-radios__input" id="@Model.RejectOptionElementId" name="SelectedAction" asp-for="SelectedAction" type="radio" value="@reject" das-highlight-error-for="SelectedAction" error-class="govuk-textarea--error"/>
+                                <label class="govuk-label govuk-radios__label" for="@Model.RejectOptionElementId">
+                                    Reject the application
+                                </label>
+                            </div>
+                        }
                     </div>
                 </fieldset>
             </div>

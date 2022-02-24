@@ -39,6 +39,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _mockEncodingService = new Mock<IEncodingService>();
             var featureToggles = _fixture.Create<Infrastructure.Configuration.FeatureToggles>();
 
+            _mockUserService.Setup(x => x.IsOwnerOrTransactor(It.IsAny<long>())).Returns(true);
+
             _applicationsOrchestrator = new ApplicationsOrchestrator(_mockApplicationsService.Object, _mockDateTimeService.Object, _mockEncodingService.Object, featureToggles, _mockUserService.Object);
         }
 
@@ -65,6 +67,34 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             // Assert
             Assert.IsNotNull(viewModel);
             Assert.AreEqual(encodedPledgeId, viewModel.EncodedOpportunityId);
+        }
+
+
+        [TestCase(ApplicationStatus.Pending, true)]
+        [TestCase(ApplicationStatus.Approved, false)]
+        public async Task GetApplicationViewModel_CanWithdraw_Is_True_When_Application_Is_Pending(ApplicationStatus status, bool expectCanWithdraw)
+        {
+            // Arrange
+            var request = _fixture.Create<ApplicationRequest>();
+            var response = _fixture.Create<GetApplicationResponse>();
+            response.Status = status;
+
+            var encodedPledgeId = _fixture.Create<string>();
+
+            _mockApplicationsService
+                .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(response);
+
+            _mockEncodingService
+                .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
+                .Returns(encodedPledgeId);
+
+            // Act
+            var viewModel = await _applicationsOrchestrator.GetApplication(request);
+
+            // Assert
+            Assert.IsNotNull(viewModel);
+            Assert.AreEqual(expectCanWithdraw, viewModel.CanWithdraw);
         }
 
         [Test]
