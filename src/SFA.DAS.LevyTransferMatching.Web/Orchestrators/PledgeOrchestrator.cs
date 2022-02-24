@@ -205,7 +205,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             {
                 UserId = _userService.GetUserId(),
                 UserDisplayName = _userService.GetUserDisplayName(),
-                ApplicationsToReject = GetDecodedApplicationsIds(request.ApplicationsToReject).ToList()
+                ApplicationsToReject = request.ApplicationsToReject.Select(applicationId => (int)_encodingService.Decode(applicationId,
+                                        EncodingType.PledgeApplicationId)).ToList()
             };
 
             await _pledgeService.RejectApplications(serviceRequest, request.AccountId, request.PledgeId);
@@ -215,16 +216,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var applicationsList = await _pledgeService.GetRejectApplications(request.AccountId, request.PledgeId);
 
-            if(!applicationsList.Applications.Any())
-            {
-                return new RejectApplicationsViewModel { EncodedAccountId = request.EncodedAccountId, EncodedPledgeId = request.EncodedPledgeId };
-            }
-
             return new RejectApplicationsViewModel
             {
                 EncodedAccountId = request.EncodedAccountId,
                 EncodedPledgeId = request.EncodedPledgeId,
-                DasAccountNames = GetRejectedApplicationsDasNames(request.ApplicationsToReject, applicationsList).ToList()
+                DasAccountNames = applicationsList.Applications.Where(x =>
+                                  request.ApplicationsToReject.Any((s => 
+                                  (int)_encodingService.Decode(s, EncodingType.PledgeApplicationId) == x.Id)))
+                                  .Select(app => app.DasAccountName).ToList()
             };
         }
         public async Task<LocationViewModel> GetLocationViewModel(LocationRequest request)
@@ -657,34 +656,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 EstimatedCostOverDuration = estimatedCostOverDuration.ToCurrencyString(),
                 YearDescription = _dateTimeService.UtcNow.ToTaxYearDescription()
             };
-        }
-
-        private List<string> GetRejectedApplicationsDasNames(List<string> rejectedApplications, GetRejectApplicationsResponse applicationsWithDasNames)
-        {
-            var getDasAccountNames = new List<string>();
-
-            foreach (var appplicationId in rejectedApplications)
-            {
-                foreach (var application in applicationsWithDasNames.Applications)
-                {
-                    if (application.Id == (int)_encodingService.Decode(appplicationId, EncodingType.PledgeApplicationId))
-                    {
-                        getDasAccountNames.Add(application.DasAccountName);
-                    }
-                }
-            }
-            return getDasAccountNames;
-        }
-
-        private IEnumerable<int> GetDecodedApplicationsIds(List<string> applicationsIds)
-        {
-            var decodedApplicationsIds = new List<int>();
-            foreach (var applicationId in applicationsIds)
-            {
-                decodedApplicationsIds.Add((int)_encodingService.Decode(applicationId,
-                                                     EncodingType.PledgeApplicationId));
-            }
-            return decodedApplicationsIds;
         }
     }
 }
