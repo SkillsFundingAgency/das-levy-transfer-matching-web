@@ -53,11 +53,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             // Arrange
             var encodedAccountId = _fixture.Create<string>();
             var cacheKey = _fixture.Create<Guid>();
-            var indexRequest = new IndexRequest()
-            {
-                EncodedAccountId = encodedAccountId,
-                CacheKey = cacheKey
-            };
+            var indexRequest = new IndexRequest();
             _orchestrator.Setup(x => x.GetIndexViewModel(indexRequest)).ReturnsAsync(() => new IndexViewModel());
             
             // Act

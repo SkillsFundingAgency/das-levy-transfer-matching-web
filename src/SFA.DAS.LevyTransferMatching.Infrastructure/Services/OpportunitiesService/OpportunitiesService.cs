@@ -26,7 +26,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
 
         public async Task<GetIndexResponse> GetIndex(IEnumerable<string> sectors)
         {
-            var response = await _client.GetAsync($"opportunities{QuerystringHelper.GetFormattedQuerystring("?","sectors",sectors)}");
+            var response = await _client.GetAsync($"opportunities{QuerystringHelper.GetFormattedQuerystring("sectors",sectors)}");
             response.EnsureSuccessStatusCode();
             return JsonConvert.DeserializeObject<GetIndexResponse>(await response.Content.ReadAsStringAsync());
         }

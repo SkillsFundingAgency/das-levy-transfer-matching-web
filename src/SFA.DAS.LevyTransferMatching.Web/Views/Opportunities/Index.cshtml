@@ -2,6 +2,9 @@
 
 @{
     ViewData["Title"] = "Search funding opportunities";
+    var checkboxSectionState = string.Empty;
+    if (Context.Request.Query["Sectors"].Count > 0)
+        checkboxSectionState = "open";
 }
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing">
     <h1 class="govuk-heading-xl">
@@ -28,10 +31,10 @@
         </div>
     </div>
     <div class="govuk-grid-row">
-        <form method="post">
+        <form method="get">
             <div class="govuk-grid-column-one-third">
                 <h2 class="govuk-heading-m">Apply filter</h2>
-                <details class="govuk-details" data-module="govuk-details">
+                <details class="govuk-details" data-module="govuk-details" @checkboxSectionState>
                     <summary class="govuk-details__summary">
                         Your business sector
                     </summary>
