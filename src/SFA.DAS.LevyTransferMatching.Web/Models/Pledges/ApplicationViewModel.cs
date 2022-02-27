@@ -1,9 +1,8 @@
-﻿using System;
+﻿using SFA.DAS.LevyTransferMatching.Domain.Types;
+using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
-using SFA.DAS.LevyTransferMatching.Domain.Types;
-using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
-using SFA.DAS.LevyTransferMatching.Web.Extensions;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 {
@@ -46,7 +45,18 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 
         public bool AllowApproval { get; set; }
         public bool AllowTransferRequestAutoApproval { get; set; }
-        public string PercentageMatchCssClass => this.GetMatchPercentageCss();
+        public string PercentageMatchCssClass
+        {
+            get
+            {
+                switch (this.MatchPercentage)
+                {
+                    case 50: case 75: return "yellow";
+                    case 100: return "turquoise";
+                    case 0: case 25: default: return "pink";
+                }
+            }
+        }
 
         public class AffordabilityViewModel
         {
@@ -58,3 +68,4 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         }
     }
 }
+
