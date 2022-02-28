@@ -19,9 +19,9 @@
                 <li>Choose how you want to approve the apprenticeship details</li>
             </ol>
             <h2 class="govuk-heading-s">Funding rules</h2>
-            <p>To make a transfer you must comply with the <a class="govuk-link" href="https://www.gov.uk/guidance/apprenticeship-funding-rules" target="_blank">apprenticeship funding rules</a>.</p>
+            <p>To make a transfer you must comply with the <a class="govuk-link" href="https://www.gov.uk/guidance/apprenticeship-funding-rules" target="_blank" rel="noopener">apprenticeship funding rules</a>.</p>
             <p>This includes not seeking or accepting any payments in exchange for sending a transfer of funds.</p>
-            <p>Find out more about <a href="https://www.gov.uk/guidance/transferring-apprenticeship-service-funds" class="govuk-link" target="_blank">transferring your levy funds</a>.</p>
+            <p>Find out more about <a href="https://www.gov.uk/guidance/transferring-apprenticeship-service-funds" class="govuk-link" target="_blank" rel="noopener">transferring your levy funds</a>.</p>
             <div class="govuk-button-group govuk-!-margin-top-5">
                 <a class="govuk-button" data-module="govuk-button" href="@Url.Action("Create", "CreatePledge", new CreateRequest { EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey }, true)">Start</a>
                 <a class="govuk-link" href="@Url.FinanceLink($"accounts/{Model.EncodedAccountId}/transfers")">Cancel pledge</a>
