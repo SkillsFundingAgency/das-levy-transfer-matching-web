@@ -80,6 +80,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 IsNamePublic = result.IsNamePublic,
                 DasAccountName = result.PledgeEmployerAccountName,
                 EncodedPledgeId = encodedOpportunityId,
+                HideFooter = true
             };
 
             return new ApplicationViewModel()
