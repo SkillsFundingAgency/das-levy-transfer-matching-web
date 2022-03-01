@@ -84,7 +84,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                         Levels = x.Levels.ToReferenceDataDescriptionList(response.Levels, descriptionSource: y => y.ShortDescription),
                         Locations = x.Locations.ToLocationsList()
                     }).ToList(),
-                Sectors = response?.Sectors
+                Sectors = response?.Sectors,
+                isSectorFilterApplied = request.Sectors != null && request.Sectors.Any()
             };
         }
 

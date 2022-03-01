@@ -1,10 +1,11 @@
 ﻿using Newtonsoft.Json;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Extensions;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Helpers;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService
 {
@@ -26,7 +27,8 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
 
         public async Task<GetIndexResponse> GetIndex(IEnumerable<string> sectors)
         {
-            var response = await _client.GetAsync($"opportunities{QuerystringHelper.GetFormattedQuerystring("sectors",sectors)}");
+            var filters = sectors != null ? sectors.ToNameValueCollection("sectors") : new NameValueCollection();
+            var response = await _client.GetAsync($"opportunities{filters.ToQueryString()}");
             response.EnsureSuccessStatusCode();
             return JsonConvert.DeserializeObject<GetIndexResponse>(await response.Content.ReadAsStringAsync());
         }

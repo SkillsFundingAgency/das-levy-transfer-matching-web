@@ -2,9 +2,6 @@
 
 @{
     ViewData["Title"] = "Search funding opportunities";
-    var checkboxSectionState = string.Empty;
-    if (Context.Request.Query["Sectors"].Count > 0)
-        checkboxSectionState = "open";
 }
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing">
     <h1 class="govuk-heading-xl">
@@ -34,7 +31,7 @@
         <form method="get">
             <div class="govuk-grid-column-one-third">
                 <h2 class="govuk-heading-m">Apply filter</h2>
-                <details class="govuk-details" data-module="govuk-details" @checkboxSectionState>
+                <details class="govuk-details" data-module="govuk-details" @(Model.isSectorFilterApplied ? "open" : "")>
                     <summary class="govuk-details__summary">
                         Your business sector
                     </summary>
@@ -61,10 +58,6 @@
                 }
                 else
                 {
-                    <p class="govuk-body govuk-!-margin-bottom-6">
-                        Sorted by:
-                        <span class="govuk-!-font-weight-bold">Name</span>
-                    </p>
                     <div class="das-search-results">
                         <ol class="das-search-results__list">
                             @foreach (var opportunity in Model.Opportunities)

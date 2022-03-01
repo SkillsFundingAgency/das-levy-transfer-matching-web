@@ -11,6 +11,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
         public List<Opportunity> Opportunities { get; set; }
         public string TaxYear => DateTime.UtcNow.ToTaxYearDescription();
         public List<ReferenceDataItem> Sectors { get; set; }
+        public bool isSectorFilterApplied { get; set; }
 
         public class Opportunity
         {

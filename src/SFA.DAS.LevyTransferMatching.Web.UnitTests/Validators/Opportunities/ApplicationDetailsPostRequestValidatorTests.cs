@@ -184,7 +184,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
                             Duration = 15,
                             MaxEmployerLevyCap = 12_000,
                             EffectiveFrom = new DateTime(DateTime.UtcNow.AddYears(-2).Year, DateTime.UtcNow.AddMonths(-1).Month, 1),
-                            EffectiveTo = new DateTime(DateTime.UtcNow.AddYears(-1).Year, DateTime.UtcNow.AddMonths(-1).Month, 30)
+                            EffectiveTo = new DateTime(DateTime.UtcNow.AddYears(-1).Year, DateTime.UtcNow.AddMonths(-1).Month, new DateTime(DateTime.UtcNow.AddYears(-1).Year,DateTime.UtcNow.Month,1).AddDays(-1).Day)
                         }
                     }
                 }
