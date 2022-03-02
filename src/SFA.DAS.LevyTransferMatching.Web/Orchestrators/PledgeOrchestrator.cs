@@ -18,7 +18,6 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using SFA.DAS.LevyTransferMatching.Web.Services.SortingService;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
