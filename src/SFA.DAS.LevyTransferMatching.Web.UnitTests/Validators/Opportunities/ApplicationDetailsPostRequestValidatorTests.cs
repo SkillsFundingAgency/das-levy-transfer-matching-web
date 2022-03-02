@@ -132,7 +132,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
 
         [Test]
         public async Task Validator_Returns_False_For_Null_HasTrainingProvider()
-        {
+         {
             var request = CreateApplicationDetailsPostRequest();
             request.HasTrainingProvider = null;
             _service.Setup(x => x.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId)).ReturnsAsync(CreateApplicationDetailsResponse());
@@ -184,7 +184,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
                             Duration = 15,
                             MaxEmployerLevyCap = 12_000,
                             EffectiveFrom = new DateTime(DateTime.UtcNow.AddYears(-2).Year, DateTime.UtcNow.AddMonths(-1).Month, 1),
-                            EffectiveTo = new DateTime(DateTime.UtcNow.AddYears(-1).Year, DateTime.UtcNow.AddMonths(-1).Month, 30)
+                            EffectiveTo = new DateTime(DateTime.UtcNow.AddYears(-1).Year, DateTime.UtcNow.AddMonths(-1).Month, 28)
                         }
                     }
                 }
