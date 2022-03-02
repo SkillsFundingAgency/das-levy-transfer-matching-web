@@ -132,7 +132,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
 
         [Test]
         public async Task Validator_Returns_False_For_Null_HasTrainingProvider()
-         {
+        {
             var request = CreateApplicationDetailsPostRequest();
             request.HasTrainingProvider = null;
             _service.Setup(x => x.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId)).ReturnsAsync(CreateApplicationDetailsResponse());
