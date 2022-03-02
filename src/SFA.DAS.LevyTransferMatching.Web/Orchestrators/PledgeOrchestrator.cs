@@ -34,9 +34,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         private Infrastructure.Configuration.FeatureToggles _featureToggles;
         private readonly IDateTimeService _dateTimeService;
         private readonly ICsvHelperService _csvService;
-        private readonly ISortingService _sortingService;
-
-        public PledgeOrchestrator(ICacheStorageService cacheStorageService, IPledgeService pledgeService, IEncodingService encodingService, ILocationValidatorService validatorService, IUserService userService, Infrastructure.Configuration.FeatureToggles featureToggles, IDateTimeService dateTimeService, ICsvHelperService csvService, ISortingService sortingService)
+        
+        public PledgeOrchestrator(ICacheStorageService cacheStorageService, IPledgeService pledgeService, IEncodingService encodingService, ILocationValidatorService validatorService, IUserService userService, Infrastructure.Configuration.FeatureToggles featureToggles, IDateTimeService dateTimeService, ICsvHelperService csvService)
         {
             _cacheStorageService = cacheStorageService;
             _pledgeService = pledgeService;
@@ -46,7 +45,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             _featureToggles = featureToggles;
             _dateTimeService = dateTimeService;
             _csvService = csvService;
-            _sortingService = sortingService;
         }
 
         public InformViewModel GetInformViewModel(string encodedAccountId)
@@ -58,12 +56,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
-        public CloseViewModel GetCloseViewModel(string encodedAccountId, string encodedPledgeId)
+        public CloseViewModel GetCloseViewModel(CloseRequest request)
         {
             return new CloseViewModel
             {
-                EncodedAccountId = encodedAccountId,
-                EncodedPledgeId = encodedPledgeId,
+                EncodedAccountId = request.EncodedAccountId,
+                EncodedPledgeId = request.EncodedPledgeId,
                 CacheKey = Guid.NewGuid(),
                 UserCanClosePledge = _userService.IsUserChangeAuthorized()
             };
@@ -280,7 +278,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         public async Task<byte[]> GetPledgeApplicationsDownloadModel(ApplicationsRequest request)
         {
-            var result = await _pledgeService.GetApplications(request.AccountId, request.PledgeId);
+            var result = await _pledgeService.GetApplications(request.AccountId, request.PledgeId, request.SortColumn, request.SortOrder);
 
             var pledgeAppModel = new PledgeApplicationsDownloadModel
             {
@@ -506,7 +504,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         public async Task<ApplicationsViewModel> GetApplications(ApplicationsRequest request)
         {
-            var result = await _pledgeService.GetApplications(request.AccountId, request.PledgeId);
+            var result = await _pledgeService.GetApplications(request.AccountId, request.PledgeId, request.SortColumn, request.SortOrder);
 
             var isOwnerOrTransactor = _userService.IsOwnerOrTransactor(request.AccountId);
 
@@ -516,7 +514,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                               {
                                   EncodedApplicationId = _encodingService.Encode(application.Id, EncodingType.PledgeApplicationId),
                                   DasAccountName = application.DasAccountName,
-                                  Amount = application.Amount,
+                                  Amount = application.CurrentFinancialYearAmount,
                                   Duration = application.StandardDuration,
                                   CreatedOn = application.CreatedOn,
                                   Status = application.Status,
@@ -541,10 +539,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 EncodedAccountId = request.EncodedAccountId,
                 UserCanClosePledge = result.PledgeStatus != PledgeStatus.Closed && isOwnerOrTransactor,
                 EncodedPledgeId = request.EncodedPledgeId,
-                DisplayRejectedBanner = request.DisplayRejectedBanner,
-                RejectedEmployerName = request.RejectedEmployerName,
                 RenderCreatePledgeButton = isOwnerOrTransactor,
-                Applications = _sortingService.SortApplications(viewModels, request.SortColumn, request.SortOrder)
+                Applications = viewModels
             };
         }
 
