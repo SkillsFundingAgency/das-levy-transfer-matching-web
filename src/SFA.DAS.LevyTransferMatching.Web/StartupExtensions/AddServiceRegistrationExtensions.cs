@@ -22,7 +22,6 @@ using Microsoft.AspNetCore.Http;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService;
 using SFA.DAS.LevyTransferMatching.Web.Services;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Location;
-using SFA.DAS.LevyTransferMatching.Web.Services.SortingService;
 
 namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
 {
@@ -47,8 +46,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
             services.AddTransient<IApplicationsOrchestrator, ApplicationsOrchestrator>();
             services.AddTransient<ICsvHelperService, CsvHelperService>();
             services.AddTransient<IUserService>((s) => new UserService(s.GetService<IHttpContextAccessor>()));
-            services.AddTransient<ISortingService, SortingService>();
-
             services.AddSingleton<IDateTimeService, DateTimeService>();
 
             services.AddClient<IPledgeService>((c, s) => new PledgeService(c));

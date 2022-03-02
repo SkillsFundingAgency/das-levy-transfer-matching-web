@@ -3,10 +3,11 @@
     public enum SortColumn
     {
         Default,
+        ApplicationDate,
         Applicant,
-        EstimatedTotalCost,
-        TypicalDuration,
-        Criteria,
+        CurrentFinancialYearAmount,
+        Duration,
+        CriteriaMatch,
         Status
     }
 }
