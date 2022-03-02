@@ -113,7 +113,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _userService.Setup(x => x.GetUserDisplayName()).Returns(_userDisplayName);
             _userService.Setup(x => x.IsOwnerOrTransactor(0)).Returns(true);
 
-            _sortingService.Setup(x => x.SortApplications(It.IsAny<List<ApplicationViewModel>>(), null, null)).Returns((List<ApplicationViewModel> list, SortColumn sortColumn, SortOrder sortOrder) => list);
+            _sortingService.Setup(x => x.SortApplications(It.IsAny<List<ApplicationsViewModel.Application>>(), null, null)).Returns((List<ApplicationsViewModel.Application> list, SortColumn sortColumn, SortOrder sortOrder) => list);
 
             _orchestrator = new PledgeOrchestrator(_cache.Object, _pledgeService.Object, _encodingService.Object, _validatorService.Object, _userService.Object, _featureToggles, 
                 _dateTimeService.Object, _csvService.Object, _sortingService.Object);

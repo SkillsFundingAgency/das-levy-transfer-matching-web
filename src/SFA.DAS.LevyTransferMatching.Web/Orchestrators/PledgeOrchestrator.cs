@@ -487,7 +487,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             var viewModels = (from application in result.Applications
                 let pledgeApplication = result.Applications.First(x => x.PledgeId == application.PledgeId)
-                              select new ApplicationViewModel
+                              select new ApplicationsViewModel.Application
                               {
                                   EncodedApplicationId = _encodingService.Encode(application.Id, EncodingType.PledgeApplicationId),
                                   DasAccountName = application.DasAccountName,

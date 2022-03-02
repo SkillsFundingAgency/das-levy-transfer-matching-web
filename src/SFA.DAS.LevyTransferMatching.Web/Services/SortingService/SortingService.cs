@@ -9,7 +9,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Services.SortingService
 {
     public class SortingService : ISortingService
     {
-        public List<ApplicationViewModel> SortApplications(List<ApplicationViewModel> applications, SortColumn? sortColumn, SortOrder? sortOrder)
+        public List<ApplicationsViewModel.Application> SortApplications(List<ApplicationsViewModel.Application> applications, SortColumn? sortColumn, SortOrder? sortOrder)
         {
             switch (sortColumn)
             {
@@ -28,7 +28,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Services.SortingService
             }
         }
 
-        public IOrderedEnumerable<ApplicationViewModel> SortByApplicant(List<ApplicationViewModel> applications, SortOrder sortOrder)
+        public IOrderedEnumerable<ApplicationsViewModel.Application> SortByApplicant(List<ApplicationsViewModel.Application> applications, SortOrder sortOrder)
         {
             if (sortOrder == SortOrder.Ascending)
                 return applications.OrderBy(x => x.DasAccountName);
@@ -36,7 +36,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Services.SortingService
                 return applications.OrderByDescending(x => x.DasAccountName);
         }
 
-        public IOrderedEnumerable<ApplicationViewModel> SortByEstimatedTotalCost(List<ApplicationViewModel> applications, SortOrder sortOrder)
+        public IOrderedEnumerable<ApplicationsViewModel.Application> SortByEstimatedTotalCost(List<ApplicationsViewModel.Application> applications, SortOrder sortOrder)
         {
             if (sortOrder == SortOrder.Ascending)
                 return applications.OrderBy(x => x.Amount);
@@ -44,7 +44,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Services.SortingService
                 return applications.OrderByDescending(x => x.Amount);
         }
 
-        public IOrderedEnumerable<ApplicationViewModel> SortByTypicalDuration(List<ApplicationViewModel> applications, SortOrder sortOrder)
+        public IOrderedEnumerable<ApplicationsViewModel.Application> SortByTypicalDuration(List<ApplicationsViewModel.Application> applications, SortOrder sortOrder)
         {
             if (sortOrder == SortOrder.Ascending)
                 return applications.OrderBy(x => x.Duration);
@@ -52,7 +52,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Services.SortingService
                 return applications.OrderByDescending(x => x.Duration);
         }
 
-        public IOrderedEnumerable<ApplicationViewModel> SortByCriteria(List<ApplicationViewModel> applications, SortOrder sortOrder)
+        public IOrderedEnumerable<ApplicationsViewModel.Application> SortByCriteria(List<ApplicationsViewModel.Application> applications, SortOrder sortOrder)
         {
             if (sortOrder == SortOrder.Ascending)
                 return applications.OrderBy(x => x.GetCriteriaScore());
@@ -60,7 +60,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Services.SortingService
                 return applications.OrderByDescending(x => x.GetCriteriaScore());
         }
 
-        public IOrderedEnumerable<ApplicationViewModel> SortByStatus(List<ApplicationViewModel> applications, SortOrder sortOrder)
+        public IOrderedEnumerable<ApplicationsViewModel.Application> SortByStatus(List<ApplicationsViewModel.Application> applications, SortOrder sortOrder)
         {
             if (sortOrder == SortOrder.Ascending)
                 return applications.OrderBy(x => x.Status.GetLabelForSender());
@@ -68,7 +68,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Services.SortingService
                 return applications.OrderByDescending(x => x.Status.GetLabelForSender());
         }
 
-        public IOrderedEnumerable<ApplicationViewModel> SortByDateApplied(List<ApplicationViewModel> applications)
+        public IOrderedEnumerable<ApplicationsViewModel.Application> SortByDateApplied(List<ApplicationsViewModel.Application> applications)
         {
             return applications.OrderByDescending(x => x.CreatedOn);
         }

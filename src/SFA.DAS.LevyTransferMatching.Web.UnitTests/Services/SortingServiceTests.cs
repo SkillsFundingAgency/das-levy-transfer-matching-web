@@ -6,7 +6,6 @@ using SFA.DAS.LevyTransferMatching.Web.Services.SortingService;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Services
 {
@@ -14,22 +13,22 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Services
     public class SortingServiceTests
     {
         private ISortingService sortingService;
-        private List<ApplicationViewModel> applicationViewModels;
+        private List<ApplicationsViewModel.Application> applicationViewModels;
 
         [SetUp]
         public void Setup()
         {
             sortingService = new SortingService();
-            applicationViewModels = new List<ApplicationViewModel>()
+            applicationViewModels = new List<ApplicationsViewModel.Application>()
             {
-                new ApplicationViewModel
+                new ApplicationsViewModel.Application
                 {
                     DasAccountName = "Middle Co.",
                     Amount = 10000,
                     Duration = 12,
                     CreatedOn = new DateTime(2022, 5, 1)
                 },
-                new ApplicationViewModel
+                new ApplicationsViewModel.Application
                 {
                     DasAccountName = "Acme Ltd",
                     Amount = 2000,
@@ -37,7 +36,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Services
                     IsJobRoleMatch = true,
                     CreatedOn = new DateTime(2022, 1, 1)
                 },
-                new ApplicationViewModel
+                new ApplicationsViewModel.Application
                 {
                     DasAccountName = "Zebra Time",
                     Amount = 50000,
@@ -54,7 +53,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Services
         [TestCase(SortOrder.Ascending)]
         public void SortByApplicantSortsCorrectly(SortOrder sortOrder)
         {
-            List<ApplicationViewModel> expected;
+            List<ApplicationsViewModel.Application> expected;
 
             if (sortOrder == SortOrder.Ascending)
                 expected = applicationViewModels.OrderBy(x => x.DasAccountName).ToList();
@@ -70,7 +69,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Services
         [TestCase(SortOrder.Ascending)]
         public void SortByEstimatedTotalCostSortsCorrectly(SortOrder sortOrder)
         {
-            List<ApplicationViewModel> expected;
+            List<ApplicationsViewModel.Application> expected;
 
             if (sortOrder == SortOrder.Ascending)
                 expected = applicationViewModels.OrderBy(x => x.Amount).ThenBy(x => x.DasAccountName).ToList();
@@ -86,7 +85,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Services
         [TestCase(SortOrder.Ascending)]
         public void SortByTypicalDurationSortsCorrectly(SortOrder sortOrder)
         {
-            List<ApplicationViewModel> expected;
+            List<ApplicationsViewModel.Application> expected;
 
             if (sortOrder == SortOrder.Ascending)
                 expected = applicationViewModels.OrderBy(x => x.Duration).ThenBy(x => x.DasAccountName).ToList();
@@ -102,7 +101,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Services
         [TestCase(SortOrder.Ascending)]
         public void SortByCriteriaSortsCorrectly(SortOrder sortOrder)
         {
-            List<ApplicationViewModel> expected;
+            List<ApplicationsViewModel.Application> expected;
 
             if (sortOrder == SortOrder.Ascending)
                 expected = applicationViewModels.OrderBy(x => x.GetCriteriaScore()).ThenBy(x => x.DasAccountName).ToList();
@@ -118,7 +117,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Services
         [TestCase(SortOrder.Ascending)]
         public void SortByStatusSortsCorrectly(SortOrder sortOrder)
         {
-            List<ApplicationViewModel> expected;
+            List<ApplicationsViewModel.Application> expected;
 
             if (sortOrder == SortOrder.Ascending)
                 expected = applicationViewModels.OrderBy(x => x.Status).ThenBy(x => x.DasAccountName).ToList();
@@ -133,7 +132,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Services
         [Test]
         public void SortByDefaultSortsByDateCreated()
         {
-            List<ApplicationViewModel> expected = applicationViewModels.OrderByDescending(x => x.CreatedOn).ThenBy(x => x.DasAccountName).ToList();
+            List<ApplicationsViewModel.Application> expected = applicationViewModels.OrderByDescending(x => x.CreatedOn).ThenBy(x => x.DasAccountName).ToList();
 
             var result = sortingService.SortApplications(applicationViewModels, null, SortOrder.Descending);
 

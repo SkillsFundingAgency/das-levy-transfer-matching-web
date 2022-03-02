@@ -44,7 +44,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.TagHelpers
         [TestCase(true, true, true, true, "<p class=\"govuk-!-margin-bottom-1\">100% match</p><ul class=\"app-criteria-list govuk-list govuk-list--bullet\"><li>Location</li><li>Sector</li><li>Job Role</li><li>Level</li></ul>")]
         public void ProcessReturnsCorrectHtml(bool isLocationMatch, bool isSectorMatch, bool isJobRoleMatch, bool isLevelMatch, string expectedOutput)
         {
-            var application = new ApplicationViewModel
+            var application = new ApplicationsViewModel.Application
             {
                 IsLocationMatch = isLocationMatch,
                 IsSectorMatch = isSectorMatch,

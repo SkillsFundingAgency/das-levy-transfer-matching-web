@@ -6,6 +6,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Services.SortingService
 {
     public interface ISortingService
     {
-        List<ApplicationViewModel> SortApplications(List<ApplicationViewModel> applications, SortColumn? sortColumn, SortOrder? sortOrder);
+        List<ApplicationsViewModel.Application> SortApplications(List<ApplicationsViewModel.Application> applications, SortColumn? sortColumn, SortOrder? sortOrder);
     }
 }
