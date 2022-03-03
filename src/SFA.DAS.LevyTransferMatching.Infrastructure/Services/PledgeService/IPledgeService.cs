@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
@@ -13,7 +14,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
         Task<GetSectorResponse> GetSector(long accountId);
         Task<GetJobRoleResponse> GetJobRole(long accountId);
         Task<GetLevelResponse> GetLevel(long accountId);
-        Task<GetApplicationsResponse> GetApplications(long accountId, int pledgeId);
+        Task<GetApplicationsResponse> GetApplications(long accountId, int pledgeId, SortColumn? sortOrder, SortOrder? sortDirection);
 		Task<GetApplicationResponse> GetApplication(long accountId, int pledgeId, int applicationId, CancellationToken cancellationToken = default);
         Task SetApplicationOutcome(long accountId, int applicationId, int pledgeId, SetApplicationOutcomeRequest outcomeRequest);
         Task<GetApplicationApprovedResponse> GetApplicationApproved(long accountId, int pledgeId, int applicationId);
