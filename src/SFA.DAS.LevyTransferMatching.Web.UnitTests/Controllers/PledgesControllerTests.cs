@@ -491,6 +491,50 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         }
 
         [Test]
+        public void POST_Applications_Rejection_Redirects_To_Reject_Applications_Options()
+        {
+            // Arrange
+            var request = _fixture.Create<ApplicationsPostRequest>();
+            var listOfApplications = new List<string>
+            {
+                "9RMK6Y"
+            };
+            request.ApplicationsToReject = listOfApplications;
+
+            // Act
+            var redirectResult = _pledgesController.Applications(request) as RedirectToActionResult;
+
+            // Assert
+            Assert.NotNull(redirectResult);
+            Assert.AreEqual("RejectApplications", redirectResult.ActionName);
+        }
+
+        [Test]
+        public async Task POST_Reject_Applications_Action_Redirects_To_Updated_List_Of_Applications_On_Confirm()
+        {
+            // Arrange
+            var request = _fixture.Create<RejectApplicationsPostRequest>();
+            var listOfApplications = new List<string>
+            {
+                "9RMK6Y"
+            };
+            request.ApplicationsToReject = listOfApplications;
+            request.RejectConfirm = true;
+
+            var mockTempData = new Mock<ITempDataDictionary>();
+            _pledgesController.TempData = mockTempData.Object;
+
+            _orchestrator.Setup(x => x.RejectApplications(request)).Returns(Task.CompletedTask);
+
+            // Act
+            var redirectResult = await _pledgesController.RejectApplications(request) as RedirectToActionResult;
+
+            //Assert
+            Assert.NotNull(redirectResult);
+            Assert.AreEqual("Applications", redirectResult.ActionName);
+        }
+
+        [Test]
         public async Task GET_ApplicationApproved_Returns_Expected_View_With_Expected_ViewModel()
         {
             // Arrange

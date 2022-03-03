@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Threading;
-using SFA.DAS.Encoding;
+﻿using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
@@ -18,6 +11,13 @@ using SFA.DAS.LevyTransferMatching.Web.Models.Cache;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Services;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Location;
+using System;
+using System.Collections.Generic;
+using System.Dynamic;
+using System.Globalization;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
@@ -136,7 +136,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 IsNamePublic = cacheItem.IsNamePublic,
                 DasAccountName = accountData.DasAccountName
             };
-        }
+        }        
 
         public async Task<SectorViewModel> GetSectorViewModel(SectorRequest request)
         {
@@ -196,7 +196,33 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             return _encodingService.Encode(pledgeId, EncodingType.PledgeId);
         }
+        public async Task RejectApplications(RejectApplicationsPostRequest request)
+        {
+            var serviceRequest = new SetRejectApplicationsRequest
+            {
+                UserId = _userService.GetUserId(),
+                UserDisplayName = _userService.GetUserDisplayName(),
+                ApplicationsToReject = request.ApplicationsToReject.Select(applicationId => (int)_encodingService.Decode(applicationId,
+                                        EncodingType.PledgeApplicationId)).ToList()
+            };
 
+            await _pledgeService.RejectApplications(serviceRequest, request.AccountId, request.PledgeId);
+        }
+
+        public async Task<RejectApplicationsViewModel> GetRejectApplicationsViewModel(RejectApplicationsRequest request)
+        {
+            var applicationsList = await _pledgeService.GetRejectApplications(request.AccountId, request.PledgeId);
+
+            return new RejectApplicationsViewModel
+            {
+                EncodedAccountId = request.EncodedAccountId,
+                EncodedPledgeId = request.EncodedPledgeId,
+                DasAccountNames = applicationsList.Applications.Where(x =>
+                                  request.ApplicationsToReject.Any((s => 
+                                  (int)_encodingService.Decode(s, EncodingType.PledgeApplicationId) == x.Id)))
+                                  .Select(app => app.DasAccountName).ToList()
+            };
+        }
         public async Task<LocationViewModel> GetLocationViewModel(LocationRequest request)
         {
             var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
@@ -503,7 +529,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                                   JobRole = pledgeApplication.JobRole,
                                   PledgeRemainingAmount = pledgeApplication.PledgeRemainingAmount,
                                   MaxFunding = pledgeApplication.MaxFunding,
-                                  Details = pledgeApplication.Details
+                                  Details = pledgeApplication.Details,
+                                  ApplicationId = application.Id,
                               }).ToList();
 
             return new ApplicationsViewModel

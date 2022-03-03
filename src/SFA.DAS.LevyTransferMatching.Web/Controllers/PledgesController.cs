@@ -1,15 +1,15 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using FluentValidation.AspNetCore;
+﻿using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Authentication;
+using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using SFA.DAS.LevyTransferMatching.Web.ValidatorInterceptors;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
@@ -231,8 +231,45 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         public async Task<IActionResult> Applications(ApplicationsRequest request)
         {
             var response = await _orchestrator.GetApplications(request);
-
             return View(response);
+        }
+
+        [Authorize(Policy = PolicyNames.ManageAccount)]
+        [HttpPost]
+        [Route("{encodedPledgeId}/applications")]
+        public IActionResult Applications(ApplicationsPostRequest request)
+        {
+            return RedirectToAction(nameof(RejectApplications), new { request.EncodedAccountId, request.EncodedPledgeId, request.ApplicationsToReject });
+        }
+        
+        [Authorize]
+        [HttpGet]
+        [Route("{encodedPledgeId}/applications/reject-applications")]
+        public async Task<IActionResult> RejectApplications(RejectApplicationsRequest request)
+        {
+            var rejectApplicationsViewModel = await _orchestrator.GetRejectApplicationsViewModel(request);
+            return View(rejectApplicationsViewModel);
+        }
+
+        [Authorize]
+        [Route("{encodedPledgeId}/applications/reject-applications")]
+        [HttpPost]
+        public async Task<IActionResult> RejectApplications(RejectApplicationsPostRequest request)
+        {
+            if (request.RejectConfirm.Value)
+            {
+                await _orchestrator.RejectApplications(request);
+                SetRejectedApplicationsBanner(request.ApplicationsToReject.Count);
+            }
+            return RedirectToAction(nameof(Applications), new { EncodedAccountId = request.EncodedAccountId, EncodedPledgeId = request.EncodedPledgeId });
+        }
+        
+        private void SetRejectedApplicationsBanner(int rejectedApplications)
+        {
+            var bannerMessage = rejectedApplications > 1 ? $"{rejectedApplications} applications have been rejected" :
+                $"{rejectedApplications} application has been rejected";
+
+            TempData.AddFlashMessage(bannerMessage, string.Empty, TempDataDictionaryExtensions.FlashMessageLevel.Success);
         }
 
         [HttpGet]

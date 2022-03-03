@@ -233,28 +233,6 @@
     100% {opacity:1;}
 }
 
-td[colspan] {
-    text-align: center;
-}
-
-th.applicant {
-    width: 250px;
-}
-
-th.tax-year {
-    width: 120px;
-}
-
-th.duration,
-th.criteria {
-    width: 120px;
-}
-
-th.status {
-    width: 100px;
-}
-
-
 .app-icon-list {
     line-height: 1.2em;
 }

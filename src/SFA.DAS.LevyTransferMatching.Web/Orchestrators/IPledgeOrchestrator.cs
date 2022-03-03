@@ -26,15 +26,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         Task<LevelViewModel> GetLevelViewModel(LevelRequest request);
         Task UpdateCacheItem(LocationPostRequest request);
         Task<string> SubmitPledge(CreatePostRequest request);
+        Task RejectApplications(RejectApplicationsPostRequest request);
         Task<ApplicationsViewModel> GetApplications(ApplicationsRequest request);
-        Task<ApplicationViewModel> GetApplicationViewModel(ApplicationRequest request,
-            CancellationToken cancellationToken = default);
-
+        Task<ApplicationViewModel> GetApplicationViewModel(ApplicationRequest request, CancellationToken cancellationToken = default);
         Task SetApplicationOutcome(ApplicationPostRequest request);
         Task<LocationSelectViewModel> GetLocationSelectViewModel(LocationSelectRequest request);
 		Task<ApplicationApprovalOptionsViewModel> GetApplicationApprovalOptionsViewModel(ApplicationApprovalOptionsRequest request, CancellationToken cancellationToken = default);
         Task SetApplicationApprovalOptions(ApplicationApprovalOptionsPostRequest request, CancellationToken cancellationToken = default);
         Task<byte[]> GetPledgeApplicationsDownloadModel(ApplicationsRequest request);
         Task ClosePledge(ClosePostRequest request);
+        Task<RejectApplicationsViewModel> GetRejectApplicationsViewModel(RejectApplicationsRequest request);
     }
 }
