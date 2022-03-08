@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 
@@ -7,34 +6,19 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
     public interface IPledgeOrchestrator
     {
-        InformViewModel GetInformViewModel(string encodedAccountId);
         CloseViewModel GetCloseViewModel(CloseRequest request);
         Task<PledgesViewModel> GetPledgesViewModel(PledgesRequest request);
         DetailViewModel GetDetailViewModel(DetailRequest request);
-        Task<CreateViewModel> GetCreateViewModel(CreateRequest request);
-        Task<AmountViewModel> GetAmountViewModel(AmountRequest request);
-        Task<SectorViewModel> GetSectorViewModel(SectorRequest request);
-        Task<JobRoleViewModel> GetJobRoleViewModel(JobRoleRequest request);
-        Task<LocationViewModel> GetLocationViewModel(LocationRequest request);
-        Task<ApplicationApprovedViewModel> GetApplicationApprovedViewModel(ApplicationApprovedRequest request);
-        Task<Dictionary<int, string>> ValidateLocations(LocationPostRequest request, IDictionary<int, IEnumerable<string>> multipleValidLocations);
-        Task UpdateCacheItem(AmountPostRequest request);
-        Task UpdateCacheItem(SectorPostRequest request);
-        Task UpdateCacheItem(JobRolePostRequest request);
-        Task UpdateCacheItem(LevelPostRequest request);
-        Task UpdateCacheItem(LocationSelectPostRequest request);
-        Task<LevelViewModel> GetLevelViewModel(LevelRequest request);
-        Task UpdateCacheItem(LocationPostRequest request);
-        Task<string> SubmitPledge(CreatePostRequest request);
-        Task RejectApplications(RejectApplicationsPostRequest request);
         Task<ApplicationsViewModel> GetApplications(ApplicationsRequest request);
-        Task<ApplicationViewModel> GetApplicationViewModel(ApplicationRequest request, CancellationToken cancellationToken = default);
+        Task<ApplicationViewModel> GetApplicationViewModel(ApplicationRequest request,
+            CancellationToken cancellationToken = default);
+        Task<ApplicationApprovedViewModel> GetApplicationApprovedViewModel(ApplicationApprovedRequest request);
         Task SetApplicationOutcome(ApplicationPostRequest request);
-        Task<LocationSelectViewModel> GetLocationSelectViewModel(LocationSelectRequest request);
-		Task<ApplicationApprovalOptionsViewModel> GetApplicationApprovalOptionsViewModel(ApplicationApprovalOptionsRequest request, CancellationToken cancellationToken = default);
+        Task<ApplicationApprovalOptionsViewModel> GetApplicationApprovalOptionsViewModel(ApplicationApprovalOptionsRequest request, CancellationToken cancellationToken = default);
         Task SetApplicationApprovalOptions(ApplicationApprovalOptionsPostRequest request, CancellationToken cancellationToken = default);
         Task<byte[]> GetPledgeApplicationsDownloadModel(ApplicationsRequest request);
         Task ClosePledge(ClosePostRequest request);
         Task<RejectApplicationsViewModel> GetRejectApplicationsViewModel(RejectApplicationsRequest request);
+        Task RejectApplications(RejectApplicationsPostRequest request);
     }
 }
