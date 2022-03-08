@@ -9,6 +9,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
     {
         Task<GetPledgesResponse> GetPledges(long accountId);
         Task<long> PostPledge(CreatePledgeRequest request, long accountId);
+        Task RejectApplications(SetRejectApplicationsRequest request, long accountId, int pledgeId);
         Task<GetCreateResponse> GetCreate(long accountId);
         Task<GetAmountResponse> GetAmount(string encodedAccountId);
         Task<GetSectorResponse> GetSector(long accountId);
@@ -21,5 +22,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
         Task<GetApplicationApprovalOptionsResponse> GetApplicationApprovalOptions(long accountId, int pledgeId, int applicationId, CancellationToken cancellationToken = default);
         Task SetApplicationApprovalOptions(long accountId, int applicationId, int pledgeId, SetApplicationApprovalOptionsRequest request);
         Task ClosePledge(long accountId, int pledgeId, ClosePledgeRequest request);
+        Task<GetRejectApplicationsResponse> GetRejectApplications(long accountId, int pledgeId);
     }
 }
