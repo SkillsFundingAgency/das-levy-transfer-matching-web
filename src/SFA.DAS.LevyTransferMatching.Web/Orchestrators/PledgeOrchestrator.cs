@@ -518,6 +518,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 DisplayRejectedBanner = request.DisplayRejectedBanner,
                 RejectedEmployerName = request.RejectedEmployerName,
                 RenderCreatePledgeButton = isOwnerOrTransactor,
+                PledgeTotalAmount = result.PledgeTotalAmount.ToCurrencyString(),
+                PledgeRemainingAmount = result.PledgeRemainingAmount.ToCurrencyString(),
                 Applications = _sortingService.SortApplications(viewModels, request.SortColumn, request.SortOrder)
             };
         }

@@ -53,6 +53,13 @@
         </div>
 
         <div class="govuk-grid-row">
+            <tile-view first-tile-text="Pledged Funds for @Model.TaxYear" 
+                first-tile-heading="@Model.PledgeTotalAmount"
+                second-tile-text="Remaining funds for @Model.TaxYear"
+                second-tile-heading="@Model.PledgeRemainingAmount"></tile-view>
+        </div>
+
+        <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                  <div class="govuk-button-group">
                     @if (Model.RenderCreatePledgeButton)
@@ -136,18 +143,18 @@
         </tbody>
     </table>
     </div>
-              
-    @if (Model.RenderCreatePledgeButton)
-    {
-        <div class="govuk-button-group">
-            <form action="/accounts/@Model.EncodedAccountId/pledges/create/inform" method="get">
-                <button class="govuk-button">
-                    Create a new transfer pledge
-                </button>
-            </form>
-        </div>
-    }
 
-    <a href="/accounts/@Model.EncodedAccountId/pledges" class="govuk-back-link">Back to my transfer pledges</a>
+        @if (Model.RenderCreatePledgeButton)
+        {
+            <div class="govuk-button-group">
+                <form action="/accounts/@Model.EncodedAccountId/pledges/create/inform" method="get">
+                    <button class="govuk-button">
+                        Create a new transfer pledge
+                    </button>
+                </form>
+            </div>
+        }
+
+        <a href="/accounts/@Model.EncodedAccountId/pledges" class="govuk-back-link">Back to my transfer pledges</a>
 
 </main>
