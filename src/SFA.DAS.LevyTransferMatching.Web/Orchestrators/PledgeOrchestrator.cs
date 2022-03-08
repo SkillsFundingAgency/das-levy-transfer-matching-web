@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Threading;
-using SFA.DAS.Encoding;
+﻿using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
@@ -14,6 +8,12 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Services;
+using System;
+using System.Collections.Generic;
+using System.Dynamic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
@@ -22,7 +22,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         private readonly IPledgeService _pledgeService;
         private readonly IEncodingService _encodingService;
         private readonly IUserService _userService;
-        private Infrastructure.Configuration.FeatureToggles _featureToggles;
+        private readonly Infrastructure.Configuration.FeatureToggles _featureToggles;
         private readonly IDateTimeService _dateTimeService;
         private readonly ICsvHelperService _csvService;
         
@@ -35,7 +35,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             _dateTimeService = dateTimeService;
             _csvService = csvService;
         }
-
 
         public CloseViewModel GetCloseViewModel(CloseRequest request)
         {
@@ -206,7 +205,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                                   JobRole = pledgeApplication.JobRole,
                                   PledgeRemainingAmount = pledgeApplication.PledgeRemainingAmount,
                                   MaxFunding = pledgeApplication.MaxFunding,
-                                  Details = pledgeApplication.Details
+                                  Details = pledgeApplication.Details,
+                                  ApplicationId = application.Id,
                               }).ToList();
 
             return new ApplicationsViewModel
@@ -326,6 +326,34 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 RemainingFundsIfApproved = remainingFundsIfApproved.ToCurrencyString(),
                 EstimatedCostOverDuration = estimatedCostOverDuration.ToCurrencyString(),
                 YearDescription = _dateTimeService.UtcNow.ToTaxYearDescription()
+            };
+        }
+
+        public async Task RejectApplications(RejectApplicationsPostRequest request)
+        {
+            var serviceRequest = new SetRejectApplicationsRequest
+            {
+                UserId = _userService.GetUserId(),
+                UserDisplayName = _userService.GetUserDisplayName(),
+                ApplicationsToReject = request.ApplicationsToReject.Select(applicationId => (int)_encodingService.Decode(applicationId,
+                                        EncodingType.PledgeApplicationId)).ToList()
+            };
+
+            await _pledgeService.RejectApplications(serviceRequest, request.AccountId, request.PledgeId);
+        }
+
+        public async Task<RejectApplicationsViewModel> GetRejectApplicationsViewModel(RejectApplicationsRequest request)
+        {
+            var applicationsList = await _pledgeService.GetRejectApplications(request.AccountId, request.PledgeId);
+
+            return new RejectApplicationsViewModel
+            {
+                EncodedAccountId = request.EncodedAccountId,
+                EncodedPledgeId = request.EncodedPledgeId,
+                DasAccountNames = applicationsList.Applications.Where(x =>
+                                  request.ApplicationsToReject.Any((s =>
+                                  (int)_encodingService.Decode(s, EncodingType.PledgeApplicationId) == x.Id)))
+                                  .Select(app => app.DasAccountName).ToList()
             };
         }
     }
