@@ -104,7 +104,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _userService.Setup(x => x.GetUserDisplayName()).Returns(_userDisplayName);
             _userService.Setup(x => x.IsOwnerOrTransactor(0)).Returns(true);
 
-            _orchestrator = new PledgeOrchestrator(_cache.Object, _pledgeService.Object, _encodingService.Object, _validatorService.Object, _userService.Object, _featureToggles,
+            _orchestrator = new PledgeOrchestrator(_pledgeService.Object, _encodingService.Object, _userService.Object, _featureToggles,
                 _dateTimeService.Object, _csvService.Object);
         }
 
@@ -440,7 +440,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var accountId = _fixture.Create<int>();
             var getPledgeApplicationsResponse = _fixture.Create<GetApplicationsResponse>();
             _pledgeService.Setup(o =>
-                o.GetApplications(It.Is<long>(l => l == accountId), It.Is<int>(p => p == _pledgeId))).ReturnsAsync(getPledgeApplicationsResponse);
+                o.GetApplications(It.Is<long>(l => l == accountId),
+                    It.Is<int>(p => p == _pledgeId), null, null))
+                .ReturnsAsync(getPledgeApplicationsResponse);
 
             await _orchestrator.GetPledgeApplicationsDownloadModel(new ApplicationsRequest
             {
