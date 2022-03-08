@@ -1,12 +1,12 @@
-﻿using System;
-using System.Net;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types;
+using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types;
+using SFA.DAS.LevyTransferMatching.Domain.Types;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
 {
@@ -28,6 +28,13 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
             var id = (string)JObject.Parse(await response.Content.ReadAsStringAsync())["id"];
 
             return long.Parse(id);
+        }
+
+        public async Task RejectApplications(SetRejectApplicationsRequest request, long accountId, int pledgeId)
+        {
+            var json = JsonConvert.SerializeObject(request, new StringEnumConverter());
+            var response = await _client.PostAsync($"accounts/{accountId}/pledges/{pledgeId}/reject-applications", new StringContent(json, System.Text.Encoding.UTF8, "application/json"));
+            response.EnsureSuccessStatusCode();
         }
 
         public async Task<GetPledgesResponse> GetPledges(long accountId)
@@ -72,12 +79,31 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
             return JsonConvert.DeserializeObject<GetLevelResponse>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<GetApplicationsResponse> GetApplications(long accountId, int pledgeId)
+        public async Task<GetApplicationsResponse> GetApplications(long accountId, int pledgeId, SortColumn? sortOrder, SortOrder? sortDirection)
         {
-            var response = await _client.GetAsync($"accounts/{accountId}/pledges/{pledgeId}/applications");
+            var sort = GetApplicationsSortParameters(sortOrder, sortDirection);
+            var response = await _client.GetAsync($"accounts/{accountId}/pledges/{pledgeId}/applications{sort}");
             response.EnsureSuccessStatusCode();
 
             return JsonConvert.DeserializeObject<GetApplicationsResponse>(await response.Content.ReadAsStringAsync());
+        }
+
+        public static string GetApplicationsSortParameters(SortColumn? sortColumn, SortOrder? sortDirection)
+        {
+            if (sortColumn.HasValue && sortDirection.HasValue && sortColumn != SortColumn.Default)
+            {
+                return $"?sortOrder={sortColumn.Value}&sortDirection={sortDirection.Value}";
+            }
+
+            return $"?sortOrder=status&sortDirection=ascending";
+        }
+
+        public async Task<GetRejectApplicationsResponse> GetRejectApplications(long accountId, int pledgeId)
+        {
+            var response = await _client.GetAsync($"accounts/{accountId}/pledges/{pledgeId}/reject-applications");
+            response.EnsureSuccessStatusCode();
+
+            return JsonConvert.DeserializeObject<GetRejectApplicationsResponse>(await response.Content.ReadAsStringAsync());
         }
 
         public async Task<GetApplicationResponse> GetApplication(long accountId, int pledgeId, int applicationId, CancellationToken cancellationToken = default)
@@ -109,6 +135,13 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
             var response = await _client.GetAsync($"accounts/{accountId}/pledges/{pledgeId}/applications/{applicationId}/approved");
             response.EnsureSuccessStatusCode();
             return JsonConvert.DeserializeObject<GetApplicationApprovedResponse>(await response.Content.ReadAsStringAsync());
+        }
+
+        public async Task ClosePledge(long accountId, int pledgeId, ClosePledgeRequest request)
+        {
+            var json = JsonConvert.SerializeObject(request);
+            var response = await _client.PostAsync($"accounts/{accountId}/pledges/{pledgeId}/close", new StringContent(json, System.Text.Encoding.UTF8, "application/json"));
+            response.EnsureSuccessStatusCode();
         }
 
         public async Task<GetApplicationApprovalOptionsResponse> GetApplicationApprovalOptions(long accountId, int pledgeId, int applicationId, CancellationToken cancellationToken = default)

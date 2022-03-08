@@ -1,0 +1,57 @@
+﻿@using SFA.DAS.LevyTransferMatching.Web.Extensions
+
+@if (TempData.ContainsKey(TempDataDictionaryExtensions.FlashMessageBodyTempDataKey))
+{
+    var body = TempData[TempDataDictionaryExtensions.FlashMessageBodyTempDataKey];
+    var detail = TempData[TempDataDictionaryExtensions.FlashMessageTempDetailKey];
+    var title = TempData[TempDataDictionaryExtensions.FlashMessageTitleTempDataKey];
+    var level = (TempDataDictionaryExtensions.FlashMessageLevel) TempData[TempDataDictionaryExtensions.FlashMessageLevelTempDataKey];
+
+    @if (level == TempDataDictionaryExtensions.FlashMessageLevel.Info)
+    {
+        <div class="govuk-grid-column-full das-notification govuk-!-margin-bottom-4 das-notification--info" tabindex="-1">
+            <h3 class="das-notification__heading">@body</h3>
+            <div class="govuk-panel__body">
+                @detail
+            </div>
+        </div>
+    }
+    @if (level == TempDataDictionaryExtensions.FlashMessageLevel.Success)
+    {
+        if (title == null)
+        {
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                    <div class="govuk-!-margin-bottom-4 govuk-panel govuk-panel--confirmation">
+                        <h1 class="govuk-panel__title">
+                            @body
+                        </h1>
+                        <div class="govuk-panel__body">
+                            @detail
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                    <div class="govuk-!-margin-bottom-4 govuk-notification-banner govuk-notification-banner--success">
+                        <div class="govuk-notification-banner__header">
+                            <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+                                Success
+                            </h2>
+                        </div>
+                        <div class="govuk-notification-banner__content">
+                            <h3 class="govuk-notification-banner__heading">
+                                @title
+                            </h3>
+                            <p class="govuk-body">@body</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+}

@@ -44,6 +44,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public AffordabilityViewModel Affordability { get; set; }
 
         public bool AllowApproval { get; set; }
+        public bool AllowRejection { get; set; }
+        public string RejectOptionElementId => AllowApproval ? "SelectedAction-2" : "SelectedAction";
         public bool AllowTransferRequestAutoApproval { get; set; }
         public string PercentageMatchCssClass
         {

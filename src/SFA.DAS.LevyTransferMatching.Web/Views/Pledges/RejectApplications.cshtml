@@ -1,0 +1,55 @@
+﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.RejectApplicationsViewModel
+
+@{
+    ViewData["Title"] = "Reject Applications";
+}
+
+<a href="@Url.Action("Applications","Pledges", new { EncodedAccountId = Model.EncodedAccountId, EncodedPledgeId = Model.EncodedPledgeId })" class="govuk-back-link">Back</a>
+
+<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
+    <partial name="_ValidationSummary" />
+    <div class="govuk-width-container">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-xl">Rejecting the apprenticeship application(s)</h1>
+             
+                <form method="post">
+                    <section class="das-highlight">
+                        <p class="govuk-heading-s">Applications for rejection</p>
+                        <ul class="govuk-list govuk-list--bullet">
+                            @foreach (var accountName in Model.DasAccountNames)
+                            {
+                                <li class="application_rejection" style="display: list-item;">@accountName</li>
+                            }
+                        </ul>
+                    </section>
+
+                    <div class="govuk-form-group" das-highlight-error-for="RejectConfirm" error-class="govuk-form-group--error" id="RejectConfirm">
+                        <fieldset class="govuk-fieldset" aria-describedby="contact-hint">
+                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                                <h2 class="govuk-heading-m no-margin-bottom">What would you like to do?</h2>
+                            </legend>
+                            
+                            <span das-validation-for="RejectConfirm" class="govuk-error-message"></span>
+
+                            <div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios">
+                                <div class="govuk-radios__item">
+                                    <input class="govuk-radios__input" id="reject-application-reject" data-aria-controls="conditional-reject-application-reject" asp-for="RejectConfirm" value="true" type="radio" das-highlight-error-for="RejectConfirm" error-class="govuk-textarea--error">
+                                    <label class="govuk-label govuk-radios__label" for="reject-application-reject">Reject the application(s)</label>
+                                </div>
+
+                                <div class="govuk-radios__item">
+                                    <input class="govuk-radios__input" id="reject-application-cancel" asp-for="RejectConfirm" value="false" type="radio" das-highlight-error-for="RejectConfirm" error-class="govuk-textarea--error">
+                                    <label class="govuk-label govuk-radios__label" for="reject-application-cancel">Cancel, return to applications</label>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+
+                    <button class="govuk-button" data-module="govuk-button" id="reject_application" type="submit">Continue</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</main>

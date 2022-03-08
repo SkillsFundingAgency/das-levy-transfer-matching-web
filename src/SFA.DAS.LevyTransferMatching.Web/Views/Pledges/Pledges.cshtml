@@ -1,4 +1,5 @@
-﻿@using SFA.DAS.LevyTransferMatching.Web.Models.Pledges
+﻿@using SFA.DAS.LevyTransferMatching.Domain.Extensions
+@using SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 @model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.PledgesViewModel
 
 @{
@@ -19,6 +20,9 @@
 
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
     <div class="govuk-width-container">
+        
+        <partial name="_FlashMessagePartial" />
+
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
                 <h1 class="govuk-heading-xl">
@@ -34,6 +38,7 @@
                             <th scope="col" class="govuk-table__header govuk-table__header--numeric">Total</th>
                             <th scope="col" class="govuk-table__header govuk-table__header--numeric">Remaining funds</th>
                             <th scope="col" class="govuk-table__header govuk-table__header--numeric">Applications</th>
+                            <th scope="col" class="govuk-table__header">Status</th>
                         </tr>
                     </thead>
                     <tbody class="govuk-table__body">
@@ -46,6 +51,7 @@
                                 <td class="govuk-table__cell govuk-table__cell--numeric">£@pledge.Amount.ToString("N0")</td>
                                 <td class="govuk-table__cell govuk-table__cell--numeric">£@pledge.RemainingAmount.ToString("N0")</td>
                                 <td class="govuk-table__cell govuk-table__cell--numeric">@pledge.ApplicationCount</td>
+                                <td class="govuk-table__cell"><strong class="@pledge.Status.GetCssClass()">@pledge.Status.GetLabel()</strong></td>
                             </tr>
                         }
                     </tbody>
@@ -53,7 +59,7 @@
                 @if (Model.RenderCreatePledgeButton)
                 {
                     <div class="govuk-button-group">
-                        <a class="govuk-button" data-module="govuk-button" href="@Url.Action("Inform", "Pledges", new { EncodedAccountId = Model.EncodedAccountId })">Create a transfers pledge</a>
+                        <a class="govuk-button" data-module="govuk-button" href="@Url.Action("Inform", "CreatePledge", new { EncodedAccountId = Model.EncodedAccountId })">Create a transfers pledge</a>
                     </div>
                 }
             </div>
