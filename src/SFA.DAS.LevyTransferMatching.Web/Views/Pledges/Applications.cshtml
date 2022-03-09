@@ -53,10 +53,26 @@
         </div>
 
         <div class="govuk-grid-row">
-            <tile-view first-tile-text="Pledged Funds for @Model.TaxYear" 
-                first-tile-heading="@Model.PledgeTotalAmount"
-                second-tile-text="Remaining funds for @Model.TaxYear"
-                second-tile-heading="@Model.PledgeRemainingAmount"></tile-view>
+            <div class="govuk-grid-column-one-third">
+                <div class="app-data ">
+                    <p class="govuk-heading-s app-data__title">
+                        Pledged Funds for @Model.TaxYear
+                    </p>
+                    <p class="govuk-heading-l app-data__figure">
+                        @Model.PledgeTotalAmount
+                    </p>
+                </div>
+            </div>
+            <div class="govuk-grid-column-one-third">
+                <div class="app-data app-data--information">
+                    <p class="govuk-heading-s app-data__title">
+                        Remaining funds for @Model.TaxYear
+                    </p>
+                    <p class="govuk-heading-l app-data__figure">
+                        @Model.PledgeRemainingAmount
+                    </p>
+                </div>
+            </div>
         </div>
 
         <div class="govuk-grid-row">
