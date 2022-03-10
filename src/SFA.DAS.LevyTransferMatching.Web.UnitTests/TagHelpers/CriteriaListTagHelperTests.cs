@@ -49,8 +49,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.TagHelpers
                 IsLocationMatch = isLocationMatch,
                 IsSectorMatch = isSectorMatch,
                 IsJobRoleMatch = isJobRoleMatch,
-                IsLevelMatch = isLevelMatch,
-                MatchPercentage = matchPercentage
+                IsLevelMatch = isLevelMatch
             };
             
             _tagHelper.Application = application;

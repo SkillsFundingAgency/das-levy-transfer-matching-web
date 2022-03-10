@@ -205,8 +205,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                                   JobRole = pledgeApplication.JobRole,
                                   PledgeRemainingAmount = pledgeApplication.PledgeRemainingAmount,
                                   MaxFunding = pledgeApplication.MaxFunding,
-                                  Details = pledgeApplication.Details,
-                                  ApplicationId = application.Id,
+                                  Details = pledgeApplication.Details
                               }).ToList();
 
             return new ApplicationsViewModel
