@@ -1,8 +1,8 @@
-﻿using System;
+﻿using SFA.DAS.LevyTransferMatching.Domain.Types;
+using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
-using SFA.DAS.LevyTransferMatching.Domain.Types;
-using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 {
@@ -34,7 +34,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public List<string> PledgeLevels { get; set; }
         public List<string> PledgeLocations { get; set; }
         public string Locations { get; set; }
+        public bool IsSectorMatch { get; set; }
+        public bool IsJobRoleMatch { get; set; }
+        public bool IsLevelMatch { get; set; }
         public bool IsLocationMatch { get; set; }
+        public int MatchPercentage { get; set; }
         public int PledgeRemainingAmount { get; set; }
         public int MaxFunding { get; set; }
         public AffordabilityViewModel Affordability { get; set; }
@@ -42,9 +46,19 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public bool AllowApproval { get; set; }
         public bool AllowRejection { get; set; }
         public string RejectOptionElementId => AllowApproval ? "SelectedAction-2" : "SelectedAction";
-        public bool IsSectorMatch { get; set; }
-        public bool IsJobRoleMatch { get; set; }
-        public bool IsLevelMatch { get; set; }
+        public bool AllowTransferRequestAutoApproval { get; set; }
+        public string PercentageMatchCssClass
+        {
+            get
+            {
+                switch (this.MatchPercentage)
+                {
+                    case 50: case 75: return "yellow";
+                    case 100: return "turquoise";
+                    case 0: case 25: default: return "pink";
+                }
+            }
+        }
 
         public class AffordabilityViewModel
         {
@@ -56,3 +70,4 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         }
     }
 }
+

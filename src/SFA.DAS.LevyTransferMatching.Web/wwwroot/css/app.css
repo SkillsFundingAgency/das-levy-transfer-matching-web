@@ -125,7 +125,7 @@
 .app-dl-icon-list {
     overflow: hidden;
     margin: 0;
-    /*padding-left: 1.6em;*/
+    padding-left: 1.6em;
 }
 
 .app-dl-icon-list__title {
@@ -159,7 +159,7 @@
 }
 
 .app-dl-icon-list__icon--tick {
-    background-image: url("/assets/images/icon-tick--green.svg");
+    background-image: url("../assets/images/icon-tick--green.svg");
     width: 1.2em;
 }
 
@@ -251,28 +251,6 @@
     0% {opacity:0;}
     100% {opacity:1;}
 }
-
-td[colspan] {
-    text-align: center;
-}
-
-th.applicant {
-    width: 250px;
-}
-
-th.tax-year {
-    width: 120px;
-}
-
-th.duration,
-th.criteria {
-    width: 120px;
-}
-
-th.status {
-    width: 100px;
-}
-
 
 .app-icon-list {
     line-height: 1.2em;

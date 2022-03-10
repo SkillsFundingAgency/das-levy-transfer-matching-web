@@ -43,10 +43,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public string FormattedEmailAddress { get; set; }
         public string FormattedSectors { get; set; }
         public string FormattedLocations { get; set; }
-        public bool IsLocationMatch { get; set; }
-        public bool IsSectorMatch { get; set; }
-        public bool IsJobRoleMatch { get; set; }
-        public bool IsLevelMatch { get; set; }
+        public bool MatchSector { get; set; }
+        public bool MatchJobRole { get; set; }
+        public bool MatchLevel { get; set; }
+        public bool MatchLocation { get; set; }
+        public int MatchPercentage { get; set; }
         public int EstimatedCostThisYear { get; set; }
         public int TotalEstimatedCost { get; set; }
         public string AdditionalLocations { get; set; }
