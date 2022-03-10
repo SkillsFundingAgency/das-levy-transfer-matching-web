@@ -20,7 +20,10 @@
             <strong>@Model.LevelList</strong>
         </li>
     </ul>
-    <div class="app-highlight__footer">
-        <p class="govuk-heading-s">Total funding available: up to £@Model.Amount.ToString("N0") available in @Model.YearDescription</p>
-    </div>
+    @if (!Model.HideFooter)
+   {
+        <div class="app-highlight__footer">
+            <p class="govuk-heading-s">Total funding available: up to £@Model.Amount.ToString("N0") available in @Model.YearDescription</p>
+        </div>
+   }
 </div>
