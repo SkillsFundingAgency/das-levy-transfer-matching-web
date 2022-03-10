@@ -104,7 +104,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _userService.Setup(x => x.GetUserDisplayName()).Returns(_userDisplayName);
             _userService.Setup(x => x.IsOwnerOrTransactor(0)).Returns(true);
 
-            _orchestrator = new PledgeOrchestrator(_pledgeService.Object, _encodingService.Object, _userService.Object, _featureToggles, 
+            _orchestrator = new PledgeOrchestrator(_pledgeService.Object, _encodingService.Object, _userService.Object, _featureToggles,
                 _dateTimeService.Object, _csvService.Object);
         }
 
@@ -390,7 +390,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             Assert.AreEqual(expectedUrl, result.BusinessWebsite);
         }
 
-
         [Test]
         public void GetAffordabilityViewModel_Returns_Correct_Values()
         {
@@ -444,13 +443,30 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                 o.GetApplications(It.Is<long>(l => l == accountId),
                     It.Is<int>(p => p == _pledgeId), null, null))
                 .ReturnsAsync(getPledgeApplicationsResponse);
-            
+
             await _orchestrator.GetPledgeApplicationsDownloadModel(new ApplicationsRequest
             {
                 AccountId = accountId, PledgeId = _pledgeId
             });
 
             _pledgeService.Verify(o => o.GetApplications(It.Is<long>(l => l == accountId), It.Is<int>(p => p == _pledgeId), null, null), Times.Once);
+        }
+
+        [TestCase(0, "pink")]
+        [TestCase(25, "pink")]
+        [TestCase(50, "yellow")]
+        [TestCase(75, "yellow")]
+        [TestCase(100, "turquoise")]
+        [Test]
+        public async Task GetApplication_PercentageMatchCssClass_Is_Correct(int matchPercentage, string expectedResult)
+        {
+            var response = _fixture.Create<GetApplicationResponse>();
+            response.MatchPercentage = matchPercentage;
+            _pledgeService.Setup(o => o.GetApplication(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
+
+            var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
+
+            Assert.AreEqual(result.PercentageMatchCssClass, expectedResult);
         }
     }
 }
