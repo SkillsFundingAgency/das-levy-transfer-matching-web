@@ -1,16 +1,15 @@
-﻿using System;
+﻿using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.LevyTransferMatching.Web.Authentication;
+using SFA.DAS.LevyTransferMatching.Web.Extensions;
+using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
+using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
+using SFA.DAS.LevyTransferMatching.Web.ValidatorInterceptors;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.LevyTransferMatching.Web.Extensions;
-using SFA.DAS.LevyTransferMatching.Web.Authentication;
-using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
-using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
-using SFA.DAS.LevyTransferMatching.Web.ValidatorInterceptors;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
@@ -32,20 +31,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             return View(viewModel);
         }
 
-        [Authorize(Policy = PolicyNames.ManageAccount)]
-        [Route("create/inform")]
-        public IActionResult Inform(string encodedAccountId)
-        {
-            var viewModel = _orchestrator.GetInformViewModel(encodedAccountId);
-            return View(viewModel);
-        }
 
         [HttpGet]
         [Authorize(Policy = PolicyNames.ManageAccount)]
         [Route("{encodedPledgeId}/close")]
-        public IActionResult Close(string encodedAccountId, string encodedPledgeId)
+        public IActionResult Close(CloseRequest request)
         {
-            var viewModel = _orchestrator.GetCloseViewModel(encodedAccountId, encodedPledgeId);
+            var viewModel = _orchestrator.GetCloseViewModel(request);
             return View(viewModel);
         }
 
@@ -55,10 +47,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         {
             if (closePostRequest.HasConfirmed.Value)
             {
-               await _orchestrator.ClosePledge(closePostRequest);
-               
-               TempData.AddFlashMessage("Transfer pledge closed", $"You closed the transfer pledge {closePostRequest.EncodedPledgeId}.", TempDataDictionaryExtensions.FlashMessageLevel.Success);
-               return RedirectToAction(nameof(Pledges), new { EncodedAccountId = closePostRequest.EncodedAccountId });
+                await _orchestrator.ClosePledge(closePostRequest);
+
+                TempData.AddFlashMessage("Transfer pledge closed", $"You closed the transfer pledge {closePostRequest.EncodedPledgeId}.", TempDataDictionaryExtensions.FlashMessageLevel.Success);
+                return RedirectToAction(nameof(Pledges), new { EncodedAccountId = closePostRequest.EncodedAccountId });
             }
             return RedirectToAction(nameof(Applications), new { EncodedAccountId = closePostRequest.EncodedAccountId, EncodedPledgeId = closePostRequest.EncodedPledgeId });
         }
@@ -70,170 +62,52 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             return View(viewModel);
         }
 
-        [Authorize(Policy = PolicyNames.ManageAccount)]
-        [Route("create")]
-        public async Task<IActionResult> Create(CreateRequest request)
-        {
-            var viewModel = await _orchestrator.GetCreateViewModel(request);
-            return View(viewModel);
-        }
 
-        [Authorize(Policy = PolicyNames.ManageAccount)]
-        [HttpPost]
-        [Route("create")]
-        public async Task<IActionResult> Submit(CreatePostRequest request)
-        {
-            var pledge = await _orchestrator.SubmitPledge(request);
-            return RedirectToAction("Confirmation", new ConfirmationRequest { EncodedAccountId = request.EncodedAccountId, EncodedPledgeId = pledge });
-        }
-
-        [Authorize(Policy = PolicyNames.ManageAccount)]
-        [Route("create/amount")]
-        public async  Task<IActionResult> Amount(AmountRequest request)
-        {
-            var viewModel = await _orchestrator.GetAmountViewModel(request);
-            return View(viewModel);
-        }
-
-        [Authorize(Policy = PolicyNames.ManageAccount)]
-        [HttpPost]
-        [Route("create/amount")]
-        public async Task<IActionResult> Amount(AmountPostRequest request)
-        {
-            await _orchestrator.UpdateCacheItem(request);
-            return RedirectToAction("Create", new { request.EncodedAccountId, request.CacheKey });
-        }
-
-        [Authorize(Policy = PolicyNames.ManageAccount)]
-        [Route("create/sector")]
-        public async Task<IActionResult> Sector(SectorRequest request)
-        {
-            var viewModel = await _orchestrator.GetSectorViewModel(request);
-            return View(viewModel);
-        }
-
-        [Authorize(Policy = PolicyNames.ManageAccount)]
-        [HttpPost]
-        [Route("create/sector")]
-        public async Task<IActionResult> Sector(SectorPostRequest request)
-        {
-            await _orchestrator.UpdateCacheItem(request);
-            return RedirectToAction("Create", new { request.EncodedAccountId, request.CacheKey });
-        }
-
-        [Authorize(Policy = PolicyNames.ManageAccount)]
-        [Route("create/job-role")]
-        public async Task<IActionResult> JobRole(JobRoleRequest request)
-        {
-            var viewModel = await _orchestrator.GetJobRoleViewModel(request);
-            return View(viewModel);
-        }
-
-        [Authorize(Policy = PolicyNames.ManageAccount)]
-        [HttpPost]
-        [Route("create/job-role")]
-        public async Task<IActionResult> JobRole(JobRolePostRequest request)
-        {
-            await _orchestrator.UpdateCacheItem(request);
-            return RedirectToAction("Create", new { request.EncodedAccountId, request.CacheKey });
-        }
-
-        [Authorize(Policy = PolicyNames.ManageAccount)]
-        [Route("create/level")]
-        public async Task<IActionResult> Level(LevelRequest request)
-        {
-            var viewModel = await _orchestrator.GetLevelViewModel(request);
-            return View(viewModel);
-        }
-
-        [Authorize(Policy = PolicyNames.ManageAccount)]
-        [HttpPost]
-        [Route("create/level")]
-        public async Task<IActionResult> Level(LevelPostRequest request)
-        {
-            await _orchestrator.UpdateCacheItem(request);
-            return RedirectToAction("Create", new CreateRequest() { EncodedAccountId = request.EncodedAccountId, CacheKey = request.CacheKey });
-        }
-
-        [Authorize(Policy = PolicyNames.ManageAccount)]
-        [Route("create/location")]
-        public async Task<IActionResult> Location(LocationRequest request)
-        {
-            var viewModel = await _orchestrator.GetLocationViewModel(request);
-
-            return View(viewModel);
-        }
-
-        [Authorize(Policy = PolicyNames.ManageAccount)]
-        [HttpPost]
-        [Route("create/location")]
-        public async Task<IActionResult> Location(LocationPostRequest request)
-        {
-            var multipleValidLocations = new Dictionary<int, IEnumerable<string>>();
-
-            var errors = await _orchestrator.ValidateLocations(request, multipleValidLocations);
-
-            if (errors.Any())
-            {
-                AddLocationErrorsToModelState(errors);
-
-                return RedirectToAction(nameof(Location), new { request.EncodedAccountId, request.AccountId, request.CacheKey });
-            }
-
-            await _orchestrator.UpdateCacheItem(request);
-
-            if (multipleValidLocations.Any() && !request.AllLocationsSelected)
-            {
-                // Then surface a view to allow them to select the correct
-                // location, from a set of multiple valid locations
-                return RedirectToAction(nameof(LocationSelect), new { request.EncodedAccountId, request.CacheKey });
-            }
-
-            return RedirectToAction("Create", new CreateRequest() { EncodedAccountId = request.EncodedAccountId, CacheKey = request.CacheKey });
-        }
-
-        [Authorize]
-        [Route("create/location/select")]
-        public async Task<IActionResult> LocationSelect(LocationSelectRequest request)
-        {
-            var viewModel = await _orchestrator.GetLocationSelectViewModel(request);
-
-            return View(viewModel);
-        }
-
-        [Authorize]
-        [Route("create/location/select")]
-        [HttpPost]
-        public async Task<IActionResult> LocationSelect([CustomizeValidator(Interceptor = typeof(LocationSelectPostRequestValidatorInterceptor))] LocationSelectPostRequest request)
-        {
-            await _orchestrator.UpdateCacheItem(request);
-
-            return RedirectToAction("Create", new CreateRequest() { EncodedAccountId = request.EncodedAccountId, CacheKey = request.CacheKey });
-        }
-
-        [Authorize(Policy = PolicyNames.ManageAccount)]
-        [HttpGet]
-        [Route("{EncodedPledgeId}/confirmation")]
-        public async Task<IActionResult> Confirmation(ConfirmationRequest request)
-        {
-            return View(new ConfirmationViewModel() { EncodedAccountId = request.EncodedAccountId, EncodedPledgeId = request.EncodedPledgeId });
-        }
-
-        private void AddLocationErrorsToModelState(Dictionary<int, string> errors)
-        {
-            foreach (var error in errors)
-            {
-                ModelState.AddModelError($"Locations[{error.Key}]", error.Value);
-            }
-        }
 
         [HttpGet]
         [Route("{encodedPledgeId}/applications")]
         public async Task<IActionResult> Applications(ApplicationsRequest request)
         {
             var response = await _orchestrator.GetApplications(request);
-
             return View(response);
+        }
+
+        [Authorize(Policy = PolicyNames.ManageAccount)]
+        [HttpPost]
+        [Route("{encodedPledgeId}/applications")]
+        public IActionResult Applications(ApplicationsPostRequest request)
+        {
+            return RedirectToAction(nameof(RejectApplications), new { request.EncodedAccountId, request.EncodedPledgeId, request.ApplicationsToReject });
+        }
+        
+        [Authorize]
+        [HttpGet]
+        [Route("{encodedPledgeId}/applications/reject-applications")]
+        public async Task<IActionResult> RejectApplications(RejectApplicationsRequest request)
+        {
+            var rejectApplicationsViewModel = await _orchestrator.GetRejectApplicationsViewModel(request);
+            return View(rejectApplicationsViewModel);
+        }
+
+        [Authorize]
+        [Route("{encodedPledgeId}/applications/reject-applications")]
+        [HttpPost]
+        public async Task<IActionResult> RejectApplications(RejectApplicationsPostRequest request)
+        {
+            if (request.RejectConfirm.Value)
+            {
+                await _orchestrator.RejectApplications(request);
+                SetRejectedApplicationsBanner(request.ApplicationsToReject.Count);
+            }
+            return RedirectToAction(nameof(Applications), new { EncodedAccountId = request.EncodedAccountId, EncodedPledgeId = request.EncodedPledgeId });
+        }
+        
+        private void SetRejectedApplicationsBanner(int rejectedApplications)
+        {
+            var bannerMessage = rejectedApplications > 1 ? $"{rejectedApplications} applications have been rejected" :
+                $"{rejectedApplications} application has been rejected";
+
+            TempData.AddFlashMessage(bannerMessage, string.Empty, TempDataDictionaryExtensions.FlashMessageLevel.Success);
         }
 
         [HttpGet]
@@ -276,7 +150,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
                 return RedirectToAction("ApplicationApproved", new { request.EncodedAccountId, request.EncodedPledgeId, request.EncodedApplicationId });
             }
 
-            return RedirectToAction("Applications", new { request.EncodedAccountId, request.EncodedPledgeId, DisplayRejectedBanner = true, RejectedEmployerName = request.EmployerAccountName });
+            TempData.AddFlashMessage("Application rejected", $"You rejected the {request.EmployerAccountName} application.", TempDataDictionaryExtensions.FlashMessageLevel.Success);
+            return RedirectToAction("Applications", new { request.EncodedAccountId, request.EncodedPledgeId });
         }
 
         [HttpGet]

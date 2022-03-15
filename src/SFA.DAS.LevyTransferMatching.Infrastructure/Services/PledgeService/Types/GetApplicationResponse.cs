@@ -36,5 +36,10 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Typ
         public string AdditionalLocation { get; set; }
         public string SpecificLocation { get; set; }
         public bool AutomaticApproval { get; set; }
+        public bool IsSectorMatch { get; set; }
+        public bool IsJobRoleMatch { get; set; }
+        public bool IsLevelMatch { get; set; }
+        public bool IsLocationMatch { get; set; }
+        public int MatchPercentage { get; set; }
     }
 }

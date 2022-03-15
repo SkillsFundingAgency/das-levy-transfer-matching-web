@@ -80,6 +80,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 IsNamePublic = result.IsNamePublic,
                 DasAccountName = result.PledgeEmployerAccountName,
                 EncodedPledgeId = encodedOpportunityId,
+                HideFooter = true
             };
 
             return new ApplicationViewModel()
@@ -105,6 +106,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                  AmountUsed = result.AmountUsed.ToCurrencyString(),
                  AmountRemaining = (result.TotalAmount - result.AmountUsed) < 0 ? 0.ToCurrencyString() : (result.TotalAmount - result.AmountUsed).ToCurrencyString(),
                  NumberOfApprenticesRemaining = (result.NumberOfApprentices - result.NumberOfApprenticesUsed) < 0 ? 0 : (result.NumberOfApprentices - result.NumberOfApprenticesUsed),
+                 CanWithdraw = isOwnerOrTransactor && result.Status == ApplicationStatus.Pending
             };
         }
 

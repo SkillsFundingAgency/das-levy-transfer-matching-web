@@ -6,7 +6,7 @@
     ViewData["Title"] = "Create a transfers pledge";
 }
 
-<a href="@Url.Action("Inform", "pledges", new { Model.EncodedAccountId })" class="govuk-back-link">Back</a>
+<a href="@Url.Action("Inform", "CreatePledge", new { Model.EncodedAccountId })" class="govuk-back-link">Back</a>
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
@@ -177,8 +177,7 @@
                                 <strong>Disclaimer:</strong> The information provided by applicants to your pledge will not be checked and verified by the apprenticeship service.
                             </p>
                             <p>
-                                Please carry out your own due diligence when deciding whether to offer a
-                                transfer of your levy funds.
+                                You may wish to undertake your own in-house governance process before committing to fund a transfer. The receiving employer will provide you with their contact details as part of their application in order to do this.
                             </p>
                         </div>
                         <button class="govuk-button pledge-level-continue" data-module="govuk-button" id="pledge-create-submit">Submit my pledge</button>
@@ -186,7 +185,7 @@
                 </form>
             }
             <div class="govuk-grid-row">
-                <a class="govuk-link" href="@Url.Action("Inform", "pledges", new { Model.EncodedAccountId })">Cancel pledge</a>
+                <a class="govuk-link" href="@Url.Action("Inform", "CreatePledge", new { Model.EncodedAccountId })">Cancel pledge</a>
             </div>
         </div>
 

@@ -44,9 +44,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
             services.AddTransient<IOpportunitiesOrchestrator, OpportunitiesOrchestrator>();
             services.AddTransient<ILocationOrchestrator, LocationOrchestrator>();
             services.AddTransient<IApplicationsOrchestrator, ApplicationsOrchestrator>();
+            services.AddTransient<ICreatePledgeOrchestrator, CreatePledgeOrchestrator>();
             services.AddTransient<ICsvHelperService, CsvHelperService>();
             services.AddTransient<IUserService>((s) => new UserService(s.GetService<IHttpContextAccessor>()));
-
             services.AddSingleton<IDateTimeService, DateTimeService>();
 
             services.AddClient<IPledgeService>((c, s) => new PledgeService(c));

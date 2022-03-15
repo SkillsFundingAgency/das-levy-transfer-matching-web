@@ -16,117 +16,176 @@
 <bread-crumb source="@breadCrumbs"></bread-crumb>
 
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
-    <div class="govuk-width-container">
-        @if (Model.DisplayRejectedBanner)
-        {
-            <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
-                <div class="govuk-notification-banner__header">
-                    <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
-                        Success
-                    </h2>
+    <partial name="_ValidationSummary" />
+    
+        <div class="govuk-width-container">
+            @if (Model.DisplayRejectedBanner)
+            {
+                <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+                    <div class="govuk-notification-banner__header">
+                        <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+                            Success
+                        </h2>
+                    </div>
+                    <div class="govuk-notification-banner__content">
+                        <h3 class="govuk-notification-banner__heading">
+                            Application rejected
+                        </h3>
+                        <p class="govuk-body">You rejected the @Model.RejectedEmployerName application.</p>
+                    </div>
                 </div>
-                <div class="govuk-notification-banner__content">
-                    <h3 class="govuk-notification-banner__heading">
-                        Application rejected
-                    </h3>
-                    <p class="govuk-body">You rejected the @Model.RejectedEmployerName application.</p>
+            }
+
+            <partial name="_FlashMessagePartial" />
+
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+
+                    <h1 class="govuk-heading-xl">
+                        Transfer pledge @Model.EncodedPledgeId
+                    </h1>
+
                 </div>
-            </div>
-        }
 
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
+                <div class="govuk-grid-column-one-third">
 
-                <h1 class="govuk-heading-xl">
-                    Transfer pledge @Model.EncodedPledgeId
-                </h1>
-
-            </div>
-
-            <div class="govuk-grid-column-one-third">
-
-                @if (Model.Applications.Any())
-                {
-                    <p><a href="/accounts/@Model.EncodedAccountId/pledges/@Model.EncodedPledgeId/applications/download" class="govuk-link app-download-link">Download applications - <span class="govuk-visually-hidden">in an</span> excel <span class="govuk-visually-hidden">spreadsheet</span></a></p>
-                }
+                    @if (Model.Applications.Any())
+                    {
+                        <p><a href="/accounts/@Model.EncodedAccountId/pledges/@Model.EncodedPledgeId/applications/download" class="govuk-link app-download-link">Download applications - <span class="govuk-visually-hidden">in an</span> excel <span class="govuk-visually-hidden">spreadsheet</span></a></p>
+                    }
 
             </div>
         </div>
+        
+        @if (Model.Applications.Any())
+        {
+            <div class="govuk-inset-text">
+                <p>Applications awaiting approval are waiting for you to review and approve or reject. Applicants appreciate a response from you in order to manage their apprenticeships.</p>
+            </div>
+        }
+
 
         <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
+            <div class="govuk-grid-column-full">
                  <div class="govuk-button-group">
-                    <form action="/accounts/@Model.EncodedAccountId/pledges/create/inform" method="get">
-                        <button class="govuk-button">
-                            Create a new transfer pledge
-                        </button>
-                    </form>
-
-                    @if (Model.UserCanClosePledge)
+                    @if (Model.RenderCreatePledgeButton)
                     {
-                        <form action="/accounts/@Model.EncodedAccountId/pledges/@Model.EncodedPledgeId/close" method="get">
-                            <button class="govuk-button govuk-link-secondary govuk-button--warning accepted-journey-cancel-button no-margin-top">
-                            Close pledge
+                        <form action="/accounts/@Model.EncodedAccountId/pledges/create/inform" method="get">
+                            <button class="govuk-button">
+                                Create a new transfer pledge
                             </button>
                         </form>
                     }
 
+                        @if (Model.UserCanClosePledge)
+                        {
+                            <form action="/accounts/@Model.EncodedAccountId/pledges/@Model.EncodedPledgeId/close" method="get">
+                                <button id="close-pledge-button" class="govuk-button govuk-link-secondary govuk-button--warning accepted-journey-cancel-button no-margin-top">
+                                Close pledge
+                                </button>
+                            </form>
+                        }
+
+                    </div>
                 </div>
             </div>
+            @{
+                if (Model.Applications != null && Model.Applications.Any())
+                {
+                    <form method="post" id="applications_actions_form">
+                        <details class="govuk-details">
+                            <summary class="govuk-details__summary">
+                                <span class="govuk-details__summary-text">Information about the applications</span>
+                            </summary>
+                            <div class="govuk-details__text">
+                                <h2 class="govuk-heading-s govuk-!-margin-bottom-0">Estimated cost in this financial year</h2>
+                                <p>This is an estimate of the cost of training for each application in this financial year. It is based on the funding band maximum and the planned start date of training.</p>
+                            </div>
+                        </details>
+                        <div class="govuk-form-group" das-highlight-error-for="ApplicationsToReject" error-class="govuk-form-group--error" id="ApplicationsToReject">
+                            <fieldset class="govuk-fieldset">
+                                <legend class="govuk-visually-hidden">Select the applications that you want to reject</legend>
+                                <table class="govuk-table" aria-label="Pledge applications">
+                                    <thead class="govuk-table__head">
+                                        <tr class="govuk-table__row">
+                                            <th scope="col" class="govuk-table__header das-table-cell-width-5"></th>
+                                            <th scope="col" class="govuk-table__header das-table-cell-width-25">
+                                                <sortable-column column-name="Applicant" column-label="Applicant" default="false" default-order="Ascending"></sortable-column>
+                                            </th>
+                                            <th scope="col" class="govuk-table__header das-table-cell-width-15">
+                                                <sortable-column column-name="CurrentFinancialYearAmount" column-label="Estimated cost @Model.TaxYear" default="false" default-order="Descending"></sortable-column>
+                                            </th>
+                                            <th scope="col" class="govuk-table__header das-table-cell-width-15">
+                                                <sortable-column column-name="Duration" column-label="Typical duration" default="false" default-order="Descending"></sortable-column>
+                                            </th>
+                                            <th scope="col" class="govuk-table__header das-table-cell-width-20">
+                                                <sortable-column column-name="CriteriaMatch" column-label="Criteria" default="false" default-order="Descending"></sortable-column>
+                                            </th>
+                                            <th scope="col" class="govuk-table__header status">
+                                                <sortable-column column-name="Status" column-label="Status" default="false" default-order="Descending"></sortable-column>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="govuk-table__body">
+                                        @{
+                                            foreach (var app in Model.Applications)
+                                            {
+                                                <tr class="govuk-table__row">
+                                                    <td class="govuk-table__cell">
+                                                        @if (app.Status == SFA.DAS.LevyTransferMatching.Domain.Types.ApplicationStatus.Pending)
+                                                        {
+                                                            <div class="govuk-checkboxes govuk-checkboxes--small" das-highlight-error-for="@app.EncodedApplicationId" error-class="govuk-form-group--error">
+                                                                <div class="govuk-checkboxes__item">
+                                                                    <input class="govuk-checkboxes__input" id="application_select_@app.EncodedApplicationId" error-class="govuk-input--error"  name="ApplicationsToReject" type="checkbox" value="@app.EncodedApplicationId">
+                                                                    <label class="govuk-label govuk-checkboxes__label" for="application_select_@app.EncodedApplicationId">
+                                                                        <span class="govuk-visually-hidden">@app.DasAccountName</span>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    </td>
+                                                    <td class="govuk-table__cell"><a href="applications/@app.EncodedApplicationId" class="govuk-link">@app.DasAccountName</a></td>
+                                                    <td class="govuk-table__cell">
+                                                        @app.DisplayAmount
+                                                    </td>
+                                                    <td class="govuk-table__cell">@app.Duration months</td>
+                                                    <td class="govuk-table__cell">
+                                                        <criteria-list application="@app"></criteria-list>
+                                                    </td>
+                                                    <td class="govuk-table__cell"><strong class="@app.Status.GetCssClassForSender()">@app.Status.GetLabelForSender()</strong></td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                         </fieldset>
+                      </div>  
+                      <div class="das-highlight">
+                        <div class="govuk-button-group govuk-!-margin-bottom-0">
+                            <p class="govuk-body govuk-!-margin-bottom-0 govuk-!-padding-right-3">Reject selected applications:</p>
+                            <button class="govuk-button govuk-!-margin-bottom-0" data-module="govuk-button" id="applications-action" type="submit">Continue</button>
+                        </div>
+                      </div>
+                    </form>
+                 } else
+                 {
+                    <fieldset class="govuk-fieldset">
+                        <legend class="govuk-visually-hidden">No applications received yet</legend>
+                            <table class="govuk-table" aria-label="Pledge applications">
+                                <thead class="govuk-table__head">
+                                        <tr class="govuk-table__row">
+                                            <th scope="col" class="govuk-table__header das-table-cell-width-5"></th>
+                                        </tr>
+                                </thead>
+                                <tbody class="govuk-table__body">
+                                    <tr class="govuk-table__row" data-table-row="one">
+                                        <td colspan="6" class="govuk-table__cell">No applications received yet</td>
+                                    </tr>
+                                </tbody>
+                             </table>
+                    </fieldset>
+                 }
+             }
         </div>
-
-        <details class="govuk-details">
-            <summary class="govuk-details__summary">
-                <span class="govuk-details__summary-text">Information about the applications</span>
-            </summary>
-            <div class="govuk-details__text">
-                <h2 class="govuk-heading-s govuk-!-margin-bottom-0">Estimated cost in this financial year</h2>
-                <p>This is an estimate of the cost of training for each application in this financial year. It is based on the funding band maximum and the planned start date of training.</p>
-            </div>
-        </details>
-        <table class="govuk-table" aria-label="Pledge applications">
-            <thead class="govuk-table__head">
-                <tr class="govuk-table__row">
-                    <th scope="col" class="govuk-table__header applicant">Applicant</th>
-                    <th scope="col" class="govuk-table__header tax-year ">Estimated cost @Model.TaxYear</th>
-                    <th scope="col" class="govuk-table__header duration">Typical duration</th>
-                    <th scope="col" class="govuk-table__header criteria">Criteria</th>
-                    <th scope="col" class="govuk-table__header">Date applied</th>
-                    <th scope="col" class="govuk-table__header status">Status</th>
-                </tr>
-            </thead>
-            <tbody class="govuk-table__body">
-                @{
-                    if (Model.Applications != null && Model.Applications.Any())
-                    {
-                        foreach (var app in Model.Applications)
-                        {
-                            <tr class="govuk-table__row" data-table-row="one">
-                                <td class="govuk-table__cell"><a href="applications/@app.EncodedApplicationId" class="govuk-link">@app.DasAccountName</a></td>
-                                <td class="govuk-table__cell">
-                                    @app.DisplayAmount
-                                </td>
-                                <td class="govuk-table__cell">@app.Duration months</td>
-                                <td class="govuk-table__cell">
-                                    <criteria-list application="@app"></criteria-list>
-                                </td>
-                                <td class="govuk-table__cell">@app.CreatedOn.ToLongDateDisplayString()</td>
-                                <td class="govuk-table__cell"><strong class="@app.Status.GetCssClassForSender()">@app.Status.GetLabelForSender()</strong></td>
-                            </tr>
-                        }
-                    }
-
-                    else
-                    {
-                        <tr class="govuk-table__row" data-table-row="one">
-                            <td colspan="6" class="govuk-table__cell">No applications received yet</td>
-                        </tr>
-                    }
-                }
-            </tbody>
-        </table>
-    </div>
-
     <a href="/accounts/@Model.EncodedAccountId/pledges" class="govuk-back-link">Back to my transfer pledges</a>
-
 </main>

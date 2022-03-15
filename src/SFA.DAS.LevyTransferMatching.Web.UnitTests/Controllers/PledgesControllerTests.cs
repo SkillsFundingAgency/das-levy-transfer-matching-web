@@ -28,21 +28,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             _pledgesController = new PledgesController(_orchestrator.Object);
         }
 
-        [Test]
-        public void GET_Inform_Returns_Expected_View_With_Expected_ViewModel()
-        {
-            // Arrange
-            var encodedAccountId = _fixture.Create<string>();
-            _orchestrator.Setup(x => x.GetInformViewModel(encodedAccountId)).Returns(() => new InformViewModel());
-
-            // Act
-            var viewResult = _pledgesController.Inform(encodedAccountId) as ViewResult;
-            var indexViewModel = viewResult?.Model as InformViewModel;
-
-            // Assert
-            Assert.NotNull(viewResult);
-            Assert.NotNull(indexViewModel);
-        }
 
         [Test]
         public async Task GET_Pledges_Returns_Expected_View_With_Expected_ViewModel()
@@ -77,50 +62,19 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         }
 
         [Test]
-        public async Task GET_Create_Returns_Expected_View_With_Expected_ViewModel()
+        public void GET_Close_Returns_Expected_View()
         {
             // Arrange
-            var request = _fixture.Create<CreateRequest>();
-            _orchestrator.Setup(x => x.GetCreateViewModel(request)).ReturnsAsync(() => new CreateViewModel());
+            var request = _fixture.Create<CloseRequest>();
+            _orchestrator.Setup(x => x.GetCloseViewModel(request)).Returns(() => new CloseViewModel());
 
             // Act
-            var viewResult = await _pledgesController.Create(request) as ViewResult;
-            var createViewModel = viewResult?.Model as CreateViewModel;
+            var viewResult = _pledgesController.Close(request) as ViewResult;
+            var actualViewModel = viewResult?.Model as CloseViewModel;
 
             // Assert
             Assert.NotNull(viewResult);
-            Assert.NotNull(createViewModel);
-        }
-
-        [Test]
-        public async Task GET_Amount_Returns_Expected_View_With_Expected_ViewModel()
-        {
-            // Arrange
-            var request = _fixture.Create<AmountRequest>();
-            _orchestrator.Setup(x => x.GetAmountViewModel(request)).ReturnsAsync(() => new AmountViewModel());
-
-            // Act
-            var viewResult = await _pledgesController.Amount(request) as ViewResult;
-            var amountViewModel = viewResult?.Model as AmountViewModel;
-
-            // Assert
-            Assert.NotNull(viewResult);
-            Assert.NotNull(amountViewModel);
-        }
-
-        [Test]
-        public async Task POST_Amount_Returns_Expected_Redirect()
-        {
-            // Arrange
-            var request = _fixture.Create<AmountPostRequest>();
-
-            // Act
-            var actionResult = await _pledgesController.Amount(request) as RedirectToActionResult;
-
-            // Assert
-            Assert.NotNull(actionResult);
-            Assert.AreEqual("Create", actionResult.ActionName);
-            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
+            Assert.NotNull(actualViewModel);
         }
 
         [Test]
@@ -143,280 +97,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             Assert.NotNull(actionResult);
             Assert.AreEqual("Pledges", actionResult.ActionName);
             Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["EncodedAccountId"]);
-        }
-
-        [Test]
-        public async Task POST_Close_Returns_Expected_Redirect_To_Applications()
-        {
-            // Arrange
-            var request = _fixture.Build<ClosePostRequest>()
-                .With(x => x.HasConfirmed, false)
-                .Create();
-
-            // Act
-            var actionResult = await _pledgesController.Close(request) as RedirectToActionResult;
-
-            // Assert
-            Assert.NotNull(actionResult);
-            Assert.AreEqual("Applications", actionResult.ActionName);
-            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["EncodedAccountId"]);
-            Assert.AreEqual(request.EncodedPledgeId, actionResult.RouteValues["EncodedPledgeId"]);
-        }
-
-        [Test]
-        public async Task GET_Sector_Returns_Expected_View_With_Expected_ViewModel()
-        {
-            // Arrange
-            var request = _fixture.Create<SectorRequest>();
-            _orchestrator.Setup(x => x.GetSectorViewModel(request)).ReturnsAsync(() => new SectorViewModel());
-
-            // Act
-            var viewResult = await _pledgesController.Sector(request) as ViewResult;
-            var amountViewModel = viewResult?.Model as SectorViewModel;
-
-            // Assert
-            Assert.NotNull(viewResult);
-            Assert.NotNull(amountViewModel);
-        }
-
-        [Test]
-        public async Task POST_Sector_Returns_Expected_Redirect()
-        {
-            // Arrange
-            var request = _fixture.Create<SectorPostRequest>();
-
-            // Act
-            var actionResult = await _pledgesController.Sector(request) as RedirectToActionResult;
-
-            // Assert
-            Assert.NotNull(actionResult);
-            Assert.AreEqual("Create", actionResult.ActionName);
-            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
-        }
-
-        [Test]
-        public async Task GET_Level_Returns_Expected_View_With_Expected_ViewModel()
-        {
-            // Arrange
-            var request = _fixture.Create<LevelRequest>();
-            _orchestrator.Setup(x => x.GetLevelViewModel(request)).ReturnsAsync(() => new LevelViewModel());
-
-            // Act
-            var viewResult = await _pledgesController.Level(request) as ViewResult;
-            var amountViewModel = viewResult?.Model as LevelViewModel;
-
-            // Assert
-            Assert.NotNull(viewResult);
-            Assert.NotNull(amountViewModel);
-        }
-
-        [Test]
-        public async Task POST_Level_Returns_Expected_Redirect()
-        {
-            // Arrange
-            var request = _fixture.Create<LevelViewModel>();
-
-            // Act
-            var actionResult = await _pledgesController.Level(request) as RedirectToActionResult;
-
-            // Assert
-            Assert.NotNull(actionResult);
-            Assert.AreEqual("Create", actionResult.ActionName);
-            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
-        }
-
-        [Test]
-        public async Task GET_JobRole_Returns_Expected_View_With_Expected_ViewModel()
-        {
-            // Arrange
-            var request = _fixture.Create<JobRoleRequest>();
-            _orchestrator.Setup(x => x.GetJobRoleViewModel(request)).ReturnsAsync(() => new JobRoleViewModel());
-
-            // Act
-            var viewResult = await _pledgesController.JobRole(request) as ViewResult;
-            var jobRoleViewModel = viewResult?.Model as JobRoleViewModel;
-
-            // Assert
-            Assert.NotNull(viewResult);
-            Assert.NotNull(jobRoleViewModel);
-        }
-
-        [Test]
-        public async Task POST_JobRole_Returns_Expected_Redirect()
-        {
-            // Arrange
-            var request = _fixture.Create<JobRolePostRequest>();
-
-            // Act
-            var actionResult = await _pledgesController.JobRole(request) as RedirectToActionResult;
-
-            // Assert
-            Assert.NotNull(actionResult);
-            Assert.AreEqual("Create", actionResult.ActionName);
-            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
-        }
-
-        [Test]
-        public async Task GET_Location_Returns_Expected_View_With_Expected_ViewModel()
-        {
-            // Arrange
-            var request = _fixture.Create<LocationRequest>();
-            _orchestrator.Setup(x => x.GetLocationViewModel(request)).ReturnsAsync(() => new LocationViewModel());
-
-            // Act
-            var viewResult = await _pledgesController.Location(request) as ViewResult;
-            var locationViewModel = viewResult?.Model as LocationViewModel;
-
-            // Assert
-            Assert.NotNull(viewResult);
-            Assert.NotNull(locationViewModel);
-        }
-
-        [Test]
-        public async Task POST_Location_Returns_Expected_Redirect_To_Create_With_Valid_Location()
-        {
-            // Arrange
-            var request = _fixture.Create<LocationPostRequest>();
-            _orchestrator
-                .Setup(x => x.ValidateLocations(It.IsAny<LocationPostRequest>(), It.IsAny<IDictionary<int, IEnumerable<string>>>()))
-                .ReturnsAsync(new Dictionary<int, string>());
-
-            // Act
-            var actionResult = await _pledgesController.Location(request) as RedirectToActionResult;
-
-            // Assert
-            Assert.NotNull(actionResult);
-            Assert.AreEqual("Create", actionResult.ActionName);
-            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
-            Assert.AreEqual(request.CacheKey, actionResult.RouteValues["cacheKey"]);
-        }
-
-        [Test]
-        public async Task POST_Location_Returns_Expected_Redirect_To_Location_With_Invalid_Location()
-        {
-            // Arrange
-            var request = _fixture.Create<LocationPostRequest>();
-            _orchestrator
-                .Setup(x => x.ValidateLocations(It.IsAny<LocationPostRequest>(), It.IsAny<IDictionary<int, IEnumerable<string>>>()))
-                .ReturnsAsync(new Dictionary<int, string>() { { 1, "Error Message" } });
-
-            // Act
-            var actionResult = await _pledgesController.Location(request) as RedirectToActionResult;
-
-            // Assert
-            Assert.NotNull(actionResult);
-            Assert.AreEqual("Location", actionResult.ActionName);
-            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
-            Assert.AreEqual(request.CacheKey, actionResult.RouteValues["cacheKey"]);
-        }
-
-        [Test]
-        public async Task POST_Location_Returns_Expected_Redirect_To_LocationSelect()
-        {
-            // Arrange
-            var request = _fixture
-                .Build<LocationPostRequest>()
-                .With(x => x.AllLocationsSelected, false)
-                .Create();
-
-            Action<LocationPostRequest, IDictionary<int, IEnumerable<string>>> validateCallback =
-                (x, y) =>
-                {
-                    y.Add(_fixture.Create<KeyValuePair<int, IEnumerable<string>>>());
-                };
-            
-            _orchestrator
-                .Setup(x => x.ValidateLocations(It.IsAny<LocationPostRequest>(), It.IsAny<IDictionary<int, IEnumerable<string>>>()))
-                .Callback(validateCallback)
-                .ReturnsAsync(new Dictionary<int, string>());
-
-            // Act
-            var actionResult = await _pledgesController.Location(request) as RedirectToActionResult;
-
-            // Assert
-            Assert.NotNull(actionResult);
-            Assert.AreEqual("LocationSelect", actionResult.ActionName);
-            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
-            Assert.AreEqual(request.CacheKey, actionResult.RouteValues["cacheKey"]);
-        }
-
-        [Test]
-        public async Task POST_LocationSelect_AllLocationsSelected_Redirect_To_Create()
-        {
-            // Arrange
-            var request = _fixture
-                .Build<LocationPostRequest>()
-                .With(x => x.AllLocationsSelected, true)
-                .Create();
-
-            _orchestrator
-                .Setup(x => x.ValidateLocations(It.IsAny<LocationPostRequest>(), It.IsAny<IDictionary<int, IEnumerable<string>>>()))
-                .ReturnsAsync(new Dictionary<int, string>());
-
-            // Act
-            var actionResult = await _pledgesController.Location(request) as RedirectToActionResult;
-
-            // Assert
-            Assert.NotNull(actionResult);
-            Assert.AreEqual("Create", actionResult.ActionName);
-            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
-            Assert.AreEqual(request.CacheKey, actionResult.RouteValues["cacheKey"]);
-        }
-
-        [Test]
-        public async Task GET_LocationSelect_Returns_View_With_Expected_ViewModel()
-        {
-            // Arrange
-            var request = _fixture.Create<LocationSelectRequest>();
-            var expectedViewModel = _fixture.Create<LocationSelectViewModel>();
-
-            _orchestrator
-                .Setup(x => x.GetLocationSelectViewModel(It.IsAny<LocationSelectRequest>()))
-                .ReturnsAsync(expectedViewModel);
-
-            // Act
-            var actionResult = await _pledgesController.LocationSelect(request);
-            var viewResult = actionResult as ViewResult;
-            var model = viewResult.Model;
-            var actualViewModel = model as LocationSelectViewModel;
-
-            // Assert
-            Assert.NotNull(actionResult);
-            Assert.NotNull(viewResult);
-            Assert.NotNull(model);
-            Assert.NotNull(actualViewModel);
-            Assert.AreEqual(expectedViewModel, actualViewModel);
-        }
-
-        [Test]
-        public async Task POST_LocationSelect_Returns_View_With_Expected_Redirect()
-        {
-            // Arrange
-            var request = _fixture.Create<LocationSelectPostRequest>();
-
-            // Act
-            var actionResult = await _pledgesController.LocationSelect(request);
-            var redirectToAction = actionResult as RedirectToActionResult;
-
-            // Assert
-            Assert.NotNull(actionResult);
-            Assert.NotNull(redirectToAction);
-            Assert.AreEqual(nameof(PledgesController.Create), redirectToAction.ActionName);
-        }
-
-        [Test]
-        public async Task POST_Create_Returns_Expected_Redirect()
-        {
-            // Arrange
-            var request = _fixture.Create<CreatePostRequest>();
-
-            // Act
-            var actionResult = await _pledgesController.Submit(request) as RedirectToActionResult;
-
-            // Assert
-            Assert.NotNull(actionResult);
-            Assert.AreEqual("Confirmation", actionResult.ActionName);
-            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
         }
 
         [Test]
@@ -479,12 +159,59 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         [Test]
         public async Task POST_Application_Rejection_Redirects_To_Applications()
         {
+            var mockTempData = new Mock<ITempDataDictionary>();
+            _pledgesController.TempData = mockTempData.Object;
+
             var request = _fixture.Create<ApplicationPostRequest>();
             request.SelectedAction = ApplicationPostRequest.ApprovalAction.Reject;
             _orchestrator.Setup(x => x.SetApplicationOutcome(It.Is<ApplicationPostRequest>(r => r.AccountId == request.AccountId && r.ApplicationId == request.ApplicationId && r.PledgeId == request.PledgeId))).Returns(Task.CompletedTask);
 
             var redirectResult = await _pledgesController.Application(request) as RedirectToActionResult;
 
+            Assert.NotNull(redirectResult);
+            Assert.AreEqual("Applications", redirectResult.ActionName);
+        }
+
+        [Test]
+        public void POST_Applications_Rejection_Redirects_To_Reject_Applications_Options()
+        {
+            // Arrange
+            var request = _fixture.Create<ApplicationsPostRequest>();
+            var listOfApplications = new List<string>
+            {
+                "9RMK6Y"
+            };
+            request.ApplicationsToReject = listOfApplications;
+
+            // Act
+            var redirectResult = _pledgesController.Applications(request) as RedirectToActionResult;
+
+            // Assert
+            Assert.NotNull(redirectResult);
+            Assert.AreEqual("RejectApplications", redirectResult.ActionName);
+        }
+
+        [Test]
+        public async Task POST_Reject_Applications_Action_Redirects_To_Updated_List_Of_Applications_On_Confirm()
+        {
+            // Arrange
+            var request = _fixture.Create<RejectApplicationsPostRequest>();
+            var listOfApplications = new List<string>
+            {
+                "9RMK6Y"
+            };
+            request.ApplicationsToReject = listOfApplications;
+            request.RejectConfirm = true;
+
+            var mockTempData = new Mock<ITempDataDictionary>();
+            _pledgesController.TempData = mockTempData.Object;
+
+            _orchestrator.Setup(x => x.RejectApplications(request)).Returns(Task.CompletedTask);
+
+            // Act
+            var redirectResult = await _pledgesController.RejectApplications(request) as RedirectToActionResult;
+
+            //Assert
             Assert.NotNull(redirectResult);
             Assert.AreEqual("Applications", redirectResult.ActionName);
         }
@@ -555,5 +282,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             Assert.AreEqual(request.EncodedPledgeId, actionResult.RouteValues["encodedPledgeId"]);
             Assert.AreEqual(request.EncodedApplicationId, actionResult.RouteValues["encodedApplicationId"]);
         }
+
     }
 }

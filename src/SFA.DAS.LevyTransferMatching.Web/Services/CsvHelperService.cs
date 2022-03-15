@@ -51,13 +51,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.Services
                 
                 AddLocationColumns(application, record, totalLocationColumnsRequired);
 
-                AddProperty(record, "Location Match", application.IsLocationMatch.ToYesNo());
+                AddProperty(record, "Location Match", application.MatchLocation.ToYesNo());
                 AddProperty(record, "Sectors", application.FormattedSectors);
-                AddProperty(record, "Sector Match",application.IsSectorMatch.ToYesNo());
+                AddProperty(record, "Sector Match",application.MatchSector.ToYesNo());
                 AddProperty(record, "Job Role", application.TypeOfJobRole);
-                AddProperty(record, "Job Role Match", application.IsJobRoleMatch.ToYesNo());
+                AddProperty(record, "Job Role Match", application.MatchJobRole.ToYesNo());
                 AddProperty(record, "Level", application.Level);
-                AddProperty(record, "Level Match", application.IsLevelMatch.ToYesNo());
+                AddProperty(record, "Level Match", application.MatchLevel.ToYesNo());
                 AddProperty(record, "Number of apprentices", application.NumberOfApprentices);
                 AddProperty(record, "Start By", application.StartBy);
                 AddProperty(record, "Have a training provider", application.HasTrainingProvider.ToYesNo());

@@ -35,6 +35,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 LocationList = locationList,
                 YearDescription = dateTime.ToTaxYearDescription(),
                 IsNamePublic = options.IsNamePublic,
+                HideFooter = options.HideFooter
             };
         }
 
@@ -51,6 +52,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             public bool IsNamePublic { get; set; }
             public string DasAccountName { get; set; }
             public string EncodedPledgeId { get; set; }
+            public bool HideFooter { get; set; }
         }
     }
 }
