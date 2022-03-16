@@ -160,12 +160,18 @@
                                 </table>
                          </fieldset>
                       </div>  
-                      <div class="das-highlight">
-                        <div class="govuk-button-group govuk-!-margin-bottom-0">
-                            <p class="govuk-body govuk-!-margin-bottom-0 govuk-!-padding-right-3">Reject selected applications:</p>
-                            <button class="govuk-button govuk-!-margin-bottom-0" data-module="govuk-button" id="applications-action" type="submit">Continue</button>
-                        </div>
-                      </div>
+                      @foreach (var app in Model.Applications)
+                      {
+                        @if (app.Status == SFA.DAS.LevyTransferMatching.Domain.Types.ApplicationStatus.Pending)
+                        {
+                            <div class="das-highlight">
+                                <div class="govuk-button-group govuk-!-margin-bottom-0">
+                                    <p class="govuk-body govuk-!-margin-bottom-0 govuk-!-padding-right-3">Reject selected applications:</p>
+                                    <button class="govuk-button govuk-!-margin-bottom-0" data-module="govuk-button" id="applications-action" type="submit">Continue</button>
+                                </div>
+                            </div>
+                        }
+                      }
                     </form>
                  } else
                  {
