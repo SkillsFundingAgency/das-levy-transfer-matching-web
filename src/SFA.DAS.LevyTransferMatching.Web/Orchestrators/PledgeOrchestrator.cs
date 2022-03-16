@@ -215,7 +215,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 UserCanClosePledge = result.PledgeStatus != PledgeStatus.Closed && isOwnerOrTransactor,
                 EncodedPledgeId = request.EncodedPledgeId,
                 RenderCreatePledgeButton = isOwnerOrTransactor,
-                Applications = viewModels
+                Applications = viewModels,
+                RenderContinueButton = viewModels.Where(x => x.Status == ApplicationStatus.Pending).ToList().Count() >= 1
             };
         }
 

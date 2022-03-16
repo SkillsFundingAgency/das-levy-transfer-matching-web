@@ -163,6 +163,52 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         }
 
         [Test]
+        public async Task GetApplications_With_Status_Pending_Renders_Continue_Button()
+        {
+            var response = new GetApplicationsResponse()
+            {
+                Applications = new List<GetApplicationsResponse.Application>()
+                {
+                    new GetApplicationsResponse.Application()
+                    {
+                        Id = 0,
+                        StartDate = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1),
+                        Status = ApplicationStatus.Pending
+                    }
+                }
+            };
+
+            _pledgeService.Setup(x => x.GetApplications(0, 0, null, null)).ReturnsAsync(response);
+            _encodingService.Setup(x => x.Encode(0, EncodingType.PledgeApplicationId)).Returns("123");
+
+            var result = await _orchestrator.GetApplications(new ApplicationsRequest() { EncodedAccountId = _encodedAccountId, EncodedPledgeId = _encodedPledgeId });
+            Assert.AreEqual(true, result.RenderContinueButton);
+        }
+
+        [Test]
+        public async Task GetApplications_With_Status_Not_Pending_Will_Not_Render_Continue_Button()
+        {
+            var response = new GetApplicationsResponse()
+            {
+                Applications = new List<GetApplicationsResponse.Application>()
+                {
+                    new GetApplicationsResponse.Application()
+                    {
+                        Id = 0,
+                        StartDate = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1),
+                        Status = ApplicationStatus.Withdrawn
+                    }
+                }
+            };
+
+            _pledgeService.Setup(x => x.GetApplications(0, 0, null, null)).ReturnsAsync(response);
+            _encodingService.Setup(x => x.Encode(0, EncodingType.PledgeApplicationId)).Returns("123");
+
+            var result = await _orchestrator.GetApplications(new ApplicationsRequest() { EncodedAccountId = _encodedAccountId, EncodedPledgeId = _encodedPledgeId });
+            Assert.AreEqual(false, result.RenderContinueButton);
+        }
+
+        [Test]
         public async Task GetRejectApplicationsViewModel_Returns_A_Valid_ViewModel()
         {
             var request = new RejectApplicationsRequest {
