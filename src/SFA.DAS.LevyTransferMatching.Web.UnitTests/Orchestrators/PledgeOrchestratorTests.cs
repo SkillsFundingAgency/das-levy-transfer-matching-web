@@ -165,7 +165,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         [TestCase(0 , false)]
         [TestCase(1, true)]
         [TestCase(2, true)]
-        public async Task GetApplications_With_Pending_Status_Will_Renders_Continue_Reject_Button(int numberOfPendingApplications, bool expectedRenderButton)
+        public async Task GetApplications_With_Pending_Status_Will_Renders_Reject_Button(int numberOfPendingApplications, bool expectedRenderButton)
         {
             var response = new GetApplicationsResponse()
             {
@@ -188,7 +188,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         [TestCase(ApplicationStatus.Approved)]
         [TestCase(ApplicationStatus.Accepted)]
         [TestCase(ApplicationStatus.Declined)]
-        public async Task GetApplications_Without_Pending_Status_Will_Not_Render_Continue_Render_Button(ApplicationStatus status)
+        public async Task GetApplications_Without_Pending_Status_Will_Not_Render_Reject_Button(ApplicationStatus status)
         {
             var response = new GetApplicationsResponse()
             {
