@@ -216,7 +216,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 EncodedPledgeId = request.EncodedPledgeId,
                 RenderCreatePledgeButton = isOwnerOrTransactor,
                 Applications = viewModels,
-                RenderContinueButton = viewModels.Where(x => x.Status == ApplicationStatus.Pending).ToList().Count() >= 1
+                RenderRejectButton = viewModels.Any(x => x.Status == ApplicationStatus.Pending)
             };
         }
 
