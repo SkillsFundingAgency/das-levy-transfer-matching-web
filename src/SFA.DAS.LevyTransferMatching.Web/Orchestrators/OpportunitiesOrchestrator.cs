@@ -67,25 +67,28 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             };
         }
 
-        public async Task<IndexViewModel> GetIndexViewModel()
+        public async Task<IndexViewModel> GetIndexViewModel(IndexRequest request)
         {
-            var response = await _opportunitiesService.GetIndex();
+            var response = await _opportunitiesService.GetIndex(request.Sectors);
 
             return new IndexViewModel
-            { 
+            {
                 Opportunities = response?.Opportunities
                     .Select(x => new IndexViewModel.Opportunity
                     {
                         Amount = x.Amount,
-                        EmployerName = x.IsNamePublic? x.DasAccountName : "Opportunity",
+                        EmployerName = x.IsNamePublic ? x.DasAccountName : "Opportunity",
                         ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),
                         Sectors = x.Sectors.ToReferenceDataDescriptionList(response.Sectors, "; "),
                         JobRoles = x.JobRoles.ToReferenceDataDescriptionList(response.JobRoles, "; "),
                         Levels = x.Levels.ToReferenceDataDescriptionList(response.Levels, descriptionSource: y => y.ShortDescription),
                         Locations = x.Locations.ToLocationsList()
-                    }).ToList()
+                    }).ToList(),
+                Sectors = response?.Sectors,
+                isSectorFilterApplied = request.Sectors != null && request.Sectors.Any()
             };
         }
+
 
         public async Task<SelectAccountViewModel> GetSelectAccountViewModel(SelectAccountRequest request)
         {
