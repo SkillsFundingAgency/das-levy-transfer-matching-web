@@ -12,5 +12,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public bool DisplayRejectedBanner { get; set; }
         public string RejectedEmployerName { get; set; }
         public bool RenderCreatePledgeButton { get; set; }
+        public bool RenderRejectButton { get; set; }
     }
 }
