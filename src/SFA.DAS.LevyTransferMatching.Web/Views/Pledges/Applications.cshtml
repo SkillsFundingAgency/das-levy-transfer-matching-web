@@ -1,5 +1,6 @@
 ﻿@using SFA.DAS.LevyTransferMatching.Domain.Extensions
 @using SFA.DAS.LevyTransferMatching.Web.Extensions
+@using SFA.DAS.LevyTransferMatching.Domain.Types
 @model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.ApplicationsViewModel
 @inject SFA.DAS.EmployerUrlHelper.ILinkGenerator LinkGenerator
 @{
@@ -10,6 +11,11 @@
         new Tuple<string, string>(LinkGenerator.FinanceLink($"accounts/{Model.EncodedAccountId}/transfers"), "Your transfers"),
         new Tuple<string, string>($"/accounts/{@Model.EncodedAccountId}/pledges", "My transfer pledges"),
         new Tuple<string, string>("", $"Transfer pledge {@Model.EncodedPledgeId}")
+    };
+    var ApplicationsPendingApproval = Model.Applications.Count(x => x.Status == ApplicationStatus.Pending);
+    string Pluralise(int count, string singular)
+    {
+        return count == 1 ? singular : singular + "s";
     };
 }
 
@@ -89,9 +95,20 @@
                     </div>
                 </div>
             </div>
-            @{
-                if (Model.Applications != null && Model.Applications.Any())
+        @{
+            if (Model.Applications != null && Model.Applications.Any())
+            {
+                if (ApplicationsPendingApproval != 0)
                 {
+                    <div class="govuk-grid-row">
+                        <div class="govuk-grid-column-two-thirds">
+                            <h2 class="govuk-heading-m">
+                                @ApplicationsPendingApproval @Pluralise(ApplicationsPendingApproval, "application") awaiting your approval
+                            </h2>
+                        </div>
+                    </div>
+                }
+
                     <form method="post" id="applications_actions_form">
                         <div class="govuk-form-group" das-highlight-error-for="ApplicationsToReject" error-class="govuk-form-group--error" id="ApplicationsToReject">
                             <fieldset class="govuk-fieldset">
