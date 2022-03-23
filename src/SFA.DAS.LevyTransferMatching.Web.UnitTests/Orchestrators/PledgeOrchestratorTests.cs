@@ -162,6 +162,51 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             });
         }
 
+        [TestCase(0 , false)]
+        [TestCase(1, true)]
+        [TestCase(2, true)]
+        public async Task GetApplications_With_Pending_Status_Will_Renders_Reject_Button(int numberOfPendingApplications, bool expectedRenderButton)
+        {
+            var response = new GetApplicationsResponse()
+            {
+                Applications = Enumerable.Range(0, numberOfPendingApplications)
+                                .Select(x => _fixture.Build<GetApplicationsResponse.Application>()
+                                .With(p => p.Id, 0)
+                                .With(p => p.Status, ApplicationStatus.Pending)
+                                .With(p => p.StartDate, new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1))
+                                .Create()).ToList()
+            };
+
+            _pledgeService.Setup(x => x.GetApplications(0, 0, null, null)).ReturnsAsync(response);
+            _encodingService.Setup(x => x.Encode(0, EncodingType.PledgeApplicationId)).Returns("123");
+
+            var result = await _orchestrator.GetApplications(new ApplicationsRequest() { EncodedAccountId = _encodedAccountId, EncodedPledgeId = _encodedPledgeId });
+            Assert.AreEqual(expectedRenderButton, result.RenderRejectButton);
+        }
+
+        [TestCase(ApplicationStatus.Withdrawn)]
+        [TestCase(ApplicationStatus.Approved)]
+        [TestCase(ApplicationStatus.Accepted)]
+        [TestCase(ApplicationStatus.Declined)]
+        public async Task GetApplications_Without_Pending_Status_Will_Not_Render_Reject_Button(ApplicationStatus status)
+        {
+            var response = new GetApplicationsResponse()
+            {
+                Applications = Enumerable.Range(0, 1)
+                              .Select(x => _fixture.Build<GetApplicationsResponse.Application>()
+                              .With(p => p.Id, 0)
+                              .With(p => p.Status, status)
+                              .With(p => p.StartDate, new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1))
+                              .Create()).ToList()
+            };
+
+            _pledgeService.Setup(x => x.GetApplications(0, 0, null, null)).ReturnsAsync(response);
+            _encodingService.Setup(x => x.Encode(0, EncodingType.PledgeApplicationId)).Returns("123");
+
+            var result = await _orchestrator.GetApplications(new ApplicationsRequest() { EncodedAccountId = _encodedAccountId, EncodedPledgeId = _encodedPledgeId });
+            Assert.AreEqual(false, result.RenderRejectButton);
+        }
+
         [Test]
         public async Task GetRejectApplicationsViewModel_Returns_A_Valid_ViewModel()
         {

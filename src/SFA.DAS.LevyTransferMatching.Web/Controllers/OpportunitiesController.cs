@@ -1,14 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
-using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
-using SFA.DAS.LevyTransferMatching.Web.Attributes;
-using System;
+﻿using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.LevyTransferMatching.Web.Attributes;
 using SFA.DAS.LevyTransferMatching.Web.Authentication;
+using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
+using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using SFA.DAS.LevyTransferMatching.Web.Validators;
-using FluentValidation.AspNetCore;
+using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
@@ -22,17 +22,17 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             _opportunitiesOrchestrator = opportunitiesOrchestrator;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(IndexRequest request)
         {
-            var viewModel = await _opportunitiesOrchestrator.GetIndexViewModel();
+            var viewModel = await _opportunitiesOrchestrator.GetIndexViewModel(request);
             return View(viewModel);
         }
-        
+
         [Route("opportunities/{encodedPledgeId}")]
         public async Task<IActionResult> Detail(DetailRequest detailRequest)
         {
             var viewModel = await _opportunitiesOrchestrator.GetDetailViewModel(detailRequest.PledgeId);
-        
+
             if (viewModel != null)
             {
                 return View(viewModel);
@@ -42,7 +42,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
                 return NotFound();
             }
         }
-        
+
         [HttpPost]
         [Route("opportunities/{encodedPledgeId}")]
         public IActionResult Detail(DetailPostRequest detailPostRequest)
@@ -73,7 +73,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
                 EncodedPledgeId = selectAccountRequest.EncodedOpportunityId,
             });
         }
-
 
         [HideAccountNavigation(false)]
         [Authorize(Policy = PolicyNames.ManageAccount)]
@@ -120,8 +119,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         public async Task<IActionResult> MoreDetails(MoreDetailsPostRequest request)
         {
             await _opportunitiesOrchestrator.UpdateCacheItem(request);
-            return RedirectToAction("Apply", new ApplicationRequest 
-            { 
+            return RedirectToAction("Apply", new ApplicationRequest
+            {
                 EncodedAccountId = request.EncodedAccountId,
                 EncodedPledgeId = request.EncodedPledgeId,
                 CacheKey = request.CacheKey
