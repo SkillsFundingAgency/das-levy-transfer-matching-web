@@ -24,6 +24,25 @@
     font-size: 36px;
     margin: 0 0 -5px;
 }
+
+.app-data {
+    padding: 20px;
+    margin-bottom: 20px;
+    background: #f3f2f1;
+}
+
+.app-data__title,
+.app-data__figure {
+    margin: 0;
+    padding: 0 !important;
+    color: inherit;
+}
+
+.app-data--information {
+    background: #d2e2f1;
+    color: #144e81;
+}
+
 @media (min-width: 40.0625em) {
     .app-task-list {
         min-width: 0;

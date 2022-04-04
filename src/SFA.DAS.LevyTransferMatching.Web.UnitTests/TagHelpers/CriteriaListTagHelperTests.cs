@@ -44,13 +44,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.TagHelpers
         [TestCase(true, true, true, true, 100, "<p class=\"govuk-!-margin-bottom-1\">100% match</p><ul class=\"app-criteria-list govuk-list govuk-list--bullet\"><li>Location</li><li>Sector</li><li>Job Role</li><li>Level</li></ul>")]
         public void ProcessReturnsCorrectHtml(bool isLocationMatch, bool isSectorMatch, bool isJobRoleMatch, bool isLevelMatch, int matchPercentage, string expectedOutput)
         {
-            var application = new ApplicationViewModel
+            var application = new ApplicationsViewModel.Application
             {
                 IsLocationMatch = isLocationMatch,
                 IsSectorMatch = isSectorMatch,
                 IsJobRoleMatch = isJobRoleMatch,
-                IsLevelMatch = isLevelMatch,
-                MatchPercentage = matchPercentage
+                IsLevelMatch = isLevelMatch
             };
             
             _tagHelper.Application = application;

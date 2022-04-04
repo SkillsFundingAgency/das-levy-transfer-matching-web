@@ -11,7 +11,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
     public class CriteriaListTagHelper : TagHelper
     {
         [HtmlAttributeName("application")]
-        public ApplicationViewModel Application { get; set; }
+        public ApplicationsViewModel.Application Application { get; set; }
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {

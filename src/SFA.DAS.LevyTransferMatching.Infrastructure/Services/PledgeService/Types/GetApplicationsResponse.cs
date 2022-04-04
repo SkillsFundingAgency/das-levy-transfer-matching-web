@@ -10,6 +10,8 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Typ
         public IEnumerable<Application> Applications { get; set; }
 
         public PledgeStatus PledgeStatus { get; set; }
+        public int PledgeRemainingAmount { get; set; }
+        public int PledgeTotalAmount { get; set; }
 
         public class Application
         {

@@ -185,7 +185,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             var viewModels = (from application in result.Applications
                 let pledgeApplication = result.Applications.First(x => x.PledgeId == application.PledgeId)
-                              select new ApplicationViewModel
+                              select new ApplicationsViewModel.Application
                               {
                                   EncodedApplicationId = _encodingService.Encode(application.Id, EncodingType.PledgeApplicationId),
                                   DasAccountName = application.DasAccountName,
@@ -205,8 +205,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                                   JobRole = pledgeApplication.JobRole,
                                   PledgeRemainingAmount = pledgeApplication.PledgeRemainingAmount,
                                   MaxFunding = pledgeApplication.MaxFunding,
-                                  Details = pledgeApplication.Details,
-                                  ApplicationId = application.Id,
+                                  Details = pledgeApplication.Details
                               }).ToList();
 
             return new ApplicationsViewModel
@@ -214,9 +213,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 EncodedAccountId = request.EncodedAccountId,
                 UserCanClosePledge = result.PledgeStatus != PledgeStatus.Closed && isOwnerOrTransactor,
                 EncodedPledgeId = request.EncodedPledgeId,
-                RenderCreatePledgeButton = isOwnerOrTransactor,
-                Applications = viewModels,
-                RenderRejectButton = viewModels.Any(x => x.Status == ApplicationStatus.Pending)
+                RenderCreatePledgeButton = isOwnerOrTransactor,                
+                RenderRejectButton = viewModels.Any(x => x.Status == ApplicationStatus.Pending),
+                PledgeTotalAmount = result.PledgeTotalAmount.ToCurrencyString(),
+                PledgeRemainingAmount = result.PledgeRemainingAmount.ToCurrencyString(),
+                Applications = viewModels
             };
         }
 
