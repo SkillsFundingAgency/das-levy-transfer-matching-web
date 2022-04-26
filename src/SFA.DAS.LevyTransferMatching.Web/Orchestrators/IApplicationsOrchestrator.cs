@@ -12,5 +12,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         Task<AcceptedViewModel> GetAcceptedViewModel(AcceptedRequest request);
         Task<DeclinedViewModel> GetDeclinedViewModel(DeclinedRequest request);
         Task<WithdrawnViewModel> GetWithdrawnViewModel(WithdrawnRequest request);
+        Task<WithdrawalConfirmationViewModel> GetWithdrawalConfirmationViewModel(WithdrawalConfirmationRequest request);
+        Task WithdrawApplicationAfterAcceptance(ConfirmWithdrawalPostRequest request);
     }
 }

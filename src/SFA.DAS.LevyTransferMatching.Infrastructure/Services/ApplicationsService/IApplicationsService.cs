@@ -12,5 +12,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsServi
         Task<GetAcceptedResponse> GetAccepted(long accountId, int applicationId);
         Task<GetDeclinedResponse> GetDeclined(long accountId, int applicationId);
         Task<GetWithdrawnResponse> GetWithdrawn(long accountId, int applicationId);
+        Task<GetWithdrawalConfirmationResponse> GetWithdrawalConfirmation(long accountId, int applicationId);
+        Task WithdrawApplicationAfterAcceptance(WithdrawApplicationAfterAcceptanceRequest request, long accountId, int applicationId);
     }
 }

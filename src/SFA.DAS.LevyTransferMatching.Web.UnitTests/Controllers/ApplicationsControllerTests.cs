@@ -241,5 +241,62 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             Assert.NotNull(actionResult);
             Assert.NotNull(notFoundResult);
         }
+
+        [Test]
+        public async Task GET_WithdrawalConfirmation_ReturnsViewAndModel()
+        {
+            // Arrange
+            var request = _fixture.Create<WithdrawalConfirmationRequest>();
+            _orchestrator
+                .Setup(x => x.GetWithdrawalConfirmationViewModel(It.Is<WithdrawalConfirmationRequest>(y => y == request)))
+                .ReturnsAsync(new WithdrawalConfirmationViewModel());
+
+            // Act
+            var actionResult = await _controller.WithdrawalConfirmation(request);
+            var viewResult = actionResult as ViewResult;
+            var model = viewResult.Model;
+            var declinedViewModel = model as WithdrawalConfirmationViewModel;
+
+            // Assert
+            Assert.NotNull(actionResult);
+            Assert.NotNull(viewResult);
+            Assert.NotNull(model);
+            Assert.NotNull(declinedViewModel);
+        }
+
+        [Test]
+        public async Task POST_ConfirmWithdrawal_Returns_Expected_Redirect_When_Confirmed()
+        {
+            // Arrange
+            var request = _fixture.Build<ConfirmWithdrawalPostRequest>()
+                .With(x => x.HasConfirmed, true)
+                .Create();
+
+            // Act
+            var actionResult = await _controller.ConfirmWithdrawal(request) as RedirectToActionResult;
+
+            // Assert
+            Assert.NotNull(actionResult);
+            Assert.AreEqual("Withdrawn", actionResult.ActionName);
+            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
+            Assert.AreEqual(request.EncodedApplicationId, actionResult.RouteValues["encodedApplicationId"]);
+        }
+
+        [Test]
+        public async Task POST_ConfirmWithdrawal_Returns_Expected_Redirect_When_Cancelled()
+        {
+            // Arrange
+            var request = _fixture.Build<ConfirmWithdrawalPostRequest>()
+                .With(x => x.HasConfirmed, false)
+                .Create();
+
+            // Act
+            var actionResult = await _controller.ConfirmWithdrawal(request) as RedirectToActionResult;
+
+            // Assert
+            Assert.NotNull(actionResult);
+            Assert.AreEqual("Applications", actionResult.ActionName);
+            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
+        }
     }
 }
