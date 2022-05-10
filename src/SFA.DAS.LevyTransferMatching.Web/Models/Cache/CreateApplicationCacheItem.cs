@@ -30,7 +30,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Cache
         public string AdditionLocationText { get; set; }
         public string SpecificLocation { get; set; }
         public string FirstName { get; set; }
-        public int Amount { get; set; }
         public string LastName { get; set; }
         public List<string> EmailAddresses { get; set; }
         public string BusinessWebsite { get; set; }
