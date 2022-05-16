@@ -19,6 +19,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
     {
         private const int MaximumNumberAdditionalEmailAddresses = 4;
 
+        private readonly IDateTimeService _dateTimeService;
         private readonly ICacheStorageService _cacheStorageService;
         private readonly IOpportunitiesService _opportunitiesService;
         private readonly IEncodingService _encodingService;
@@ -26,6 +27,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
         public OpportunitiesOrchestrator(IDateTimeService dateTimeService, IOpportunitiesService opportunitiesService, IUserService userService, IEncodingService encodingService, ICacheStorageService cacheStorageService) : base(dateTimeService)
         {
+            _dateTimeService = dateTimeService;
             _opportunitiesService = opportunitiesService;
             _encodingService = encodingService;
             _userService = userService;
@@ -459,9 +461,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                         LarsCode = app.LarsCode,
                         Level = app.Level,
                         Title = app.Title,
-                        Selected = !string.IsNullOrEmpty(application.StandardId) && (app.StandardUId == application.StandardId) ? "selected": null
+                        Selected = !string.IsNullOrEmpty(application.StandardId) && (app.StandardUId == application.StandardId) ? "selected" : null
                     }),
                 },
+                CurrentFinancialYear = _dateTimeService.UtcNow.ToTaxYearDescription()
             };
         }
 
