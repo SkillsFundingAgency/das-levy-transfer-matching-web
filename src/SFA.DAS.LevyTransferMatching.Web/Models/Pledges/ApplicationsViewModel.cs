@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using SFA.DAS.LevyTransferMatching.Domain.Types;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
@@ -16,6 +17,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public bool RenderRejectButton { get; set; }
         public string PledgeTotalAmount { get; set; }
         public string PledgeRemainingAmount { get; set; }
+        public int ApplicationsPendingApproval { get => Applications.Count(x => x.Status == ApplicationStatus.Pending); }
+        public bool RenderApplicationsList { get => Applications != null && Applications.Any(); }
 
         public class Application
         {
