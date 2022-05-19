@@ -27,7 +27,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Extensions
 
             var net = apprenticeshipFunding.MaxEmployerLevyCap - (apprenticeshipFunding.MaxEmployerLevyCap * 0.2);
             var monthlyCost = (net / apprenticeshipFunding.Duration);
-            var cost = monthlyCost * startDate.MonthsTillFinancialYearEnd();
+            var cost = monthlyCost * (startDate.MonthsTillFinancialYearEnd() - 1);
 
             return (cost * numberOfApprentices ?? 0).ToNearest(100);
         }

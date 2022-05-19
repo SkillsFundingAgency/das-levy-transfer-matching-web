@@ -143,7 +143,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 NumberOfApprentices = cacheItem.NumberOfApprentices.Value,
                 StartDate = cacheItem.StartDate.Value,
                 HasTrainingProvider = cacheItem.HasTrainingProvider.Value,
-                Amount = cacheItem.Amount,
                 Sectors = cacheItem.Sectors,
                 Locations = cacheItem.Locations,
                 AdditionalLocation = cacheItem.AdditionalLocation ? cacheItem.AdditionLocationText : string.Empty,
@@ -384,7 +383,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             cacheItem.NumberOfApprentices = request.ParsedNumberOfApprentices;
             cacheItem.StartDate = request.StartDate;
             cacheItem.HasTrainingProvider = request.HasTrainingProvider.Value;
-            cacheItem.Amount = amount;
 
             await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
         }

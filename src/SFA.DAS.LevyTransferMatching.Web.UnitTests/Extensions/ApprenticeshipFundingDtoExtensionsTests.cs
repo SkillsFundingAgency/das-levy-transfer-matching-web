@@ -84,7 +84,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
 
             var result = sut.CalcFundingForDate(1, new DateTime(2021, 9, 1));
 
-            Assert.AreEqual(4_100, result);
+            Assert.AreEqual(3500, result);
         }
 
         [Test]
@@ -100,7 +100,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
 
             var result = sut.CalcFundingForDate(2, new DateTime(2021, 10, 1));
 
-            Assert.AreEqual(8_000, result);
+            Assert.AreEqual(6700, result);
         }
 
         [Test]
@@ -116,7 +116,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
 
             var result = sut.CalcFundingForDate(1, new DateTime(2021, 2, 1));
 
-            Assert.AreEqual(1_600, result);
+            Assert.AreEqual(800, result);
         }
 
         [TestCase(1, 15000, 15000)]
