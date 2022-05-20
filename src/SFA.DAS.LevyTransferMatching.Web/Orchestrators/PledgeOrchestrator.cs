@@ -210,6 +210,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             return new ApplicationsViewModel
             {
+                TaxYear = _dateTimeService.UtcNow.ToTaxYearDescription(),
                 EncodedAccountId = request.EncodedAccountId,
                 UserCanClosePledge = result.PledgeStatus != PledgeStatus.Closed && isOwnerOrTransactor,
                 EncodedPledgeId = request.EncodedPledgeId,

@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using SFA.DAS.LevyTransferMatching.Domain.Types;
-using SFA.DAS.LevyTransferMatching.Web.Extensions;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 {
     public class ApplicationsViewModel : ApplicationsPostRequest
     {
-        public string TaxYear => DateTime.UtcNow.ToTaxYearDescription();
+        public string TaxYear { get; set; }
         public IEnumerable<Application> Applications { get; set; }
         public bool UserCanClosePledge { get; set; }
         public bool DisplayRejectedBanner { get; set; }

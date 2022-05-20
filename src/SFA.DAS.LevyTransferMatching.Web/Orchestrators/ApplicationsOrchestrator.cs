@@ -41,7 +41,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 NumberOfApprentices = app.NumberOfApprentices,
                 PledgeReference = _encodingService.Encode(app.PledgeId, EncodingType.PledgeId),
                 IsNamePublic = app.IsNamePublic,
-                EstimatedTotalCost = MonetaryUtilityFunctions.CalculateEstimatedTotalCost(app.Amount, app.NumberOfApprentices).ToCurrencyString()
+                EstimatedTotalCost = app.TotalAmount.ToCurrencyString()
             }).ToList();
 
             var viewModel = new GetApplicationsViewModel()
@@ -97,7 +97,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                  StartBy = result.StartBy,
                  Status = result.Status,
                  EncodedOpportunityId = encodedOpportunityId,
-                 EstimatedTotalCost = MonetaryUtilityFunctions.CalculateEstimatedTotalCost(result.Amount, result.NumberOfApprentices).ToCurrencyString(),
+                 EstimatedTotalCost = result.TotalAmount.ToCurrencyString(),
                  CanAcceptFunding = isOwnerOrTransactor && result.Status == ApplicationStatus.Approved,
                  CanUseTransferFunds = isOwnerOrTransactor && result.Status == ApplicationStatus.Accepted,
                  EncodedSenderPublicAccountId = encodedSenderPublicAccountId,

@@ -20,5 +20,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
         public bool? HasTrainingProvider { get; set; }
         public SelectStandardViewModel SelectStandardViewModel { get; set; }
         public int SelectedStandardId { get; set; }
+        public string CurrentFinancialYear { get; set; }
     }
 }
