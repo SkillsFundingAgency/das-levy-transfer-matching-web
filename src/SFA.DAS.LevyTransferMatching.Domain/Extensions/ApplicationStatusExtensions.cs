@@ -15,6 +15,7 @@ namespace SFA.DAS.LevyTransferMatching.Domain.Extensions
                 case ApplicationStatus.Rejected: return "REJECTED";
                 case ApplicationStatus.Declined: return "WITHDRAWN BY APPLICANT";
                 case ApplicationStatus.Withdrawn: return "WITHDRAWN BY APPLICANT";
+                case ApplicationStatus.WithdrawnAfterAcceptance: return "WITHDRAWN BY APPLICANT";
                 default:
                     return string.Empty;
             }
@@ -31,6 +32,7 @@ namespace SFA.DAS.LevyTransferMatching.Domain.Extensions
                 case ApplicationStatus.Rejected: return "govuk-tag govuk-tag--red";
                 case ApplicationStatus.Declined: return "govuk-tag govuk-tag--yellow";
                 case ApplicationStatus.Withdrawn: return "govuk-tag govuk-tag--yellow";
+                case ApplicationStatus.WithdrawnAfterAcceptance: return "govuk-tag govuk-tag--yellow";
                 default:
                     return string.Empty;
             }
@@ -47,6 +49,7 @@ namespace SFA.DAS.LevyTransferMatching.Domain.Extensions
                 case ApplicationStatus.FundsUsed: return "FUNDS USED";
                 case ApplicationStatus.Declined: return "WITHDRAWN";
                 case ApplicationStatus.Withdrawn: return "WITHDRAWN";
+                case ApplicationStatus.WithdrawnAfterAcceptance: return "WITHDRAWN";
                 default:
                     return string.Empty;
             }
@@ -63,6 +66,7 @@ namespace SFA.DAS.LevyTransferMatching.Domain.Extensions
                 case ApplicationStatus.FundsUsed: return "govuk-tag govuk-tag--pink";
                 case ApplicationStatus.Declined: return "govuk-tag govuk-tag--yellow";
                 case ApplicationStatus.Withdrawn: return "govuk-tag govuk-tag--yellow";
+                case ApplicationStatus.WithdrawnAfterAcceptance: return "govuk-tag govuk-tag--yellow";
                 default:
                     return string.Empty;
             }
