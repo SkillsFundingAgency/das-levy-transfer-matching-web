@@ -1,0 +1,50 @@
+﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Applications.WithdrawalConfirmationViewModel
+
+@{
+    ViewData["Title"] = "Confirm withdrawal";
+}
+
+<a href="@Url.Action("Application", new { Model.EncodedAccountId, Model.EncodedApplicationId })" class="govuk-back-link">Back</a>
+<main class="govuk-main-wrapper" id="main-content" role="main">
+
+    <partial name="_ValidationSummary" />
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <h1 class="govuk-heading-xl">Withdraw transfer application to @Model.PledgeEmployerName (@Model.EncodedPledgeId)</h1>
+
+            <form method="post">
+                <div class="govuk-form-group" das-highlight-error-for="HasConfirmed" error-class="govuk-form-group--error" id="HasConfirmed">
+                    <fieldset class="govuk-fieldset">
+
+                        <legend class="govuk-fieldset__legend">
+                            <h1 class="govuk-fieldset__heading govuk-label--s">Are you sure you want to withdraw this transfer application?</h1>
+                        </legend>
+
+                        <span das-validation-for="HasConfirmed" class="govuk-error-message"></span>
+
+                        <div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios">
+
+                            <div class="govuk-radios__item">
+                                <input class="govuk-radios__input" id="withdraw-application-yes" asp-for="HasConfirmed" value="true" type="radio" data-aria-controls="condition-withdraw-application-yes" das-highlight-error-for="HasConfirmed" error-class="govuk-textarea--error">
+                                <label class="govuk-label govuk-radios__label" for="withdraw-application-yes">Yes, withdraw transfer application</label>
+                            </div>
+
+                            <div class="govuk-radios__item">
+                                <input class="govuk-radios__input" id="withdraw-application-no" asp-for="HasConfirmed" value="false" type="radio" das-highlight-error-for="HasConfirmed" error-class="govuk-textarea--error">
+                                <label class="govuk-label govuk-radios__label" for="withdraw-application-no">No, keep transfer application</label>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <div class="govuk-button-group">
+                     <button class="govuk-button" data-module="govuk-button" id="withdraw-application-continue" type="submit">Continue</button>
+
+                    <a class="govuk-link" href="@Url.Action("Application", new { EncodedAccountId = Model.EncodedAccountId, EncodedApplicationId = Model.EncodedApplicationId })">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>

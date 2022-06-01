@@ -106,5 +106,20 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsServi
 
             return getWithdrawnResponse;
         }
+
+        public async Task<GetWithdrawalConfirmationResponse> GetWithdrawalConfirmation(long accountId, int applicationId)
+        {
+            var response = await _httpClient.GetAsync($"accounts/{accountId}/applications/{applicationId}/withdrawal-confirmation");
+            response.EnsureSuccessStatusCode();
+
+            return JsonConvert.DeserializeObject<GetWithdrawalConfirmationResponse>(await response.Content.ReadAsStringAsync());
+        }
+
+        public async Task WithdrawApplicationAfterAcceptance(WithdrawApplicationAfterAcceptanceRequest request, long accountId, int applicationId)
+        {
+            var json = JsonConvert.SerializeObject(request);
+            var response = await _httpClient.PostAsync($"accounts/{accountId}/applications/{applicationId}/withdrawal-confirmation", new StringContent(json, System.Text.Encoding.UTF8, "application/json"));
+            response.EnsureSuccessStatusCode();
+        }
     }
 }

@@ -290,5 +290,95 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             Assert.IsNotNull(viewModel);
             Assert.AreEqual(true, viewModel.CanUseTransferFunds);
         }
+
+        [Test]
+        public async Task GetApplicationViewModel_IsOwnerAndTransactorAndStatusEqualsAcceptedAndIsWithdrawable_ReturnsViewModelWithRenderWithdrawButton()
+        {
+            // Arrange
+            var request = _fixture.Create<ApplicationRequest>();
+            var response = _fixture.Create<GetApplicationResponse>();
+            var encodedPledgeId = _fixture.Create<string>();
+
+            _mockApplicationsService
+                .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId), CancellationToken.None))
+                .ReturnsAsync(response);
+
+            _mockEncodingService
+                .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
+                .Returns(encodedPledgeId);
+
+            response.Status = ApplicationStatus.Accepted;
+            response.IsWithdrawableAfterAcceptance = true;
+            _mockUserService.Setup(o => o.IsOwnerOrTransactor(It.IsAny<long>())).Returns(true);
+
+            // Act
+            var viewModel = await _applicationsOrchestrator.GetApplication(request);
+
+            // Assert
+            Assert.IsNotNull(viewModel);
+            Assert.AreEqual(true, viewModel.RenderWithdrawAfterAcceptanceButton);
+        }
+
+        [Test]
+        public async Task GetWithdrawalConfirmationViewModel_ReturnsViewModel()
+        {
+            // Arrange
+            var request = _fixture.Create<WithdrawalConfirmationRequest>();
+            var response = _fixture.Create<GetWithdrawalConfirmationResponse>();
+            var encodedPledgeId = _fixture.Create<string>();
+            var encodedAccountId = _fixture.Create<string>();
+            var encodedApplicationId = _fixture.Create<string>();
+
+            _mockApplicationsService
+                .Setup(x => x.GetWithdrawalConfirmation(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId)))
+                .ReturnsAsync(response);
+
+            _mockEncodingService
+                .Setup(x => x.Encode(It.Is<long>(y => y == response.PledgeId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
+                .Returns(encodedPledgeId);
+
+            _mockEncodingService
+                .Setup(x => x.Encode(It.Is<long>(y => y == request.AccountId), It.Is<EncodingType>(y => y == EncodingType.AccountId)))
+                .Returns(encodedAccountId);
+
+            _mockEncodingService
+                .Setup(x => x.Encode(It.Is<long>(y => y == request.ApplicationId), It.Is<EncodingType>(y => y == EncodingType.PledgeApplicationId)))
+                .Returns(encodedApplicationId);
+
+            // Act
+            var viewModel = await _applicationsOrchestrator.GetWithdrawalConfirmationViewModel(request);
+
+            // Assert
+            Assert.IsNotNull(viewModel);
+            Assert.AreEqual(response.PledgeEmployerName, viewModel.PledgeEmployerName);
+            Assert.AreEqual(encodedPledgeId, viewModel.EncodedPledgeId);
+            Assert.AreEqual(encodedAccountId, viewModel.EncodedAccountId);
+            Assert.AreEqual(encodedApplicationId, viewModel.EncodedApplicationId);
+        }
+
+        [Test]
+        public async Task WithdrawConfirmationAfterAcceptance_CallsService()
+        {
+            // Arrange
+            var request = _fixture.Create<ConfirmWithdrawalPostRequest>();
+            var expectedUserId = _fixture.Create<string>();
+            var expectedUserDisplayName = _fixture.Create<string>();
+
+            _mockUserService
+                .Setup(x => x.GetUserId())
+                .Returns(expectedUserId);
+            _mockUserService
+                .Setup(x => x.GetUserDisplayName())
+                .Returns(expectedUserDisplayName);
+
+            // Act
+            await _applicationsOrchestrator.WithdrawApplicationAfterAcceptance(request);
+
+            // Assert
+            _mockApplicationsService.Verify(x => x.WithdrawApplicationAfterAcceptance(
+                                                    It.Is<WithdrawApplicationAfterAcceptanceRequest>(y => y.UserId == expectedUserId && y.UserDisplayName == expectedUserDisplayName),
+                                                    request.AccountId,
+                                                    request.ApplicationId), Times.Once);
+        }
     }
 }

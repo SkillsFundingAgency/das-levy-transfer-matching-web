@@ -34,5 +34,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsServi
         public int AmountUsed { get; set; }
         public int NumberOfApprenticesUsed { get; set; }
         public bool AutomaticApproval { get; set; }
+        public bool IsWithdrawableAfterAcceptance { get; set; }
     }
 }

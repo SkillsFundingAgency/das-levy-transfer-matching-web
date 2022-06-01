@@ -110,5 +110,28 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
             return NotFound();
         }
+
+        [HttpGet]
+        [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}/withdrawal-confirmation")]
+        public async Task<IActionResult> WithdrawalConfirmation(WithdrawalConfirmationRequest request)
+        {
+            var viewModel = await _applicationsOrchestrator.GetWithdrawalConfirmationViewModel(request);
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}/withdrawal-confirmation")]
+        public async Task<IActionResult> ConfirmWithdrawal(ConfirmWithdrawalPostRequest request)
+        {
+            if (request.HasConfirmed.Value)
+            {
+                await _applicationsOrchestrator.WithdrawApplicationAfterAcceptance(request);
+
+                return RedirectToAction("Withdrawn", new { request.EncodedAccountId, request.EncodedApplicationId });
+            }
+
+            return RedirectToAction("Applications", new { request.EncodedAccountId });
+        }
     }
 }

@@ -44,6 +44,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
         public bool RenderCanUseTransferFundsStartButton { get; set; }
         public bool CanWithdraw { get; set; }
         public bool IsWithdrawalConfirmed { get; set; }
+        public bool RenderWithdrawAfterAcceptanceButton { get; set; }
         public enum ApprovalAction
         {
             Accept,

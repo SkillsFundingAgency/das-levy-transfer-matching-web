@@ -106,7 +106,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                  AmountUsed = result.AmountUsed.ToCurrencyString(),
                  AmountRemaining = (result.TotalAmount - result.AmountUsed) < 0 ? 0.ToCurrencyString() : (result.TotalAmount - result.AmountUsed).ToCurrencyString(),
                  NumberOfApprenticesRemaining = (result.NumberOfApprentices - result.NumberOfApprenticesUsed) < 0 ? 0 : (result.NumberOfApprentices - result.NumberOfApprenticesUsed),
-                 CanWithdraw = isOwnerOrTransactor && result.Status == ApplicationStatus.Pending
+                 CanWithdraw = isOwnerOrTransactor && result.Status == ApplicationStatus.Pending,
+                 RenderWithdrawAfterAcceptanceButton = isOwnerOrTransactor && result.Status == ApplicationStatus.Accepted && result.IsWithdrawableAfterAcceptance
             };
         }
 
@@ -177,6 +178,30 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 EncodedApplicationId = request.EncodedApplicationId,
                 EmployerNameAndReference = $"{result.EmployerAccountName} ({encodedPledgeId})",
             };
+        }
+
+        public async Task<WithdrawalConfirmationViewModel> GetWithdrawalConfirmationViewModel(WithdrawalConfirmationRequest request)
+        {
+            var result = await _applicationsService.GetWithdrawalConfirmation(request.AccountId, request.ApplicationId);
+
+            return new WithdrawalConfirmationViewModel
+            {
+                PledgeEmployerName = result.PledgeEmployerName,
+                EncodedAccountId = _encodingService.Encode(request.AccountId, EncodingType.AccountId),
+                EncodedApplicationId = _encodingService.Encode(request.ApplicationId, EncodingType.PledgeApplicationId),
+                EncodedPledgeId = _encodingService.Encode(result.PledgeId, EncodingType.PledgeId)
+            };
+        }
+
+        public async Task WithdrawApplicationAfterAcceptance(ConfirmWithdrawalPostRequest request)
+        {
+            var withDrawApplicationAfterAcceptanceRequest = new WithdrawApplicationAfterAcceptanceRequest
+            {
+                UserId = _userService.GetUserId(),
+                UserDisplayName = _userService.GetUserDisplayName()
+            };
+
+            await _applicationsService.WithdrawApplicationAfterAcceptance(withDrawApplicationAfterAcceptanceRequest, request.AccountId, request.ApplicationId);
         }
     }
 }
