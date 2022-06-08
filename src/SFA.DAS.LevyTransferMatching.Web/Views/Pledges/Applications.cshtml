@@ -61,6 +61,29 @@
 
             </div>
         </div>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-third">
+                <div class="app-data ">
+                    <p class="govuk-heading-s app-data__title">
+                        Pledged funds for @Model.TaxYear
+                    </p>
+                    <p class="govuk-heading-l app-data__figure">
+                        @Model.PledgeTotalAmount
+                    </p>
+                </div>
+            </div>
+            <div class="govuk-grid-column-one-third">
+                <div class="app-data app-data--information">
+                    <p class="govuk-heading-s app-data__title">
+                        Remaining funds for @Model.TaxYear
+                    </p>
+                    <p class="govuk-heading-l app-data__figure">
+                        @Model.PledgeRemainingAmount
+                    </p>
+                </div>
+            </div>
+        </div>
         
         @if (Model.Applications.Any())
         {
