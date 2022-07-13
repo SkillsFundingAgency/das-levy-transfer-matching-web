@@ -19,6 +19,8 @@ jobs:
             EnvironmentId: $(Environment.Id)
             PipelineName: $(Build.DefinitionName)
             RunId: $(Build.BuildId)
+        - pwsh: |
+            Start-Sleep -Seconds 240 # Do Better. This gives time for the old pods to remove themselves from the pool before AcceptanceTests.
         - template: azure-pipelines-templates/deploy/step/arm-deploy.yml@das-platform-building-blocks
           parameters:
             ServiceConnection: ${{ parameters.ServiceConnection }}
