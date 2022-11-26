@@ -19,6 +19,8 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using Microsoft.AspNetCore.Http;
+using SFA.DAS.GovUK.Auth.Services;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsers;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService;
 using SFA.DAS.LevyTransferMatching.Web.Services;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Location;
@@ -48,11 +50,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
             services.AddTransient<ICsvHelperService, CsvHelperService>();
             services.AddTransient<IUserService>((s) => new UserService(s.GetService<IHttpContextAccessor>()));
             services.AddSingleton<IDateTimeService, DateTimeService>();
-
+            services.AddTransient<ICustomClaims, PostAuthenticationClaimsHandler>();
+            
             services.AddClient<IPledgeService>((c, s) => new PledgeService(c));
             services.AddClient<IOpportunitiesService>((c, s) => new OpportunitiesService(c));
             services.AddClient<ILocationService>((c, s) => new LocationService(c));
             services.AddClient<IApplicationsService>((c, s) => new ApplicationsService(c));
+            services.AddClient<IAccountUserService>((c, s) => new AccountUserService(c));
         }
 
         private static IServiceCollection AddClient<T>(
