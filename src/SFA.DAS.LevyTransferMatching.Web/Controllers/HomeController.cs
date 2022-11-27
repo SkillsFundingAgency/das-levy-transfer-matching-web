@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Mvc;
@@ -30,14 +32,20 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         }
 
         [Route("signout", Name= "signout")]
-        public IActionResult SignOut()
+        public async Task<IActionResult> SignOut()
         {
+            var idToken = await HttpContext.GetTokenAsync("id_token");
+
+            var authenticationProperties = new AuthenticationProperties
+            {
+                RedirectUri = "",
+                AllowRefresh = true
+            };
+            authenticationProperties.Parameters.Clear();
+            authenticationProperties.Parameters.Add("id_token",idToken);
+            
             return SignOut(
-                new Microsoft.AspNetCore.Authentication.AuthenticationProperties
-                {
-                    RedirectUri = "",
-                    AllowRefresh = true
-                },
+                authenticationProperties,
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 OpenIdConnectDefaults.AuthenticationScheme);
         }
