@@ -16,12 +16,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
     public class PostAuthenticationClaimsHandler : ICustomClaims
     {
         private readonly IAccountUserService _accountUserService;
-        private readonly LevyTransferMatchingWeb _configuration;
+        private readonly Infrastructure.Configuration.FeatureToggles _configuration;
 
-        public PostAuthenticationClaimsHandler(IAccountUserService accountUserService, IOptions<LevyTransferMatchingWeb> configuration)
+        public PostAuthenticationClaimsHandler(IAccountUserService accountUserService, Infrastructure.Configuration.FeatureToggles configuration)
         {
             _accountUserService = accountUserService;
-            _configuration = configuration.Value;
+            _configuration = configuration;
         }
         
         public async Task<IEnumerable<Claim>> GetClaims(TokenValidatedContext tokenValidatedContext)

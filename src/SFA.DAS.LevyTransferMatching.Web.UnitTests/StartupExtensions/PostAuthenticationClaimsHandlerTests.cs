@@ -30,7 +30,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.StartupExtensions
         private PostAuthenticationClaimsHandler _handler;
         private GetUserAccountsResponse _response;
         private Mock<IAccountUserService> _accountUserService;
-        private Mock<IOptions<LevyTransferMatchingWeb>> _configuration;
+        private Infrastructure.Configuration.FeatureToggles _configuration;
         private string _legacyId;
 
         [SetUp]
@@ -45,11 +45,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.StartupExtensions
             _legacyId = fixture.Create<string>();
             _emailNotMatching = fixture.Create<string>();
 
-            _configuration = new Mock<IOptions<LevyTransferMatchingWeb>>();
-            _configuration.Setup(x => x.Value).Returns(new LevyTransferMatchingWeb
+            _configuration = new Infrastructure.Configuration.FeatureToggles
             {
                 UseGovSignIn = true
-            });
+            };
             _accountUserService = new Mock<IAccountUserService>();
             _accountUserService.Setup(x => x.GetUserAccounts(_email, _userId)).ReturnsAsync(_response);
             _accountUserService.Setup(x => x.GetUserAccounts(_emailNotMatching, _userId)).ReturnsAsync(new GetUserAccountsResponse
@@ -60,7 +59,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.StartupExtensions
                 LastName = fixture.Create<string>()
             });
 
-            _handler = new PostAuthenticationClaimsHandler(_accountUserService.Object, _configuration.Object);
+            _handler = new PostAuthenticationClaimsHandler(_accountUserService.Object, _configuration);
 
         }
         [Test]

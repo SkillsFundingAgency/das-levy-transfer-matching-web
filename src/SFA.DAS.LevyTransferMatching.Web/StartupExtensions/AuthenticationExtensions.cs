@@ -18,8 +18,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
     {
         public static void AddEmployerAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
-            if (configuration[$"{nameof(LevyTransferMatchingWeb)}:UseGovSignIn"] != null 
-                && configuration[$"{nameof(LevyTransferMatchingWeb)}:UseGovSignIn"]
+            if (configuration[$"{nameof(Infrastructure.Configuration.FeatureToggles)}:UseGovSignIn"] != null 
+                && configuration[$"{nameof(Infrastructure.Configuration.FeatureToggles)}:UseGovSignIn"]
                     .Equals("true", StringComparison.CurrentCultureIgnoreCase))
             {
                 services.Configure<GovUkOidcConfiguration>(configuration.GetSection("GovUkOidcConfiguration"));
