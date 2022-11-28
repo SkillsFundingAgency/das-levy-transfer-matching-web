@@ -3,6 +3,7 @@
 @model ApplicationApprovedViewModel
 @{
     ViewData["Title"] = "Application Approved";
+    ViewBag.GaData.Vpv = "/accounts/pledges/applications/application/approved";
 }
 
 <a href="@Url.Action("Applications", "Pledges", new { EncodedAccountId = Model.EncodedAccountId, EncodedPledgeId = Model.EncodedPledgeId })" class="govuk-back-link">Back</a>

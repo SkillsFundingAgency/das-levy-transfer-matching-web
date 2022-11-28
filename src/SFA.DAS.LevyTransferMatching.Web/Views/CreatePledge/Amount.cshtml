@@ -1,6 +1,7 @@
 ﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.AmountViewModel
 @{
     ViewData["Title"] = "Pledges";
+    ViewBag.GaData.Vpv = "/accounts/pledges/create/amount";
 }
 
 <a href="@Url.Action("Create", "CreatePledge", new { Model.EncodedAccountId, Model.CacheKey })" class="govuk-back-link">Back</a>

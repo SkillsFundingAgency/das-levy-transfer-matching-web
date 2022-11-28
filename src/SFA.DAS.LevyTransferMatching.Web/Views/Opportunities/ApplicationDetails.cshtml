@@ -2,6 +2,7 @@
 @inject SFA.DAS.EmployerUrlHelper.ILinkGenerator LinkGenerator
 @{
     ViewData["Title"] = "Apprenticeship Training";
+    ViewBag.GaData.Vpv = "/accounts/opportunities/apply/application-details";
 }
 <a href="@Url.Action("Apply", new {Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey})" class="govuk-back-link">Back</a>
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
