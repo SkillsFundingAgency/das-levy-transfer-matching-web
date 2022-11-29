@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Extensions.Options;
+using SFA.DAS.Encoding;
 using SFA.DAS.GovUK.Auth.Services;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsers;
@@ -17,11 +18,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
     {
         private readonly IAccountUserService _accountUserService;
         private readonly Infrastructure.Configuration.FeatureToggles _configuration;
+        private readonly IEncodingService _encodingService;
 
-        public PostAuthenticationClaimsHandler(IAccountUserService accountUserService, Infrastructure.Configuration.FeatureToggles configuration)
+        public PostAuthenticationClaimsHandler(IAccountUserService accountUserService, Infrastructure.Configuration.FeatureToggles configuration, IEncodingService encodingService)
         {
             _accountUserService = accountUserService;
             _configuration = configuration;
+            _encodingService = encodingService;
         }
         
         public async Task<IEnumerable<Claim>> GetClaims(TokenValidatedContext tokenValidatedContext)
@@ -69,11 +72,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
             return claims;
         }
 
-        private static IEnumerable<Claim> GetAccountClaims(GetUserAccountsResponse accountInformation, Func<EmployerIdentifier, bool> predicate, string claimName)
+        private IEnumerable<Claim> GetAccountClaims(GetUserAccountsResponse accountInformation, Func<EmployerIdentifier, bool> predicate, string claimName)
         {
             return accountInformation.UserAccounts
                 .Where(predicate)
-                .Select(c => new Claim(claimName, c.AccountId)).ToList();
+                .Select(c => new Claim(claimName, _encodingService.Decode(c.AccountId, EncodingType.AccountId).ToString())).ToList();
         }
     }
 }

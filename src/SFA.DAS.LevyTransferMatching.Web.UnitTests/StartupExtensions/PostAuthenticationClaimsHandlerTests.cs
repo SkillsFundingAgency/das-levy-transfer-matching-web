@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsers;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsers.Types;
@@ -30,8 +31,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.StartupExtensions
         private PostAuthenticationClaimsHandler _handler;
         private GetUserAccountsResponse _response;
         private Mock<IAccountUserService> _accountUserService;
+        private Mock<IEncodingService> _encodingService;
         private Infrastructure.Configuration.FeatureToggles _configuration;
         private string _legacyId;
+        private long _ownerAccountId;
+        private long _transactorAccountId;
 
         [SetUp]
         public void Arrange()
@@ -44,6 +48,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.StartupExtensions
             _email = fixture.Create<string>();
             _legacyId = fixture.Create<string>();
             _emailNotMatching = fixture.Create<string>();
+            _ownerAccountId = fixture.Create<long>();
+            _transactorAccountId = fixture.Create<long>();
 
             _configuration = new Infrastructure.Configuration.FeatureToggles
             {
@@ -59,7 +65,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.StartupExtensions
                 LastName = fixture.Create<string>()
             });
 
-            _handler = new PostAuthenticationClaimsHandler(_accountUserService.Object, _configuration);
+            _encodingService = new Mock<IEncodingService>();
+            _encodingService.Setup(x => x.Decode(_response.UserAccounts.First().AccountId, EncodingType.AccountId))
+                .Returns(_ownerAccountId);
+            _encodingService.Setup(x => x.Decode(_response.UserAccounts.Last().AccountId, EncodingType.AccountId))
+                .Returns(_transactorAccountId);
+            
+            _handler = new PostAuthenticationClaimsHandler(_accountUserService.Object, _configuration, _encodingService.Object);
 
         }
         [Test]
@@ -83,10 +95,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.StartupExtensions
             var actualAccountClaims = actual.Where(c => c.Type.Equals(ClaimIdentifierConfiguration.AccountOwner)).Select(c => c.Value)
                 .ToList();
             actualAccountClaims.Count.Should().Be(2);
-            actualAccountClaims.Should().BeEquivalentTo(
-                _response.UserAccounts
-                    .Where(c => c.Role.Equals(UserRole.Owner.ToString()) ||
-                                c.Role.Equals(UserRole.Transactor.ToString())).Select(c => c.AccountId).ToList());
+            actualAccountClaims.Should().BeEquivalentTo(new List<string>{_ownerAccountId.ToString(), _transactorAccountId.ToString()});
         }
 
         [Test]
