@@ -72,6 +72,7 @@ namespace SFA.DAS.LevyTransferMatching.Web
                 options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
                 options.Filters.Add(new HideAccountNavigationAttribute(false));
                 options.Filters.Add(new EnableGoogleAnalyticsAttribute(Configuration.GetSection<GoogleAnalytics>()));
+                options.Filters.Add(new SetZenDeskValuesAttribute(Configuration.GetSection<ZenDesk>()));
                 options.Filters.Add(new GoogleAnalyticsFilter());
 
                 if (!config.IsLive)
