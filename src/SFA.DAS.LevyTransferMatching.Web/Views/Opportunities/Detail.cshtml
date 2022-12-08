@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = $"Transfer fund details for {(Model.IsNamePublic ? Model.EmployerName : "opportunity")} ({Model.EncodedPledgeId})";
     ViewBag.GaData.Vpv = "/opportunities/pledge";
+    ViewBag.ZenDeskLabel = "LTM-R-viewoppty";
 }
 
 <a href="@Url.Action("index")" class="govuk-back-link">Back</a>

@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Confirm withdrawal";
     ViewBag.GaData.Vpv = "/accounts/applications/withdrawal-confirmation";
+    ViewBag.ZenDeskLabel = "LTM-R-application-withdraw-conf";
 }
 
 <a href="@Url.Action("Application", new { Model.EncodedAccountId, Model.EncodedApplicationId })" class="govuk-back-link">Back</a>
