@@ -3,6 +3,7 @@
 @inject SFA.DAS.EmployerUrlHelper.ILinkGenerator LinkGenerator
 @{
     ViewData["Title"] = "Opportunities";
+    ViewBag.GaData.Vpv = "accounts/opportunities/apply";
 }
 <a href="@(Model.AccessToMultipleAccounts ? Url.Action("SelectAccount", new { EncodedOpportunityId = Model.EncodedPledgeId }) : Url.Action("Detail", new { Model.EncodedPledgeId }))" class="govuk-back-link">Back</a>
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">

@@ -4,6 +4,7 @@
 
 @{
     ViewData["Title"] = Model.Title;
+    ViewBag.GaData.Vpv = "/accounts/applications/application";
 
     var accept = SFA.DAS.LevyTransferMatching.Web.Models.Applications.ApplicationPostRequest.ApprovalAction.Accept;
     var decline = SFA.DAS.LevyTransferMatching.Web.Models.Applications.ApplicationPostRequest.ApprovalAction.Decline;

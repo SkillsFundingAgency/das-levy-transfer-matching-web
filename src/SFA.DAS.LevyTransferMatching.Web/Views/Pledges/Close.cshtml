@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Close pledge";
+    ViewBag.GaData.Vpv = "/accounts/pledges/close";
 }
 
 <a href="@Url.Action("Applications", new { EncodedAccountId = Model.EncodedAccountId, EncodedPledgeId = Model.EncodedPledgeId })" class="govuk-back-link">Back</a>

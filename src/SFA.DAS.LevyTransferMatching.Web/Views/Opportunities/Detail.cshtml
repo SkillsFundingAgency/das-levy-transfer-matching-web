@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = $"Transfer fund details for {(Model.IsNamePublic ? Model.EmployerName : "opportunity")} ({Model.EncodedPledgeId})";
+    ViewBag.GaData.Vpv = "/opportunities/pledge";
 }
 
 <a href="@Url.Action("index")" class="govuk-back-link">Back</a>
