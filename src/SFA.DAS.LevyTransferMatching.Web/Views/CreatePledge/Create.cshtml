@@ -4,6 +4,7 @@
 
 @{
     ViewData["Title"] = "Create a transfers pledge";
+    ViewBag.GaData.Vpv = "/accounts/pledges/create";
 }
 
 <a href="@Url.Action("Inform", "CreatePledge", new { Model.EncodedAccountId })" class="govuk-back-link">Back</a>

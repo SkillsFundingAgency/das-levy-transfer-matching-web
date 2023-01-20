@@ -4,5 +4,6 @@
     {
         public const string HideAccountNavigation = "UI.HideNavigation";
         public const string ShowNav = "ShowNav";
+        public const string GoogleAnalyticsConfiguration = "UI.GoogleAnalyticsConfiguration";
     }
 }

@@ -14,6 +14,7 @@ using SFA.DAS.EmployerUrlHelper.DependencyResolution;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
 using SFA.DAS.LevyTransferMatching.Web.Attributes;
 using SFA.DAS.LevyTransferMatching.Web.FeatureToggles;
+using SFA.DAS.LevyTransferMatching.Web.Filters;
 using SFA.DAS.LevyTransferMatching.Web.ModelBinders;
 using SFA.DAS.LevyTransferMatching.Web.Models.Shared;
 using SFA.DAS.LevyTransferMatching.Web.StartupExtensions;
@@ -70,6 +71,9 @@ namespace SFA.DAS.LevyTransferMatching.Web
                 options.AddValidation();
                 options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
                 options.Filters.Add(new HideAccountNavigationAttribute(false));
+                options.Filters.Add(new EnableGoogleAnalyticsAttribute(Configuration.GetSection<GoogleAnalytics>()));
+                options.Filters.Add(new GoogleAnalyticsFilter());
+
                 if (!config.IsLive)
                 {
                     options.Filters.Add<DisabledActionFilter>();
@@ -113,12 +117,14 @@ namespace SFA.DAS.LevyTransferMatching.Web
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseDasHealthChecks();
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseMiddleware<SecurityHeadersMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
