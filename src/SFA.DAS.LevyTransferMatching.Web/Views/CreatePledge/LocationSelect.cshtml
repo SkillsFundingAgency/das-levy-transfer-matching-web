@@ -1,6 +1,7 @@
 ﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.LocationSelectViewModel
 @{
     ViewData["Title"] = "Select Location";
+    ViewBag.GaData.Vpv = "/accounts/pledges/create/location/select";
 }
 
 <a href="@Url.Action("Location", "CreatePledge", new { Model.EncodedAccountId, Model.CacheKey })" class="govuk-back-link">Back</a>

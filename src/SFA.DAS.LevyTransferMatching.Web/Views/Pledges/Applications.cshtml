@@ -5,6 +5,8 @@
 @inject SFA.DAS.EmployerUrlHelper.ILinkGenerator LinkGenerator
 @{
     ViewData["Title"] = "Pledge Applications";
+    ViewBag.GaData.Vpv = "/accounts/applications";
+
     var breadCrumbs = new List<Tuple<string, string>>
     {
         new Tuple<string, string>(LinkGenerator.AccountsLink($"accounts/{Model.EncodedAccountId}/teams"), "Home"),

@@ -3,6 +3,7 @@
 
 @{
     ViewData["Title"] = "Provide more detail about your apprenticeship";
+    ViewBag.GaData.Vpv = "/accounts/opportunities/apply/more-details";
 }
 <a href="@Url.Action("Apply", new { Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey })" class="govuk-back-link">Back</a>
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
