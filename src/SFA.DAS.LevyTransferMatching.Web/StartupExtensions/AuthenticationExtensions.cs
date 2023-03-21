@@ -1,26 +1,35 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+using SFA.DAS.GovUK.Auth.AppStart;
+using SFA.DAS.GovUK.Auth.Configuration;
+using SFA.DAS.GovUK.Auth.Services;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.EmployerAccountsService;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.EmployerAccountsService.Types;
 
 namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
 {
     public static class AuthenticationExtensions
     {
-        public static void AddEmployerAuthentication(this IServiceCollection services, Infrastructure.Configuration.Authentication configuration)
+        public static void AddEmployerAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
-            services
+            if (configuration[$"{nameof(Infrastructure.Configuration.FeatureToggles)}:UseGovSignIn"] != null 
+                && configuration[$"{nameof(Infrastructure.Configuration.FeatureToggles)}:UseGovSignIn"]
+                    .Equals("true", StringComparison.CurrentCultureIgnoreCase))
+            {
+                services.Configure<GovUkOidcConfiguration>(configuration.GetSection("GovUkOidcConfiguration"));
+                services.AddAndConfigureGovUkAuthentication(configuration, $"{typeof(AuthenticationExtensions).Assembly.GetName().Name}.Auth",typeof(PostAuthenticationClaimsHandler));
+            }
+            else
+            {
+                var employerConfig = configuration.GetSection<Infrastructure.Configuration.Authentication>();
+                
+                services
                 .AddAuthentication(sharedOptions =>
                 {
                     sharedOptions.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -30,13 +39,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
 
                 }).AddOpenIdConnect(options =>
                 {
-                    options.ClientId = configuration.ClientId;
-                    options.ClientSecret = configuration.ClientSecret;
-                    options.Authority = configuration.BaseAddress;
-                    options.UsePkce = configuration.UsePkce;
-                    options.ResponseType = configuration.ResponseType;
+                    options.ClientId = employerConfig.ClientId;
+                    options.ClientSecret = employerConfig.ClientSecret;
+                    options.Authority = employerConfig.BaseAddress;
+                    options.UsePkce = employerConfig.UsePkce;
+                    options.ResponseType = employerConfig.ResponseType;
 
-                    var scopes = configuration.Scopes.Split(' ');
+                    var scopes = employerConfig.Scopes.Split(' ');
                     
                     foreach (var scope in scopes)
                     {
@@ -67,55 +76,18 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
 
             services
                 .AddOptions<OpenIdConnectOptions>(OpenIdConnectDefaults.AuthenticationScheme)
-                .Configure<IEmployerAccountsService, ILogger<Startup>>((options, accountsService, logger) =>
+                .Configure<ICustomClaims>((options, customClaimsHandler) =>
                 {
-                    options.Events.OnTokenValidated = async (ctx) => await PopulateAccountsClaim(ctx, accountsService, logger);
+                    options.Events.OnTokenValidated = async (ctx) =>
+                    {
+                        var claims = await customClaimsHandler.GetClaims(ctx);
+                        ctx.Principal.Identities.First().AddClaims(claims);
+                    };
                 });
-        }
-
-        private static async Task PopulateAccountsClaim(TokenValidatedContext ctx, IEmployerAccountsService accountsService, ILogger<Startup> logger)
-        {
-            var userId = ctx.Principal.Claims
-                .First(c => c.Type.Equals(ClaimIdentifierConfiguration.Id))
-                .Value;
-
-            logger.LogInformation($"Populating Accounts claims for user {userId}");
-
-            if (Guid.TryParse(userId, out Guid userRef))
-            {
-                var ownerRole = new HashSet<UserRole> { UserRole.Owner, UserRole.Transactor };
-                var ownerUserAccounts = await accountsService.GetUserAccounts(userRef, ownerRole, CancellationToken.None);
-
-                foreach (var userAccount in ownerUserAccounts)
-                {
-
-                    logger.LogInformation($"Adding owner claim for account {userAccount} for user {userId}");
-                    var claim = new Claim(ClaimIdentifierConfiguration.AccountOwner, userAccount.ToString());
-                    ctx.Principal.Identities.First().AddClaim(claim);
-                }
-
-                var transactorRole = new HashSet<UserRole> { UserRole.Transactor };
-                var transactorUserAccounts = await accountsService.GetUserAccounts(userRef, transactorRole, CancellationToken.None);
-
-                foreach (var userAccount in transactorUserAccounts)
-                {
-
-                    logger.LogInformation($"Adding transactor claim for account {userAccount} for user {userId}");
-                    var claim = new Claim(ClaimIdentifierConfiguration.AccountTransactor, userAccount.ToString());
-                    ctx.Principal.Identities.First().AddClaim(claim);
-                }
-
-                var viewerRole = new HashSet<UserRole> { UserRole.Viewer };
-                var viewerUserAccounts = await accountsService.GetUserAccounts(userRef, viewerRole, CancellationToken.None);
-
-                foreach (var userAccount in viewerUserAccounts)
-                {
-
-                    logger.LogInformation($"Adding viewer claim for account {userAccount} for user {userId}");
-                    var claim = new Claim(ClaimIdentifierConfiguration.AccountViewer, userAccount.ToString());
-                    ctx.Principal.Identities.First().AddClaim(claim);
-                }
             }
+            
         }
+
+        
     }
 }

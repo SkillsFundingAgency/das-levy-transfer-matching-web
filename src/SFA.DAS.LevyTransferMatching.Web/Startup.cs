@@ -85,7 +85,7 @@ namespace SFA.DAS.LevyTransferMatching.Web
             .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
 
             services.AddApplicationInsightsTelemetry(Configuration.GetValue<string>("APPINSIGHTS_INSTRUMENTATIONKEY"));
-            services.AddEmployerAuthentication(Configuration.GetSection<Infrastructure.Configuration.Authentication>());
+            services.AddEmployerAuthentication(Configuration);
             services.AddAuthorizationPolicies();
             services.AddCache(_environment, config);
             services.AddMemoryCache();
