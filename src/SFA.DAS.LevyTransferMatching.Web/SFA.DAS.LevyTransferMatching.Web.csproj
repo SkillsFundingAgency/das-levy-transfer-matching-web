@@ -32,7 +32,7 @@
     <PackageReference Include="SFA.DAS.Employer.Shared.UI" Version="17.1.24" />
     <PackageReference Include="SFA.DAS.EmployerUrlHelper" Version="3.0.43" />
     <PackageReference Include="SFA.DAS.Encoding" Version="1.1.76" />
-    <PackageReference Include="SFA.DAS.GovUK.Auth" Version="17.1.28" />
+    <PackageReference Include="SFA.DAS.GovUK.Auth" Version="17.1.38" />
     <PackageReference Include="SFA.DAS.Http" Version="3.2.62" />
     <PackageReference Include="SFA.DAS.NLog.Targets.Redis" Version="1.2.1" />
     <PackageReference Include="SFA.DAS.Validation" Version="6.0.15" />

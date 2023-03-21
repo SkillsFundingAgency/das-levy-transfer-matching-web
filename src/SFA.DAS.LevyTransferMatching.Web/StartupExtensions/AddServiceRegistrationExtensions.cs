@@ -19,6 +19,7 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using Microsoft.AspNetCore.Http;
+using SFA.DAS.GovUK.Auth.Authentication;
 using SFA.DAS.GovUK.Auth.Services;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsers;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService;
@@ -38,6 +39,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
 
             services.AddSingleton<IAuthorizationHandler, ManageAccountAuthorizationHandler>();
             services.AddSingleton<IAuthorizationHandler, ViewAccountAuthorizationHandler>();
+            
+            services.AddSingleton<IAuthorizationHandler, AccountActiveAuthorizationHandler>();//TODO remove after gov login go live
 
             services.AddTransient<IEmployerAccountsService, EmployerAccountsService>();
             services.AddTransient<ILocationValidatorService, LocationValidatorService>();
