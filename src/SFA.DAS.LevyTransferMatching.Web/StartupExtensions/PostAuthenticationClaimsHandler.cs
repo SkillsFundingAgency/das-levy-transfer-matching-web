@@ -68,6 +68,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
             
             claims.Add(new Claim(ClaimIdentifierConfiguration.Id, accountInformation.EmployerUserId));
             claims.Add(new Claim(ClaimIdentifierConfiguration.DisplayName, $"{accountInformation.FirstName} {accountInformation.LastName}"));
+
+            if (accountInformation.IsSuspended)
+            {
+                claims.Add(new Claim(ClaimTypes.AuthorizationDecision, "Suspended"));
+            }
             
             return claims;
         }

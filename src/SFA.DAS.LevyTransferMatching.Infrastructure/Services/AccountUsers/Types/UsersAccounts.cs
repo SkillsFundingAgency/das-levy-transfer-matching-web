@@ -6,6 +6,8 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsers.Type
     public class GetUserAccountsResponse
     {
         [JsonProperty]
+        public bool IsSuspended { get; set; }
+        [JsonProperty]
         public string EmployerUserId { get; set; }
         [JsonProperty]
         public string FirstName { get; set; }

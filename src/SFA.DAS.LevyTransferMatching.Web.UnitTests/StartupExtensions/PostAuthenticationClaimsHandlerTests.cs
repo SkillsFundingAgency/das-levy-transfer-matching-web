@@ -28,6 +28,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.StartupExtensions
         private string _userId;
         private string _email;
         private string _emailNotMatching;
+        private string _emailSuspended;
         private PostAuthenticationClaimsHandler _handler;
         private GetUserAccountsResponse _response;
         private Mock<IAccountUserService> _accountUserService;
@@ -36,6 +37,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.StartupExtensions
         private string _legacyId;
         private long _ownerAccountId;
         private long _transactorAccountId;
+        private GetUserAccountsResponse _responseSuspended;
 
         [SetUp]
         public void Arrange()
@@ -44,10 +46,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.StartupExtensions
             _response = fixture.Create<GetUserAccountsResponse>();
             _response.UserAccounts.First().Role = UserRole.Owner.ToString();
             _response.UserAccounts.Last().Role = UserRole.Transactor.ToString();
+            _response.IsSuspended = false;
+            _responseSuspended = fixture.Create<GetUserAccountsResponse>();
+            _responseSuspended.IsSuspended = true;
             _userId = fixture.Create<string>();
             _email = fixture.Create<string>();
             _legacyId = fixture.Create<string>();
             _emailNotMatching = fixture.Create<string>();
+            _emailSuspended = fixture.Create<string>();
             _ownerAccountId = fixture.Create<long>();
             _transactorAccountId = fixture.Create<long>();
 
@@ -57,6 +63,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.StartupExtensions
             };
             _accountUserService = new Mock<IAccountUserService>();
             _accountUserService.Setup(x => x.GetUserAccounts(_email, _userId)).ReturnsAsync(_response);
+            _accountUserService.Setup(x => x.GetUserAccounts(_emailSuspended, _userId)).ReturnsAsync(_responseSuspended);
             _accountUserService.Setup(x => x.GetUserAccounts(_emailNotMatching, _userId)).ReturnsAsync(new GetUserAccountsResponse
             {
                 UserAccounts = new List<EmployerIdentifier>(),
@@ -108,6 +115,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.StartupExtensions
             actual.Should().BeEmpty();
         }
         
+        [Test]
+        public async Task Then_If_Suspended_Flag_Set_In_Response_From_Api_Claim_Set()
+        {
+            var tokenValidatedContext = ArrangeTokenValidatedContext(_userId, _emailSuspended, _legacyId);
+            
+            var actual = (await _handler.GetClaims(tokenValidatedContext)).ToList();
+
+            actual.First(c=>c.Type.Equals(ClaimTypes.AuthorizationDecision)).Value.Should().Be("Suspended");
+        }
         private TokenValidatedContext ArrangeTokenValidatedContext(string nameIdentifier, string emailAddress, string legacyId)
         {
             var identity = new ClaimsIdentity(new List<Claim>
