@@ -47,7 +47,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.UnitTests.Services.Account
                     "SendAsync",
                     ItExpr.Is<HttpRequestMessage>(c =>
                         c.Method.Equals(HttpMethod.Get)
-                        && c.RequestUri.Equals(new Uri($"https://tempuri.org/AccountUsers/{_userId}/accounts?{HttpUtility.UrlEncode(_email)}"))
+                        && c.RequestUri.Equals(new Uri($"https://tempuri.org/AccountUsers/{_userId}/accounts?email={HttpUtility.UrlEncode(_email)}"))
                     ),
                     ItExpr.IsAny<CancellationToken>()
                 )
@@ -57,7 +57,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.UnitTests.Services.Account
                     "SendAsync",
                     ItExpr.Is<HttpRequestMessage>(c =>
                         c.Method.Equals(HttpMethod.Get)
-                        && c.RequestUri.Equals(new Uri($"https://tempuri.org/AccountUsers/{_userId}/accounts?{HttpUtility.UrlEncode(_emailNotMatch)}"))
+                        && c.RequestUri.Equals(new Uri($"https://tempuri.org/AccountUsers/{_userId}/accounts?email={HttpUtility.UrlEncode(_emailNotMatch)}"))
                     ),
                     ItExpr.IsAny<CancellationToken>()
                 )
