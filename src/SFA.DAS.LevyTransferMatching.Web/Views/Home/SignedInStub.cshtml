@@ -1,0 +1,54 @@
+@using System.Security.Claims
+@using Newtonsoft.Json
+@using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration
+
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-xl">
+            You've signed in
+        </h1>
+
+        <p>Id: @User.Claims.FirstOrDefault(c=>c.Type.Equals(ClaimTypes.NameIdentifier))?.Value</p>
+        <p>Email: @User.Claims.FirstOrDefault(c=>c.Type.Equals(ClaimTypes.Email))?.Value</p>
+        <table class="govuk-table">
+            <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">Account ID</th>
+                <th scope="col" class="govuk-table__header">Role</th>
+                <th scope="col" class="govuk-table__header">Employer name</th>
+            </tr>
+            </thead>
+            <tbody class="govuk-table__body">
+            @foreach (var account in User.Claims.Where(c=>c.Type.Equals(ClaimIdentifierConfiguration.AccountOwner)).Select(c=>c.Value))
+            {
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">@account</td>
+                    <td class="govuk-table__cell">Owner</td>
+                </tr>
+            }
+            @foreach (var account in User.Claims.Where(c=>c.Type.Equals(ClaimIdentifierConfiguration.AccountTransactor)).Select(c=>c.Value))
+            {
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">@account</td>
+                    <td class="govuk-table__cell">Transator</td>
+                </tr>
+            }
+            @foreach (var account in User.Claims.Where(c=>c.Type.Equals(ClaimIdentifierConfiguration.AccountViewer)).Select(c=>c.Value))
+            {
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">@account</td>
+                    <td class="govuk-table__cell">Viewer</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    
+   
+    </div>
+</div>
