@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.GovUK.Auth.Authentication;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
 using SFA.DAS.LevyTransferMatching.Web.Authentication;
 
 namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
@@ -10,6 +11,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
         {
             services.AddAuthorization(options =>
             {
+                options.AddPolicy(PolicyNames.IsAuthenticated, policy =>
+                {
+                    policy.RequireAuthenticatedUser();
+                    policy.RequireClaim(ClaimIdentifierConfiguration.Id);
+                    policy.Requirements.Add(new AccountActiveRequirement());
+                });
                 options.AddPolicy(PolicyNames.ManageAccount, policy =>
                 {
                     policy.Requirements.Add(new ManageAccountRequirement());
