@@ -23,7 +23,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
                     .Equals("true", StringComparison.CurrentCultureIgnoreCase))
             {
                 services.Configure<GovUkOidcConfiguration>(configuration.GetSection("GovUkOidcConfiguration"));
-                services.AddAndConfigureGovUkAuthentication(configuration, $"{typeof(AuthenticationExtensions).Assembly.GetName().Name}.Auth",typeof(PostAuthenticationClaimsHandler));
+                services.AddAndConfigureGovUkAuthentication(configuration,typeof(PostAuthenticationClaimsHandler), "", "/SignIn-Stub");
             }
             else
             {
