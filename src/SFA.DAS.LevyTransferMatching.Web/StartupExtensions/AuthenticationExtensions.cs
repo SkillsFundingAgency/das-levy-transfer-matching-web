@@ -18,6 +18,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
     {
         public static void AddEmployerAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddTransient<IStubAuthenticationService, StubAuthenticationService>(); // TODO can be removed once gov login enabled
+            
             if (configuration[$"{nameof(Infrastructure.Configuration.FeatureToggles)}:UseGovSignIn"] != null 
                 && configuration[$"{nameof(Infrastructure.Configuration.FeatureToggles)}:UseGovSignIn"]
                     .Equals("true", StringComparison.CurrentCultureIgnoreCase))
