@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Moq;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
@@ -30,9 +31,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.StartupExtensions
         private string _emailNotMatching;
         private string _emailSuspended;
         private PostAuthenticationClaimsHandler _handler;
-        private GetUserAccountsResponse _response;
+        private EmployerUserAccounts _response;
         private Mock<IAccountUserService> _accountUserService;
-        private Mock<IEncodingService> _encodingService;
         private Infrastructure.Configuration.FeatureToggles _configuration;
         private string _legacyId;
         private long _ownerAccountId;
@@ -43,9 +43,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.StartupExtensions
         public void Arrange()
         {
             var fixture = new Fixture();
-            _response = fixture.Create<GetUserAccountsResponse>();
-            _response.UserAccounts.First().Role = UserRole.Owner.ToString();
-            _response.UserAccounts.Last().Role = UserRole.Transactor.ToString();
+            _response = fixture.Create<EmployerUserAccounts>();
+            _response.EmployerAccounts.First().Role = UserRole.Owner.ToString();
+            _response.EmployerAccounts.Last().Role = UserRole.Transactor.ToString();
             _response.IsSuspended = false;
             _responseSuspended = fixture.Create<GetUserAccountsResponse>();
             _responseSuspended.IsSuspended = true;
@@ -71,14 +71,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.StartupExtensions
                 FirstName = fixture.Create<string>(),
                 LastName = fixture.Create<string>()
             });
-
-            _encodingService = new Mock<IEncodingService>();
-            _encodingService.Setup(x => x.Decode(_response.UserAccounts.First().AccountId, EncodingType.AccountId))
-                .Returns(_ownerAccountId);
-            _encodingService.Setup(x => x.Decode(_response.UserAccounts.Last().AccountId, EncodingType.AccountId))
-                .Returns(_transactorAccountId);
             
-            _handler = new PostAuthenticationClaimsHandler(_accountUserService.Object, _configuration, _encodingService.Object);
+            _handler = new PostAuthenticationClaimsHandler(_accountUserService.Object, _configuration);
 
         }
         [Test]
@@ -93,16 +87,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.StartupExtensions
         }
 
         [Test]
-        public async Task Then_The_Accounts_Are_Populated_For_Owner_And_Transactor_Accounts()
+        public async Task Then_The_Accounts_Are_Populated()
         {
             var tokenValidatedContext = ArrangeTokenValidatedContext(_userId, _email,_legacyId);
             
             var actual = (await _handler.GetClaims(tokenValidatedContext)).ToList();
 
-            var actualAccountClaims = actual.Where(c => c.Type.Equals(ClaimIdentifierConfiguration.AccountOwner)).Select(c => c.Value)
-                .ToList();
-            actualAccountClaims.Count.Should().Be(2);
-            actualAccountClaims.Should().BeEquivalentTo(new List<string>{_ownerAccountId.ToString(), _transactorAccountId.ToString()});
+            var actualClaimValue = actual.First(c => c.Type.Equals(ClaimIdentifierConfiguration.Account)).Value;
+            actual.FirstOrDefault(c => c.Type.Equals(ClaimTypes.AuthorizationDecision))?.Value?.Should().BeNullOrEmpty();
+            JsonConvert.SerializeObject(_response.EmployerAccounts.ToDictionary(k => k.AccountId)).Should().Be(actualClaimValue);
         }
 
         [Test]
