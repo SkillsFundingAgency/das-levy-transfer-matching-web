@@ -1,11 +1,16 @@
 @using System.Security.Claims
 @using Newtonsoft.Json
 @using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration
+@using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsers
 
 
 @{
     ViewBag.Title = "title";
     Layout = "_Layout";
+    var accounts = JsonConvert.DeserializeObject<Dictionary<string, EmployerUserAccountItem>>(
+        User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimIdentifierConfiguration.Account))?.Value)
+        .Select(c => c.Value)
+        .ToList();
 }
 
 <div class="govuk-grid-row">
@@ -25,25 +30,12 @@
             </tr>
             </thead>
             <tbody class="govuk-table__body">
-            @foreach (var account in User.Claims.Where(c=>c.Type.Equals(ClaimIdentifierConfiguration.AccountOwner)).Select(c=>c.Value))
+            @foreach (var account in accounts)
             {
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">@account</td>
-                    <td class="govuk-table__cell">Owner</td>
-                </tr>
-            }
-            @foreach (var account in User.Claims.Where(c=>c.Type.Equals(ClaimIdentifierConfiguration.AccountTransactor)).Select(c=>c.Value))
-            {
-                <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">@account</td>
-                    <td class="govuk-table__cell">Transator</td>
-                </tr>
-            }
-            @foreach (var account in User.Claims.Where(c=>c.Type.Equals(ClaimIdentifierConfiguration.AccountViewer)).Select(c=>c.Value))
-            {
-                <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">@account</td>
-                    <td class="govuk-table__cell">Viewer</td>
+                    <td class="govuk-table__cell">@account.AccountId</td>
+                    <td class="govuk-table__cell">@account.Role</td>
+                    <td class="govuk-table__cell">@account.EmployerName</td>
                 </tr>
             }
             </tbody>
