@@ -39,7 +39,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _mockEncodingService = new Mock<IEncodingService>();
             var featureToggles = _fixture.Create<Infrastructure.Configuration.FeatureToggles>();
 
-            _mockUserService.Setup(x => x.IsOwnerOrTransactor(It.IsAny<long>())).Returns(true);
+            _mockUserService.Setup(x => x.IsOwnerOrTransactor(It.IsAny<string>())).Returns(true);
 
             _applicationsOrchestrator = new ApplicationsOrchestrator(_mockApplicationsService.Object, _mockDateTimeService.Object, _mockEncodingService.Object, featureToggles, _mockUserService.Object);
         }
@@ -254,7 +254,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                 .Returns(encodedPledgeId);
             
             response.Status = ApplicationStatus.Approved;
-            _mockUserService.Setup(o => o.IsOwnerOrTransactor(It.IsAny<long>())).Returns(true);
+            _mockUserService.Setup(o => o.IsOwnerOrTransactor(It.IsAny<string>())).Returns(true);
 
             // Act
             var viewModel = await _applicationsOrchestrator.GetApplication(request);
@@ -281,7 +281,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                 .Returns(encodedPledgeId);
 
             response.Status = ApplicationStatus.Accepted;
-            _mockUserService.Setup(o => o.IsOwnerOrTransactor(It.IsAny<long>())).Returns(true);
+            _mockUserService.Setup(o => o.IsOwnerOrTransactor(It.IsAny<string>())).Returns(true);
 
             // Act
             var viewModel = await _applicationsOrchestrator.GetApplication(request);
@@ -309,7 +309,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             response.Status = ApplicationStatus.Accepted;
             response.IsWithdrawableAfterAcceptance = true;
-            _mockUserService.Setup(o => o.IsOwnerOrTransactor(It.IsAny<long>())).Returns(true);
+            _mockUserService.Setup(o => o.IsOwnerOrTransactor(It.IsAny<string>())).Returns(true);
 
             // Act
             var viewModel = await _applicationsOrchestrator.GetApplication(request);

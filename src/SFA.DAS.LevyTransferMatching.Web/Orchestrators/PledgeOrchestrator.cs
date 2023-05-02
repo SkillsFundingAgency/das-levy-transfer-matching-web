@@ -43,14 +43,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 EncodedAccountId = request.EncodedAccountId,
                 EncodedPledgeId = request.EncodedPledgeId,
                 CacheKey = Guid.NewGuid(),
-                UserCanClosePledge = _userService.IsUserChangeAuthorized()
+                UserCanClosePledge = _userService.IsUserChangeAuthorized(request.EncodedAccountId)
             };
         }
 
         public async Task<PledgesViewModel> GetPledgesViewModel(PledgesRequest request)
         {
             var pledgesResponse = await _pledgeService.GetPledges(request.AccountId);
-            var renderCreatePledgesButton = _userService.IsUserChangeAuthorized();
+            var renderCreatePledgesButton = _userService.IsUserChangeAuthorized(request.EncodedAccountId);
 
             return new PledgesViewModel
             {
@@ -181,7 +181,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var result = await _pledgeService.GetApplications(request.AccountId, request.PledgeId, request.SortColumn, request.SortOrder);
 
-            var isOwnerOrTransactor = _userService.IsOwnerOrTransactor(request.AccountId);
+            var isOwnerOrTransactor = _userService.IsOwnerOrTransactor(request.EncodedAccountId);
 
             var viewModels = (from application in result.Applications
                 let pledgeApplication = result.Applications.First(x => x.PledgeId == application.PledgeId)
@@ -227,7 +227,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             var result =
                 await _pledgeService.GetApplication(request.AccountId, request.PledgeId, request.ApplicationId, cancellationToken);
 
-            var isOwnerOrTransactor = _userService.IsOwnerOrTransactor(request.AccountId);
+            var isOwnerOrTransactor = _userService.IsOwnerOrTransactor(request.EncodedAccountId);
 
             if (result != null)
             {
