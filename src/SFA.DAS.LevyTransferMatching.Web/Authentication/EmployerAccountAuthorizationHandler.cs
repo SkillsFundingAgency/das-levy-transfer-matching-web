@@ -71,8 +71,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Authentication
             {
                 string requiredIdClaim = ClaimIdentifierConfiguration.Id;
 
-                if (_configuration["RecruitConfiguration:UseGovSignIn"] != null
-                    && _configuration["RecruitConfiguration:UseGovSignIn"]
+                if (_configuration[$"{nameof(Infrastructure.Configuration.FeatureToggles)}:UseGovSignIn"] != null
+                    && _configuration[$"{nameof(Infrastructure.Configuration.FeatureToggles)}:UseGovSignIn"]
                         .Equals("true", StringComparison.CurrentCultureIgnoreCase))
                 {
                     requiredIdClaim = ClaimTypes.NameIdentifier;

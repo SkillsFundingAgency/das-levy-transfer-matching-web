@@ -100,7 +100,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Authorisation
             EmployerAccountAuthorizationHandler authorizationHandler)
         {
             //Arrange
-            configuration.Setup(x=>x["UseGovSignIn"]).Returns("false");
+            configuration.Setup(x=>x[$"{nameof(Infrastructure.Configuration.FeatureToggles)}:UseGovSignIn"]).Returns("false");
             employerIdentifier.AccountId = accountId.ToUpper();
             employerIdentifier.Role = "Owner";
             employerAccountService.Setup(x => x.GetUserAccounts(userId, email))
@@ -140,7 +140,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Authorisation
             EmployerAccountAuthorizationHandler authorizationHandler)
         {
             //Arrange
-            configuration.Setup(x=>x["UseGovSignIn"]).Returns("true");
+            configuration.Setup(x=>x[$"{nameof(Infrastructure.Configuration.FeatureToggles)}:UseGovSignIn"]).Returns("true");
             employerIdentifier.AccountId = accountId.ToUpper();
             employerIdentifier.Role = "Owner";
             employerAccountService.Setup(x => x.GetUserAccounts(userId, email))
