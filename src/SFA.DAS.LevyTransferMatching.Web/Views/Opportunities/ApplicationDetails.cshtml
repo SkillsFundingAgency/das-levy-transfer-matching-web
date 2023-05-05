@@ -45,9 +45,12 @@
                     </fieldset>
                 </div>
 
-                <div class="app-estimate" id="panel-estimate">
-                    <p class="govuk-heading-s app-estimate__heading">In @Model.CurrentFinancialYear your apprenticeship training will cost:</p>
-                    <p class="govuk-heading-xl app-estimate__estimate">£<span id="field-estimate"></span></p>
+                <div class="govuk-form-group" das-highlight-error-for="ExceedsAvailableFunding" error-class="govuk-form-group--error">
+                    <span das-validation-for="ExceedsAvailableFunding" class="govuk-error-message"></span>
+                    <div class="app-estimate" id="panel-estimate">
+                        <p class="govuk-heading-s app-estimate__heading">Estimated cost of training will be</p>
+                        <p class="govuk-heading-xl app-estimate__estimate">£<span id="field-estimate"></span></p>
+                    </div>
                 </div>
 
                 <div class="govuk-form-group" das-highlight-error-for="HasTrainingProvider" error-class="govuk-form-group--error">
@@ -84,7 +87,6 @@
             <button id="opportunity-criteria-continue" class="govuk-button" data-module="govuk-button">
                 Continue
             </button>
-            <a href="@Url.Action("Apply", new {Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey})" class="govuk-back-link">Back</a>
         </div>
     </form>
 </main>
