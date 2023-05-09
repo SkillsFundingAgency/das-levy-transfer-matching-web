@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsers;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.EmployerAccountsService.Types;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService
 {
@@ -28,30 +31,67 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService
             return GetUserClaimAsString(ClaimIdentifierConfiguration.DisplayName);
         }
 
-        public bool IsUserChangeAuthorized()
+        public bool IsUserChangeAuthorized(string accountId)
         {
-            return TryGetUserClaimValue(ClaimIdentifierConfiguration.AccountOwner, out _) || TryGetUserClaimValue(ClaimIdentifierConfiguration.AccountTransactor, out _);
+            var result = TryGetUserClaimValue(ClaimIdentifierConfiguration.Account, out var employerAccountClaim);
+            if (!result)
+            {
+                return false;
+            }
+            
+            try
+            {
+                var employerAccounts = JsonConvert.DeserializeObject<Dictionary<string, EmployerUserAccountItem>>(employerAccountClaim);
+                var tryParse = Enum.TryParse<UserRole>(employerAccounts[accountId].Role, true, out var userRole);
+
+                if (!tryParse)
+                {
+                    return false;
+                }
+
+                if (userRole is UserRole.Owner || userRole is UserRole.Transactor)
+                {
+                    return true;
+                }
+            }
+            catch (JsonSerializationException)
+            {
+                return false;
+            }
+
+            return false;
         }
 
-        public IEnumerable<long> GetUserOwnerTransactorAccountIds()
+        public IEnumerable<string> GetUserOwnerTransactorAccountIds()
         {
-            var ownerAccountIds = GetUserClaimsAsLongs(ClaimIdentifierConfiguration.AccountOwner) ?? Array.Empty<long>();
-            var transactorAccountIds = GetUserClaimsAsLongs(ClaimIdentifierConfiguration.AccountTransactor) ?? Array.Empty<long>();
+            
+            
+            var result = TryGetUserClaimValue(ClaimIdentifierConfiguration.Account, out var employerAccountClaim);
+            if (!result)
+            {
+                return null;
+            }
+            try
+            {
+                var employerAccounts = JsonConvert.DeserializeObject<Dictionary<string, EmployerUserAccountItem>>(employerAccountClaim);
 
-            if (!ownerAccountIds.Any() && !transactorAccountIds.Any())
+                return employerAccounts.Values
+                    .Where(c => c.Role.Equals("Owner", StringComparison.CurrentCultureIgnoreCase) ||
+                                c.Role.Equals("Transactor", StringComparison.CurrentCultureIgnoreCase))
+                    .Select(c => c.AccountId);
+
+            }
+            catch (JsonSerializationException)
             {
                 return null;
             }
 
-            var ids = ownerAccountIds.Concat(transactorAccountIds).Distinct();
-
-            return ids;
+            return null;
         }
 
-        public bool IsOwnerOrTransactor(long accountId)
+        public bool IsOwnerOrTransactor(string accountId)
         {
-            var ownerTransactorAccountIds = GetUserOwnerTransactorAccountIds();
-            return ownerTransactorAccountIds != null && ownerTransactorAccountIds.Contains(accountId);
+            return IsUserChangeAuthorized(accountId);
         }
 
         private bool IsUserAuthenticated()
@@ -71,18 +111,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService
             return exists;
         }
 
-        private bool TryGetUserClaimValues(string key, out IEnumerable<string> values)
-        {
-            var claimsIdentity = (ClaimsIdentity)_httpContextAccessor.HttpContext.User.Identity;
-            var claims = claimsIdentity.FindAll(key);
-
-            var exists = claims != null;
-
-            values = exists ? claims.Select(x => x.Value) : null;
-
-            return exists;
-        }
-
         private string GetUserClaimAsString(string claim)
         {
             if (IsUserAuthenticated() && TryGetUserClaimValue(claim, out var value))
@@ -92,13 +120,5 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService
             return null;
         }
 
-        private IEnumerable<long> GetUserClaimsAsLongs(string claim)
-        {
-            if (IsUserAuthenticated() && TryGetUserClaimValues(claim, out var values))
-            {
-                return values.Select(long.Parse);
-            }
-            return null;
-        }
     }
 }

@@ -63,7 +63,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 return null;
             }
 
-            var isOwnerOrTransactor = _userService.IsOwnerOrTransactor(request.AccountId);
+            var isOwnerOrTransactor = _userService.IsOwnerOrTransactor(request.EncodedAccountId);
             var encodedOpportunityId = _encodingService.Encode(result.OpportunityId, EncodingType.PledgeId);
             var encodedSenderPublicAccountId = _encodingService.Encode(result.SenderEmployerAccountId, EncodingType.PublicAccountId);
 

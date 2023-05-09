@@ -4,8 +4,10 @@ using System.Security.Claims;
 using AutoFixture;
 using Microsoft.AspNetCore.Http;
 using Moq;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsers;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.UnitTests.Services
@@ -37,8 +39,8 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.UnitTests.Services
         public void GetUserOwnerTransactorAccountIds_UserAuthenticatedAndOwnerAndTransactorAccountIdClaimsPresent_ReturnsParsedList()
         {
             // Arrange
-            var accountOwnerAccountIds = _fixture.CreateMany<long>();
-            var accountTransactorAccountIds = accountOwnerAccountIds.Concat(_fixture.CreateMany<long>());
+            var accountOwnerAccountIds = _fixture.CreateMany<string>();
+            var accountTransactorAccountIds = _fixture.CreateMany<string>();
 
             var expectedAccountIds = accountOwnerAccountIds.Concat(accountTransactorAccountIds).Distinct();
 
@@ -46,71 +48,24 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.UnitTests.Services
                 .Setup(x => x.IsAuthenticated)
                 .Returns(true);
 
-            var accountOwnerClaims = accountOwnerAccountIds
-                .Select(x => new Claim(ClaimIdentifierConfiguration.AccountOwner, x.ToString()));
-            var accountTransactorClaims = accountTransactorAccountIds
-                .Select(x => new Claim(ClaimIdentifierConfiguration.AccountTransactor, x.ToString()));
+
+            var accounts = accountOwnerAccountIds
+                .Select(ownerAccountId => new EmployerUserAccountItem
+                {AccountId = ownerAccountId, EmployerName = $"test - {ownerAccountId}", Role = "Owner"}).ToList();
+            accounts.AddRange(accountTransactorAccountIds.Select(ownerAccountId => new EmployerUserAccountItem
+                {AccountId = ownerAccountId, EmployerName = $"test - {ownerAccountId}", Role = "Transactor"}).ToList());
+
 
             _mockClaimsIdentity
-                .Setup(x => x.FindAll(It.Is<string>(y => y == ClaimIdentifierConfiguration.AccountOwner)))
-                .Returns(accountOwnerClaims);
-            _mockClaimsIdentity
-                .Setup(x => x.FindAll(It.Is<string>(y => y == ClaimIdentifierConfiguration.AccountTransactor)))
-                .Returns(accountTransactorClaims);
+                .Setup(x => x.FindFirst(It.Is<string>(y => y == ClaimIdentifierConfiguration.Account)))
+                .Returns(new Claim(ClaimIdentifierConfiguration.Account, JsonConvert.SerializeObject(accounts.ToDictionary(k => k.AccountId))));
+
 
             // Act
             var actualAccountIds = _userService.GetUserOwnerTransactorAccountIds();
 
             // Assert
             CollectionAssert.AreEqual(expectedAccountIds, actualAccountIds);
-        }
-
-        [Test]
-        public void GetUserOwnerTransactorAccountIds_UserAuthenticatedAndOwnerAccountIdClaimsPresent_ReturnsParsedList()
-        {
-            // Arrange
-            var accountOwnerAccountIds = _fixture.CreateMany<long>();
-
-            _mockClaimsIdentity
-                .Setup(x => x.IsAuthenticated)
-                .Returns(true);
-
-            var accountOwnerClaims = accountOwnerAccountIds
-                .Select(x => new Claim(ClaimIdentifierConfiguration.AccountOwner, x.ToString()));
-
-            _mockClaimsIdentity
-                .Setup(x => x.FindAll(It.Is<string>(y => y == ClaimIdentifierConfiguration.AccountOwner)))
-                .Returns(accountOwnerClaims);
-
-            // Act
-            var actualAccountIds = _userService.GetUserOwnerTransactorAccountIds();
-
-            // Assert
-            CollectionAssert.AreEqual(accountOwnerAccountIds, actualAccountIds);
-        }
-
-        [Test]
-        public void GetUserOwnerTransactorAccountIds_UserAuthenticatedAndTransactorAccountIdClaimsPresent_ReturnsParsedList()
-        {
-            // Arrange
-            var accountTransactorAccountIds = _fixture.CreateMany<long>();
-
-            _mockClaimsIdentity
-                .Setup(x => x.IsAuthenticated)
-                .Returns(true);
-
-            var accountTransactorClaims = accountTransactorAccountIds
-                .Select(x => new Claim(ClaimIdentifierConfiguration.AccountTransactor, x.ToString()));
-
-            _mockClaimsIdentity
-                .Setup(x => x.FindAll(It.Is<string>(y => y == ClaimIdentifierConfiguration.AccountTransactor)))
-                .Returns(accountTransactorClaims);
-
-            // Act
-            var actualAccountIds = _userService.GetUserOwnerTransactorAccountIds();
-
-            // Assert
-            CollectionAssert.AreEqual(accountTransactorAccountIds, actualAccountIds);
         }
 
         [Test]

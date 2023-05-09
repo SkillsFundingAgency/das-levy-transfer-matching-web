@@ -1,82 +1,29 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.Encoding;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
-using SFA.DAS.LevyTransferMatching.Web.Authorization;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.EmployerAccountsService.Types;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Authentication
 {
     public class ManageAccountAuthorizationHandler : AuthorizationHandler<ManageAccountRequirement>
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly ILogger<ManageAccountAuthorizationHandler> _logger;
-        private readonly IEncodingService _encodingService;
+        private readonly IEmployerAccountAuthorizationHandler _accountAuthorizationHandler;
 
-        public ManageAccountAuthorizationHandler(IHttpContextAccessor httpContextAccessor,
-            ILogger<ManageAccountAuthorizationHandler> logger,
-            IEncodingService encodingService)
+        public ManageAccountAuthorizationHandler(IEmployerAccountAuthorizationHandler accountAuthorizationHandler)
         {
-            _httpContextAccessor = httpContextAccessor;
-            _logger = logger;
-            _encodingService = encodingService;
+            _accountAuthorizationHandler = accountAuthorizationHandler;
         }
 
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, ManageAccountRequirement requirement)
         {
-            var isAuthorized = await IsEmployerAuthorized(context);
-
-            var userClaim = context.User.FindFirst(c => c.Type.Equals(ClaimIdentifierConfiguration.Id));
-            var userId = string.IsNullOrWhiteSpace(userClaim?.Value) ? "unknown" : userClaim.Value;
+            var isAuthorized = await _accountAuthorizationHandler.IsEmployerAuthorized(context, UserRole.Transactor);
 
             if (isAuthorized)
             {
-                _logger.LogInformation($"ManageAccountRequirement met for user [{userId}]");
                 context.Succeed(requirement);
+                return;
             }
-            else
-            {
-                _logger.LogInformation($"ManageAccountRequirement not met for user [{userId}]");
-            }
-        }
-
-        private Task<bool> IsEmployerAuthorized(AuthorizationHandlerContext context)
-        {
-            if (!_httpContextAccessor.HttpContext.Request.RouteValues.ContainsKey(RouteValueKeys.EncodedAccountId))
-            {
-                return Task.FromResult(false);
-            }
-
-            var accountIdFromUrl =
-                _httpContextAccessor.HttpContext.Request.RouteValues[RouteValueKeys.EncodedAccountId].ToString();
-
-            var decodedAccountId = _encodingService.Decode(accountIdFromUrl, EncodingType.AccountId);
             
-            var userIdClaim = context.User.FindFirst(c => c.Type.Equals(ClaimIdentifierConfiguration.Id));
-            if (userIdClaim?.Value == null)
-            {
-                return Task.FromResult(false);
-            }
-
-            if (!Guid.TryParse(userIdClaim.Value, out Guid userId))
-            {
-                return Task.FromResult(false);
-            }
-
-            var accountClaim = context.User.FindFirst(c =>
-                (c.Type.Equals(ClaimIdentifierConfiguration.AccountOwner) ||
-                c.Type.Equals(ClaimIdentifierConfiguration.AccountTransactor)) &&
-                c.Value.Equals(decodedAccountId.ToString(), StringComparison.InvariantCultureIgnoreCase)
-            );
-
-            if (accountClaim?.Value != null)
-            {
-                return Task.FromResult(true);
-            }
-
-            return Task.FromResult(false);
+            context.Fail();
         }
     }
 }

@@ -91,10 +91,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             _userId = _fixture.Create<string>();
             _userDisplayName = _fixture.Create<string>();
-            _userService.Setup(x => x.IsUserChangeAuthorized()).Returns(true);
+            //TODO these tests should be changed to properly test the IsUserChangeAuthorized and IsOwnerOrTransactor methods
+            _userService.Setup(x => x.IsUserChangeAuthorized(It.IsAny<string>())).Returns(true);
             _userService.Setup(x => x.GetUserId()).Returns(_userId);
             _userService.Setup(x => x.GetUserDisplayName()).Returns(_userDisplayName);
-            _userService.Setup(x => x.IsOwnerOrTransactor(0)).Returns(true);
+            _userService.Setup(x => x.IsOwnerOrTransactor(It.IsAny<string>())).Returns(true);
 
             _orchestrator = new CreatePledgeOrchestrator(_cache.Object, _pledgeService.Object, _encodingService.Object, _validatorService.Object, _userService.Object);
         }

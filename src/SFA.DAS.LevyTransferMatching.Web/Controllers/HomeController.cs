@@ -76,13 +76,16 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [AllowAnonymous()]
         [HttpPost]
         [Route("SignIn-Stub")]
-        public IActionResult SigninStubPost()
+        public async Task<IActionResult> SigninStubPost()
         {
-            _stubAuthenticationService?.AddStubEmployerAuth(Response.Cookies, new StubAuthUserDetails
+            var claims = await _stubAuthenticationService.GetStubSignInClaims(new StubAuthUserDetails
             {
                 Email = _config["StubEmail"],
                 Id = _config["StubId"]
-            },true);
+            });
+
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claims,
+                new AuthenticationProperties());
 
             return RedirectToRoute("Signed-in-stub");
         }

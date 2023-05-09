@@ -41,7 +41,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
             services.AddSingleton<IAuthorizationHandler, ViewAccountAuthorizationHandler>();
             
             services.AddSingleton<IAuthorizationHandler, AccountActiveAuthorizationHandler>();//TODO remove after gov login go live
-
+            services.AddTransient<IEmployerAccountAuthorizationHandler, EmployerAccountAuthorizationHandler>();
+            
             services.AddTransient<IEmployerAccountsService, EmployerAccountsService>();
             services.AddTransient<ILocationValidatorService, LocationValidatorService>();
             services.AddTransient<ICacheStorageService, CacheStorageService>();

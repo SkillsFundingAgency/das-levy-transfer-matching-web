@@ -8,10 +8,10 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService
 
         string GetUserDisplayName();
 
-        bool IsUserChangeAuthorized();
+        bool IsUserChangeAuthorized(string accountId);
 
-        IEnumerable<long> GetUserOwnerTransactorAccountIds();
+        IEnumerable<string> GetUserOwnerTransactorAccountIds();
 
-        bool IsOwnerOrTransactor(long accountId);
+        bool IsOwnerOrTransactor(string accountId);
     }
 }

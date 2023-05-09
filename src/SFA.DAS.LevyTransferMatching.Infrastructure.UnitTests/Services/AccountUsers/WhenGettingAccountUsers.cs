@@ -74,7 +74,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.UnitTests.Services.Account
         {
             var actual = await _service.GetUserAccounts(_email, _userId);
 
-            actual.Should().BeEquivalentTo(_response);
+            actual.Should().BeEquivalentTo((EmployerUserAccounts)_response);
         }
 
         [Test]
@@ -82,7 +82,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.UnitTests.Services.Account
         {
             var actual = await _service.GetUserAccounts(_emailNotMatch, _userId);
 
-            actual.Should().BeEquivalentTo(new GetUserAccountsResponse());
+            actual.Should().BeEquivalentTo((EmployerUserAccounts)(GetUserAccountsResponse)null);
         }
     }
 }

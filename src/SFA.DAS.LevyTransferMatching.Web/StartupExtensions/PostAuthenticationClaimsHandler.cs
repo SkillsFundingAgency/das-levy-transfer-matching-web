@@ -1,16 +1,13 @@
-using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.Extensions.Options;
-using SFA.DAS.Encoding;
+using Newtonsoft.Json;
 using SFA.DAS.GovUK.Auth.Services;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsers;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsers.Types;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.EmployerAccountsService.Types;
 
 namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
 {
@@ -18,13 +15,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
     {
         private readonly IAccountUserService _accountUserService;
         private readonly Infrastructure.Configuration.FeatureToggles _configuration;
-        private readonly IEncodingService _encodingService;
 
-        public PostAuthenticationClaimsHandler(IAccountUserService accountUserService, Infrastructure.Configuration.FeatureToggles configuration, IEncodingService encodingService)
+        public PostAuthenticationClaimsHandler(IAccountUserService accountUserService, Infrastructure.Configuration.FeatureToggles configuration)
         {
             _accountUserService = accountUserService;
             _configuration = configuration;
-            _encodingService = encodingService;
         }
         
         public async Task<IEnumerable<Claim>> GetClaims(TokenValidatedContext tokenValidatedContext)
@@ -48,24 +43,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
 
             var claims = new List<Claim>();
 
-            if (!accountInformation.UserAccounts.Any())
+            if (!accountInformation.EmployerAccounts.Any())
             {
                 return claims;
             }
-            
-            claims.AddRange(GetAccountClaims(accountInformation, c =>
-                    c.Role.Equals(UserRole.Owner.ToString(), StringComparison.CurrentCultureIgnoreCase) ||
-                    c.Role.Equals(UserRole.Transactor.ToString(), StringComparison.CurrentCultureIgnoreCase),
-                ClaimIdentifierConfiguration.AccountOwner));
-            
-            claims.AddRange(GetAccountClaims(accountInformation, c =>
-                    c.Role.Equals(UserRole.Transactor.ToString(), StringComparison.CurrentCultureIgnoreCase),
-                ClaimIdentifierConfiguration.AccountTransactor));
-            
-            claims.AddRange(GetAccountClaims(accountInformation, c =>
-                    c.Role.Equals(UserRole.Viewer.ToString(), StringComparison.CurrentCultureIgnoreCase),
-                ClaimIdentifierConfiguration.AccountViewer));
-            
+            var accountsAsJson = JsonConvert.SerializeObject(accountInformation.EmployerAccounts.ToDictionary(k => k.AccountId));
+            var associatedAccountsClaim = new Claim(ClaimIdentifierConfiguration.Account, accountsAsJson, JsonClaimValueTypes.Json);
+            claims.Add(associatedAccountsClaim);
             claims.Add(new Claim(ClaimIdentifierConfiguration.Id, accountInformation.EmployerUserId));
             claims.Add(new Claim(ClaimIdentifierConfiguration.DisplayName, $"{accountInformation.FirstName} {accountInformation.LastName}"));
 
@@ -77,11 +61,5 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
             return claims;
         }
 
-        private IEnumerable<Claim> GetAccountClaims(GetUserAccountsResponse accountInformation, Func<EmployerIdentifier, bool> predicate, string claimName)
-        {
-            return accountInformation.UserAccounts
-                .Where(predicate)
-                .Select(c => new Claim(claimName, _encodingService.Decode(c.AccountId, EncodingType.AccountId).ToString())).ToList();
-        }
     }
 }
