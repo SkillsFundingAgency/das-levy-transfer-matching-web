@@ -19,7 +19,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
                 var redis = ConnectionMultiplexer.Connect($"{redisConnectionString},{dataProtectionKeysDatabase}");
 
                 services.AddDataProtection()
-                    .SetApplicationName("das-levy-transfer-matching-web")
+                    .SetApplicationName("das-employer")
                     .PersistKeysToStackExchangeRedis(redis, "DataProtection-Keys");
             }
             return services;

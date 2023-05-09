@@ -152,7 +152,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             return RedirectToAction("Create", new CreateRequest() { EncodedAccountId = request.EncodedAccountId, CacheKey = request.CacheKey });
         }
 
-        [Authorize]
+        [Authorize(Policy=PolicyNames.IsAuthenticated)]
         [Route("location/select")]
         public async Task<IActionResult> LocationSelect(LocationSelectRequest request)
         {
@@ -161,7 +161,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             return View(viewModel);
         }
 
-        [Authorize]
+        [Authorize(Policy=PolicyNames.IsAuthenticated)]
         [Route("location/select")]
         [HttpPost]
         public async Task<IActionResult> LocationSelect([CustomizeValidator(Interceptor = typeof(LocationSelectPostRequestValidatorInterceptor))] LocationSelectPostRequest request)

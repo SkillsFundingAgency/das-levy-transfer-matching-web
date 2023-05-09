@@ -102,12 +102,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             var result = await _opportunitiesService.GetSelectAccount(request.OpportunityId, userId);
 
             var filteredAccounts = result.Accounts
-                .Where((x) =>
-                {
-                    var accountId = _encodingService.Decode(x.EncodedAccountId, EncodingType.AccountId);
-
-                    return ownerTransactorAccounts.Contains(accountId);
-                });
+                .Where((x) => ownerTransactorAccounts.Contains(x.EncodedAccountId));
 
             return new SelectAccountViewModel()
             {

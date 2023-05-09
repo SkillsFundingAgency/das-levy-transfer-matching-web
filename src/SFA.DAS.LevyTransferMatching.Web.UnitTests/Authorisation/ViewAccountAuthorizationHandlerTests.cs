@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.EmployerAccountsService.Types;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Authorisation
 {
@@ -21,124 +22,37 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Authorisation
     public class ViewAccountAuthorizationHandlerTests
     {
         private ViewAccountAuthorizationHandler _handler;
-        private List<IAuthorizationRequirement> _requirements;
-        private ClaimsPrincipal _user;
-        private ClaimsIdentity _identity;
-        private Mock<IHttpContextAccessor> _httpContextAccessor;
-        private Mock<IEncodingService> _encodingService;
-        private Guid _userId;
-        private List<Claim> _claims;
-        private string _encodedAccountId;
-        private long _decodedAccountId;
-        private readonly Fixture _fixture = new Fixture();
         private AuthorizationHandlerContext _context;
-        private DefaultHttpContext _httpContext;
+        private Mock<IEmployerAccountAuthorizationHandler> _employerAccountAuthorizationHandler;
 
 
         [SetUp]
         public void SetUp()
         {
-            _userId = Guid.NewGuid();
-
-            _requirements = new List<IAuthorizationRequirement>
-            {
-                new ViewAccountRequirement()
-            };
-
-            _encodedAccountId = _fixture.Create<string>();
-            _decodedAccountId = _fixture.Create<long>();
-
-            _encodingService = new Mock<IEncodingService>();
-            _encodingService.Setup(x => x.Decode(_encodedAccountId, EncodingType.AccountId)).Returns(_decodedAccountId);
-
-            _httpContextAccessor = new Mock<IHttpContextAccessor>();
-            var responseMock = new FeatureCollection();
-            _httpContext = new DefaultHttpContext(responseMock);
-            _httpContext.Request.RouteValues.Add("EncodedAccountId", _encodedAccountId);
-            _httpContextAccessor.Setup(_ => _.HttpContext).Returns(_httpContext);
-
-            _claims = new List<Claim>
-            {
-                new Claim(ClaimIdentifierConfiguration.Id, _userId.ToString()),
-                new Claim(ClaimIdentifierConfiguration.AccountViewer, _decodedAccountId.ToString()),
-
-            };
-            _identity = new ClaimsIdentity(_claims);
-            _user = new ClaimsPrincipal(_identity);
-
-            _context = new AuthorizationHandlerContext(_requirements, _user, "");
-
-            _handler = new ViewAccountAuthorizationHandler(_httpContextAccessor.Object, Mock.Of<ILogger<ManageAccountAuthorizationHandler>>(), _encodingService.Object);
+            _context = new AuthorizationHandlerContext(new[] {new ViewAccountRequirement()}, new ClaimsPrincipal(), "");
+            _employerAccountAuthorizationHandler = new Mock<IEmployerAccountAuthorizationHandler>();
+            _handler = new ViewAccountAuthorizationHandler(_employerAccountAuthorizationHandler.Object);
         }
 
+        
         [Test]
-        public async Task Then_the_requirement_does_not_succeed_if_the_route_does_not_contain_the_accountId()
+        public async Task Then_The_Requirement_Fails_If_Handler_Returns_False()
         {
-            _httpContext.Request.RouteValues.Remove(RouteValueKeys.EncodedAccountId);
+
+            _employerAccountAuthorizationHandler.Setup(x => x.IsEmployerAuthorized(_context, UserRole.Viewer))
+                .ReturnsAsync(false);
+            
             await _handler.HandleAsync(_context);
             Assert.IsFalse(_context.HasSucceeded);
         }
 
         [Test]
-        public async Task Then_the_requirement_does_not_succeed_if_the_user_does_not_have_a_userId_claim()
+        public async Task Then_The_Requirement_Succeeds_If_Handler_Returns_True()
         {
-            // arrange            
-            _identity = new ClaimsIdentity(new List<Claim>());
-            _user = new ClaimsPrincipal(_identity);
-            _context = new AuthorizationHandlerContext(_requirements, _user, _context);
 
-            await _handler.HandleAsync(_context);
-
-            Assert.IsFalse(_context.HasSucceeded);
-        }
-
-        [Test]
-        public async Task Then_the_requirement_does_not_succeed_if_the_userid_claim_is_not_a_guid()
-        {
-            // arrange            
-            _claims = new List<Claim>
-            {
-                new Claim(ClaimIdentifierConfiguration.Id, "NOT-A-GUID")
-            };
-            _identity = new ClaimsIdentity(_claims);
-            _user = new ClaimsPrincipal(_identity);
-            _context = new AuthorizationHandlerContext(_requirements, _user, _context);
-
-            await _handler.HandleAsync(_context);
-
-            Assert.IsFalse(_context.HasSucceeded);
-        }
-
-        [Test]
-        public async Task Then_the_requirement_does_not_succeed_if_the_account_viewer_claim_does_not_exist()
-        {
-            _claims.Remove(_claims.Find(c => c.Type == ClaimIdentifierConfiguration.AccountViewer));
-            _identity = new ClaimsIdentity(_claims);
-            _user = new ClaimsPrincipal(_identity);
-            _context = new AuthorizationHandlerContext(_requirements, _user, _context);
-
-            await _handler.HandleAsync(_context);
-
-            Assert.IsFalse(_context.HasSucceeded);
-        }
-
-        [Test]
-        public async Task Then_the_requirement_does_not_succeed_if_the_accountId_claim_does_not_match_the_route_data()
-        {
-            _claims.Remove(_claims.Find(c => c.Type == ClaimIdentifierConfiguration.AccountViewer));
-            _claims.Add(new Claim(ClaimIdentifierConfiguration.AccountViewer, Guid.NewGuid().ToString()));
-            _identity = new ClaimsIdentity(_claims);
-            _user = new ClaimsPrincipal(_identity);
-            _context = new AuthorizationHandlerContext(_requirements, _user, _context);
-
-            await _handler.HandleAsync(_context);
-
-            Assert.IsFalse(_context.HasSucceeded);
-        }
-
-        [Test]
-        public async Task Then_the_requirement_succeeds_if_the_route_accountid_matches_the_account_claim()
-        {
+            _employerAccountAuthorizationHandler.Setup(x => x.IsEmployerAuthorized(_context, UserRole.Viewer))
+                .ReturnsAsync(true);
+            
             await _handler.HandleAsync(_context);
             Assert.IsTrue(_context.HasSucceeded);
         }
