@@ -8,7 +8,6 @@
         public string JobRoleList { get; set; }
         public string LevelList { get; set; }
         public string LocationList { get; set; }
-        public string YearDescription { get; set; }
         public bool IsNamePublic { get; set; }
         public bool HideFooter { get; set; }
     }
