@@ -13,6 +13,19 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
 
+                @if (ViewData.ModelState.ContainsKey("ExceedsAvailableFunding") && ViewData.ModelState["ExceedsAvailableFunding"].Errors.Any())
+                {
+                    <div class="govuk-inset-text" id="exceeding-what-to-do">
+                        <label class="govuk-label govuk-label--s">What you can do</label>
+                        <p>To reduce the cost of the training you can:</p>
+                        <ul class="govuk-list govuk-list--bullet">
+                            <li>go back and <a href="https://www.gov.uk/guidance/transferring-apprenticeship-service-funds" target="_blank" rel="noopener" class="govuk-link">search for a different funding opportunity</a></li>
+                            <li>change the job role</li>
+                            <li>reduce the number of apprentices in this application</li>
+                        </ul>
+                    </div>
+                }
+
                 <partial name="StandardSearch" for="SelectStandardViewModel"/>
 
                 <div class="govuk-form-group" das-highlight-error-for="NumberOfApprentices" error-class="govuk-form-group--error">
@@ -84,7 +97,7 @@
             </div>
         </div>
         <div class="govuk-button-group">
-            <button id="opportunity-criteria-continue" class="govuk-button" data-module="govuk-button">
+            <button id="opportunity-criteria-continue" class="govuk-button" data-module="govuk-button" @(ViewData.ModelState.ContainsKey("ExceedsAvailableFunding") && ViewData.ModelState["ExceedsAvailableFunding"].Errors.Any() ? "disabled" : "")>
                 Continue
             </button>
         </div>
