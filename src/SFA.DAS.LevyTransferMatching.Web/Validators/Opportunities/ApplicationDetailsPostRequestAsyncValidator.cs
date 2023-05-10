@@ -45,12 +45,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities
                         return false;
                     }
 
-                    return model.StartDate.HasValue
-                            ?
-                                result.Opportunity.RemainingAmount >= selectedStandard.ApprenticeshipFunding
-                                .GetEffectiveFundingLine(model.StartDate.Value)
-                                .CalcFundingForDate(model.ParsedNumberOfApprentices, model.StartDate.Value)
-                            : true;
+                    return !model.StartDate.HasValue || result.Opportunity.RemainingAmount >= selectedStandard.ApprenticeshipFunding
+                        .GetEffectiveFundingLine(model.StartDate.Value)
+                        .CalcFundingForDate(model.ParsedNumberOfApprentices, model.StartDate.Value);
                 })
                 .WithMessage(NumApprenticesError)
             ;

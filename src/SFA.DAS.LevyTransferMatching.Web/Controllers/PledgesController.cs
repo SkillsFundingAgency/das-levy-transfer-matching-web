@@ -80,7 +80,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             return RedirectToAction(nameof(RejectApplications), new { request.EncodedAccountId, request.EncodedPledgeId, request.ApplicationsToReject });
         }
         
-        [Authorize]
+        [Authorize(Policy=PolicyNames.IsAuthenticated)]
         [HttpGet]
         [Route("{encodedPledgeId}/applications/reject-applications")]
         public async Task<IActionResult> RejectApplications(RejectApplicationsRequest request)
@@ -89,7 +89,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             return View(rejectApplicationsViewModel);
         }
 
-        [Authorize]
+        [Authorize(Policy=PolicyNames.IsAuthenticated)]
         [Route("{encodedPledgeId}/applications/reject-applications")]
         [HttpPost]
         public async Task<IActionResult> RejectApplications(RejectApplicationsPostRequest request)

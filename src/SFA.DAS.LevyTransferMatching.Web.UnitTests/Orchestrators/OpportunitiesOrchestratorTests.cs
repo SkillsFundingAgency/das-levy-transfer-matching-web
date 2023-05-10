@@ -146,7 +146,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             // The list of accounts that the user has access to, across all
             // levels of access.
-            var accountIds = _fixture.CreateMany<long>(3).ToArray();
+            var accountIds = _fixture.CreateMany<string>(3).ToArray();
             
             // The list of accounts that the user has access to with
             // Owner/Transactor privilages (a subset of the above)
@@ -156,16 +156,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                 .Setup(x => x.GetUserOwnerTransactorAccountIds())
                 .Returns(userAccessAccountIds);
 
-            // Account IDs come from EAS encoded by default - so we need to
-            // "decode"
-            var idStack = new Stack<long>(accountIds);
-            _encodingService
-                .Setup(x => x.Decode(It.IsAny<string>(), It.Is<EncodingType>(y => y == EncodingType.AccountId)))
-                .Returns(idStack.Pop);
 
             var selectAccountRequest = _fixture.Create<SelectAccountRequest>();
             var getOpportunityApplyResponse = _fixture
                 .Create<GetSelectAccountResponse>();
+            getOpportunityApplyResponse.Accounts.First().EncodedAccountId = userAccessAccountIds.First();
+            getOpportunityApplyResponse.Accounts.Last().EncodedAccountId = userAccessAccountIds.Last();
 
             _opportunitiesService
                 .Setup(x => x.GetSelectAccount(It.Is<int>(y => y == selectAccountRequest.OpportunityId), It.Is<string>(y => y == userId)))

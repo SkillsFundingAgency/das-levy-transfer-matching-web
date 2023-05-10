@@ -6,6 +6,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsers
 {
     public interface IAccountUserService
     {
-        Task<GetUserAccountsResponse> GetUserAccounts(string email, string userId);
+        Task<EmployerUserAccounts> GetUserAccounts(string email, string userId);
     }
 }

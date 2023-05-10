@@ -99,10 +99,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             _userId = _fixture.Create<string>();
             _userDisplayName = _fixture.Create<string>();
-            _userService.Setup(x => x.IsUserChangeAuthorized()).Returns(true);
+            _userService.Setup(x => x.IsUserChangeAuthorized(_encodedAccountId)).Returns(true);
             _userService.Setup(x => x.GetUserId()).Returns(_userId);
             _userService.Setup(x => x.GetUserDisplayName()).Returns(_userDisplayName);
-            _userService.Setup(x => x.IsOwnerOrTransactor(0)).Returns(true);
+            _userService.Setup(x => x.IsOwnerOrTransactor(_encodedAccountId)).Returns(true);
 
             _orchestrator = new PledgeOrchestrator(_pledgeService.Object, _encodingService.Object, _userService.Object, _featureToggles,
                 _dateTimeService.Object, _csvService.Object);
@@ -263,7 +263,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                 }
             };
 
-            _userService.Setup(x => x.IsOwnerOrTransactor(0)).Returns(ownerOrTransactorStatus);
+            _userService.Setup(x => x.IsOwnerOrTransactor(_encodedAccountId)).Returns(ownerOrTransactorStatus);
             _pledgeService.Setup(x => x.GetApplications(0, 0, null, null)).ReturnsAsync(response);
            
             var result = await _orchestrator.GetApplications(new ApplicationsRequest() { EncodedAccountId = _encodedAccountId, EncodedPledgeId = _encodedPledgeId });
@@ -278,10 +278,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             response.PledgeRemainingAmount = 1000;
             response.Amount = 1;
             response.Status = ApplicationStatus.Pending;
-
+            
             _pledgeService.Setup(o => o.GetApplication(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
 
-            var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
+            var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0, EncodedAccountId = _encodedAccountId});
 
             Assert.IsFalse(string.IsNullOrWhiteSpace(result.JobRole));
             Assert.IsTrue(result.AllowApproval);
@@ -299,7 +299,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             response.Status = ApplicationStatus.Pending;
             _pledgeService.Setup(o => o.GetApplication(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
 
-            var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
+            var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0, EncodedAccountId = _encodedAccountId });
 
             Assert.AreEqual(expectAllowApproval, result.AllowApproval);
         }
@@ -348,7 +348,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             response.Status = ApplicationStatus.Pending;
             _pledgeService.Setup(o => o.GetApplication(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
 
-            _userService.Setup(x => x.IsOwnerOrTransactor(0)).Returns(false);
+            _userService.Setup(x => x.IsOwnerOrTransactor(It.IsAny<string>())).Returns(false);
 
             var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
 
@@ -364,7 +364,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             response.Status = ApplicationStatus.Pending;
             _pledgeService.Setup(o => o.GetApplication(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
 
-            _userService.Setup(x => x.IsOwnerOrTransactor(0)).Returns(false);
+            _userService.Setup(x => x.IsOwnerOrTransactor(It.IsAny<string>())).Returns(false);
 
             var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
 
@@ -381,7 +381,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             response.Status = ApplicationStatus.Pending;
             _pledgeService.Setup(o => o.GetApplication(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
 
-            var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
+            var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0, EncodedAccountId = _encodedAccountId});
 
             Assert.AreEqual(expectedRejectOptionElementId, result.RejectOptionElementId);
         }
