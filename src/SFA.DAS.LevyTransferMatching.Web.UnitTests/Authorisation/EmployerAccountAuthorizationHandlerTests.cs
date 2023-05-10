@@ -103,7 +103,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Authorisation
             configuration.Setup(x=>x[$"{nameof(Infrastructure.Configuration.FeatureToggles)}:UseGovSignIn"]).Returns("false");
             employerIdentifier.AccountId = accountId.ToUpper();
             employerIdentifier.Role = "Owner";
-            employerAccountService.Setup(x => x.GetUserAccounts(userId, email))
+            employerAccountService.Setup(x => x.GetUserAccounts(email, userId))
                 .ReturnsAsync(new GetUserAccountsResponse
                 {
                     UserAccounts = new List<EmployerIdentifier>{ employerIdentifier }
@@ -133,6 +133,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Authorisation
             string userId,
             string email,
             EmployerIdentifier employerIdentifier,
+            EmployerIdentifier claimEmployerIdentifier,
             ManageAccountRequirement ownerRequirement,
             [Frozen] Mock<IHttpContextAccessor> httpContextAccessor,
             [Frozen] Mock<IAccountUserService> employerAccountService,
@@ -143,14 +144,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Authorisation
             configuration.Setup(x=>x[$"{nameof(Infrastructure.Configuration.FeatureToggles)}:UseGovSignIn"]).Returns("true");
             employerIdentifier.AccountId = accountId.ToUpper();
             employerIdentifier.Role = "Owner";
-            employerAccountService.Setup(x => x.GetUserAccounts(userId, email))
+            employerAccountService.Setup(x => x.GetUserAccounts(email, userId))
                 .ReturnsAsync(new GetUserAccountsResponse
                 {
                     UserAccounts = new List<EmployerIdentifier>{ employerIdentifier }
                 });
             
             var userClaim = new Claim(ClaimTypes.NameIdentifier, userId);
-            var employerAccounts = new Dictionary<string, EmployerIdentifier>{{employerIdentifier.AccountId, employerIdentifier}};
+            var employerAccounts = new Dictionary<string, EmployerIdentifier>{{claimEmployerIdentifier.AccountId, claimEmployerIdentifier}};
             var employerAccountClaim = new Claim(ClaimIdentifierConfiguration.Account, JsonConvert.SerializeObject(employerAccounts));
             var claimsPrinciple = new ClaimsPrincipal(new[] {new ClaimsIdentity(new[] {employerAccountClaim, userClaim, new Claim(ClaimTypes.Email, email)})});
             var context = new AuthorizationHandlerContext(new[] {ownerRequirement}, claimsPrinciple, null);
@@ -181,7 +182,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Authorisation
             //Arrange
             employerIdentifier.AccountId = employerIdentifier.AccountId.ToUpper();
             employerIdentifier.Role = "Owner";
-            employerAccountService.Setup(x => x.GetUserAccounts(userId,""))
+            employerAccountService.Setup(x => x.GetUserAccounts("",userId))
                 .ReturnsAsync(new GetUserAccountsResponse
                 {
                     UserAccounts = new List<EmployerIdentifier>{ employerIdentifier }

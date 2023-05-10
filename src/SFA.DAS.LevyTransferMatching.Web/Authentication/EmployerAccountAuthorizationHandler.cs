@@ -88,7 +88,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Authentication
 
                 var userId = userClaim.Value;
 
-                var result = _accountsService.GetUserAccounts(userId, email).Result;
+                var result = _accountsService.GetUserAccounts(email, userId).Result;
                 
                 var accountsAsJson = JsonConvert.SerializeObject(result.EmployerAccounts.ToDictionary(k => k.AccountId));
                 var associatedAccountsClaim = new Claim(ClaimIdentifierConfiguration.Account, accountsAsJson, JsonClaimValueTypes.Json);
