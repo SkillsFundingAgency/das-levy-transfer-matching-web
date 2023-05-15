@@ -31,16 +31,22 @@
     background: #f3f2f1;
 }
 
-.app-data__title,
 .app-data__figure {
     margin: 0;
     padding: 0 !important;
     color: inherit;
 }
 
+.app-data__title {
+    margin: 0;
+    padding: 0 !important;
+    color: inherit;
+    font-size:15px;
+}
+
 .app-data--information {
-    background: #d2e2f1;
-    color: #144e81;
+    background: #1d70b8;
+    color: #fff;
 }
 
 @media (min-width: 40.0625em) {

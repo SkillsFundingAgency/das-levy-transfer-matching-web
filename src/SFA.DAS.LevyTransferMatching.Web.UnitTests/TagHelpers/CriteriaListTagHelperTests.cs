@@ -41,7 +41,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.TagHelpers
         [TestCase(false, false, true, false, 25, "<p class=\"govuk-!-margin-bottom-1\">25% match</p><ul class=\"app-criteria-list govuk-list govuk-list--bullet\"><li>Job Role</li></ul>")]
         [TestCase(false, true, true, false, 50, "<p class=\"govuk-!-margin-bottom-1\">50% match</p><ul class=\"app-criteria-list govuk-list govuk-list--bullet\"><li>Sector</li><li>Job Role</li></ul>")]
         [TestCase(true, false, true, true, 75, "<p class=\"govuk-!-margin-bottom-1\">75% match</p><ul class=\"app-criteria-list govuk-list govuk-list--bullet\"><li>Location</li><li>Job Role</li><li>Level</li></ul>")]
-        [TestCase(true, true, true, true, 100, "<p class=\"govuk-!-margin-bottom-1\">100% match</p><ul class=\"app-criteria-list govuk-list govuk-list--bullet\"><li>Location</li><li>Sector</li><li>Job Role</li><li>Level</li></ul>")]
+        [TestCase(true, true, true, true, 100, "<p class=\"govuk-!-margin-bottom-1\">100% match</p>")]
         public void ProcessReturnsCorrectHtml(bool isLocationMatch, bool isSectorMatch, bool isJobRoleMatch, bool isLevelMatch, int matchPercentage, string expectedOutput)
         {
             var application = new ApplicationsViewModel.Application

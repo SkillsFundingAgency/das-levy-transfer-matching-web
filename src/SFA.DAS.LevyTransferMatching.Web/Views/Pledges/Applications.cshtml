@@ -68,7 +68,7 @@
             <div class="govuk-grid-column-one-third">
                 <div class="app-data ">
                     <p class="govuk-heading-s app-data__title">
-                        Pledged funds for @Model.TaxYear
+                        Pledged funds
                     </p>
                     <p class="govuk-heading-l app-data__figure">
                         @Model.PledgeTotalAmount
@@ -78,7 +78,7 @@
             <div class="govuk-grid-column-one-third">
                 <div class="app-data app-data--information">
                     <p class="govuk-heading-s app-data__title">
-                        Remaining funds for @Model.TaxYear
+                        Estimated remaining transfer balance
                     </p>
                     <p class="govuk-heading-l app-data__figure">
                         @Model.PledgeRemainingAmount
@@ -89,35 +89,15 @@
         
         @if (Model.Applications.Any())
         {
-            <div class="govuk-inset-text">
-                <p>Applications awaiting approval are waiting for you to review and approve or reject. Applicants appreciate a response from you in order to manage their apprenticeships.</p>
-            </div>
-        }
-
         <div class="govuk-grid-row">
-            <div class="govuk-grid-column-full">
-                 <div class="govuk-button-group">
-                    @if (Model.RenderCreatePledgeButton)
-                    {
-                        <form action="/accounts/@Model.EncodedAccountId/pledges/create/inform" method="get">
-                            <button class="govuk-button">
-                                Create a new transfer pledge
-                            </button>
-                        </form>
-                    }
-
-                        @if (Model.UserCanClosePledge)
-                        {
-                            <form action="/accounts/@Model.EncodedAccountId/pledges/@Model.EncodedPledgeId/close" method="get">
-                                <button id="close-pledge-button" class="govuk-button govuk-link-secondary govuk-button--warning accepted-journey-cancel-button no-margin-top">
-                                Close pledge
-                                </button>
-                            </form>
-                        }
-
-                    </div>
+            <div class="govuk-grid-column-two-thirds">
+                <div class="govuk-inset-text">
+                    <p>You may have applications waiting to be approved or rejected. Applicants need a response from you in order to manage their apprenticeships.</p>
+                    <p>Select the name of the applicant to review. If you want to approve or reject more than 1 application, tick the box then select awaiting your approval or reject.</p>
                 </div>
             </div>
+        </div>
+        }       
         </div>
 
         <div class="govuk-grid-row">
@@ -146,7 +126,7 @@
                                             <sortable-column column-name="Applicant" column-label="Applicant" default="false" default-order="Ascending"></sortable-column>
                                         </th>
                                         <th scope="col" class="govuk-table__header das-table-cell-width-15">
-                                            <sortable-column column-name="CurrentFinancialYearAmount" column-label="Estimated cost @Model.TaxYear" default="false" default-order="Descending"></sortable-column>
+                                            <sortable-column column-name="CurrentFinancialYearAmount" column-label="Estimated cost" default="false" default-order="Descending"></sortable-column>
                                         </th>
                                         <th scope="col" class="govuk-table__header das-table-cell-width-15">
                                             <sortable-column column-name="Duration" column-label="Typical duration" default="false" default-order="Descending"></sortable-column>
@@ -194,14 +174,30 @@
                          </fieldset>
                       </div>  
                       @if (Model.RenderRejectButton)
-                      {
-                        <div class="das-highlight">
-                            <div class="govuk-button-group govuk-!-margin-bottom-0">
-                                <p class="govuk-body govuk-!-margin-bottom-0 govuk-!-padding-right-3">Reject selected applications:</p>
-                                <button class="govuk-button govuk-!-margin-bottom-0" data-module="govuk-button" id="applications-action" type="submit">Continue</button>
+                      {                        
+                        <div class="govuk-grid-row">
+                            <div class="govuk-grid-column-full">
+                                <div class="govuk-button-group">
+                                <button class="govuk-button govuk-button--secondary" data-module="govuk-button" id="applications-action" type="submit">Reject application</button>
+                                </div>
                             </div>
                         </div>
                       }
+                    
+                    <div class="govuk-grid-row">
+                        <div class="govuk-grid-column-full">
+                            <div class="govuk-button-group">
+                                @if (Model.UserCanClosePledge)
+                                {
+                                    <form action="/accounts/@Model.EncodedAccountId/pledges/@Model.EncodedPledgeId/close" method="get">
+                                        <button id="close-pledge-button" class="govuk-button govuk-link-secondary govuk-button--warning accepted-journey-cancel-button no-margin-top">
+                                            Close pledge
+                                        </button>
+                                    </form>
+                                }
+                            </div>
+                        </div>
+                    </div>
                 </form>
             } else
             {
@@ -223,5 +219,4 @@
             }
          
         </div>
-    <a href="/accounts/@Model.EncodedAccountId/pledges" class="govuk-back-link">Back to my transfer pledges</a>
 </main>

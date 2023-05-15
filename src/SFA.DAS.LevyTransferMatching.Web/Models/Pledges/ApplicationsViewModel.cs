@@ -8,7 +8,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 {
     public class ApplicationsViewModel : ApplicationsPostRequest
     {
-        public string TaxYear { get; set; }
+    
         public IEnumerable<Application> Applications { get; set; }
         public bool UserCanClosePledge { get; set; }
         public bool DisplayRejectedBanner { get; set; }

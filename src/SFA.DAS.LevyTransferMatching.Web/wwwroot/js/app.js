@@ -438,11 +438,6 @@ ShowFundingEstimate.prototype.updateUI = function () {
   if (this.showEstimate) {
     document.getElementById('field-estimate').innerText = this.estimate.toLocaleString()
     panel.style.display = 'block'
-    if (!this.hasEnoughFunding) {
-      panel.classList.add('app-estimate--not-enough')
-    } else {
-      panel.classList.remove('app-estimate--not-enough')
-    }
   } else {
     panel.style.display = 'none'
   }
