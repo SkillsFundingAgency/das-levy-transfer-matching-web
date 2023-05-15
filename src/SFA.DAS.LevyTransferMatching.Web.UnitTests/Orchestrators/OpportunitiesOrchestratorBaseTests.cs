@@ -7,7 +7,6 @@ using NUnit.Framework;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
-using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using static SFA.DAS.LevyTransferMatching.Web.Orchestrators.OpportunitiesOrchestratorBase;
 
@@ -88,7 +87,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                 .Select(x => x.Description);
             Assert.AreEqual(result.SectorList, sectorDescriptions.Single());
 
-            Assert.AreEqual(result.YearDescription, $"{CurrentDateTime.ToTaxYear("yyyy")}/{CurrentDateTime.AddYears(1).ToTaxYear("yy")}");
         }
 
         [Test]
@@ -129,7 +127,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             Assert.AreEqual("All", result.JobRoleList);
             Assert.AreEqual("All", result.LevelList);
             Assert.AreEqual("All", result.SectorList);
-            Assert.AreEqual(result.YearDescription, $"{CurrentDateTime.ToTaxYear("yyyy")}/{CurrentDateTime.AddYears(1).ToTaxYear("yy")}");
             Assert.IsFalse(result.Description.Contains(encodedPledgeId));
         }
 
@@ -187,7 +184,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                 .Select(x => x.Description);
             Assert.AreEqual(result.SectorList, string.Join("; ", sectorDescriptions));
 
-            Assert.AreEqual(result.YearDescription, $"{CurrentDateTime.ToTaxYear("yyyy")}/{CurrentDateTime.AddYears(1).ToTaxYear("yy")}");
 
             Assert.IsTrue(result.Description.Contains(encodedPledgeId));
         }
@@ -204,7 +200,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             LevelReferenceDataItems = _fixture
                 .CreateMany<ReferenceDataItem>(7)
-                .ToList();
+                .ToList();           
 
             CurrentDateTime = _fixture.Create<DateTime>();
             DateTimeService

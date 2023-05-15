@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
@@ -198,11 +197,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             // Arrange
             ContactDetailsRequest contactDetailsRequest = _fixture.Create<ContactDetailsRequest>();
 
-            CurrentDateTime = _fixture.Create<DateTime>();
-            DateTimeService
-                .Setup(x => x.UtcNow)
-                .Returns(CurrentDateTime);
-
             GetContactDetailsResponse getContactDetailsResult = _fixture.Create<GetContactDetailsResponse>();
 
             _opportunitiesService
@@ -227,11 +221,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         {
             // Arrange
             ContactDetailsRequest contactDetailsRequest = _fixture.Create<ContactDetailsRequest>();
-
-            CurrentDateTime = _fixture.Create<DateTime>();
-            DateTimeService
-                .Setup(x => x.UtcNow)
-                .Returns(CurrentDateTime);
 
             GetContactDetailsResponse getContactDetailsResult = _fixture.Create<GetContactDetailsResponse>();
 
@@ -283,7 +272,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             Assert.AreEqual(string.Join(", ", getMoreDetailsResponse.Opportunity.JobRoles.ToReferenceDataDescriptionList(getMoreDetailsResponse.JobRoles)), result.OpportunitySummaryViewModel.JobRoleList);
             Assert.AreEqual(string.Join(", ", getMoreDetailsResponse.Opportunity.Levels.ToReferenceDataDescriptionList(getMoreDetailsResponse.Levels, (x) => x.ShortDescription)), result.OpportunitySummaryViewModel.LevelList);
             Assert.AreEqual(string.Join(", ", getMoreDetailsResponse.Opportunity.Sectors.ToReferenceDataDescriptionList(getMoreDetailsResponse.Sectors)), result.OpportunitySummaryViewModel.SectorList);
-            Assert.AreEqual(CurrentDateTime.ToTaxYearDescription(), result.OpportunitySummaryViewModel.YearDescription);
 
             _cacheStorageService.Verify(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()), Times.Once);
             _opportunitiesService.Verify(x => x.GetMoreDetails(request.AccountId, request.PledgeId), Times.Once);
@@ -321,7 +309,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             Assert.AreEqual(result.OpportunitySummaryViewModel.SectorList, applicationDetailsResponse.Opportunity.Sectors.ToReferenceDataDescriptionList(applicationDetailsResponse.Sectors));
             Assert.AreEqual(result.OpportunitySummaryViewModel.JobRoleList, applicationDetailsResponse.Opportunity.JobRoles.ToReferenceDataDescriptionList(applicationDetailsResponse.JobRoles));
             Assert.AreEqual(result.OpportunitySummaryViewModel.LevelList, applicationDetailsResponse.Opportunity.Levels.ToReferenceDataDescriptionList(applicationDetailsResponse.Levels, x => x.ShortDescription));
-            Assert.AreEqual(CurrentDateTime.ToTaxYearDescription(), result.OpportunitySummaryViewModel.YearDescription);
             Assert.AreEqual(cacheItem.StartDate.Value.Month, result.Month);
             Assert.AreEqual(cacheItem.StartDate.Value.Year, result.Year);
             Assert.AreEqual(applicationDetailsResponse.Standards.Count(), result.SelectStandardViewModel.Standards.Count());
@@ -491,7 +478,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             Assert.AreEqual(result.OpportunitySummaryViewModel.SectorList, getSectorResponse.Opportunity.Sectors.ToReferenceDataDescriptionList(getSectorResponse.Sectors));
             Assert.AreEqual(result.OpportunitySummaryViewModel.JobRoleList, getSectorResponse.Opportunity.JobRoles.ToReferenceDataDescriptionList(getSectorResponse.JobRoles));
             Assert.AreEqual(result.OpportunitySummaryViewModel.LevelList, getSectorResponse.Opportunity.Levels.ToReferenceDataDescriptionList(getSectorResponse.Levels, x => x.ShortDescription));
-            Assert.AreEqual(CurrentDateTime.ToTaxYearDescription(), result.OpportunitySummaryViewModel.YearDescription);
 
             _cacheStorageService.Verify(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()), Times.Once);
             _opportunitiesService.Verify(x => x.GetSector(1, 1), Times.Once);
