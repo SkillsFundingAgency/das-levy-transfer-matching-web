@@ -8,7 +8,7 @@ namespace SFA.DAS.LevyTransferMatching.Domain.Extensions
         {
             switch (status)
             {
-                case ApplicationStatus.Pending: return "AWAITING APPROVAL";
+                case ApplicationStatus.Pending: return "AWAITING YOUR APPROVAL";
                 case ApplicationStatus.Approved: return "AWAITING ACCEPTANCE BY APPLICANT";
                 case ApplicationStatus.Accepted: return "OFFER OF FUNDING ACCEPTED";
                 case ApplicationStatus.FundsUsed: return "FUNDS USED";
