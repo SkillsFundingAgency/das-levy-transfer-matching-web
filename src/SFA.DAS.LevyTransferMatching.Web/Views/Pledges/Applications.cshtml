@@ -184,21 +184,9 @@
                         </div>
                       }
                     
-                    <div class="govuk-grid-row">
-                        <div class="govuk-grid-column-full">
-                            <div class="govuk-button-group">
-                                @if (Model.UserCanClosePledge)
-                                {
-                                    <form action="/accounts/@Model.EncodedAccountId/pledges/@Model.EncodedPledgeId/close" method="get">
-                                        <button id="close-pledge-button" class="govuk-button govuk-link-secondary govuk-button--warning accepted-journey-cancel-button no-margin-top">
-                                            Close pledge
-                                        </button>
-                                    </form>
-                                }
-                            </div>
-                        </div>
-                    </div>
+                    
                 </form>
+            
             } else
             {
                 <fieldset class="govuk-fieldset">
@@ -217,6 +205,19 @@
                             </table>
                 </fieldset>
             }
-         
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                    <div class="govuk-button-group">
+                        @if (Model.UserCanClosePledge)
+                        {
+                            <form action="/accounts/@Model.EncodedAccountId/pledges/@Model.EncodedPledgeId/close" method="get">
+                                <button id="close-pledge-button" class="govuk-button govuk-link-secondary govuk-button--warning accepted-journey-cancel-button no-margin-top">
+                                    Close pledge
+                                </button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
         </div>
 </main>
