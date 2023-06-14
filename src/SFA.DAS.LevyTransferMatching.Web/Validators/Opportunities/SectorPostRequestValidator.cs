@@ -15,9 +15,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities
                 .NotEmpty().WithMessage("You must select or enter a location")
                 .When(x => x.HasPledgeLocations && !x.AdditionalLocation);
 
-            RuleFor(x => x.Locations)
+            RuleFor(x => x.AdditionalLocationText)
                 .Must((request, s) => !string.IsNullOrWhiteSpace(request.AdditionalLocationText))
-                .WithMessage("You must select or enter a location")
+                .WithMessage("You must enter a location")
                 .When(x => x.AdditionalLocation && x.HasPledgeLocations);
 
             RuleFor(x => x.SpecificLocation)
