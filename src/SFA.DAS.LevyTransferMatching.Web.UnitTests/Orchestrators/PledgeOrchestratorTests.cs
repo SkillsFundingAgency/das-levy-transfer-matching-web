@@ -455,8 +455,45 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             Assert.AreEqual(expectedRemainingFundsIfApproved.ToCurrencyString(), viewModel.RemainingFundsIfApproved);
             Assert.AreEqual(expectedEstimatedCostOverDuration.ToCurrencyString(), viewModel.EstimatedCostOverDuration);
             Assert.AreEqual(_dateTimeService.Object.UtcNow.ToTaxYearDescription(), viewModel.YearDescription);
+            Assert.IsTrue(viewModel.YearlyPayments.Count > 0);
         }
 
+        [Test]
+        public void GetAffordabilityViewModel_Returns_Correct_YearlyPayments_Values()
+        {
+            var amount = 169;
+            var remainingAmount = 172;
+            var numberOfApprentices = 2;
+            var maxFunding = 28000;
+            var estimatedDurationMonths = 138;
+            var startDate = new DateTime(2023, 9, 1);
+
+            List<YearlyPayments> expectedPayments = new List<YearlyPayments>
+            {
+                new YearlyPayments("first year", 4870),
+                new YearlyPayments("second year", 4870),
+                new YearlyPayments("third year", 4870),
+                new YearlyPayments("fourth year", 4870),
+                new YearlyPayments("fifth year", 4870),
+                new YearlyPayments("sixth year", 4870),
+                new YearlyPayments("seventh year", 4870),
+                new YearlyPayments("eighth year", 4870),
+                new YearlyPayments("ninth year", 4870),
+                new YearlyPayments("tenth year", 4870),
+                new YearlyPayments("eleventh year", 4870),
+                new YearlyPayments("final year", 2435),
+            };
+
+            var viewModel = _orchestrator.GetAffordabilityViewModel(amount, remainingAmount, numberOfApprentices, maxFunding, estimatedDurationMonths, startDate);
+
+            Assert.AreEqual(12, viewModel.YearlyPayments.Count);
+
+            for (int i = 0; i < viewModel.YearlyPayments.Count; i++)
+            {
+                Assert.AreEqual(expectedPayments[i].Year, viewModel.YearlyPayments[i].Year);
+                Assert.AreEqual(expectedPayments[i].Amount, viewModel.YearlyPayments[i].Amount);
+            }
+        }
 
         [Test]
         public async Task GetApplicationApprovedViewModel_EncodedAccountId_Is_Correct()

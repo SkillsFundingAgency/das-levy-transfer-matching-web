@@ -14,6 +14,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Humanizer;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
@@ -331,8 +332,47 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 EstimatedCostThisYear = amount.ToCurrencyString(),
                 RemainingFundsIfApproved = remainingFundsIfApproved.ToCurrencyString(),
                 EstimatedCostOverDuration = estimatedCostOverDuration.ToCurrencyString(),
-                YearDescription = _dateTimeService.UtcNow.ToTaxYearDescription()
+                YearDescription = _dateTimeService.UtcNow.ToTaxYearDescription(),
+                YearlyPayments = CalculateYearlyPayments(estimatedCostOverDuration, estimatedDurationMonths).ToList()
             };
+        }
+
+        private List<YearlyPayments> CalculateYearlyPayments(double totalAmount, int durationInMonths)
+        {
+            List<YearlyPayments> yearlyPayments = new List<YearlyPayments>();
+
+            double paymentPerMonth = totalAmount / durationInMonths;
+            double remainingAmount = totalAmount;
+            int currentYear = 1;
+            double currentYearPayment = 0;
+
+            for (int i = 0; i < durationInMonths; i++)
+            {
+                int currentMonthIndex = (i) % 12;
+
+                double paymentThisMonth = Math.Min(paymentPerMonth, remainingAmount);
+
+                currentYearPayment += paymentThisMonth;
+                remainingAmount -= paymentThisMonth;
+
+                if (currentMonthIndex == 11 || i == durationInMonths - 1)
+                {
+                    string yearLabel = i == durationInMonths - 1 ? "final year" : GenerateYearLabel(currentYear);
+                    yearlyPayments.Add(new YearlyPayments(yearLabel, currentYearPayment.ToNearest(1)));
+
+                    currentYear++;
+                    currentYearPayment = 0;
+                }
+            }
+
+            return yearlyPayments;
+
+        }
+
+        private string GenerateYearLabel(int year)
+        {
+            string ordinalYear = year.ToOrdinalWords();
+            return $"{ordinalYear} year";
         }
 
         public async Task RejectApplications(RejectApplicationsPostRequest request)

@@ -67,7 +67,19 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
             public string RemainingFundsIfApproved { get; set; }
             public string EstimatedCostOverDuration { get; set; }
             public string YearDescription { get; set; }
+            public List<YearlyPayments> YearlyPayments { get; set; }
         }
+    }
+
+    public class YearlyPayments
+    {
+        public YearlyPayments(string year, double amount)
+        {
+            Year = year;
+            Amount = amount;
+        }
+        public string Year { get; set; }
+        public double Amount { get; set; }
     }
 }
 

@@ -85,18 +85,22 @@
     }
 
     <div class="das-highlight">
-        <h2 class="govuk-heading-m">Can I afford to fund this training?</h2>
-        <p>Estimated cost over @Model.EstimatedDurationMonths months: <strong>@Model.Affordability.EstimatedCostOverDuration</strong></p>
-        <h3 class="govuk-heading-s govuk-!-margin-bottom-0">For @Model.Affordability.YearDescription:</h3>
+        <h2 class="govuk-heading-m">Estimated costs of training</h2>
         <dl class="app-dl-inline govuk-body govuk-!-margin-bottom-4">
-            <dt class="app-dl-inline__title">Pledge funds remaining this year</dt>
-            <dd class="app-dl-inline__definition"><strong>@Model.Affordability.RemainingFunds</strong></dd>
-            <dt class="app-dl-inline__title">Estimated costs this year</dt>
-            <dd class="app-dl-inline__definition"><strong>@Model.Affordability.EstimatedCostThisYear</strong></dd>
+            <dt class="app-dl-inline__title">Maximum cost of training over @Model.EstimatedDurationMonths months =</dt>
+            <dd class="app-dl-inline__definition"><strong>@Model.Affordability.EstimatedCostOverDuration</strong></dd>
+            @foreach (var payment in @Model.Affordability.YearlyPayments)
+            {
+                <dt class="app-dl-inline__title">Estimated cost for @payment.Year</dt>
+                <dd class="app-dl-inline__definition"><strong>@payment.Amount</strong></dd>
+            }
+            <dt class="app-dl-inline__title">
+                Estimated costs include 20% completion costs which are paid on completion of the apprenticeship.
+            </dt>
         </dl>
         <p>Pledge funds remaining if application is approved: <strong>@Model.Affordability.RemainingFundsIfApproved</strong></p>
         <h3 class="govuk-heading-s govuk-!-margin-bottom-0">What is estimated cost?</h3>
-        <p>The estimated total cost of training is based on the funding band maximum, the planned start date of training and the 20% completion payment.</p>
+        <p>The total estimated cost of training is based on the funding band maximum,including completion costs,and is spread across the typical duration of the apprenticeship.</p>
     </div>
 
     <div class="das-highlight">
