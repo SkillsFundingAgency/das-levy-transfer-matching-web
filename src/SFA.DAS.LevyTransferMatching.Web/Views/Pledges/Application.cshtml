@@ -14,11 +14,12 @@
     <h1 class="govuk-heading-xl">
         @Model.EmployerAccountName
     </h1>
-    <div class="das-highlight">
+
         <h2 class="govuk-heading-m">Details about the application</h2>
         <p><strong class="govuk-tag govuk-tag--@Model.PercentageMatchCssClass">@Model.MatchPercentage% Match</strong></p>
-        <dl class="govuk-list app-dl-icon-list govuk-!-margin-bottom-4">
-            <dt class="app-dl-icon-list__title">
+
+        <dl class="govuk-body app-dl-inline govuk-!-margin-bottom-4">
+            <dt class="app-dl-inline__title">
                 @{ if (Model.IsLocationMatch) {
                         <span class="app-dl-icon-list__icon app-dl-icon-list__icon--tick">
                             Match on:
@@ -27,8 +28,8 @@
                 }
                 Location
             </dt>
-            <dd class="app-dl-icon-list__definition">@Model.Locations</dd>
-            <dt class="app-dl-icon-list__title">
+            <dd class="app-dl-inline__definition--strong">@Model.Locations</dd>
+            <dt class="app-dl-inline__title">
                 @{ if (Model.IsSectorMatch)
                     {
                         <span class="app-dl-icon-list__icon app-dl-icon-list__icon--tick">
@@ -38,8 +39,8 @@
                 }
                 Sector
             </dt>
-            <dd class="app-dl-icon-list__definition">@Model.DisplaySectors</dd>
-            <dt class="app-dl-icon-list__title">
+            <dd class="app-dl-inline__definition--strong">@Model.DisplaySectors</dd>
+            <dt class="app-dl-inline__title">
                 @{ if (Model.IsJobRoleMatch)
                     {
                         <span class="app-dl-icon-list__icon app-dl-icon-list__icon--tick">
@@ -49,8 +50,8 @@
                 }
                 Type of job role
             </dt>
-            <dd class="app-dl-icon-list__definition">@Model.JobRole</dd>
-            <dt class="app-dl-icon-list__title">
+            <dd class="app-dl-inline__definition--strong">@Model.JobRole</dd>
+            <dt class="app-dl-inline__title">
                 @{ if (Model.IsLevelMatch)
                     {
                         <span class="app-dl-icon-list__icon app-dl-icon-list__icon--tick">
@@ -60,7 +61,7 @@
                 }
                 Level
             </dt>
-            <dd class="app-dl-icon-list__definition">@Model.Level</dd>
+            <dd class="app-dl-inline__definition--strong">@Model.Level</dd>
         </dl>
         <dl class="govuk-body app-dl-inline">
             <dt class="app-dl-inline__title">Apprentices</dt>
@@ -74,17 +75,21 @@
             <dt class="app-dl-inline__title">Date applied</dt>
             <dd class="app-dl-inline__definition--strong">@Model.CreatedOn.ToLongDateDisplayString()</dd>
         </dl>
-    </div>
+
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
 
     @if (!string.IsNullOrWhiteSpace(Model.AboutOpportunity))
     {
-        <div class="das-highlight">
+
             <h2 class="govuk-heading-m">About their apprenticeship opportunity</h2>
             <p>@Model.AboutOpportunity</p>
-        </div>
+
+        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
     }
 
-    <div class="das-highlight">
+
         <h2 class="govuk-heading-m">Estimated costs of training</h2>
         <dl class="app-dl-inline govuk-body govuk-!-margin-bottom-4">
             <dt class="app-dl-inline__title">Maximum cost of training over @Model.EstimatedDurationMonths months =</dt>
@@ -101,26 +106,22 @@
         <p>Pledge funds remaining if application is approved: <strong>@Model.Affordability.RemainingFundsIfApproved</strong></p>
         <h3 class="govuk-heading-s govuk-!-margin-bottom-0">What is estimated cost?</h3>
         <p>The total estimated cost of training is based on the funding band maximum,including completion costs,and is spread across the typical duration of the apprenticeship.</p>
-    </div>
+   
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
 
-    <div class="das-highlight">
+
+
         <h2 class="govuk-heading-m">Contact details</h2>
         <p>You can contact @Model.EmployerAccountName if you would like to ask them for more information.</p>
-        <ul class="govuk-list app-icon-list">
-            <li class="app-icon-list__list-item">
-                <span class="app-icon-list__icon app-icon-list__icon--user">Name: </span> <strong>@Model.FirstName @Model.LastName</strong>
-            </li>
+        <ul class="govuk-list">
+            <li><strong>@Model.FirstName @Model.LastName</strong></li>
             @foreach (var email in Model.EmailAddresses)
             {
-                <li class="app-icon-list__list-item">
-                    <span class="app-icon-list__icon app-icon-list__icon--email">Email address: </span> <a href="mailto:@email" class="govuk-link">@email</a>
-                </li>
+                <li><a href="mailto:@email" class="govuk-link">@email</a></li>
             }
             @if (!string.IsNullOrWhiteSpace(Model.BusinessWebsite))
             {
-                <li class="app-icon-list__list-item">
-                    <span class="app-icon-list__icon app-icon-list__icon--website">Website: </span> <a target="_blank" href="@Model.BusinessWebsite" class="govuk-link" rel="noreferrer noopener">@Model.BusinessWebsite (opens in new tab)</a>
-                </li>
+                <li><a target="_blank" href="@Model.BusinessWebsite" class="govuk-link" rel="noreferrer noopener">@Model.BusinessWebsite (opens in new tab)</a></li>
             }
         </ul>
         @if (!string.IsNullOrWhiteSpace(Model.BusinessWebsite))
@@ -129,7 +130,9 @@
                 The Apprenticeship Service is not responsible for the content of external sites.
             </div>
         }
-    </div>
+
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
 
     @if (Model.AllowApproval || Model.AllowRejection)
     {
