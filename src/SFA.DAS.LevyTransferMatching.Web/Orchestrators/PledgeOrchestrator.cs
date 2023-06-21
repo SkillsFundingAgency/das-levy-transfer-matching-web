@@ -348,17 +348,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             for (int i = 0; i < durationInMonths; i++)
             {
-                int currentMonthIndex = (i) % 12;
-
                 double paymentThisMonth = Math.Min(paymentPerMonth, remainingAmount);
 
                 currentYearPayment += paymentThisMonth;
                 remainingAmount -= paymentThisMonth;
 
-                if (currentMonthIndex == 11 || i == durationInMonths - 1)
+                if ((i) % 12 == 11 || i == durationInMonths - 1)
                 {
                     string yearLabel = i == durationInMonths - 1 ? "final year" : GenerateYearLabel(currentYear);
-                    yearlyPayments.Add(new YearlyPayments(yearLabel, currentYearPayment.ToNearest(1)));
+                    yearlyPayments.Add(new YearlyPayments(yearLabel, currentYearPayment.ToCurrencyString()));
 
                     currentYear++;
                     currentYearPayment = 0;

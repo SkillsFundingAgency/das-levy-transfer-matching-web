@@ -470,18 +470,18 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             List<YearlyPayments> expectedPayments = new List<YearlyPayments>
             {
-                new YearlyPayments("first year", 4870),
-                new YearlyPayments("second year", 4870),
-                new YearlyPayments("third year", 4870),
-                new YearlyPayments("fourth year", 4870),
-                new YearlyPayments("fifth year", 4870),
-                new YearlyPayments("sixth year", 4870),
-                new YearlyPayments("seventh year", 4870),
-                new YearlyPayments("eighth year", 4870),
-                new YearlyPayments("ninth year", 4870),
-                new YearlyPayments("tenth year", 4870),
-                new YearlyPayments("eleventh year", 4870),
-                new YearlyPayments("final year", 2435),
+                new YearlyPayments("first year", "£4,870"),
+                new YearlyPayments("second year", "£4,870"),
+                new YearlyPayments("third year", "£4,870"),
+                new YearlyPayments("fourth year", "£4,870"),
+                new YearlyPayments("fifth year", "£4,870"),
+                new YearlyPayments("sixth year", "£4,870"),
+                new YearlyPayments("seventh year", "£4,870"),
+                new YearlyPayments("eighth year", "£4,870"),
+                new YearlyPayments("ninth year", "£4,870"),
+                new YearlyPayments("tenth year", "£4,870"),
+                new YearlyPayments("eleventh year", "£4,870"),
+                new YearlyPayments("final year", "£2,435"),
             };
 
             var viewModel = _orchestrator.GetAffordabilityViewModel(amount, remainingAmount, numberOfApprentices, maxFunding, estimatedDurationMonths, startDate);

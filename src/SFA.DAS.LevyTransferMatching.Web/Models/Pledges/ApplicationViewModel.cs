@@ -73,13 +73,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 
     public class YearlyPayments
     {
-        public YearlyPayments(string year, double amount)
+        public YearlyPayments(string year, string amount)
         {
             Year = year;
             Amount = amount;
         }
         public string Year { get; set; }
-        public double Amount { get; set; }
+        public string Amount { get; set; }
     }
 }
 
