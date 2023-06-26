@@ -62,10 +62,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 
         public class AffordabilityViewModel
         {
-            public string RemainingFunds { get; set; }
-            public string EstimatedCostThisYear { get; set; }
-            public string RemainingFundsIfApproved { get; set; }
-            public string EstimatedCostOverDuration { get; set; }
+            public int RemainingFundsIfApproved { get; set; }
+            public int EstimatedCostOverDuration { get; set; }
             public string YearDescription { get; set; }
             public List<YearlyPayments> YearlyPayments { get; set; }
         }
@@ -73,13 +71,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 
     public class YearlyPayments
     {
-        public YearlyPayments(string year, string amount)
+        public YearlyPayments(string year, int amount)
         {
             Year = year;
             Amount = amount;
         }
         public string Year { get; set; }
-        public string Amount { get; set; }
+        public int Amount { get; set; }
     }
 }
 

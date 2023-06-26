@@ -259,7 +259,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     IsLocationMatch = result.IsLocationMatch,
                     IsSectorMatch = result.IsSectorMatch,
                     MatchPercentage = result.MatchPercentage,
-                    Affordability = GetAffordabilityViewModel(result.Amount, result.PledgeRemainingAmount, result.NumberOfApprentices, result.MaxFunding, result.EstimatedDurationMonths, result.StartBy),
+                    Affordability = GetAffordabilityViewModel(result.PledgeRemainingAmount, result.NumberOfApprentices, result.MaxFunding, result.EstimatedDurationMonths, result.StartBy),
                     AllowApproval = result.Status == ApplicationStatus.Pending && result.Amount <= result.PledgeRemainingAmount && isOwnerOrTransactor,
                     AllowRejection = result.Status == ApplicationStatus.Pending && isOwnerOrTransactor,
                     DisplayApplicationApprovalOptions = _featureToggles.FeatureToggleApplicationApprovalOptions
@@ -321,56 +321,47 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             return $"http://{url}";
         }
 
-        public ApplicationViewModel.AffordabilityViewModel GetAffordabilityViewModel(int amount, int remainingAmount, int numberOfApprentices, int maxFunding, int estimatedDurationMonths, DateTime startDate)
+        public ApplicationViewModel.AffordabilityViewModel GetAffordabilityViewModel(int remainingAmount, int numberOfApprentices, int maxFunding, int estimatedDurationMonths, DateTime startDate)
         {
-            var remainingFundsIfApproved = remainingAmount - amount;
-            var estimatedCostOverDuration = maxFunding * numberOfApprentices;
+            var totalCost = maxFunding * numberOfApprentices;
+
+            var yearlyBreakdown = CalculateYearlyPayments(totalCost, estimatedDurationMonths).ToList();
 
             return new ApplicationViewModel.AffordabilityViewModel
             {
-                RemainingFunds = remainingAmount.ToCurrencyString(),
-                EstimatedCostThisYear = amount.ToCurrencyString(),
-                RemainingFundsIfApproved = remainingFundsIfApproved.ToCurrencyString(),
-                EstimatedCostOverDuration = estimatedCostOverDuration.ToCurrencyString(),
+                EstimatedCostOverDuration = totalCost,
+                YearlyPayments = yearlyBreakdown,
                 YearDescription = _dateTimeService.UtcNow.ToTaxYearDescription(),
-                YearlyPayments = CalculateYearlyPayments(estimatedCostOverDuration, estimatedDurationMonths).ToList()
+                RemainingFundsIfApproved = remainingAmount - (int) yearlyBreakdown.First().Amount
             };
         }
 
-        private List<YearlyPayments> CalculateYearlyPayments(double totalAmount, int durationInMonths)
+        private List<YearlyPayments> CalculateYearlyPayments(decimal totalAmount, int durationInMonths)
         {
-            List<YearlyPayments> yearlyPayments = new List<YearlyPayments>();
-
-            double paymentPerMonth = totalAmount / durationInMonths;
-            double remainingAmount = totalAmount;
-            int currentYear = 1;
-            double currentYearPayment = 0;
-
-            for (int i = 0; i < durationInMonths; i++)
+            if (durationInMonths <= 12)
             {
-                double paymentThisMonth = Math.Min(paymentPerMonth, remainingAmount);
+                return new List<YearlyPayments> { new YearlyPayments(string.Empty, (int) totalAmount) };
+            }
 
-                currentYearPayment += paymentThisMonth;
-                remainingAmount -= paymentThisMonth;
+            var yearlyPayments = new List<YearlyPayments>();
 
-                if ((i) % 12 == 11 || i == durationInMonths - 1)
-                {
-                    string yearLabel = i == durationInMonths - 1 ? "final year" : GenerateYearLabel(currentYear);
-                    yearlyPayments.Add(new YearlyPayments(yearLabel, currentYearPayment.ToCurrencyString()));
+            var years = durationInMonths / 12;
+            var months = durationInMonths % 12;
 
-                    currentYear++;
-                    currentYearPayment = 0;
-                }
+            var paymentPerMonth = totalAmount / durationInMonths;
+
+            for (var i = 0; i < years; i++)
+            {
+                var yearLabel = (i == years - 1) && (months == 0) ? "final year" : $"{(i+1).ToOrdinalWords()} year";
+                yearlyPayments.Add(new YearlyPayments(yearLabel, (int) Math.Round(paymentPerMonth * 12)));
+            }
+
+            if (months > 0)
+            {
+                yearlyPayments.Add(new YearlyPayments("final year", (int) Math.Round(paymentPerMonth * months)));
             }
 
             return yearlyPayments;
-
-        }
-
-        private string GenerateYearLabel(int year)
-        {
-            string ordinalYear = year.ToOrdinalWords();
-            return $"{ordinalYear} year";
         }
 
         public async Task RejectApplications(RejectApplicationsPostRequest request)

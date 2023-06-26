@@ -1,4 +1,5 @@
 ﻿@using SFA.DAS.LevyTransferMatching.Web.Extensions
+@using SFA.DAS.LevyTransferMatching.Domain.Types
 @model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.ApplicationViewModel
 @{
     ViewBag.GaData.Vpv = "/accounts/pledges/applications/application";
@@ -14,12 +15,14 @@
     <h1 class="govuk-heading-xl">
         @Model.EmployerAccountName
     </h1>
+    
+    <div class="das-highlight">
 
-        <h2 class="govuk-heading-m">Details about the application</h2>
+    <h2 class="govuk-heading-m">Details about the application</h2>
         <p><strong class="govuk-tag govuk-tag--@Model.PercentageMatchCssClass">@Model.MatchPercentage% Match</strong></p>
 
-        <dl class="govuk-body app-dl-inline govuk-!-margin-bottom-4">
-            <dt class="app-dl-inline__title">
+        <dl class="govuk-body app-dl-inline govuk-!-margin-bottom-4 gov-uk-list app-dl-icon-list">
+            <dt class="app-dl-icon-list__title">
                 @{ if (Model.IsLocationMatch) {
                         <span class="app-dl-icon-list__icon app-dl-icon-list__icon--tick">
                             Match on:
@@ -29,7 +32,7 @@
                 Location
             </dt>
             <dd class="app-dl-inline__definition--strong">@Model.Locations</dd>
-            <dt class="app-dl-inline__title">
+            <dt class="app-dl-icon-list__title">
                 @{ if (Model.IsSectorMatch)
                     {
                         <span class="app-dl-icon-list__icon app-dl-icon-list__icon--tick">
@@ -40,7 +43,7 @@
                 Sector
             </dt>
             <dd class="app-dl-inline__definition--strong">@Model.DisplaySectors</dd>
-            <dt class="app-dl-inline__title">
+            <dt class="app-dl-icon-list__title">
                 @{ if (Model.IsJobRoleMatch)
                     {
                         <span class="app-dl-icon-list__icon app-dl-icon-list__icon--tick">
@@ -51,7 +54,7 @@
                 Type of job role
             </dt>
             <dd class="app-dl-inline__definition--strong">@Model.JobRole</dd>
-            <dt class="app-dl-inline__title">
+            <dt class="app-dl-icon-list__title">
                 @{ if (Model.IsLevelMatch)
                     {
                         <span class="app-dl-icon-list__icon app-dl-icon-list__icon--tick">
@@ -75,9 +78,10 @@
             <dt class="app-dl-inline__title">Date applied</dt>
             <dd class="app-dl-inline__definition--strong">@Model.CreatedOn.ToLongDateDisplayString()</dd>
         </dl>
+        
+    </div>
 
     <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-
 
     @if (!string.IsNullOrWhiteSpace(Model.AboutOpportunity))
     {
@@ -89,28 +93,33 @@
 
     }
 
-
-        <h2 class="govuk-heading-m">Estimated costs of training</h2>
-        <dl class="app-dl-inline govuk-body govuk-!-margin-bottom-4">
-            <dt class="app-dl-inline__title">Maximum cost of training over @Model.EstimatedDurationMonths months =</dt>
-            <dd class="app-dl-inline__definition"><strong>@Model.Affordability.EstimatedCostOverDuration</strong></dd>
+    <h2 class="govuk-heading-m">Estimated costs of training</h2>
+    <dl class="app-dl-inline govuk-body govuk-!-margin-bottom-4">
+        <dt class="app-dl-inline__title">Maximum cost of training over @Model.EstimatedDurationMonths months </dt>
+        <dd class="app-dl-inline__definition"><strong>@Model.Affordability.EstimatedCostOverDuration.ToCurrencyString()</strong></dd>
+        
+        @if (Model.Affordability.YearlyPayments.Count > 1)
+        {
             @foreach (var payment in @Model.Affordability.YearlyPayments)
             {
                 <dt class="app-dl-inline__title">Estimated cost for @payment.Year</dt>
-                <dd class="app-dl-inline__definition"><strong>@payment.Amount</strong></dd>
+                <dd class="app-dl-inline__definition"><strong>@payment.Amount.ToCurrencyString()</strong></dd>
             }
-            <dt class="app-dl-inline__title">
-                Estimated costs include 20% completion costs which are paid on completion of the apprenticeship.
-            </dt>
-        </dl>
-        <p>Pledge funds remaining if application is approved: <strong>@Model.Affordability.RemainingFundsIfApproved</strong></p>
-        <h3 class="govuk-heading-s govuk-!-margin-bottom-0">What is estimated cost?</h3>
-        <p>The total estimated cost of training is based on the funding band maximum,including completion costs,and is spread across the typical duration of the apprenticeship.</p>
-   
+        }
+        <dt class="app-dl-inline__definition">
+            Estimated costs include 20% completion costs which are paid on completion of the apprenticeship.
+        </dt>
+    </dl>
+    
+    @if (Model.Status == ApplicationStatus.Pending)
+    {
+        <p>Pledge funds remaining if application is approved: <strong>@Model.Affordability.RemainingFundsIfApproved.ToCurrencyString()</strong></p>
+    }
+
+    <h3 class="govuk-heading-s govuk-!-margin-bottom-0">What is estimated cost?</h3>
+    <p>The total estimated cost of training is based on the funding band maximum, including completion costs, and is spread across the typical duration of the apprenticeship.</p>
+
     <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-
-
-
         <h2 class="govuk-heading-m">Contact details</h2>
         <p>You can contact @Model.EmployerAccountName if you would like to ask them for more information.</p>
         <ul class="govuk-list">
