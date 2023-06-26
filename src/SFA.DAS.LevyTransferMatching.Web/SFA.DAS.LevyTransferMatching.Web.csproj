@@ -22,8 +22,8 @@
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.17.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="3.1.14" />
-    <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="5.0.5" />
-    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="5.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="6.0.18" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="6.0.18" />
     <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="6.22.0" />
     <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="6.22.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.5" />
@@ -33,7 +33,7 @@
     <PackageReference Include="SFA.DAS.Employer.Shared.UI" Version="17.1.44" />
     <PackageReference Include="SFA.DAS.EmployerUrlHelper" Version="3.0.43" />
     <PackageReference Include="SFA.DAS.Encoding" Version="1.1.76" />
-    <PackageReference Include="SFA.DAS.GovUK.Auth" Version="17.1.45-prerelease-14" />
+    <PackageReference Include="SFA.DAS.GovUK.Auth" Version="17.1.49" />
     <PackageReference Include="SFA.DAS.Http" Version="3.2.62" />
     <PackageReference Include="SFA.DAS.NLog.Targets.Redis" Version="1.2.1" />
     <PackageReference Include="SFA.DAS.Validation" Version="6.0.15" />
