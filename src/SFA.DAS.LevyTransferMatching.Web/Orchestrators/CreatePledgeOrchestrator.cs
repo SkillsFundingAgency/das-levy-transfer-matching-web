@@ -100,9 +100,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 EncodedAccountId = request.EncodedAccountId,
                 CacheKey = request.CacheKey,
                 Amount = cacheItem.Amount.ToString(),
-                RemainingTransferAllowance = accountData.RemainingTransferAllowance.ToString("N0"),
-                IsNamePublic = cacheItem.IsNamePublic,
-                DasAccountName = accountData.DasAccountName
+                RemainingTransferAllowance = accountData.RemainingTransferAllowance.ToString("N0")
             };
         }
 
@@ -223,8 +221,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
 
             cacheItem.Amount = int.Parse(request.Amount, NumberStyles.AllowThousands, CultureInfo.InvariantCulture);
-            cacheItem.IsNamePublic = request.IsNamePublic.Value;
-            cacheItem.DasAccountName = request.DasAccountName;
 
             await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
         }
