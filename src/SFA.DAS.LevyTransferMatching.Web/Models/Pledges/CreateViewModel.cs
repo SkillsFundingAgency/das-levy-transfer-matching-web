@@ -22,7 +22,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public bool AreAllSectorsSelected => Sectors == null || !Sectors.Any() || Sectors.Count == SectorOptions.Count;
         public bool AreAllJobRolesSelected => JobRoles == null || !JobRoles.Any() || JobRoles.Count == JobRoleOptions.Count;
         public bool AreAllLevelsSelected => Levels == null || !Levels.Any() || Levels.Count == LevelOptions.Count;
-        public bool AmountSectionComplete => Amount.HasValue && IsNamePublic.HasValue;
+        public bool AmountSectionComplete => Amount.HasValue;
+        public bool OrgansiationNameSectionComplete => IsNamePublic.HasValue;
+
         public bool AreAllLocationsSelected => Locations == null || Locations.Count == 0 || Locations.All(x => x == null);
     }
 }
