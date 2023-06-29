@@ -1,7 +1,11 @@
-﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.AmountViewModel
+﻿@using System.Globalization
+
+@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.AmountViewModel
 @{
     ViewData["Title"] = "Pledges";
     ViewBag.GaData.Vpv = "/accounts/pledges/create/amount";
+    var culture = new CultureInfo("en-GB");
+
 }
 
 <a href="@Url.Action("Create", "CreatePledge", new { Model.EncodedAccountId, Model.CacheKey })" class="govuk-back-link">Back</a>
@@ -12,10 +16,20 @@
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-xl">Pledge amount</h1>
             <form method="post">
-                <div class="app-highlight">
-                    <p class="app-highlight__title">Estimated remaining transfer balance</p>
-                    <p class="app-highlight__figure">&pound;@Model.RemainingTransferAllowance</p>
-                    @Html.HiddenFor(x => x.RemainingTransferAllowance)
+                <div class="govuk-grid-row">
+                     <div class="govuk-grid-column-one-half">
+                        <div class="app-data ">
+                            <p class="govuk-heading-s app-data__title">Transfer allowance as at 6 April @Model.FinancialYearString</p>
+                            <p class="govuk-heading-l app-data__figure">@Model.StartingTransferAllowance.ToString("C0", culture)</p>
+                        </div>  
+                     </div>
+                     <div class="govuk-grid-column-one-half">
+                         <div class="app-data app-data--information">
+                            <p class="govuk-heading-s app-data__title">Estimated remaining transfer balance</p>
+                            <p class="govuk-heading-l app-data__figure">&pound;@Model.RemainingTransferAllowance</p>
+                            @Html.HiddenFor(x => x.RemainingTransferAllowance)
+                          </div>
+                     </div>
                 </div>
                 <div class="govuk-form-group" das-highlight-error-for="Amount" error-class="govuk-form-group--error">
                     <label class="govuk-label" for="pledge-amount">
