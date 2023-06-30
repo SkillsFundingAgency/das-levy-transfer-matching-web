@@ -9,7 +9,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Pledges
         public OrganisationNamePostRequestValidator()
         {           
             RuleFor(x => x.IsNamePublic)
-                .NotNull().WithMessage("You need to select whether or not you want your pledge to show your organisation’s name publicly");
+                .NotNull().WithMessage("You need to tell us if you want to show or hide your organisation name");
         }
     }
 }
