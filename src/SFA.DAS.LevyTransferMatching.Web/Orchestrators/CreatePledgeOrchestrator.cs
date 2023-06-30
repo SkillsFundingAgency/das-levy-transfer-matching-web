@@ -19,6 +19,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         InformViewModel GetInformViewModel(string encodedAccountId);
         Task<CreateViewModel> GetCreateViewModel(CreateRequest request);
         Task<AmountViewModel> GetAmountViewModel(AmountRequest request);
+        Task<OrganisationNameViewModel> GetOrganisationNameViewModel(OrganisationNameRequest request);
         Task<SectorViewModel> GetSectorViewModel(SectorRequest request);
         Task<JobRoleViewModel> GetJobRoleViewModel(JobRoleRequest request);
         Task<LocationViewModel> GetLocationViewModel(LocationRequest request);
@@ -26,6 +27,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         Task<LocationSelectViewModel> GetLocationSelectViewModel(LocationSelectRequest request);
         Task<Dictionary<int, string>> ValidateLocations(LocationPostRequest request, IDictionary<int, IEnumerable<string>> multipleValidLocations);
         Task UpdateCacheItem(AmountPostRequest request);
+        Task UpdateCacheItem(OrganisationNamePostRequest request);
         Task UpdateCacheItem(SectorPostRequest request);
         Task UpdateCacheItem(JobRolePostRequest request);
         Task UpdateCacheItem(LevelPostRequest request);
@@ -103,6 +105,24 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 RemainingTransferAllowance = accountData.RemainingTransferAllowance.ToString("N0"),
                 StartingTransferAllowance = accountData.StartingTransferAllowance,
                 FinancialYearString = DateTime.UtcNow.Year.ToString()
+            };
+        }
+
+        public async Task<OrganisationNameViewModel> GetOrganisationNameViewModel(OrganisationNameRequest request)
+        {
+            var cacheItemTask = RetrievePledgeCacheItem(request.CacheKey);
+            var accountDataTask = _pledgeService.GetOrganisationName(request.EncodedAccountId);
+
+            await Task.WhenAll(cacheItemTask, accountDataTask);
+            var cacheItem = cacheItemTask.Result;
+            var accountData = accountDataTask.Result;
+
+            return new OrganisationNameViewModel
+            {
+                EncodedAccountId = request.EncodedAccountId,
+                CacheKey = request.CacheKey,
+                IsNamePublic = cacheItem.IsNamePublic,
+                DasAccountName = accountData.DasAccountName
             };
         }
 
@@ -223,6 +243,16 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
 
             cacheItem.Amount = int.Parse(request.Amount, NumberStyles.AllowThousands, CultureInfo.InvariantCulture);
+
+            await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
+        }
+
+        public async Task UpdateCacheItem(OrganisationNamePostRequest request)
+        {
+            var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
+
+            cacheItem.DasAccountName = request.DasAccountName;
+            cacheItem.IsNamePublic = request.IsNamePublic;
 
             await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
         }
