@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
-using System.Globalization;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Validators.Pledges
 {
