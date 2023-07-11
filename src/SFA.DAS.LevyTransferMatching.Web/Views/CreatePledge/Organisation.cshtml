@@ -1,8 +1,6 @@
-﻿@using System.Globalization
-
-@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.OrganisationNameViewModel
+﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.OrganisationNameViewModel
 @{
-    ViewData["Title"] = "Pledges";
+    ViewData["Title"] = "Show organisation name";
     ViewBag.GaData.Vpv = "/accounts/pledges/create/organisation";
 
 }
@@ -13,7 +11,7 @@
     <partial name="_ValidationSummary" />
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-xl">Show organisation's name</h1>
+            <h1 class="govuk-heading-xl">Show organisation name</h1>
             <form method="post">                
                 <div class="govuk-form-group" das-highlight-error-for="IsNamePublic" error-class="govuk-form-group--error">
                     @Html.HiddenFor(x => x.DasAccountName)
