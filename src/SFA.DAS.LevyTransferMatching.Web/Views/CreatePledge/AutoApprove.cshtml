@@ -1,0 +1,43 @@
+﻿@using System.Globalization
+
+@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.AutoApproveViewModel
+@{
+    ViewData["Title"] = "Pledges";
+    ViewBag.GaData.Vpv = "/accounts/pledges/create/autoapprove";
+
+}
+
+<a href="@Url.Action("Create", "CreatePledge", new { Model.EncodedAccountId, Model.CacheKey })" class="govuk-back-link">Back</a>
+
+<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
+    <partial name="_ValidationSummary" />
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">Approve or delay applications for 100% match</h1>
+            <form method="post">                
+                <div class="govuk-form-group" das-highlight-error-for="AutoApproveFullMatches" error-class="govuk-form-group--error">
+                    <fieldset class="govuk-fieldset">
+                        <span das-validation-for="AutoApproveFullMatches" class="govuk-error-message"></span>
+                        <div class="govuk-radios">
+                            <div class="govuk-radios__item">
+                                <input class="govuk-radios__input" id="AutoApproveFullMatches" asp-for="AutoApproveFullMatches" type="radio" value="true" das-highlight-error-for="AutoApproveFullMatches" error-class="govuk-textarea--error" />
+                                <label class="govuk-label govuk-radios__label" for="AutoApproveFullMatches">
+                                    Approve immediately, no delay
+                                </label>
+                            </div>
+                            <div class="govuk-radios__item">
+                                <input class="govuk-radios__input" id="AutoApproveFullMatches-2" asp-for="AutoApproveFullMatches" type="radio" value="false" das-highlight-error-for="AutoApproveFullMatches" error-class="govuk-textarea--error" />
+                                <label class="govuk-label govuk-radios__label" for="AutoApproveFullMatches-2">
+                                    I want to do my own checks; I understand I have up to 6 weeks to complete them
+                                </label>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="govuk-button-group">
+                    <button class="govuk-button pledge-amount-continue" id="pledge-criteria-continue">Save and continue</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>

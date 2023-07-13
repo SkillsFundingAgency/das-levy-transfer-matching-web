@@ -385,6 +385,37 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             Assert.AreEqual(cacheItem.Locations, result.Locations);
         }
 
+
+
+        [Test]
+        public async Task GetAutoApproveViewModel_EncodedId_Is_Correct()
+        {
+            var result = await _orchestrator.GetAutoApproveViewModel(new AutoApproveRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
+            Assert.AreEqual(_encodedAccountId, result.EncodedAccountId);
+        }
+
+        [Test]
+        public async Task GetAutoApproveViewModel_CacheKey_Is_Correct()
+        {
+            var result = await _orchestrator.GetAutoApproveViewModel(new AutoApproveRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
+            Assert.AreEqual(_cacheKey, result.CacheKey);
+        }
+
+        [Test]
+        public async Task GetAutoApproveViewModel_AutoApprove_Is_Correct()
+        {
+            var cacheItem = _fixture.Build<CreatePledgeCacheItem>()
+                    .With(x => x.AutoApproveFullMatches, true)
+                    .Create();
+
+            _cache.Setup(x => x.RetrieveFromCache<CreatePledgeCacheItem>(_cacheKey.ToString())).ReturnsAsync(cacheItem);
+
+            var result = await _orchestrator.GetAutoApproveViewModel(new AutoApproveRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
+            Assert.AreEqual(cacheItem.AutoApproveFullMatches, result.AutoApproveFullMatches);
+        }
+
+
+
         [Test]
         public async Task SubmitPledge_Is_Correct()
         {
