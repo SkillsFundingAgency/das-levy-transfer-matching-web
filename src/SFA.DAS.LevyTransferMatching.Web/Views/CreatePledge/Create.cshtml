@@ -1,5 +1,7 @@
 ﻿@using SFA.DAS.LevyTransferMatching.Web.Extensions
 @using SFA.DAS.LevyTransferMatching.Web.Models.Pledges
+@using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration
+@inject FeatureToggles toggles
 @model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.CreateViewModel
 
 @{
@@ -189,50 +191,53 @@
                         </li>
                     </ul>
                 </li>
-                <li>
-                    <div class="govuk-grid-row app-task-list__group-header">
-                        <div class="govuk-grid-column-three-quarters">
-                            <h2 class="das-task-list__section">
-                                <span class="das-task-list__section-number">4. </span> 100% Match <br />
-                                <span class="govuk-hint app-task-list__group-header-hint">
-                                    Pledges that match 100% will automatically be approved.
-                                    If you want to do further due diligence checks you can delay the automatic approval by up to 6 weeks;
-                                    after which time they will be approved. 
-                                </span>
-                            </h2>
+                @if (toggles.FeatureToggleApplicationAutoApprove)
+                {
+                    <li>
+                        <div class="govuk-grid-row app-task-list__group-header">
+                            <div class="govuk-grid-column-three-quarters">
+                                <h2 class="das-task-list__section">
+                                    <span class="das-task-list__section-number">4. </span> 100% Match <br />
+                                    <span class="govuk-hint app-task-list__group-header-hint">
+                                        Pledges that match 100% will automatically be approved.
+                                        If you want to do further due diligence checks you can delay the automatic approval by up to 6 weeks;
+                                        after which time they will be approved. 
+                                    </span>
+                                </h2>
+                            </div>
+                            <div class="govuk-grid-column-one-quarter">
+                                @if (Model.AutoApproveSectionComplete)
+                                {
+                                    <strong class="govuk-tag app-task-list__group-header-tag">Completed</strong>
+                                }
+                                else
+                                {
+                                    <strong class="govuk-tag govuk-tag--grey app-task-list__group-header-tag">Not started</strong>
+                                }
+                            </div>
                         </div>
-                        <div class="govuk-grid-column-one-quarter">
-                            @if (Model.AutoApproveSectionComplete)
-                            {
-                                <strong class="govuk-tag app-task-list__group-header-tag">Completed</strong>
-                            }
-                            else
-                            {
-                                <strong class="govuk-tag govuk-tag--grey app-task-list__group-header-tag">Not started</strong>
-                            }
-                        </div>
-                    </div>
-                    <ul class="das-task-list__items">
+                        <ul class="das-task-list__items">
 
-                        <li class="das-task-list__item">
-                            <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="@Url.Action("autoapprove", new AutoApproveRequest{EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey}, true)">
-                                    Approve or delay
-                                </a>
-                            </span>
-                            <span class="das-task-list__task-tag">
-                                @if (Model.AutoApproveFullMatches.HasValue && Model.AutoApproveFullMatches.Value)
-                                {
-                                    <text>No delay</text>
-                                }
-                                else if (Model.AutoApproveFullMatches.HasValue && !Model.AutoApproveFullMatches.Value)
-                                {
-                                    <text>Delay</text>
-                                }
-                            </span>
-                        </li>
-                    </ul>
-                </li>
+                            <li class="das-task-list__item">
+                                <span class="das-task-list__task-name">
+                                    <a class="govuk-link" href="@Url.Action("autoapprove", new AutoApproveRequest{EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey}, true)">
+                                        Approve or delay
+                                    </a>
+                                </span>
+                                <span class="das-task-list__task-tag">
+                                    @if (Model.AutoApproveFullMatches.HasValue && Model.AutoApproveFullMatches.Value)
+                                    {
+                                        <text>No delay</text>
+                                    }
+                                    else if (Model.AutoApproveFullMatches.HasValue && !Model.AutoApproveFullMatches.Value)
+                                    {
+                                        <text>Delay</text>
+                                    }
+                                </span>
+                            </li>
+                        </ul>
+                    </li>
+                }
             </ol>
         <div class="govuk-grid-column-full">
             @if (Model.AmountSectionComplete && Model.OrgansiationNameSectionComplete)
