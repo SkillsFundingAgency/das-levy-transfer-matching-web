@@ -240,7 +240,11 @@
                 }
             </ol>
         <div class="govuk-grid-column-full">
-            @if (Model.AmountSectionComplete && Model.OrgansiationNameSectionComplete)
+            @if (
+                Model.AmountSectionComplete && 
+                Model.OrgansiationNameSectionComplete && 
+                (!toggles.FeatureToggleApplicationAutoApprove || Model.AutoApproveSectionComplete)
+            )
             {
                 <form method="post">
                     <div class="govuk-grid-row">
