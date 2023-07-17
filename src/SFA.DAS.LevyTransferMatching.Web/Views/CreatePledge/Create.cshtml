@@ -261,12 +261,13 @@
                         </div>
                             <div class="govuk-button-group govuk-!-margin-top-5">
                                 <button class="govuk-button pledge-level-continue" data-module="govuk-button" id="pledge-create-submit">Submit my pledge</button>
-                                <a class="govuk-link" href="@Url.Action("Inform", "CreatePledge", new { Model.EncodedAccountId })">Cancel pledge</a>
                             </div>
                         </div>
                 </form>
-            }          
+            }
         </div>
+
+        <a class="govuk-link" href="@Url.Action("Inform", "CreatePledge", new { Model.EncodedAccountId })">Cancel pledge</a>
 
         </div>
     </div>
