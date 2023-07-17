@@ -405,13 +405,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         public async Task GetAutoApproveViewModel_AutoApprove_Is_Correct()
         {
             var cacheItem = _fixture.Build<CreatePledgeCacheItem>()
-                    .With(x => x.AutoApproveFullMatches, true)
                     .Create();
 
             _cache.Setup(x => x.RetrieveFromCache<CreatePledgeCacheItem>(_cacheKey.ToString())).ReturnsAsync(cacheItem);
 
             var result = await _orchestrator.GetAutoApproveViewModel(new AutoApproveRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
-            Assert.AreEqual(cacheItem.AutoApproveFullMatches, result.AutoApproveFullMatches);
+            Assert.AreEqual(cacheItem.AutomaticApprovalOption, result.AutomaticApprovalOption);
         }
 
 

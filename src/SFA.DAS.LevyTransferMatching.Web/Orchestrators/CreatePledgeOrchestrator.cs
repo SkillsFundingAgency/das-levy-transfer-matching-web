@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.Encoding;
+using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types;
@@ -83,7 +84,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 Sectors = cacheItem.Sectors,
                 JobRoles = cacheItem.JobRoles,
                 Levels = cacheItem.Levels,
-                AutoApproveFullMatches = cacheItem.AutoApproveFullMatches,
+                AutomaticApprovalOption = cacheItem.AutomaticApprovalOption,
                 LevelOptions = dataTask.Result.Levels.ToList(),
                 SectorOptions = dataTask.Result.Sectors.ToList(),
                 JobRoleOptions = dataTask.Result.JobRoles.ToList(),
@@ -137,7 +138,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             {
                 EncodedAccountId = request.EncodedAccountId,
                 CacheKey = request.CacheKey,
-                AutoApproveFullMatches = cacheItem.AutoApproveFullMatches
+                AutomaticApprovalOption = cacheItem.AutomaticApprovalOption
             };
         }
 
@@ -191,7 +192,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 Levels = cacheItem.Levels ?? new List<string>(),
                 Locations = cacheItem.Locations?.Where(x => x != null).ToList() ?? new List<string>(),
                 UserId = _userService.GetUserId(),
-                UserDisplayName = _userService.GetUserDisplayName()
+                UserDisplayName = _userService.GetUserDisplayName(),
+                AutomaticApprovalOption = cacheItem.AutomaticApprovalOption
             };
 
             var pledgeId = await _pledgeService.PostPledge(createPledgeRequest, request.AccountId);
@@ -276,7 +278,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
 
-            cacheItem.AutoApproveFullMatches = request.AutoApproveFullMatches;
+            cacheItem.AutomaticApprovalOption = request.AutomaticApprovalOption;
 
             await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
         }

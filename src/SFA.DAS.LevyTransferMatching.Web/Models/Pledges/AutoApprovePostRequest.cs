@@ -1,8 +1,10 @@
-﻿namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
+﻿using SFA.DAS.LevyTransferMatching.Domain.Types;
+
+namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 {
     public class AutoApprovePostRequest : BasePledgesRequest
     {
-        public bool? AutoApproveFullMatches { get; set; }
+        public AutomaticApprovalOption AutomaticApprovalOption { get; set; }
 
     }
 }

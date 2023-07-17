@@ -8,8 +8,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Pledges
     {
         public AutoApprovePostRequestValidator()
         {           
-            RuleFor(x => x.AutoApproveFullMatches)
-                .NotNull().WithMessage("You need to tell us if you want to approve 100% match or delay");
+            RuleFor(x => x.AutomaticApprovalOption)
+                .NotEmpty().WithMessage("You need to tell us if you want to approve 100% match or delay");
         }
     }
 }

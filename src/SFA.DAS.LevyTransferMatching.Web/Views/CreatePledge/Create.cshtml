@@ -1,6 +1,7 @@
 ﻿@using SFA.DAS.LevyTransferMatching.Web.Extensions
 @using SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 @using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration
+@using SFA.DAS.LevyTransferMatching.Domain.Types
 @inject FeatureToggles toggles
 @model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.CreateViewModel
 
@@ -225,11 +226,11 @@
                                     </a>
                                 </span>
                                 <span class="das-task-list__task-tag">
-                                    @if (Model.AutoApproveFullMatches.HasValue && Model.AutoApproveFullMatches.Value)
+                                    @if (Model.AutomaticApprovalOption == AutomaticApprovalOption.ImmediateAutoApproval)
                                     {
                                         <text>No delay</text>
                                     }
-                                    else if (Model.AutoApproveFullMatches.HasValue && !Model.AutoApproveFullMatches.Value)
+                                    else if (Model.AutomaticApprovalOption == AutomaticApprovalOption.DelayedAutoApproval)
                                     {
                                         <text>Delay</text>
                                     }
