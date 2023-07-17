@@ -205,8 +205,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         }
 
         [Authorize(Policy = PolicyNames.ManageAccount)]
-        [Route("autoapprove")]
-        public async Task<IActionResult> AutoApprove(AutoApproveRequest request)
+        [Route("auto-approval")]
+        public async Task<IActionResult> AutoApproval(AutoApproveRequest request)
         {
             var viewModel = await _orchestrator.GetAutoApproveViewModel(request);
             return View(viewModel);
@@ -214,8 +214,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 
         [Authorize(Policy = PolicyNames.ManageAccount)]
         [HttpPost]
-        [Route("autoapprove")]
-        public async Task<IActionResult> AutoApprove(AutoApprovePostRequest request)
+        [Route("auto-approval")]
+        public async Task<IActionResult> AutoApproval(AutoApprovePostRequest request)
         {
             await _orchestrator.UpdateCacheItem(request);
             return RedirectToAction("Create", new { request.EncodedAccountId, request.CacheKey });

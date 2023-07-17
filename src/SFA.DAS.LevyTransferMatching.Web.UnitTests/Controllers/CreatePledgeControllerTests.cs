@@ -121,14 +121,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         }
 
         [Test]
-        public async Task GET_AutoApprove_Returns_Expected_View_With_Expected_ViewModel()
+        public async Task GET_AutoApproval_Returns_Expected_View_With_Expected_ViewModel()
         {
             // Arrange
             var request = _fixture.Create<AutoApproveRequest>();
             _orchestrator.Setup(x => x.GetAutoApproveViewModel(request)).ReturnsAsync(() => new AutoApproveViewModel());
 
             // Act
-            var viewResult = await _pledgesController.AutoApprove(request) as ViewResult;
+            var viewResult = await _pledgesController.AutoApproval(request) as ViewResult;
             var organisationNameViewModel = viewResult?.Model as AutoApproveViewModel;
 
             // Assert
@@ -137,13 +137,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         }
 
         [Test]
-        public async Task POST_AutoApprove_Returns_Expected_Redirect()
+        public async Task POST_AutoApproval_Returns_Expected_Redirect()
         {
             // Arrange
             var request = _fixture.Create<AutoApprovePostRequest>();
 
             // Act
-            var actionResult = await _pledgesController.AutoApprove(request) as RedirectToActionResult;
+            var actionResult = await _pledgesController.AutoApproval(request) as RedirectToActionResult;
 
             // Assert
             Assert.NotNull(actionResult);
