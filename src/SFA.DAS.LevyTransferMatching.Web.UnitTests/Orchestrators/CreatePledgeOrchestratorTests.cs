@@ -39,6 +39,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private GetLevelResponse _levelResponse;
         private GetPledgesResponse _pledgesResponse;
         private GetApplicationApprovedResponse _applicationApprovedResponse;
+        private Infrastructure.Configuration.FeatureToggles _featureToggles;
         private string _encodedAccountId;
         private Guid _cacheKey;
         private readonly long _accountId = 1;
@@ -52,6 +53,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         public void Setup()
         {
             _fixture = new Fixture();
+            _featureToggles = new Infrastructure.Configuration.FeatureToggles();
             _encodedAccountId = _fixture.Create<string>();
             _cacheKey = Guid.NewGuid();
             _cache = new Mock<ICacheStorageService>();
@@ -100,7 +102,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _userService.Setup(x => x.GetUserDisplayName()).Returns(_userDisplayName);
             _userService.Setup(x => x.IsOwnerOrTransactor(It.IsAny<string>())).Returns(true);
 
-            _orchestrator = new CreatePledgeOrchestrator(_cache.Object, _pledgeService.Object, _encodingService.Object, _validatorService.Object, _userService.Object);
+            _orchestrator = new CreatePledgeOrchestrator(_cache.Object, _pledgeService.Object, _encodingService.Object, _validatorService.Object, _userService.Object, _featureToggles);
         }
 
         [Test]
@@ -197,6 +199,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             var result = await _orchestrator.GetCreateViewModel(new CreateRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
             Assert.AreEqual(cacheItem.JobRoles, result.JobRoles);
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task GetCreateViewModel_AutoApprovalIsEnabled_Is_Correct(bool toggleValue)
+        {
+            _featureToggles.FeatureToggleApplicationAutoApprove = toggleValue;
+            var result = await _orchestrator.GetCreateViewModel(new CreateRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
+            Assert.AreEqual(toggleValue, result.AutoApprovalIsEnabled);
         }
 
         [Test]

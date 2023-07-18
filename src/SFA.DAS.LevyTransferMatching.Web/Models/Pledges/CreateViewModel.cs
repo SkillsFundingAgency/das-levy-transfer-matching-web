@@ -13,6 +13,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public List<string> Sectors { get; set; }
         public List<string> JobRoles { get; set; }
         public List<string> Levels { get; set; }
+        public bool AutoApprovalIsEnabled { get; set; }
         public AutomaticApprovalOption AutomaticApprovalOption { get; set; }
         
         public List<ReferenceDataItem> LevelOptions { get; set; }

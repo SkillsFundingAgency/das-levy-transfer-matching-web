@@ -2,7 +2,6 @@
 @using SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 @using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration
 @using SFA.DAS.LevyTransferMatching.Domain.Types
-@inject FeatureToggles toggles
 @model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.CreateViewModel
 
 @{
@@ -192,7 +191,7 @@
                         </li>
                     </ul>
                 </li>
-                @if (toggles.FeatureToggleApplicationAutoApprove)
+                @if (Model.AutoApprovalIsEnabled)
                 {
                     <li>
                         <div class="govuk-grid-row app-task-list__group-header">
@@ -244,7 +243,7 @@
             @if (
                 Model.AmountSectionComplete && 
                 Model.OrgansiationNameSectionComplete && 
-                (!toggles.FeatureToggleApplicationAutoApprove || Model.AutoApproveSectionComplete)
+                (!Model.AutoApprovalIsEnabled || Model.AutoApproveSectionComplete)
             )
             {
                 <form method="post">
