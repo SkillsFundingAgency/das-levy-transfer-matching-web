@@ -73,7 +73,7 @@
                             </h2>
                         </div>
                         <div class="govuk-grid-column-one-third">
-                            @if (Model.OrgansiationNameSectionComplete)
+                            @if (Model.OrganisationNameSectionComplete)
                             {
                                 <strong class="govuk-tag app-task-list__group-header-tag">Completed</strong>
                             }
@@ -240,11 +240,7 @@
                 }
             </ol>
         <div class="govuk-grid-column-full">
-            @if (
-                Model.AmountSectionComplete && 
-                Model.OrgansiationNameSectionComplete && 
-                (!Model.AutoApprovalIsEnabled || Model.AutoApproveSectionComplete)
-            )
+            @if (Model.MandatorySectionsAreComplete)
             {
                 <form method="post">
                     <div class="govuk-grid-row">
