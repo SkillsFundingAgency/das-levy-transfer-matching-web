@@ -33,6 +33,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private List<ReferenceDataItem> _levels;
         private List<ReferenceDataItem> _jobRoles;
         private GetAmountResponse _amountResponse;
+        private GetOrganisationNameResponse _organisationNameResponse;
         private GetSectorResponse _sectorResponse;
         private GetJobRoleResponse _jobRoleResponse;
         private GetLevelResponse _levelResponse;
@@ -67,6 +68,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _jobRoles = _fixture.Create<List<ReferenceDataItem>>();
 
             _amountResponse = _fixture.Create<GetAmountResponse>();
+            _organisationNameResponse = _fixture.Create<GetOrganisationNameResponse>();
             _sectorResponse = new GetSectorResponse { Sectors = _sectors };
             _levelResponse = new GetLevelResponse { Levels = _levels };
             _jobRoleResponse = new GetJobRoleResponse { JobRoles = _jobRoles, Sectors = _sectors };
@@ -84,6 +86,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             });
 
             _pledgeService.Setup(x => x.GetAmount(_encodedAccountId)).ReturnsAsync(_amountResponse);
+            _pledgeService.Setup(x => x.GetOrganisationName(_encodedAccountId)).ReturnsAsync(_organisationNameResponse);
             _pledgeService.Setup(x => x.GetSector(_accountId)).ReturnsAsync(_sectorResponse);
             _pledgeService.Setup(x => x.GetJobRole(_accountId)).ReturnsAsync(_jobRoleResponse);
             _pledgeService.Setup(x => x.GetLevel(_accountId)).ReturnsAsync(_levelResponse);
@@ -220,15 +223,32 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             Assert.AreEqual(cacheItem.Amount.ToString(), result.Amount);
         }
 
+
+
         [Test]
-        public async Task GetAmountViewModel_IsNamePublic_Is_Retrieved_From_Cache()
+        public async Task GetOrganisationNameViewModel_EncodedId_Is_Correct()
+        {
+            var result = await _orchestrator.GetOrganisationNameViewModel(new OrganisationNameRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
+            Assert.AreEqual(_encodedAccountId, result.EncodedAccountId);
+        }
+
+        [Test]
+        public async Task GetOrganisationNameViewModel_CacheKey_Is_Correct()
+        {
+            var result = await _orchestrator.GetOrganisationNameViewModel(new OrganisationNameRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
+            Assert.AreEqual(_cacheKey, result.CacheKey);
+        }
+
+        [Test]
+        public async Task GetOrganisationNameViewModel_IsNamePublic_Is_Retrieved_From_Cache()
         {
             var cacheItem = _fixture.Create<CreatePledgeCacheItem>();
             _cache.Setup(x => x.RetrieveFromCache<CreatePledgeCacheItem>(_cacheKey.ToString())).ReturnsAsync(cacheItem);
 
-            var result = await _orchestrator.GetAmountViewModel(new AmountRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
+            var result = await _orchestrator.GetOrganisationNameViewModel(new OrganisationNameRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
             Assert.AreEqual(cacheItem.IsNamePublic, result.IsNamePublic);
         }
+
 
         [Test]
         public async Task GetSectorViewModel_EncodedId_Is_Correct()

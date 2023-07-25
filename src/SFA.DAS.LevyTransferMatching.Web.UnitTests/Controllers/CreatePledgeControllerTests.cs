@@ -90,6 +90,37 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         }
 
         [Test]
+        public async Task GET_OrganisationName_Returns_Expected_View_With_Expected_ViewModel()
+        {
+            // Arrange
+            var request = _fixture.Create<OrganisationNameRequest>();
+            _orchestrator.Setup(x => x.GetOrganisationNameViewModel(request)).ReturnsAsync(() => new OrganisationNameViewModel());
+
+            // Act
+            var viewResult = await _pledgesController.Organisation(request) as ViewResult;
+            var organisationNameViewModel = viewResult?.Model as OrganisationNameViewModel;
+
+            // Assert
+            Assert.NotNull(viewResult);
+            Assert.NotNull(organisationNameViewModel);
+        }
+
+        [Test]
+        public async Task POST_OrganisationName_Returns_Expected_Redirect()
+        {
+            // Arrange
+            var request = _fixture.Create<OrganisationNamePostRequest>();
+
+            // Act
+            var actionResult = await _pledgesController.Organisation(request) as RedirectToActionResult;
+
+            // Assert
+            Assert.NotNull(actionResult);
+            Assert.AreEqual("Create", actionResult.ActionName);
+            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
+        }
+
+        [Test]
         public async Task GET_Sector_Returns_Expected_View_With_Expected_ViewModel()
         {
             // Arrange
