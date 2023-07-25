@@ -65,6 +65,23 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         }
 
         [Authorize(Policy = PolicyNames.ManageAccount)]
+        [Route("organisation")]
+        public async Task<IActionResult> Organisation(OrganisationNameRequest request)
+        {
+            var viewModel = await _orchestrator.GetOrganisationNameViewModel(request);
+            return View(viewModel);
+        }
+
+        [Authorize(Policy = PolicyNames.ManageAccount)]
+        [HttpPost]
+        [Route("organisation")]
+        public async Task<IActionResult> Organisation(OrganisationNamePostRequest request)
+        {
+            await _orchestrator.UpdateCacheItem(request);
+            return RedirectToAction("Create", new { request.EncodedAccountId, request.CacheKey });
+        }
+
+        [Authorize(Policy = PolicyNames.ManageAccount)]
         [Route("sector")]
         public async Task<IActionResult> Sector(SectorRequest request)
         {

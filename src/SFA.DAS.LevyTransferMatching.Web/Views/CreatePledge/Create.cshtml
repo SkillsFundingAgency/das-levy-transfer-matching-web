@@ -85,7 +85,7 @@
                       
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="@Url.Action("Amount", new AmountRequest{EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey}, true)">
+                                <a class="govuk-link" href="@Url.Action("Organisation", new AmountRequest{EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey}, true)">
                                     Show or hide your organisation's name
                                 </a>
                             </span>
@@ -207,12 +207,13 @@
                         </div>
                             <div class="govuk-button-group govuk-!-margin-top-5">
                                 <button class="govuk-button pledge-level-continue" data-module="govuk-button" id="pledge-create-submit">Submit my pledge</button>
-                                <a class="govuk-link" href="@Url.Action("Inform", "CreatePledge", new { Model.EncodedAccountId })">Cancel pledge</a>
                             </div>
                         </div>
                 </form>
-            }          
+            }
         </div>
+
+        <a class="govuk-link" href="@Url.Action("Inform", "CreatePledge", new { Model.EncodedAccountId })">Cancel pledge</a>
 
         </div>
     </div>
