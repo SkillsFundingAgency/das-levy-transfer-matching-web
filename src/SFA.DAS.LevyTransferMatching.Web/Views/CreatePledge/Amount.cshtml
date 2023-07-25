@@ -11,10 +11,11 @@
 <a href="@Url.Action("Create", "CreatePledge", new { Model.EncodedAccountId, Model.CacheKey })" class="govuk-back-link">Back</a>
 
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
-    <partial name="_ValidationSummary" />
+    
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-xl">Pledge amount</h1>
+            <partial name="_ValidationSummary" />
             <form method="post">
                 <div class="govuk-grid-row">
                      <div class="govuk-grid-column-one-half">
