@@ -1,0 +1,45 @@
+﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.OrganisationNameViewModel
+@{
+    ViewData["Title"] = "Show organisation name";
+    ViewBag.GaData.Vpv = "/accounts/pledges/create/organisation";
+
+}
+
+<a href="@Url.Action("Create", "CreatePledge", new { Model.EncodedAccountId, Model.CacheKey })" class="govuk-back-link">Back</a>
+
+<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
+    <partial name="_ValidationSummary" />
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">Show organisation name</h1>
+            <form method="post">                
+                <div class="govuk-form-group" das-highlight-error-for="IsNamePublic" error-class="govuk-form-group--error">
+                    @Html.HiddenFor(x => x.DasAccountName)
+                    <fieldset class="govuk-fieldset">
+                        <legend class="govuk-fieldset__legend">
+                            Would you like your pledge to show your organisation's name publicly?
+                        </legend>
+                        <span das-validation-for="IsNamePublic" class="govuk-error-message"></span>
+                        <div class="govuk-radios">
+                            <div class="govuk-radios__item">
+                                <input class="govuk-radios__input" id="IsNamePublic" asp-for="IsNamePublic" type="radio" value="true" das-highlight-error-for="IsNamePublic" error-class="govuk-textarea--error" />
+                                <label class="govuk-label govuk-radios__label" for="IsNamePublic">
+                                    Yes, show my organisation's name
+                                </label>
+                            </div>
+                            <div class="govuk-radios__item">
+                                <input class="govuk-radios__input" id="IsNamePublic-2" asp-for="IsNamePublic" type="radio" value="false" das-highlight-error-for="IsNamePublic" error-class="govuk-textarea--error" />
+                                <label class="govuk-label govuk-radios__label" for="IsNamePublic-2">
+                                    No, hide my organisation's name
+                                </label>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="govuk-button-group">
+                    <button class="govuk-button" id="pledge-criteria-continue">Save and continue</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
