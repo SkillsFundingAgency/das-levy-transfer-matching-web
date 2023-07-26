@@ -12,6 +12,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
         Task RejectApplications(SetRejectApplicationsRequest request, long accountId, int pledgeId);
         Task<GetCreateResponse> GetCreate(long accountId);
         Task<GetAmountResponse> GetAmount(string encodedAccountId);
+        Task<GetOrganisationNameResponse> GetOrganisationName(string encodedAccountId);
         Task<GetSectorResponse> GetSector(long accountId);
         Task<GetJobRoleResponse> GetJobRole(long accountId);
         Task<GetLevelResponse> GetLevel(long accountId);

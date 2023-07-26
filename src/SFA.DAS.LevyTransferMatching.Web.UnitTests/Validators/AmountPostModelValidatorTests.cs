@@ -23,6 +23,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators
         [TestCase("")]
         [TestCase(null)]
         [TestCase("0")]
+        [TestCase("1999")]
         [TestCase("6001")]
         public void Validator_Returns_Expected_Errors_For_Invalid_Amount(string amount)
         {
@@ -38,10 +39,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators
 
             //Assert
             result.ShouldHaveValidationErrorFor(x => x.Amount)
-                .WithErrorMessage("Enter a number between 1 and 6,000");
+                .WithErrorMessage("You need to enter an amount greater than £2,000 and less than £6,000");
         }
 
-        [TestCase("1")]
+        [TestCase("2,000")]
         [TestCase("3,000")]
         [TestCase("6000")]
         public void Validator_Returns_No_Errors_For_Valid_Amount(string amount)
@@ -60,38 +61,5 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators
             result.ShouldNotHaveValidationErrorFor(x => x.Amount);
         }
 
-        [TestCase(null)]
-        public void Validator_Returns_Expected_Errors_For_Invalid_IsNamePublic(bool? isNamePublic)
-        {
-            //Arrange
-            AmountPostRequest amountPostRequest = new AmountPostRequest()
-            {
-                IsNamePublic = isNamePublic
-            };
-
-            //Act
-            var result = amountPostModelValidator.TestValidate(amountPostRequest);
-
-            //Assert
-            result.ShouldHaveValidationErrorFor(x => x.IsNamePublic)
-                .WithErrorMessage("You need to select whether or not you want your pledge to show your organisation’s name publicly");
-        }
-
-        [TestCase(true)]
-        [TestCase(false)]
-        public void Validator_Returns_No_Errors_For_Valid_IsNamePublic(bool? isNamePublic)
-        {
-            //Arrange
-            AmountPostRequest amountPostRequest = new AmountPostRequest()
-            {
-                IsNamePublic = isNamePublic
-            };
-
-            //Act
-            var result = amountPostModelValidator.TestValidate(amountPostRequest);
-
-            //Assert
-            result.ShouldNotHaveValidationErrorFor(x => x.IsNamePublic);
-        }
     }
 }
