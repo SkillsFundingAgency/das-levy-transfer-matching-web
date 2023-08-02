@@ -1,57 +1,54 @@
 ﻿using FluentValidation.TestHelper;
 using NUnit.Framework;
+using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Pledges;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators
 {
     [TestFixture]
     public class AutoApprovePostRequestValidatorTests
     {
-        private AutoApprovePostRequestValidator organisationNamePostRequestValidator;
+        private AutoApprovePostRequestValidator _validator;
 
         [SetUp]
         public void SetUp()
         {
-            organisationNamePostRequestValidator = new AutoApprovePostRequestValidator();
+            _validator = new AutoApprovePostRequestValidator();
         }
 
-      
-        [TestCase(null)]        
-        public void Validator_Returns_Expected_Errors_For_Invalid_OrganisationNameResponse(bool? autoApprove)
+        [Test]
+        public void Validator_Returns_Expected_Errors_For_Invalid_Response()
         {
             //Arrange
-            AutoApprovePostRequest postRequest = new AutoApprovePostRequest()
+            var postRequest = new AutoApprovePostRequest
             {
-                AutoApproveFullMatches = autoApprove
+                AutomaticApprovalOption = AutomaticApprovalOption.NotApplicable
             };
 
             //Act
-            var result = organisationNamePostRequestValidator.TestValidate(postRequest);
+            var result = _validator.TestValidate(postRequest);
 
             //Assert
-            result.ShouldHaveValidationErrorFor(x => x.AutoApproveFullMatches)
+            result.ShouldHaveValidationErrorFor(x => x.AutomaticApprovalOption)
                 .WithErrorMessage("You need to tell us if you want to approve 100% match or delay");
         }
 
-        [TestCase(true)]
-        [TestCase(false)]
-        public void Validator_Returns_No_Errors_For_Valid_OrganisationNameResponse(bool? autoApprove)
+        [TestCase(AutomaticApprovalOption.ImmediateAutoApproval)]
+        [TestCase(AutomaticApprovalOption.DelayedAutoApproval)]
+        public void Validator_Returns_No_Errors_For_Valid_Response(AutomaticApprovalOption option)
         {
             //Arrange
-            AutoApprovePostRequest postRequest = new AutoApprovePostRequest()
+            var postRequest = new AutoApprovePostRequest()
             {
-                AutoApproveFullMatches = autoApprove
+                AutomaticApprovalOption = option
             };
 
             //Act
-            var result = organisationNamePostRequestValidator.TestValidate(postRequest);
+            var result = _validator.TestValidate(postRequest);
 
             //Assert
-            result.ShouldNotHaveValidationErrorFor(x => x.AutoApproveFullMatches);
+            result.ShouldNotHaveValidationErrorFor(x => x.AutomaticApprovalOption);
         }
 
     }

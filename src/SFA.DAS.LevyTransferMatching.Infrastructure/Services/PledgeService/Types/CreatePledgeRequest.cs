@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using SFA.DAS.LevyTransferMatching.Domain.Types;
+using System.Collections.Generic;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types
 {
@@ -13,6 +14,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Typ
         public List<string> Locations { get; set; }
         public string UserId { get; set; }
         public string UserDisplayName { get; set; }
-        public bool AutoApproveFullMatches { get; set; }
+        public AutomaticApprovalOption AutomaticApprovalOption { get; set; }
     }
 }

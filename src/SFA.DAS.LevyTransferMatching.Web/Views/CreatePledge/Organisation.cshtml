@@ -1,10 +1,7 @@
-﻿@using System.Globalization
-
-@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.OrganisationNameViewModel
+﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.OrganisationNameViewModel
 @{
-    ViewData["Title"] = "Pledges";
+    ViewData["Title"] = "Show organisation name";
     ViewBag.GaData.Vpv = "/accounts/pledges/create/organisation";
-
 }
 
 <a href="@Url.Action("Create", "CreatePledge", new { Model.EncodedAccountId, Model.CacheKey })" class="govuk-back-link">Back</a>
@@ -13,7 +10,7 @@
     <partial name="_ValidationSummary" />
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-xl">Pledge amount</h1>
+            <h1 class="govuk-heading-xl">Show organisation name</h1>
             <form method="post">                
                 <div class="govuk-form-group" das-highlight-error-for="IsNamePublic" error-class="govuk-form-group--error">
                     @Html.HiddenFor(x => x.DasAccountName)
@@ -39,7 +36,7 @@
                     </fieldset>
                 </div>
                 <div class="govuk-button-group">
-                    <button class="govuk-button pledge-amount-continue" id="pledge-criteria-continue">Save and continue</button>
+                    <button class="govuk-button" id="pledge-criteria-continue">Save and continue</button>
                 </div>
             </form>
         </div>

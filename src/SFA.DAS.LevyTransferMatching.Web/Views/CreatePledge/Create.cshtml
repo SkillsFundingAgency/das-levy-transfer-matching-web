@@ -1,7 +1,7 @@
 ﻿@using SFA.DAS.LevyTransferMatching.Web.Extensions
 @using SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 @using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration
-@inject FeatureToggles toggles
+@using SFA.DAS.LevyTransferMatching.Domain.Types
 @model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.CreateViewModel
 
 @{
@@ -73,7 +73,7 @@
                             </h2>
                         </div>
                         <div class="govuk-grid-column-one-third">
-                            @if (Model.OrgansiationNameSectionComplete)
+                            @if (Model.OrganisationNameSectionComplete)
                             {
                                 <strong class="govuk-tag app-task-list__group-header-tag">Completed</strong>
                             }
@@ -191,7 +191,7 @@
                         </li>
                     </ul>
                 </li>
-                @if (toggles.FeatureToggleApplicationAutoApprove)
+                @if (Model.AutoApprovalIsEnabled)
                 {
                     <li>
                         <div class="govuk-grid-row app-task-list__group-header">
@@ -220,16 +220,16 @@
 
                             <li class="das-task-list__item">
                                 <span class="das-task-list__task-name">
-                                    <a class="govuk-link" href="@Url.Action("autoapprove", new AutoApproveRequest{EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey}, true)">
+                                    <a class="govuk-link" href="@Url.Action("AutoApproval", new AutoApproveRequest{EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey}, true)">
                                         Approve or delay
                                     </a>
                                 </span>
                                 <span class="das-task-list__task-tag">
-                                    @if (Model.AutoApproveFullMatches.HasValue && Model.AutoApproveFullMatches.Value)
+                                    @if (Model.AutomaticApprovalOption == AutomaticApprovalOption.ImmediateAutoApproval)
                                     {
                                         <text>No delay</text>
                                     }
-                                    else if (Model.AutoApproveFullMatches.HasValue && !Model.AutoApproveFullMatches.Value)
+                                    else if (Model.AutomaticApprovalOption == AutomaticApprovalOption.DelayedAutoApproval)
                                     {
                                         <text>Delay</text>
                                     }
@@ -240,11 +240,7 @@
                 }
             </ol>
         <div class="govuk-grid-column-full">
-            @if (
-                Model.AmountSectionComplete && 
-                Model.OrgansiationNameSectionComplete && 
-                (!toggles.FeatureToggleApplicationAutoApprove || Model.AutoApproveSectionComplete)
-            )
+            @if (Model.MandatorySectionsAreComplete)
             {
                 <form method="post">
                     <div class="govuk-grid-row">
@@ -260,12 +256,13 @@
                         </div>
                             <div class="govuk-button-group govuk-!-margin-top-5">
                                 <button class="govuk-button pledge-level-continue" data-module="govuk-button" id="pledge-create-submit">Submit my pledge</button>
-                                <a class="govuk-link" href="@Url.Action("Inform", "CreatePledge", new { Model.EncodedAccountId })">Cancel pledge</a>
                             </div>
                         </div>
                 </form>
-            }          
+            }
         </div>
+
+        <a class="govuk-link" href="@Url.Action("Inform", "CreatePledge", new { Model.EncodedAccountId })">Cancel pledge</a>
 
         </div>
     </div>

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
@@ -12,7 +13,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public List<string> Sectors { get; set; }
         public List<string> JobRoles { get; set; }
         public List<string> Levels { get; set; }
-        public bool? AutoApproveFullMatches { get; set; }
+        public bool AutoApprovalIsEnabled { get; set; }
+        public AutomaticApprovalOption AutomaticApprovalOption { get; set; }
         
         public List<ReferenceDataItem> LevelOptions { get; set; }
         public List<ReferenceDataItem> SectorOptions { get; set; }
@@ -24,9 +26,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public bool AreAllJobRolesSelected => JobRoles == null || !JobRoles.Any() || JobRoles.Count == JobRoleOptions.Count;
         public bool AreAllLevelsSelected => Levels == null || !Levels.Any() || Levels.Count == LevelOptions.Count;
         public bool AmountSectionComplete => Amount.HasValue;
-        public bool AutoApproveSectionComplete => AutoApproveFullMatches.HasValue;
-        public bool OrgansiationNameSectionComplete => IsNamePublic.HasValue;
+        public bool AutoApproveSectionComplete => AutomaticApprovalOption != AutomaticApprovalOption.NotApplicable;
+        public bool OrganisationNameSectionComplete => IsNamePublic.HasValue;
 
         public bool AreAllLocationsSelected => Locations == null || Locations.Count == 0 || Locations.All(x => x == null);
+
+        public bool MandatorySectionsAreComplete => AmountSectionComplete && OrganisationNameSectionComplete && (!AutoApprovalIsEnabled || AutoApproveSectionComplete);
     }
 }
