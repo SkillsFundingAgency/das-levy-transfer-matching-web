@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.Encoding;
+using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types;
@@ -20,6 +21,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         Task<CreateViewModel> GetCreateViewModel(CreateRequest request);
         Task<AmountViewModel> GetAmountViewModel(AmountRequest request);
         Task<OrganisationNameViewModel> GetOrganisationNameViewModel(OrganisationNameRequest request);
+        Task<AutoApproveViewModel> GetAutoApproveViewModel(AutoApproveRequest request);
         Task<SectorViewModel> GetSectorViewModel(SectorRequest request);
         Task<JobRoleViewModel> GetJobRoleViewModel(JobRoleRequest request);
         Task<LocationViewModel> GetLocationViewModel(LocationRequest request);
@@ -27,6 +29,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         Task<LocationSelectViewModel> GetLocationSelectViewModel(LocationSelectRequest request);
         Task<Dictionary<int, string>> ValidateLocations(LocationPostRequest request, IDictionary<int, IEnumerable<string>> multipleValidLocations);
         Task UpdateCacheItem(AmountPostRequest request);
+        Task UpdateCacheItem(AutoApprovePostRequest request);
         Task UpdateCacheItem(OrganisationNamePostRequest request);
         Task UpdateCacheItem(SectorPostRequest request);
         Task UpdateCacheItem(JobRolePostRequest request);
@@ -45,14 +48,16 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         private readonly IEncodingService _encodingService;
         private readonly ILocationValidatorService _validatorService;
         private readonly IUserService _userService;
+        private readonly Infrastructure.Configuration.FeatureToggles _featureToggles;
 
-        public CreatePledgeOrchestrator(ICacheStorageService cacheStorageService, IPledgeService pledgeService, IEncodingService encodingService, ILocationValidatorService validatorService, IUserService userService)
+        public CreatePledgeOrchestrator(ICacheStorageService cacheStorageService, IPledgeService pledgeService, IEncodingService encodingService, ILocationValidatorService validatorService, IUserService userService, Infrastructure.Configuration.FeatureToggles featureToggles)
         {
             _cacheStorageService = cacheStorageService;
             _pledgeService = pledgeService;
             _encodingService = encodingService;
             _validatorService = validatorService;
             _userService = userService;
+            _featureToggles = featureToggles;
         }
 
         public InformViewModel GetInformViewModel(string encodedAccountId)
@@ -81,10 +86,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 Sectors = cacheItem.Sectors,
                 JobRoles = cacheItem.JobRoles,
                 Levels = cacheItem.Levels,
+                AutomaticApprovalOption = cacheItem.AutomaticApprovalOption,
                 LevelOptions = dataTask.Result.Levels.ToList(),
                 SectorOptions = dataTask.Result.Sectors.ToList(),
                 JobRoleOptions = dataTask.Result.JobRoles.ToList(),
-                Locations = cacheItem.Locations?.OrderBy(x => x).ToList()
+                Locations = cacheItem.Locations?.OrderBy(x => x).ToList(),
+                AutoApprovalIsEnabled = _featureToggles.FeatureToggleApplicationAutoApprove
             };
         }
 
@@ -123,6 +130,18 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 CacheKey = request.CacheKey,
                 IsNamePublic = cacheItem.IsNamePublic,
                 DasAccountName = accountData.DasAccountName
+            };
+        }
+
+        public async Task<AutoApproveViewModel> GetAutoApproveViewModel(AutoApproveRequest request)
+        {
+            var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
+
+            return new AutoApproveViewModel
+            {
+                EncodedAccountId = request.EncodedAccountId,
+                CacheKey = request.CacheKey,
+                AutomaticApprovalOption = cacheItem.AutomaticApprovalOption
             };
         }
 
@@ -176,7 +195,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 Levels = cacheItem.Levels ?? new List<string>(),
                 Locations = cacheItem.Locations?.Where(x => x != null).ToList() ?? new List<string>(),
                 UserId = _userService.GetUserId(),
-                UserDisplayName = _userService.GetUserDisplayName()
+                UserDisplayName = _userService.GetUserDisplayName(),
+                AutomaticApprovalOption = cacheItem.AutomaticApprovalOption,
             };
 
             var pledgeId = await _pledgeService.PostPledge(createPledgeRequest, request.AccountId);
@@ -253,6 +273,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             cacheItem.DasAccountName = request.DasAccountName;
             cacheItem.IsNamePublic = request.IsNamePublic;
+
+            await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
+        }
+
+        public async Task UpdateCacheItem(AutoApprovePostRequest request)
+        {
+            var cacheItem = await RetrievePledgeCacheItem(request.CacheKey);
+
+            cacheItem.AutomaticApprovalOption = request.AutomaticApprovalOption;
 
             await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
         }

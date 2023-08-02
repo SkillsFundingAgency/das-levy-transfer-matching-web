@@ -121,6 +121,37 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         }
 
         [Test]
+        public async Task GET_AutoApproval_Returns_Expected_View_With_Expected_ViewModel()
+        {
+            // Arrange
+            var request = _fixture.Create<AutoApproveRequest>();
+            _orchestrator.Setup(x => x.GetAutoApproveViewModel(request)).ReturnsAsync(() => new AutoApproveViewModel());
+
+            // Act
+            var viewResult = await _pledgesController.AutoApproval(request) as ViewResult;
+            var organisationNameViewModel = viewResult?.Model as AutoApproveViewModel;
+
+            // Assert
+            Assert.NotNull(viewResult);
+            Assert.NotNull(organisationNameViewModel);
+        }
+
+        [Test]
+        public async Task POST_AutoApproval_Returns_Expected_Redirect()
+        {
+            // Arrange
+            var request = _fixture.Create<AutoApprovePostRequest>();
+
+            // Act
+            var actionResult = await _pledgesController.AutoApproval(request) as RedirectToActionResult;
+
+            // Assert
+            Assert.NotNull(actionResult);
+            Assert.AreEqual("Create", actionResult.ActionName);
+            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
+        }
+
+        [Test]
         public async Task GET_Sector_Returns_Expected_View_With_Expected_ViewModel()
         {
             // Arrange

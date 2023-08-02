@@ -203,5 +203,22 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
                 ModelState.AddModelError($"Locations[{error.Key}]", error.Value);
             }
         }
+
+        [Authorize(Policy = PolicyNames.ManageAccount)]
+        [Route("auto-approval")]
+        public async Task<IActionResult> AutoApproval(AutoApproveRequest request)
+        {
+            var viewModel = await _orchestrator.GetAutoApproveViewModel(request);
+            return View(viewModel);
+        }
+
+        [Authorize(Policy = PolicyNames.ManageAccount)]
+        [HttpPost]
+        [Route("auto-approval")]
+        public async Task<IActionResult> AutoApproval(AutoApprovePostRequest request)
+        {
+            await _orchestrator.UpdateCacheItem(request);
+            return RedirectToAction("Create", new { request.EncodedAccountId, request.CacheKey });
+        }
     }
 }
