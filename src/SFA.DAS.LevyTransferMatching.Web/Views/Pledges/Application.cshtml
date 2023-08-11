@@ -16,8 +16,6 @@
         @Model.EmployerAccountName
     </h1>
     
-    <div class="das-highlight">
-
     <h2 class="govuk-heading-m">Details about the application</h2>
         <p><strong class="govuk-tag govuk-tag--@Model.PercentageMatchCssClass">@Model.MatchPercentage% Match</strong></p>
 
@@ -79,8 +77,6 @@
             <dd class="app-dl-inline__definition--strong">@Model.CreatedOn.ToLongDateDisplayString()</dd>
         </dl>
         
-    </div>
-
     <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
 
     @if (!string.IsNullOrWhiteSpace(Model.AboutOpportunity))
@@ -93,23 +89,32 @@
 
     }
 
-    <h2 class="govuk-heading-m">Estimated costs of training</h2>
+    <h2 class="govuk-heading-m">Estimated cost of training and assessment</h2>
     <dl class="app-dl-inline govuk-body govuk-!-margin-bottom-4">
-        <dt class="app-dl-inline__title">Maximum cost of training over @Model.EstimatedDurationMonths months </dt>
-        <dd class="app-dl-inline__definition"><strong>@Model.Affordability.EstimatedCostOverDuration.ToCurrencyString()</strong></dd>
         
+        @if (Model.Affordability.YearlyPayments.Count == 1)
+        {
+            <dt class="app-dl-inline__title app-dl-inline__title-no-colon">Total maximum cost for standard = </dt>
+            <dd class="app-dl-inline__definition"><strong>@Model.Affordability.EstimatedCostOverDuration.ToCurrencyString()</strong></dd>
+        }
+
         @if (Model.Affordability.YearlyPayments.Count > 1)
         {
+            <dt class="app-dl-inline__title app-dl-inline__title-no-colon">Maximum cost of training and assessment over @Model.EstimatedDurationMonths months = </dt>
+            <dd class="app-dl-inline__definition"><strong>@Model.Affordability.EstimatedCostOverDuration.ToCurrencyString()</strong></dd>
+
             @foreach (var payment in @Model.Affordability.YearlyPayments)
             {
                 <dt class="app-dl-inline__title">Estimated cost for @payment.Year</dt>
                 <dd class="app-dl-inline__definition"><strong>@payment.Amount.ToCurrencyString()</strong></dd>
             }
         }
-        <dt class="app-dl-inline__definition">
-            Estimated costs include 20% completion costs which are paid on completion of the apprenticeship.
-        </dt>
+        
     </dl>
+    
+    <p>
+        Estimated costs includes 20% completion payment which is paid on completion of the apprenticeship.
+    </p>
     
     @if (Model.Status == ApplicationStatus.Pending)
     {
@@ -117,7 +122,7 @@
     }
 
     <h3 class="govuk-heading-s govuk-!-margin-bottom-0">What is estimated cost?</h3>
-    <p>The total estimated cost of training is based on the funding band maximum, including completion costs, and is spread across the typical duration of the apprenticeship.</p>
+    <p>The total estimated cost of training and assessment is based on the funding band maximum, including completion payment, and is spread across the typical duration of the apprenticeship. First and final year costs will depend on the month when the apprenticeship started.</p>
 
     <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
         <h2 class="govuk-heading-m">Contact details</h2>

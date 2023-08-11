@@ -446,7 +446,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             var firstYearCost = estimatedDurationMonths <= 12
                 ? maxFunding * numberOfApprentices
-                : (((decimal) maxFunding * numberOfApprentices) / estimatedDurationMonths) * 12;
+                : (((decimal) (maxFunding * 0.8) * numberOfApprentices) / estimatedDurationMonths) * 12;
 
             var expectedRemainingFundsIfApproved = Math.Round(remainingAmount - firstYearCost);
             var expectedEstimatedCostOverDuration = maxFunding * numberOfApprentices;
@@ -467,21 +467,23 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var maxFunding = 28000;
             var estimatedDurationMonths = 138;
             var startDate = new DateTime(2023, 9, 1);
+            var completionPayment = (maxFunding * numberOfApprentices) * 0.2;
+            
 
             List<YearlyPayments> expectedPayments = new List<YearlyPayments>
             {
-                new YearlyPayments("first year", 4870),
-                new YearlyPayments("second year", 4870),
-                new YearlyPayments("third year", 4870),
-                new YearlyPayments("fourth year", 4870),
-                new YearlyPayments("fifth year", 4870),
-                new YearlyPayments("sixth year", 4870),
-                new YearlyPayments("seventh year", 4870),
-                new YearlyPayments("eighth year", 4870),
-                new YearlyPayments("ninth year", 4870),
-                new YearlyPayments("tenth year", 4870),
-                new YearlyPayments("eleventh year", 4870),
-                new YearlyPayments("final year", 2435)
+                new YearlyPayments("first year", 3896),
+                new YearlyPayments("second year", 3896),
+                new YearlyPayments("third year", 3896),
+                new YearlyPayments("fourth year", 3896),
+                new YearlyPayments("fifth year", 3896),
+                new YearlyPayments("sixth year", 3896),
+                new YearlyPayments("seventh year", 3896),
+                new YearlyPayments("eighth year", 3896),
+                new YearlyPayments("ninth year", 3896),
+                new YearlyPayments("tenth year", 3896),
+                new YearlyPayments("eleventh year", 3896),
+                new YearlyPayments("final year", (3896 / 2) + (int)completionPayment)
             };
 
             var viewModel = _orchestrator.GetAffordabilityViewModel(remainingAmount, numberOfApprentices, maxFunding, estimatedDurationMonths, startDate);

@@ -262,7 +262,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     Affordability = GetAffordabilityViewModel(result.PledgeRemainingAmount, result.NumberOfApprentices, result.MaxFunding, result.EstimatedDurationMonths, result.StartBy),
                     AllowApproval = result.Status == ApplicationStatus.Pending && result.Amount <= result.PledgeRemainingAmount && isOwnerOrTransactor,
                     AllowRejection = result.Status == ApplicationStatus.Pending && isOwnerOrTransactor,
-                    DisplayApplicationApprovalOptions = _featureToggles.FeatureToggleApplicationApprovalOptions
+                    DisplayApplicationApprovalOptions = _featureToggles.FeatureToggleApplicationApprovalOptions,
+                    Status = result.Status
                 };
             }
 
@@ -343,22 +344,36 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 return new List<YearlyPayments> { new YearlyPayments(string.Empty, (int) totalAmount) };
             }
 
+            var completionPayment = totalAmount / 5;
+
             var yearlyPayments = new List<YearlyPayments>();
 
             var years = durationInMonths / 12;
             var months = durationInMonths % 12;
 
-            var paymentPerMonth = totalAmount / durationInMonths;
+            var paymentPerMonth = (totalAmount - completionPayment) / durationInMonths;
 
             for (var i = 0; i < years; i++)
             {
-                var yearLabel = (i == years - 1) && (months == 0) ? "final year" : $"{(i+1).ToOrdinalWords()} year";
-                yearlyPayments.Add(new YearlyPayments(yearLabel, (int) Math.Round(paymentPerMonth * 12)));
+                if ((i == years - 1) && (months == 0))
+                {
+                    var finalYearAmount = (int)Math.Round(paymentPerMonth * 12);
+                    finalYearAmount += (int)completionPayment;
+                    yearlyPayments.Add(new YearlyPayments("final year", finalYearAmount));
+                }
+                else
+                {
+                    var yearAmount = (int)Math.Round(paymentPerMonth * 12);
+                    var yearLabel = $"{(i + 1).ToOrdinalWords()} year";
+                    yearlyPayments.Add(new YearlyPayments(yearLabel, yearAmount));
+                }
             }
 
             if (months > 0)
             {
-                yearlyPayments.Add(new YearlyPayments("final year", (int) Math.Round(paymentPerMonth * months)));
+                var finalYearAmount = (int)Math.Round(paymentPerMonth * months);
+                finalYearAmount += (int) completionPayment;
+                yearlyPayments.Add(new YearlyPayments("final year", finalYearAmount));
             }
 
             return yearlyPayments;
