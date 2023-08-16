@@ -573,7 +573,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         }
 
         [Test]
-        public async Task POST_Sector_Redirects_To_Apply()
+        public async Task POST_Sector_Redirects_To_Apply_On_Valid_ModelState()
         {
             // Arrange
             var encodedPledgeId = _fixture.Create<string>();
@@ -590,13 +590,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
 
             _orchestrator.Setup(x => x.UpdateCacheItem(request));
             
-            var validator = new Mock<SectorPostRequestValidator>();
-            validator.Setup(x => x.Validate(It.IsAny<ValidationContext<SectorPostRequest>>())).Returns(new ValidationResult());     
-
             // Assert
-            var redirectToActionResult =
-                await _opportunitiesController.Sector(validator.Object, request) as
-                    RedirectToActionResult;
+            var redirectToActionResult = await _opportunitiesController.Sector(request) as RedirectToActionResult;
 
             // Assert
             Assert.IsNotNull(redirectToActionResult);
@@ -606,39 +601,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             Assert.AreEqual(redirectToActionResult.RouteValues["CacheKey"], cacheKey);
 
             _orchestrator.Verify(x => x.UpdateCacheItem(request), Times.Once);
-        }
-
-        [Test]
-        [InlineAutoData]
-        public async Task POST_Sector_Redirects_To_Sector_On_Invalid_ModelState(SectorPostRequest request)
-        {
-            // Arrange
-            _orchestrator.Setup(x => x.UpdateCacheItem(request));
-
-            var validator = new Mock<SectorPostRequestValidator>();
-            validator.Setup(x => x.Validate(It.IsAny<ValidationContext<SectorPostRequest>>())).Returns(new ValidationResult
-            {
-                Errors = { new ValidationFailure("Test", "Fail") }
-            });            
-           
-            // Act
-            var redirectToActionResult = await _opportunitiesController.Sector(validator.Object, request) as RedirectToActionResult;
-
-            // Assert
-            Assert.IsNotNull(redirectToActionResult);
-            Assert.AreEqual(nameof(OpportunitiesController.Sector), redirectToActionResult.ActionName);
-            Assert.AreEqual(request.EncodedPledgeId, redirectToActionResult.RouteValues["EncodedPledgeId"]);
-            Assert.AreEqual(request.EncodedAccountId, redirectToActionResult.RouteValues["EncodedAccountId"]);
-            Assert.AreEqual(request.CacheKey, redirectToActionResult.RouteValues["CacheKey"]);
-            
-            Assert.AreEqual(request.Locations, redirectToActionResult.RouteValues["Locations"]);
-            Assert.AreEqual(request.AdditionalLocation, redirectToActionResult.RouteValues["AdditionalLocation"]);
-            Assert.AreEqual(request.AdditionalLocationText, redirectToActionResult.RouteValues["AdditionalLocationText"]);
-            Assert.AreEqual(request.PledgeId, redirectToActionResult.RouteValues["PledgeId"]);
-            Assert.AreEqual(request.HasPledgeLocations, redirectToActionResult.RouteValues["HasPledgeLocations"]);
-            Assert.AreEqual(request.AccountId, redirectToActionResult.RouteValues["AccountId"]);
-            Assert.AreEqual(request.Sectors, redirectToActionResult.RouteValues["Sectors"]);
-            Assert.AreEqual(request.SpecificLocation, redirectToActionResult.RouteValues["SpecificLocation"]);
         }
     }
 }
