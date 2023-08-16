@@ -12,6 +12,7 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
 using System.Collections.Generic;
 using System.Threading;
 using AutoFixture.NUnit3;
+using FluentValidation;
 using FluentValidation.Results;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
@@ -605,58 +606,36 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         }
 
         [Test]
-        public async Task POST_Sector_Redirects_To_Sector_On_Invalid_ModelState()
+        [InlineAutoData]
+        public async Task POST_Sector_Redirects_To_Sector_On_Invalid_ModelState(SectorPostRequest request)
         {
             // Arrange
-            var encodedPledgeId = _fixture.Create<string>();
-            var pledgeId = _fixture.Create<int>();
-            var accountId = _fixture.Create<long>();
-            var encodedAccountId = _fixture.Create<string>();
-            var additionalLocationText = _fixture.Create<string>();
-            var cacheKey = _fixture.Create<Guid>();
-            var locations = _fixture.Create<List<int>>();
-            var additionalLocation = _fixture.Create<bool>();
-            var hasPledgeLocations = _fixture.Create<bool>();
-
-            var sectors = new List<string> { "Sector" };
-            var specificLocation = string.Empty;
-            
-            var request = new SectorPostRequest
-            {
-                SpecificLocation = specificLocation, // force validation to fail
-                Sectors = sectors,
-                EncodedPledgeId = encodedPledgeId,
-                EncodedAccountId = encodedAccountId,
-                CacheKey = cacheKey,
-               
-                Locations = locations, 
-                AdditionalLocation = additionalLocation,
-                AdditionalLocationText = additionalLocationText,
-                PledgeId = pledgeId,
-                HasPledgeLocations = hasPledgeLocations,
-                AccountId = accountId,
-            };
-
             _orchestrator.Setup(x => x.UpdateCacheItem(request));
 
-            // Assert
-            var redirectToActionResult = await _opportunitiesController.Sector(new SectorPostRequestValidator(), request) as RedirectToActionResult;
+            var validator = new Mock<SectorPostRequestValidator>();
+            validator.Setup(x => x.Validate(It.IsAny<ValidationContext<SectorPostRequest>>())).Returns(new ValidationResult
+            {
+                Errors = { new ValidationFailure("Test", "Fail") }
+            });            
+           
+            // Act
+            var redirectToActionResult = await _opportunitiesController.Sector(validator.Object, request) as RedirectToActionResult;
 
             // Assert
             Assert.IsNotNull(redirectToActionResult);
             Assert.AreEqual(nameof(OpportunitiesController.Sector), redirectToActionResult.ActionName);
-            Assert.AreEqual(encodedPledgeId, redirectToActionResult.RouteValues["EncodedPledgeId"]);
-            Assert.AreEqual(encodedAccountId, redirectToActionResult.RouteValues["EncodedAccountId"]);
-            Assert.AreEqual(cacheKey, redirectToActionResult.RouteValues["CacheKey"]);
+            Assert.AreEqual(request.EncodedPledgeId, redirectToActionResult.RouteValues["EncodedPledgeId"]);
+            Assert.AreEqual(request.EncodedAccountId, redirectToActionResult.RouteValues["EncodedAccountId"]);
+            Assert.AreEqual(request.CacheKey, redirectToActionResult.RouteValues["CacheKey"]);
             
-            Assert.AreEqual(locations, redirectToActionResult.RouteValues["Locations"]);
-            Assert.AreEqual(additionalLocation, redirectToActionResult.RouteValues["AdditionalLocation"]);
-            Assert.AreEqual(additionalLocationText, redirectToActionResult.RouteValues["AdditionalLocationText"]);
-            Assert.AreEqual(pledgeId, redirectToActionResult.RouteValues["PledgeId"]);
-            Assert.AreEqual(hasPledgeLocations, redirectToActionResult.RouteValues["HasPledgeLocations"]);
-            Assert.AreEqual(accountId, redirectToActionResult.RouteValues["AccountId"]);
-            Assert.AreEqual(sectors, redirectToActionResult.RouteValues["Sectors"]);
-            Assert.AreEqual(specificLocation, redirectToActionResult.RouteValues["SpecificLocation"]);
+            Assert.AreEqual(request.Locations, redirectToActionResult.RouteValues["Locations"]);
+            Assert.AreEqual(request.AdditionalLocation, redirectToActionResult.RouteValues["AdditionalLocation"]);
+            Assert.AreEqual(request.AdditionalLocationText, redirectToActionResult.RouteValues["AdditionalLocationText"]);
+            Assert.AreEqual(request.PledgeId, redirectToActionResult.RouteValues["PledgeId"]);
+            Assert.AreEqual(request.HasPledgeLocations, redirectToActionResult.RouteValues["HasPledgeLocations"]);
+            Assert.AreEqual(request.AccountId, redirectToActionResult.RouteValues["AccountId"]);
+            Assert.AreEqual(request.Sectors, redirectToActionResult.RouteValues["Sectors"]);
+            Assert.AreEqual(request.SpecificLocation, redirectToActionResult.RouteValues["SpecificLocation"]);
         }
     }
 }
