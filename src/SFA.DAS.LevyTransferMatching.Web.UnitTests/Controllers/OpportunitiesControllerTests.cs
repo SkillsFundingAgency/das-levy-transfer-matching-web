@@ -589,10 +589,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             };
 
             _orchestrator.Setup(x => x.UpdateCacheItem(request));
+            
+            var validator = new Mock<SectorPostRequestValidator>();
+            validator.Setup(x => x.Validate(It.IsAny<ValidationContext<SectorPostRequest>>())).Returns(new ValidationResult());     
 
             // Assert
             var redirectToActionResult =
-                await _opportunitiesController.Sector(new SectorPostRequestValidator(), request) as
+                await _opportunitiesController.Sector(validator.Object, request) as
                     RedirectToActionResult;
 
             // Assert
