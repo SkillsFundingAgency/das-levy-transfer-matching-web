@@ -1,4 +1,7 @@
-﻿using FluentValidation.AspNetCore;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.LevyTransferMatching.Web.Attributes;
@@ -6,9 +9,7 @@ using SFA.DAS.LevyTransferMatching.Web.Authentication;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using SFA.DAS.LevyTransferMatching.Web.Validators;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
+using SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers
 {
@@ -37,24 +38,17 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             {
                 return View(viewModel);
             }
-            else
-            {
-                return NotFound();
-            }
+
+            return NotFound();
         }
 
         [HttpPost]
         [Route("opportunities/{encodedPledgeId}")]
         public IActionResult Detail(DetailPostRequest detailPostRequest)
         {
-            if (detailPostRequest.HasConfirmed.Value)
-            {
-                return RedirectToAction(nameof(SelectAccount), new { EncodedOpportunityId = detailPostRequest.EncodedPledgeId });
-            }
-            else
-            {
-                return RedirectToAction(nameof(Index));
-            }
+            return detailPostRequest.HasConfirmed.Value 
+                ? RedirectToAction(nameof(SelectAccount), new { EncodedOpportunityId = detailPostRequest.EncodedPledgeId }) 
+                : RedirectToAction(nameof(Index));
         }
 
         [HideAccountNavigation(false, hideNavigationLinks: true)]
@@ -165,11 +159,33 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         [Authorize(Policy = PolicyNames.ManageAccount)]
         [HttpPost]
         [Route("/accounts/{encodedAccountId}/opportunities/{encodedPledgeId}/apply/sector")]
-        public async Task<IActionResult> Sector(SectorPostRequest request)
+        public async Task<IActionResult> Sector([FromServices] SectorPostRequestValidator validator, SectorPostRequest request)
         {
+            var validationResult = validator.Validate(request);
+            if (!validationResult.IsValid)
+            {
+                validationResult.AddToModelState(ModelState, string.Empty);
+                
+                return RedirectToAction(nameof(Sector), new SectorPostRequest
+                {
+                    EncodedAccountId = request.EncodedAccountId,
+                    EncodedPledgeId = request.EncodedPledgeId,
+                    CacheKey = request.CacheKey,
+
+                    Locations = request.Locations,
+                    AdditionalLocation = request.AdditionalLocation,
+                    HasPledgeLocations = request.HasPledgeLocations,
+                    SpecificLocation = request.SpecificLocation,
+                    Sectors = request.Sectors,
+                    AdditionalLocationText = request.AdditionalLocationText,
+                    PledgeId = request.PledgeId,
+                    AccountId = request.AccountId
+                });
+            }
+            
             await _opportunitiesOrchestrator.UpdateCacheItem(request);
 
-            return RedirectToAction("Apply", new ApplicationRequest
+            return RedirectToAction(nameof(Apply), new ApplicationRequest
             {
                 EncodedAccountId = request.EncodedAccountId,
                 EncodedPledgeId = request.EncodedPledgeId,
