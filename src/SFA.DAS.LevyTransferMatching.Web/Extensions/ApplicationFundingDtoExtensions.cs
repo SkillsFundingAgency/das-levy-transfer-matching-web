@@ -18,23 +18,22 @@ namespace SFA.DAS.LevyTransferMatching.Web.Extensions
                         apprenticeshipFunding.First(c => c.EffectiveTo.IsNull());
         }
 
-        public static int CalcFundingForDate(this ApprenticeshipFundingDto apprenticeshipFunding, int? numberOfApprentices, DateTime startDate)
-        {
-            if (startDate > DateTime.UtcNow.EndOfMarchOfFinancialYear())
-            {
-                return 0;
-            }
-
-            var net = apprenticeshipFunding.MaxEmployerLevyCap - (apprenticeshipFunding.MaxEmployerLevyCap * 0.2);
-            var monthlyCost = (net / apprenticeshipFunding.Duration);
-            var cost = monthlyCost * (startDate.MonthsTillFinancialYearEnd() - 1);
-
-            return (cost * numberOfApprentices ?? 0).ToNearest(100);
-        }
-
         public static int CalculateEstimatedTotalCost(this ApprenticeshipFundingDto apprenticeshipFunding, int numberOfApprentices)
         {
             return apprenticeshipFunding.MaxEmployerLevyCap * numberOfApprentices;
+        }
+
+        public static int CalculateOneYearCost(this ApprenticeshipFundingDto apprenticeshipFunding, int numberOfApprentices)
+        {
+            if (numberOfApprentices == 0) return 0;
+
+            if (apprenticeshipFunding.Duration <= 12)
+            {
+                return apprenticeshipFunding.MaxEmployerLevyCap * numberOfApprentices;
+            }
+
+            var fundingBandMax = ((double)apprenticeshipFunding.MaxEmployerLevyCap * numberOfApprentices) * 0.8;
+            return ((fundingBandMax / apprenticeshipFunding.Duration) * 12).ToNearest(1);
         }
     }
 }
