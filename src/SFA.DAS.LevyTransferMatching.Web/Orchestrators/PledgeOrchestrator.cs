@@ -190,7 +190,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                               {
                                   EncodedApplicationId = _encodingService.Encode(application.Id, EncodingType.PledgeApplicationId),
                                   DasAccountName = application.DasAccountName,
-                                  Amount = application.CurrentFinancialYearAmount,
+                                  Amount = application.Amount,
                                   Duration = application.StandardDuration,
                                   CreatedOn = application.CreatedOn,
                                   Status = application.Status,

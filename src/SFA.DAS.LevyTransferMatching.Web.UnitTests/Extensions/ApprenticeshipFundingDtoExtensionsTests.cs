@@ -71,52 +71,28 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
             Assert.AreEqual(12_000, result.MaxEmployerLevyCap);
         }
 
-        [Test]
-        public void CalcFundingForDate_Calculates_Correctly_For_1_Apprentice_15_Months()
+        [TestCase(48000, 24, 0)]
+        [TestCase(48000, 24, 1)]
+        [TestCase(18000,18, 1)]
+        [TestCase(18000, 12, 1)]
+        [TestCase(18000, 12, 2)]
+        public void CalculateOneYearCost_Produces_Expected_Result(int fundingCap, int duration, int numberOfApprentices)
         {
             var sut = new ApprenticeshipFundingDto()
             {
-                Duration = 15,
-                MaxEmployerLevyCap = 11_000,
+                Duration = duration,
+                MaxEmployerLevyCap = fundingCap,
                 EffectiveFrom = new DateTime(2021, 12, 1),
                 EffectiveTo = null
             };
 
-            var result = sut.CalcFundingForDate(1, new DateTime(2021, 9, 1));
+            var expectedResult = duration <= 12 
+                ? (fundingCap * numberOfApprentices)
+                : (((fundingCap * numberOfApprentices) * 0.8m ) / duration) * 12;
 
-            Assert.AreEqual(3500, result);
-        }
+            var result = sut.CalculateOneYearCost(numberOfApprentices);
 
-        [Test]
-        public void CalcFundingForDate_Calculates_Correctly_For_2_Apprentices_24_Months()
-        {
-            var sut = new ApprenticeshipFundingDto()
-            {
-                Duration = 24,
-                MaxEmployerLevyCap = 20_000,
-                EffectiveFrom = new DateTime(2021, 12, 1),
-                EffectiveTo = null
-            };
-
-            var result = sut.CalcFundingForDate(2, new DateTime(2021, 10, 1));
-
-            Assert.AreEqual(6700, result);
-        }
-
-        [Test]
-        public void CalcFundingForDate_Calculates_Correctly_For_1_Apprentice_12_Months()
-        {
-            var sut = new ApprenticeshipFundingDto()
-            {
-                Duration = 12,
-                MaxEmployerLevyCap = 12_000,
-                EffectiveFrom = new DateTime(2021, 12, 1),
-                EffectiveTo = null
-            };
-
-            var result = sut.CalcFundingForDate(1, new DateTime(2021, 2, 1));
-
-            Assert.AreEqual(800, result);
+            Assert.AreEqual(expectedResult, result);
         }
 
         [TestCase(1, 15000, 15000)]
