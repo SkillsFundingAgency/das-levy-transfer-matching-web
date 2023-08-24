@@ -494,7 +494,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             var amount = applicationDetails.Standards.Single()
                 .ApprenticeshipFunding.GetEffectiveFundingLine(request.StartDate)
-                .CalcFundingForDate(request.NumberOfApprentices, request.StartDate);
+                .CalculateOneYearCost(request.NumberOfApprentices);
 
             return new GetFundingEstimateViewModel()
             {

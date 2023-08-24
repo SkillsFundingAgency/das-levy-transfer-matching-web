@@ -115,6 +115,10 @@
     content: ':';
 }
 
+.app-dl-inline__title-no-colon:after {
+    content: '';
+}
+
 .app-dl-inline__definition {
     margin: 0;
     float: left;

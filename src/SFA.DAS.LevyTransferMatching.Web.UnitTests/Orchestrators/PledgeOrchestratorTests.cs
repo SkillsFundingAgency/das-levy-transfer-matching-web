@@ -438,25 +438,64 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         [Test]
         public void GetAffordabilityViewModel_Returns_Correct_Values()
         {
-            var amount = _fixture.Create<int>();
             var remainingAmount = _fixture.Create<int>();
             var numberOfApprentices = _fixture.Create<int>();
             var maxFunding = _fixture.Create<int>();
             var estimatedDurationMonths = _fixture.Create<int>();
             var startDate = _fixture.Create<DateTime>();
 
-            var expectedRemainingFundsIfApproved = remainingAmount - amount;
+            var firstYearCost = estimatedDurationMonths <= 12
+                ? maxFunding * numberOfApprentices
+                : (((decimal) (maxFunding * 0.8) * numberOfApprentices) / estimatedDurationMonths) * 12;
+
+            var expectedRemainingFundsIfApproved = Math.Round(remainingAmount - firstYearCost);
             var expectedEstimatedCostOverDuration = maxFunding * numberOfApprentices;
 
-            var viewModel = _orchestrator.GetAffordabilityViewModel(amount, remainingAmount, numberOfApprentices, maxFunding, estimatedDurationMonths, startDate);
+            var viewModel = _orchestrator.GetAffordabilityViewModel(remainingAmount, numberOfApprentices, maxFunding, estimatedDurationMonths, startDate);
 
-            Assert.AreEqual(remainingAmount.ToCurrencyString(), viewModel.RemainingFunds);
-            Assert.AreEqual(amount.ToCurrencyString(), viewModel.EstimatedCostThisYear);
-            Assert.AreEqual(expectedRemainingFundsIfApproved.ToCurrencyString(), viewModel.RemainingFundsIfApproved);
-            Assert.AreEqual(expectedEstimatedCostOverDuration.ToCurrencyString(), viewModel.EstimatedCostOverDuration);
+            Assert.AreEqual(expectedRemainingFundsIfApproved, viewModel.RemainingFundsIfApproved);
+            Assert.AreEqual(expectedEstimatedCostOverDuration, viewModel.EstimatedCostOverDuration);
             Assert.AreEqual(_dateTimeService.Object.UtcNow.ToTaxYearDescription(), viewModel.YearDescription);
+            Assert.IsTrue(viewModel.YearlyPayments.Count > 0);
         }
 
+        [Test]
+        public void GetAffordabilityViewModel_Returns_Correct_YearlyPayments_Values()
+        {
+            var remainingAmount = 172;
+            var numberOfApprentices = 2;
+            var maxFunding = 28000;
+            var estimatedDurationMonths = 138;
+            var startDate = new DateTime(2023, 9, 1);
+            var completionPayment = (maxFunding * numberOfApprentices) * 0.2;
+            
+
+            List<YearlyPayments> expectedPayments = new List<YearlyPayments>
+            {
+                new YearlyPayments("first year", 3896),
+                new YearlyPayments("second year", 3896),
+                new YearlyPayments("third year", 3896),
+                new YearlyPayments("fourth year", 3896),
+                new YearlyPayments("fifth year", 3896),
+                new YearlyPayments("sixth year", 3896),
+                new YearlyPayments("seventh year", 3896),
+                new YearlyPayments("eighth year", 3896),
+                new YearlyPayments("ninth year", 3896),
+                new YearlyPayments("tenth year", 3896),
+                new YearlyPayments("eleventh year", 3896),
+                new YearlyPayments("final year", (3896 / 2) + (int)completionPayment)
+            };
+
+            var viewModel = _orchestrator.GetAffordabilityViewModel(remainingAmount, numberOfApprentices, maxFunding, estimatedDurationMonths, startDate);
+
+            Assert.AreEqual(12, viewModel.YearlyPayments.Count);
+
+            for (int i = 0; i < viewModel.YearlyPayments.Count; i++)
+            {
+                Assert.AreEqual(expectedPayments[i].Year, viewModel.YearlyPayments[i].Year);
+                Assert.AreEqual(expectedPayments[i].Amount, viewModel.YearlyPayments[i].Amount);
+            }
+        }
 
         [Test]
         public async Task GetApplicationApprovedViewModel_EncodedAccountId_Is_Correct()
