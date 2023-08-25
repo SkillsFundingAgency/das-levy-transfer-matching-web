@@ -10,8 +10,13 @@ using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
 using System.Collections.Generic;
+using System.Threading;
+using AutoFixture.NUnit3;
+using FluentValidation;
+using FluentValidation.Results;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
+using SFA.DAS.LevyTransferMatching.Web.Validators;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
 {
@@ -55,7 +60,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var cacheKey = _fixture.Create<Guid>();
             var indexRequest = new IndexRequest();
             _orchestrator.Setup(x => x.GetIndexViewModel(indexRequest)).ReturnsAsync(() => new IndexViewModel());
-            
+
             // Act
             var viewResult = await _opportunitiesController.Index(indexRequest) as ViewResult;
             var indexViewModel = viewResult?.Model as IndexViewModel;
@@ -63,7 +68,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             // Assert
             Assert.NotNull(viewResult);
             Assert.NotNull(indexViewModel);
-
         }
 
         [Test]
@@ -86,7 +90,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             Assert.IsNotNull(actualDetailViewModel);
             Assert.AreEqual(expectedDetailViewModel, actualDetailViewModel);
         }
-        
+
         [Test]
         public async Task GET_Detail_Opportunity_Doesnt_Exist_Returns_404()
         {
@@ -162,7 +166,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
 
             Assert.IsNotNull(actionResult);
             Assert.IsNotNull(redirectToActionResult);
-            
+
             Assert.AreEqual(redirectToActionResult.ActionName, nameof(OpportunitiesController.Apply));
         }
 
@@ -236,7 +240,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var actualViewModel = viewResult.Model as MoreDetailsViewModel;
 
             Assert.IsNotNull(viewResult);
-            Assert.IsNotNull(actualViewModel);            
+            Assert.IsNotNull(actualViewModel);
             Assert.AreEqual(expectedViewModel, actualViewModel);
             _orchestrator.Verify(x => x.GetMoreDetailsViewModel(request), Times.Once);
         }
@@ -260,7 +264,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             _orchestrator.Setup(x => x.UpdateCacheItem(request));
 
             // Assert
-            var redirectToActionResult = (await _opportunitiesController.MoreDetails(request)) as RedirectToActionResult;
+            var redirectToActionResult =
+                (await _opportunitiesController.MoreDetails(request)) as RedirectToActionResult;
 
             // Assert
             Assert.IsNotNull(redirectToActionResult);
@@ -277,7 +282,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             // Arrange
             ContactDetailsRequest contactDetailsRequest = _fixture.Create<ContactDetailsRequest>();
 
-            _orchestrator.Setup(x => x.GetContactDetailsViewModel(It.Is<ContactDetailsRequest>(y => y == contactDetailsRequest))).ReturnsAsync(() => new ContactDetailsViewModel());
+            _orchestrator
+                .Setup(x => x.GetContactDetailsViewModel(It.Is<ContactDetailsRequest>(y => y == contactDetailsRequest)))
+                .ReturnsAsync(() => new ContactDetailsViewModel());
 
             // Act
             var viewResult = await _opportunitiesController.ContactDetails(contactDetailsRequest) as ViewResult;
@@ -305,13 +312,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             bool cacheUpdated = false;
             _orchestrator
                 .Setup(x => x.UpdateCacheItem(It.Is<ContactDetailsPostRequest>(y => y == contactDetailsPostRequest)))
-                .Callback(() =>
-                {
-                    cacheUpdated = true;
-                });
+                .Callback(() => { cacheUpdated = true; });
 
             // Assert
-            var redirectToActionResult = await _opportunitiesController.ContactDetails(contactDetailsPostRequest) as RedirectToActionResult;
+            var redirectToActionResult =
+                await _opportunitiesController.ContactDetails(contactDetailsPostRequest) as RedirectToActionResult;
 
             // Assert
             Assert.IsNotNull(redirectToActionResult);
@@ -370,36 +375,41 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             };
 
             var opportunitiesService = new Mock<IOpportunitiesService>();
-            opportunitiesService.Setup(x => x.GetApplicationDetails(1, 1, selectedStandardId)).ReturnsAsync(new GetApplicationDetailsResponse()
-            {
-                Opportunity = new GetApplicationDetailsResponse.OpportunityData()
+            opportunitiesService.Setup(x => x.GetApplicationDetails(1, 1, selectedStandardId)).ReturnsAsync(
+                new GetApplicationDetailsResponse()
                 {
-                    Amount = 100_000,
-                    RemainingAmount = 100_000
-                },
-                Standards = new List<StandardsListItemDto>()
-                {
-                    new StandardsListItemDto()
+                    Opportunity = new GetApplicationDetailsResponse.OpportunityData()
                     {
-                        ApprenticeshipFunding = new List<ApprenticeshipFundingDto>()
+                        Amount = 100_000,
+                        RemainingAmount = 100_000
+                    },
+                    Standards = new List<StandardsListItemDto>()
+                    {
+                        new StandardsListItemDto()
                         {
-                            new ApprenticeshipFundingDto()
+                            ApprenticeshipFunding = new List<ApprenticeshipFundingDto>()
                             {
-                                Duration = 12,
-                                MaxEmployerLevyCap = 9_000,
-                                EffectiveFrom = new DateTime(DateTime.UtcNow.AddYears(-1).Year, DateTime.UtcNow.Month, 1),
-                                EffectiveTo = null
+                                new ApprenticeshipFundingDto()
+                                {
+                                    Duration = 12,
+                                    MaxEmployerLevyCap = 9_000,
+                                    EffectiveFrom = new DateTime(DateTime.UtcNow.AddYears(-1).Year,
+                                        DateTime.UtcNow.Month, 1),
+                                    EffectiveTo = null
+                                }
                             }
                         }
                     }
-                }
-            });
+                });
 
 
             _orchestrator.Setup(x => x.PostApplicationViewModel(request)).ReturnsAsync(applicationRequest);
 
             // Assert
-            var redirectToActionResult = (await _opportunitiesController.ApplicationDetails(new ApplicationDetailsPostRequestAsyncValidator(opportunitiesService.Object), request)) as RedirectToActionResult;
+            var redirectToActionResult =
+                (await _opportunitiesController.ApplicationDetails(
+                    new ApplicationDetailsPostRequestAsyncValidator(opportunitiesService.Object),
+                    request)) as RedirectToActionResult;
 
             // Assert
             Assert.IsNotNull(redirectToActionResult);
@@ -410,7 +420,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         }
 
         [Test]
-        [Ignore("During March and April this test will always fail as the cost will be calculated as zero, which can always be afforded, even from an empty pledge. Costing is to be overhauled anyway shortly, so safe to ignore this for now.")]
+        [Ignore(
+            "During March and April this test will always fail as the cost will be calculated as zero, which can always be afforded, even from an empty pledge. Costing is to be overhauled anyway shortly, so safe to ignore this for now.")]
         public async Task POST_ApplicationDetails_Redirects_To_ApplicationDetails_On_Invalid_ModelState()
         {
             // Arrange
@@ -439,36 +450,41 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             };
 
             var opportunitiesService = new Mock<IOpportunitiesService>();
-            opportunitiesService.Setup(x => x.GetApplicationDetails(1, 1, selectedStandardId)).ReturnsAsync(new GetApplicationDetailsResponse()
-            {
-                Opportunity = new GetApplicationDetailsResponse.OpportunityData()
+            opportunitiesService.Setup(x => x.GetApplicationDetails(1, 1, selectedStandardId)).ReturnsAsync(
+                new GetApplicationDetailsResponse()
                 {
-                    Amount = 100_000,
-                    RemainingAmount = 0
-                },
-                Standards = new List<StandardsListItemDto>()
-                {
-                    new StandardsListItemDto()
+                    Opportunity = new GetApplicationDetailsResponse.OpportunityData()
                     {
-                        ApprenticeshipFunding = new List<ApprenticeshipFundingDto>()
+                        Amount = 100_000,
+                        RemainingAmount = 0
+                    },
+                    Standards = new List<StandardsListItemDto>()
+                    {
+                        new StandardsListItemDto()
                         {
-                            new ApprenticeshipFundingDto()
+                            ApprenticeshipFunding = new List<ApprenticeshipFundingDto>()
                             {
-                                Duration = 12,
-                                MaxEmployerLevyCap = 9_000,
-                                EffectiveFrom = new DateTime(DateTime.UtcNow.AddYears(-1).Year, DateTime.UtcNow.Month, 1),
-                                EffectiveTo = null
+                                new ApprenticeshipFundingDto()
+                                {
+                                    Duration = 12,
+                                    MaxEmployerLevyCap = 9_000,
+                                    EffectiveFrom = new DateTime(DateTime.UtcNow.AddYears(-1).Year,
+                                        DateTime.UtcNow.Month, 1),
+                                    EffectiveTo = null
+                                }
                             }
                         }
                     }
-                }
-            });
+                });
 
 
             _orchestrator.Setup(x => x.PostApplicationViewModel(request)).ReturnsAsync(applicationRequest);
 
             // Assert
-            var redirectToActionResult = (await _opportunitiesController.ApplicationDetails(new ApplicationDetailsPostRequestAsyncValidator(opportunitiesService.Object), request)) as RedirectToActionResult;
+            var redirectToActionResult =
+                (await _opportunitiesController.ApplicationDetails(
+                    new ApplicationDetailsPostRequestAsyncValidator(opportunitiesService.Object),
+                    request)) as RedirectToActionResult;
 
             // Assert
             Assert.IsNotNull(redirectToActionResult);
@@ -505,7 +521,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
                 .ReturnsAsync(expectedViewModel);
 
             var viewResult = await _opportunitiesController.Apply(new ApplicationRequest()) as ViewResult;
-            
+
             Assert.IsNotNull(viewResult);
             var actualViewModel = viewResult.Model as ApplyViewModel;
             Assert.IsNotNull(actualViewModel);
@@ -530,7 +546,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             _orchestrator.Setup(x => x.GetFundingEstimate(It.IsAny<GetFundingEstimateRequest>(), null))
                 .ReturnsAsync(expectedViewModel);
 
-            var jsonResult = await _opportunitiesController.GetFundingEstimate(new GetFundingEstimateRequest()) as JsonResult;
+            var jsonResult =
+                await _opportunitiesController.GetFundingEstimate(new GetFundingEstimateRequest()) as JsonResult;
 
             Assert.IsNotNull(jsonResult);
             Assert.AreEqual(expectedViewModel, jsonResult.Value);
@@ -556,7 +573,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
         }
 
         [Test]
-        public async Task POST_Sector_Redirects_To_Apply()
+        public async Task POST_Sector_Redirects_To_Apply_On_Valid_ModelState()
         {
             // Arrange
             var encodedPledgeId = _fixture.Create<string>();
@@ -572,9 +589,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             };
 
             _orchestrator.Setup(x => x.UpdateCacheItem(request));
-
+            
             // Assert
-            var redirectToActionResult = (await _opportunitiesController.Sector(request)) as RedirectToActionResult;
+            var redirectToActionResult = await _opportunitiesController.Sector(request) as RedirectToActionResult;
 
             // Assert
             Assert.IsNotNull(redirectToActionResult);
@@ -582,6 +599,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             Assert.AreEqual(redirectToActionResult.RouteValues["EncodedPledgeId"], encodedPledgeId);
             Assert.AreEqual(redirectToActionResult.RouteValues["EncodedAccountId"], encodedAccountId);
             Assert.AreEqual(redirectToActionResult.RouteValues["CacheKey"], cacheKey);
+
             _orchestrator.Verify(x => x.UpdateCacheItem(request), Times.Once);
         }
     }
