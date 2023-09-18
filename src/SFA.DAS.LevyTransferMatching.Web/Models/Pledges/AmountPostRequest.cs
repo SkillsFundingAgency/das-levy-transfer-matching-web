@@ -4,7 +4,9 @@
     {
         public string Amount { get; set; }
         public string RemainingTransferAllowance { get; set; }
-        public bool? IsNamePublic { get; set; }
-        public string DasAccountName { get; set; }
+        public decimal StartingTransferAllowance { get; set; }
+        public string FinancialYearString { get; set; }
+
+
     }
 }

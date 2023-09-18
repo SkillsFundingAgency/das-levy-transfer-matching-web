@@ -1,4 +1,5 @@
 ﻿@using SFA.DAS.LevyTransferMatching.Web.Extensions
+@using SFA.DAS.LevyTransferMatching.Domain.Types
 @model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.ApplicationViewModel
 @{
     ViewBag.GaData.Vpv = "/accounts/pledges/applications/application";
@@ -15,10 +16,11 @@
     <h1 class="govuk-heading-xl">
         @Model.EmployerAccountName
     </h1>
-    <div class="das-highlight">
-        <h2 class="govuk-heading-m">Details about the application</h2>
+    
+    <h2 class="govuk-heading-m">Details about the application</h2>
         <p><strong class="govuk-tag govuk-tag--@Model.PercentageMatchCssClass">@Model.MatchPercentage% Match</strong></p>
-        <dl class="govuk-list app-dl-icon-list govuk-!-margin-bottom-4">
+
+        <dl class="govuk-body app-dl-inline govuk-!-margin-bottom-4 gov-uk-list app-dl-icon-list">
             <dt class="app-dl-icon-list__title">
                 @{ if (Model.IsLocationMatch) {
                         <span class="app-dl-icon-list__icon app-dl-icon-list__icon--tick">
@@ -28,7 +30,7 @@
                 }
                 Location
             </dt>
-            <dd class="app-dl-icon-list__definition">@Model.Locations</dd>
+            <dd class="app-dl-inline__definition--strong">@Model.Locations</dd>
             <dt class="app-dl-icon-list__title">
                 @{ if (Model.IsSectorMatch)
                     {
@@ -39,7 +41,7 @@
                 }
                 Sector
             </dt>
-            <dd class="app-dl-icon-list__definition">@Model.DisplaySectors</dd>
+            <dd class="app-dl-inline__definition--strong">@Model.DisplaySectors</dd>
             <dt class="app-dl-icon-list__title">
                 @{ if (Model.IsJobRoleMatch)
                     {
@@ -50,7 +52,7 @@
                 }
                 Type of job role
             </dt>
-            <dd class="app-dl-icon-list__definition">@Model.JobRole</dd>
+            <dd class="app-dl-inline__definition--strong">@Model.JobRole</dd>
             <dt class="app-dl-icon-list__title">
                 @{ if (Model.IsLevelMatch)
                     {
@@ -61,7 +63,7 @@
                 }
                 Level
             </dt>
-            <dd class="app-dl-icon-list__definition">@Model.Level</dd>
+            <dd class="app-dl-inline__definition--strong">@Model.Level</dd>
         </dl>
         <dl class="govuk-body app-dl-inline">
             <dt class="app-dl-inline__title">Apprentices</dt>
@@ -75,49 +77,66 @@
             <dt class="app-dl-inline__title">Date applied</dt>
             <dd class="app-dl-inline__definition--strong">@Model.CreatedOn.ToLongDateDisplayString()</dd>
         </dl>
-    </div>
+        
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
 
     @if (!string.IsNullOrWhiteSpace(Model.AboutOpportunity))
     {
-        <div class="das-highlight">
+
             <h2 class="govuk-heading-m">About their apprenticeship opportunity</h2>
             <p>@Model.AboutOpportunity</p>
-        </div>
+
+        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
     }
 
-    <div class="das-highlight">
-        <h2 class="govuk-heading-m">Can I afford to fund this training?</h2>
-        <p>Estimated cost over @Model.EstimatedDurationMonths months: <strong>@Model.Affordability.EstimatedCostOverDuration</strong></p>
-        <h3 class="govuk-heading-s govuk-!-margin-bottom-0">For @Model.Affordability.YearDescription:</h3>
-        <dl class="app-dl-inline govuk-body govuk-!-margin-bottom-4">
-            <dt class="app-dl-inline__title">Pledge funds remaining this year</dt>
-            <dd class="app-dl-inline__definition"><strong>@Model.Affordability.RemainingFunds</strong></dd>
-            <dt class="app-dl-inline__title">Estimated costs this year</dt>
-            <dd class="app-dl-inline__definition"><strong>@Model.Affordability.EstimatedCostThisYear</strong></dd>
-        </dl>
-        <p>Pledge funds remaining if application is approved: <strong>@Model.Affordability.RemainingFundsIfApproved</strong></p>
-        <h3 class="govuk-heading-s govuk-!-margin-bottom-0">What is estimated cost?</h3>
-        <p>The estimated total cost of training is based on the funding band maximum, the planned start date of training and the 20% completion payment.</p>
-    </div>
+    <h2 class="govuk-heading-m">Estimated cost of training and assessment</h2>
+    <dl class="app-dl-inline govuk-body govuk-!-margin-bottom-4">
+        
+        @if (Model.Affordability.YearlyPayments.Count == 1)
+        {
+            <dt class="app-dl-inline__title app-dl-inline__title-no-colon">Total maximum cost for standard = </dt>
+            <dd class="app-dl-inline__definition"><strong>@Model.Affordability.EstimatedCostOverDuration.ToCurrencyString()</strong></dd>
+        }
 
-    <div class="das-highlight">
+        @if (Model.Affordability.YearlyPayments.Count > 1)
+        {
+            <dt class="app-dl-inline__title app-dl-inline__title-no-colon">Maximum cost of training and assessment over @Model.EstimatedDurationMonths months = </dt>
+            <dd class="app-dl-inline__definition"><strong>@Model.Affordability.EstimatedCostOverDuration.ToCurrencyString()</strong></dd>
+
+            @foreach (var payment in @Model.Affordability.YearlyPayments)
+            {
+                <dt class="app-dl-inline__title">Estimated cost for @payment.Year</dt>
+                <dd class="app-dl-inline__definition"><strong>@payment.Amount.ToCurrencyString()</strong></dd>
+            }
+        }
+        
+    </dl>
+    
+    <p>
+        Estimated costs includes 20% completion payment which is paid on completion of the apprenticeship.
+    </p>
+    
+    @if (Model.Status == ApplicationStatus.Pending)
+    {
+        <p>Pledge funds remaining if application is approved: <strong>@Model.Affordability.RemainingFundsIfApproved.ToCurrencyString()</strong></p>
+    }
+
+    <h3 class="govuk-heading-s govuk-!-margin-bottom-0">What is estimated cost?</h3>
+    <p>The total estimated cost of training and assessment is based on the funding band maximum, including completion payment, and is spread across the typical duration of the apprenticeship. First and final year costs will depend on the month when the apprenticeship started.</p>
+
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
         <h2 class="govuk-heading-m">Contact details</h2>
         <p>You can contact @Model.EmployerAccountName if you would like to ask them for more information.</p>
-        <ul class="govuk-list app-icon-list">
-            <li class="app-icon-list__list-item">
-                <span class="app-icon-list__icon app-icon-list__icon--user">Name: </span> <strong>@Model.FirstName @Model.LastName</strong>
-            </li>
+        <ul class="govuk-list">
+            <li><strong>@Model.FirstName @Model.LastName</strong></li>
             @foreach (var email in Model.EmailAddresses)
             {
-                <li class="app-icon-list__list-item">
-                    <span class="app-icon-list__icon app-icon-list__icon--email">Email address: </span> <a href="mailto:@email" class="govuk-link">@email</a>
-                </li>
+                <li><a href="mailto:@email" class="govuk-link">@email</a></li>
             }
             @if (!string.IsNullOrWhiteSpace(Model.BusinessWebsite))
             {
-                <li class="app-icon-list__list-item">
-                    <span class="app-icon-list__icon app-icon-list__icon--website">Website: </span> <a target="_blank" href="@Model.BusinessWebsite" class="govuk-link" rel="noreferrer noopener">@Model.BusinessWebsite (opens in new tab)</a>
-                </li>
+                <li><a target="_blank" href="@Model.BusinessWebsite" class="govuk-link" rel="noreferrer noopener">@Model.BusinessWebsite (opens in new tab)</a></li>
             }
         </ul>
         @if (!string.IsNullOrWhiteSpace(Model.BusinessWebsite))
@@ -126,7 +145,9 @@
                 The Apprenticeship Service is not responsible for the content of external sites.
             </div>
         }
-    </div>
+
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
 
     @if (Model.AllowApproval || Model.AllowRejection)
     {

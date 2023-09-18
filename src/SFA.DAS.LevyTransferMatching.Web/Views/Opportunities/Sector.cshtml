@@ -1,4 +1,5 @@
-﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Opportunities.SectorViewModel
+﻿@using SFA.DAS.LevyTransferMatching.Web.Helpers
+@model SFA.DAS.LevyTransferMatching.Web.Models.Opportunities.SectorViewModel
 @inject SFA.DAS.EmployerUrlHelper.ILinkGenerator LinkGenerator
 @{
     ViewData["Title"] = "Apprenticeship Training";
@@ -29,7 +30,7 @@
 
                 @if (Model.HasPledgeLocations)
                 {
-                    <div class="govuk-form-group" das-highlight-error-for="Locations" das-highlight-error-for="AdditionalLocationText"  error-class="govuk-form-group--error">
+                    <div class="govuk-form-group @Html.AddClassIfPropertyInError(x => x.AdditionalLocationText, "govuk-form-group--error ") @Html.AddClassIfPropertyInError(x => x.Locations, "govuk-form-group--error ")">
                         <fieldset class="govuk-fieldset" aria-describedby="locations-hint">
                             <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
                                 Select the location where your apprentice will work
@@ -88,21 +89,21 @@
 
                         </fieldset>
                     </div>
-                        }
-                    </div>
-                    <div class="govuk-grid-column-one-third">
-                        <section class="employer-details side-panel">
-                            <partial name="/Views/Shared/_OpportunitySummary.cshtml" for="OpportunitySummaryViewModel" />
-                        </section>
-                    </div>
-                    <div class="govuk-grid-column-full">
-                        <div class="govuk-button-group">
-                            <button id="opportunity-criteria-continue" class="govuk-button" data-module="govuk-button">
-                                Continue
-                            </button>
-                            <a href="@Url.Action("Apply", new {Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey})" class="govuk-back-link">Back</a>
-                        </div>
-                    </div>
+                }
+            </div>
+            <div class="govuk-grid-column-one-third">
+                <section class="employer-details side-panel">
+                    <partial name="/Views/Shared/_OpportunitySummary.cshtml" for="OpportunitySummaryViewModel" />
+                </section>
+            </div>
+            <div class="govuk-grid-column-full">
+                <div class="govuk-button-group">
+                    <button id="opportunity-criteria-continue" class="govuk-button" data-module="govuk-button">
+                        Continue
+                    </button>
+                    <a href="@Url.Action("Apply", new {Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey})" class="govuk-back-link">Back</a>
                 </div>
+            </div>
+        </div>
     </form>
 </main>

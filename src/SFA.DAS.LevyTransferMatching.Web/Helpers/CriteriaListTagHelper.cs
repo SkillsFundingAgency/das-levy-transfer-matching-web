@@ -51,7 +51,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers
 
             content.Append("<p class=\"govuk-!-margin-bottom-1\">" + matchPercentageText + "</p>");
 
-            if (matches > 0)
+            if (matches > 0 && matches < 4)
             {
                 content.Append("<ul class=\"app-criteria-list govuk-list govuk-list--bullet\">");
                 content.Append(matchesList.ToString());

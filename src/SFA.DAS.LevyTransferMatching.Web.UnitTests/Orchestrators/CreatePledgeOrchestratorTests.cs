@@ -33,11 +33,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         private List<ReferenceDataItem> _levels;
         private List<ReferenceDataItem> _jobRoles;
         private GetAmountResponse _amountResponse;
+        private GetOrganisationNameResponse _organisationNameResponse;
         private GetSectorResponse _sectorResponse;
         private GetJobRoleResponse _jobRoleResponse;
         private GetLevelResponse _levelResponse;
         private GetPledgesResponse _pledgesResponse;
         private GetApplicationApprovedResponse _applicationApprovedResponse;
+        private Infrastructure.Configuration.FeatureToggles _featureToggles;
         private string _encodedAccountId;
         private Guid _cacheKey;
         private readonly long _accountId = 1;
@@ -51,6 +53,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         public void Setup()
         {
             _fixture = new Fixture();
+            _featureToggles = new Infrastructure.Configuration.FeatureToggles();
             _encodedAccountId = _fixture.Create<string>();
             _cacheKey = Guid.NewGuid();
             _cache = new Mock<ICacheStorageService>();
@@ -67,6 +70,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _jobRoles = _fixture.Create<List<ReferenceDataItem>>();
 
             _amountResponse = _fixture.Create<GetAmountResponse>();
+            _organisationNameResponse = _fixture.Create<GetOrganisationNameResponse>();
             _sectorResponse = new GetSectorResponse { Sectors = _sectors };
             _levelResponse = new GetLevelResponse { Levels = _levels };
             _jobRoleResponse = new GetJobRoleResponse { JobRoles = _jobRoles, Sectors = _sectors };
@@ -84,6 +88,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             });
 
             _pledgeService.Setup(x => x.GetAmount(_encodedAccountId)).ReturnsAsync(_amountResponse);
+            _pledgeService.Setup(x => x.GetOrganisationName(_encodedAccountId)).ReturnsAsync(_organisationNameResponse);
             _pledgeService.Setup(x => x.GetSector(_accountId)).ReturnsAsync(_sectorResponse);
             _pledgeService.Setup(x => x.GetJobRole(_accountId)).ReturnsAsync(_jobRoleResponse);
             _pledgeService.Setup(x => x.GetLevel(_accountId)).ReturnsAsync(_levelResponse);
@@ -91,12 +96,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             _userId = _fixture.Create<string>();
             _userDisplayName = _fixture.Create<string>();
-            _userService.Setup(x => x.IsUserChangeAuthorized()).Returns(true);
+            //TODO these tests should be changed to properly test the IsUserChangeAuthorized and IsOwnerOrTransactor methods
+            _userService.Setup(x => x.IsUserChangeAuthorized(It.IsAny<string>())).Returns(true);
             _userService.Setup(x => x.GetUserId()).Returns(_userId);
             _userService.Setup(x => x.GetUserDisplayName()).Returns(_userDisplayName);
-            _userService.Setup(x => x.IsOwnerOrTransactor(0)).Returns(true);
+            _userService.Setup(x => x.IsOwnerOrTransactor(It.IsAny<string>())).Returns(true);
 
-            _orchestrator = new CreatePledgeOrchestrator(_cache.Object, _pledgeService.Object, _encodingService.Object, _validatorService.Object, _userService.Object);
+            _orchestrator = new CreatePledgeOrchestrator(_cache.Object, _pledgeService.Object, _encodingService.Object, _validatorService.Object, _userService.Object, _featureToggles);
         }
 
         [Test]
@@ -195,6 +201,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             Assert.AreEqual(cacheItem.JobRoles, result.JobRoles);
         }
 
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task GetCreateViewModel_AutoApprovalIsEnabled_Is_Correct(bool toggleValue)
+        {
+            _featureToggles.FeatureToggleApplicationAutoApprove = toggleValue;
+            var result = await _orchestrator.GetCreateViewModel(new CreateRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
+            Assert.AreEqual(toggleValue, result.AutoApprovalIsEnabled);
+        }
+
         [Test]
         public async Task GetAmountViewModel_EncodedId_Is_Correct()
         {
@@ -219,15 +234,32 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             Assert.AreEqual(cacheItem.Amount.ToString(), result.Amount);
         }
 
+
+
         [Test]
-        public async Task GetAmountViewModel_IsNamePublic_Is_Retrieved_From_Cache()
+        public async Task GetOrganisationNameViewModel_EncodedId_Is_Correct()
+        {
+            var result = await _orchestrator.GetOrganisationNameViewModel(new OrganisationNameRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
+            Assert.AreEqual(_encodedAccountId, result.EncodedAccountId);
+        }
+
+        [Test]
+        public async Task GetOrganisationNameViewModel_CacheKey_Is_Correct()
+        {
+            var result = await _orchestrator.GetOrganisationNameViewModel(new OrganisationNameRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
+            Assert.AreEqual(_cacheKey, result.CacheKey);
+        }
+
+        [Test]
+        public async Task GetOrganisationNameViewModel_IsNamePublic_Is_Retrieved_From_Cache()
         {
             var cacheItem = _fixture.Create<CreatePledgeCacheItem>();
             _cache.Setup(x => x.RetrieveFromCache<CreatePledgeCacheItem>(_cacheKey.ToString())).ReturnsAsync(cacheItem);
 
-            var result = await _orchestrator.GetAmountViewModel(new AmountRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
+            var result = await _orchestrator.GetOrganisationNameViewModel(new OrganisationNameRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
             Assert.AreEqual(cacheItem.IsNamePublic, result.IsNamePublic);
         }
+
 
         [Test]
         public async Task GetSectorViewModel_EncodedId_Is_Correct()
@@ -363,6 +395,36 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var result = await _orchestrator.GetLocationViewModel(new LocationRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
             Assert.AreEqual(cacheItem.Locations, result.Locations);
         }
+
+
+
+        [Test]
+        public async Task GetAutoApproveViewModel_EncodedId_Is_Correct()
+        {
+            var result = await _orchestrator.GetAutoApproveViewModel(new AutoApproveRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
+            Assert.AreEqual(_encodedAccountId, result.EncodedAccountId);
+        }
+
+        [Test]
+        public async Task GetAutoApproveViewModel_CacheKey_Is_Correct()
+        {
+            var result = await _orchestrator.GetAutoApproveViewModel(new AutoApproveRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
+            Assert.AreEqual(_cacheKey, result.CacheKey);
+        }
+
+        [Test]
+        public async Task GetAutoApproveViewModel_AutoApprove_Is_Correct()
+        {
+            var cacheItem = _fixture.Build<CreatePledgeCacheItem>()
+                    .Create();
+
+            _cache.Setup(x => x.RetrieveFromCache<CreatePledgeCacheItem>(_cacheKey.ToString())).ReturnsAsync(cacheItem);
+
+            var result = await _orchestrator.GetAutoApproveViewModel(new AutoApproveRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
+            Assert.AreEqual(cacheItem.AutomaticApprovalOption, result.AutomaticApprovalOption);
+        }
+
+
 
         [Test]
         public async Task SubmitPledge_Is_Correct()

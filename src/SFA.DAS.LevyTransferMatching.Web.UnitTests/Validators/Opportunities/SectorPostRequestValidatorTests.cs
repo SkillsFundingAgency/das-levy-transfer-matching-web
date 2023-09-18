@@ -74,7 +74,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
 
             var result = _validator.TestValidate(request);
 
-            result.ShouldHaveValidationErrorFor(x => x.Locations);
+            result.ShouldHaveValidationErrorFor(x => x.AdditionalLocationText);
         }
 
         [Test]

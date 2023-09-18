@@ -74,6 +74,7 @@ namespace SFA.DAS.LevyTransferMatching.Web
                 options.Filters.Add(new EnableGoogleAnalyticsAttribute(Configuration.GetSection<GoogleAnalytics>()));
                 options.Filters.Add(new SetZenDeskValuesAttribute(Configuration.GetSection<ZenDesk>()));
                 options.Filters.Add(new GoogleAnalyticsFilter());
+                options.Filters.Add(new AccountActiveFilter(Configuration));
 
                 if (!config.IsLive)
                 {
@@ -86,7 +87,7 @@ namespace SFA.DAS.LevyTransferMatching.Web
             .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
 
             services.AddApplicationInsightsTelemetry(Configuration.GetValue<string>("APPINSIGHTS_INSTRUMENTATIONKEY"));
-            services.AddEmployerAuthentication(Configuration.GetSection<Infrastructure.Configuration.Authentication>());
+            services.AddEmployerAuthentication(Configuration);
             services.AddAuthorizationPolicies();
             services.AddCache(_environment, config);
             services.AddMemoryCache();

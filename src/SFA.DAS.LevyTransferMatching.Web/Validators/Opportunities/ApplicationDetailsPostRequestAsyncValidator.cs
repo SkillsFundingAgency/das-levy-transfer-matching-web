@@ -11,7 +11,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities
 {
     internal class ApplicationDetailsPostRequestAsyncValidator : AsyncValidator<ApplicationDetailsPostRequest>
     {
-        private const string NumApprenticesError = "There is not enough funding to support this many apprentices";
+        private const string ExceedsAvailableFundingError = "Cost of training exceeds the amount remaining in this pledge";
         private const string StartDateError = "Start date must be between {0} and {1}";
 
         public ApplicationDetailsPostRequestAsyncValidator(IOpportunitiesService opportunitiesService)
@@ -34,26 +34,26 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities
                 .NotNull().WithMessage("You must enter the number of apprentices")
                 .NotEmpty().WithMessage("You must enter the number of apprentices")
                 .Must((request, s) => request.ParsedNumberOfApprentices.HasValue && request.ParsedNumberOfApprentices.Value > 0)
-                .WithMessage("You must enter the number of apprentices")
-                .MustAsync(async (model, numberOfApprentices, cancellation) =>
-                {
-                    var result = await opportunitiesService.GetApplicationDetails(model.AccountId, model.PledgeId, model.SelectedStandardId);
-                    var selectedStandard = result.Standards.First();
-
-                    if (selectedStandard.ApprenticeshipFunding == null || !selectedStandard.ApprenticeshipFunding.Any())
-                    {
-                        return false;
-                    }
-
-                    return model.StartDate.HasValue
-                            ?
-                                result.Opportunity.RemainingAmount >= selectedStandard.ApprenticeshipFunding
-                                .GetEffectiveFundingLine(model.StartDate.Value)
-                                .CalcFundingForDate(model.ParsedNumberOfApprentices, model.StartDate.Value)
-                            : true;
-                })
-                .WithMessage(NumApprenticesError)
+                .WithMessage("You must enter the number of apprentices")                
             ;
+
+            RuleFor(request => request.ExceedsAvailableFunding)
+               .MustAsync(async (model, numberOfApprentices, cancellation) =>
+               {
+                   var result = await opportunitiesService.GetApplicationDetails(model.AccountId, model.PledgeId, model.SelectedStandardId);
+                   var selectedStandard = result.Standards.First();
+
+                   if (selectedStandard.ApprenticeshipFunding == null || !selectedStandard.ApprenticeshipFunding.Any())
+                   {
+                       return false;
+                   }
+
+                   return !model.StartDate.HasValue || result.Opportunity.RemainingAmount >= selectedStandard.ApprenticeshipFunding
+                       .GetEffectiveFundingLine(model.StartDate.Value)
+                       .CalculateOneYearCost(model.ParsedNumberOfApprentices ?? 0);
+               })
+               .WithMessage(ExceedsAvailableFundingError)
+           ;
 
             RuleFor(request => request.HasTrainingProvider)
                 .NotNull()

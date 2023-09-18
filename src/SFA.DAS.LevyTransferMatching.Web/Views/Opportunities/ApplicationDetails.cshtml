@@ -7,12 +7,25 @@
 }
 <a href="@Url.Action("Apply", new {Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey})" class="govuk-back-link">Back</a>
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
-    <partial name="_ValidationSummary" />
     <form method="post" class="validate-auto-complete" novalidate>
         <span class="govuk-caption-m">Search and apply for pledges in England</span>
         <h1 class="govuk-heading-xl">Apprenticeship training</h1>
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
+                <partial name="_ValidationSummary" />
+
+                @if (ViewData.ModelState.ContainsKey("ExceedsAvailableFunding") && ViewData.ModelState["ExceedsAvailableFunding"].Errors.Any())
+                {
+                    <div class="govuk-inset-text" id="exceeding-what-to-do">
+                        <label class="govuk-label govuk-label--s">What you can do</label>
+                        <p>To reduce the cost of the training you can:</p>
+                        <ul class="govuk-list govuk-list--bullet">
+                            <li>go back and <a href="@Url.Action("Index")"  class="govuk-link">search for a different funding opportunity</a></li>
+                            <li>change the job role</li>
+                            <li>reduce the number of apprentices in this application</li>
+                        </ul>
+                    </div>
+                }
 
                 <partial name="StandardSearch" for="SelectStandardViewModel"/>
 
@@ -46,9 +59,12 @@
                     </fieldset>
                 </div>
 
-                <div class="app-estimate" id="panel-estimate">
-                    <p class="govuk-heading-s app-estimate__heading">In @Model.CurrentFinancialYear your apprenticeship training will cost:</p>
-                    <p class="govuk-heading-xl app-estimate__estimate">£<span id="field-estimate"></span></p>
+                <div class="govuk-form-group" das-highlight-error-for="ExceedsAvailableFunding" error-class="govuk-form-group--error">
+                    <span das-validation-for="ExceedsAvailableFunding" class="govuk-error-message"></span>
+                    <div class="app-estimate" id="panel-estimate">
+                        <p class="govuk-heading-s app-estimate__heading">Estimated yearly cost for apprenticeship training:</p>
+                        <p class="govuk-heading-xl app-estimate__estimate">£<span id="field-estimate"></span></p>
+                    </div>
                 </div>
 
                 <div class="govuk-form-group" das-highlight-error-for="HasTrainingProvider" error-class="govuk-form-group--error">
@@ -82,10 +98,9 @@
             </div>
         </div>
         <div class="govuk-button-group">
-            <button id="opportunity-criteria-continue" class="govuk-button" data-module="govuk-button">
+            <button id="opportunity-criteria-continue" class="govuk-button" data-module="govuk-button" >
                 Continue
             </button>
-            <a href="@Url.Action("Apply", new {Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey})" class="govuk-back-link">Back</a>
         </div>
     </form>
 </main>

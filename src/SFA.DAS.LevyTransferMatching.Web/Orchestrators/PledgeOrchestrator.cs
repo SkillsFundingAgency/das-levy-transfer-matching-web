@@ -14,6 +14,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Humanizer;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
@@ -43,14 +44,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 EncodedAccountId = request.EncodedAccountId,
                 EncodedPledgeId = request.EncodedPledgeId,
                 CacheKey = Guid.NewGuid(),
-                UserCanClosePledge = _userService.IsUserChangeAuthorized()
+                UserCanClosePledge = _userService.IsUserChangeAuthorized(request.EncodedAccountId)
             };
         }
 
         public async Task<PledgesViewModel> GetPledgesViewModel(PledgesRequest request)
         {
             var pledgesResponse = await _pledgeService.GetPledges(request.AccountId);
-            var renderCreatePledgesButton = _userService.IsUserChangeAuthorized();
+            var renderCreatePledgesButton = _userService.IsUserChangeAuthorized(request.EncodedAccountId);
 
             return new PledgesViewModel
             {
@@ -181,7 +182,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         {
             var result = await _pledgeService.GetApplications(request.AccountId, request.PledgeId, request.SortColumn, request.SortOrder);
 
-            var isOwnerOrTransactor = _userService.IsOwnerOrTransactor(request.AccountId);
+            var isOwnerOrTransactor = _userService.IsOwnerOrTransactor(request.EncodedAccountId);
 
             var viewModels = (from application in result.Applications
                 let pledgeApplication = result.Applications.First(x => x.PledgeId == application.PledgeId)
@@ -189,7 +190,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                               {
                                   EncodedApplicationId = _encodingService.Encode(application.Id, EncodingType.PledgeApplicationId),
                                   DasAccountName = application.DasAccountName,
-                                  Amount = application.CurrentFinancialYearAmount,
+                                  Amount = application.Amount,
                                   Duration = application.StandardDuration,
                                   CreatedOn = application.CreatedOn,
                                   Status = application.Status,
@@ -207,10 +208,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                                   MaxFunding = pledgeApplication.MaxFunding,
                                   Details = pledgeApplication.Details
                               }).ToList();
-
+           
             return new ApplicationsViewModel
             {
-                TaxYear = _dateTimeService.UtcNow.ToTaxYearDescription(),
                 EncodedAccountId = request.EncodedAccountId,
                 UserCanClosePledge = result.PledgeStatus != PledgeStatus.Closed && isOwnerOrTransactor,
                 EncodedPledgeId = request.EncodedPledgeId,
@@ -227,7 +227,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             var result =
                 await _pledgeService.GetApplication(request.AccountId, request.PledgeId, request.ApplicationId, cancellationToken);
 
-            var isOwnerOrTransactor = _userService.IsOwnerOrTransactor(request.AccountId);
+            var isOwnerOrTransactor = _userService.IsOwnerOrTransactor(request.EncodedAccountId);
 
             if (result != null)
             {
@@ -259,10 +259,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                     IsLocationMatch = result.IsLocationMatch,
                     IsSectorMatch = result.IsSectorMatch,
                     MatchPercentage = result.MatchPercentage,
-                    Affordability = GetAffordabilityViewModel(result.Amount, result.PledgeRemainingAmount, result.NumberOfApprentices, result.MaxFunding, result.EstimatedDurationMonths, result.StartBy),
+                    Affordability = GetAffordabilityViewModel(result.PledgeRemainingAmount, result.NumberOfApprentices, result.MaxFunding, result.EstimatedDurationMonths, result.StartBy),
                     AllowApproval = result.Status == ApplicationStatus.Pending && result.Amount <= result.PledgeRemainingAmount && isOwnerOrTransactor,
                     AllowRejection = result.Status == ApplicationStatus.Pending && isOwnerOrTransactor,
-                    DisplayApplicationApprovalOptions = _featureToggles.FeatureToggleApplicationApprovalOptions
+                    DisplayApplicationApprovalOptions = _featureToggles.FeatureToggleApplicationApprovalOptions,
+                    Status = result.Status
                 };
             }
 
@@ -321,19 +322,61 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             return $"http://{url}";
         }
 
-        public ApplicationViewModel.AffordabilityViewModel GetAffordabilityViewModel(int amount, int remainingAmount, int numberOfApprentices, int maxFunding, int estimatedDurationMonths, DateTime startDate)
+        public ApplicationViewModel.AffordabilityViewModel GetAffordabilityViewModel(int remainingAmount, int numberOfApprentices, int maxFunding, int estimatedDurationMonths, DateTime startDate)
         {
-            var remainingFundsIfApproved = remainingAmount - amount;
-            var estimatedCostOverDuration = maxFunding * numberOfApprentices;
+            var totalCost = maxFunding * numberOfApprentices;
+
+            var yearlyBreakdown = CalculateYearlyPayments(totalCost, estimatedDurationMonths).ToList();
 
             return new ApplicationViewModel.AffordabilityViewModel
             {
-                RemainingFunds = remainingAmount.ToCurrencyString(),
-                EstimatedCostThisYear = amount.ToCurrencyString(),
-                RemainingFundsIfApproved = remainingFundsIfApproved.ToCurrencyString(),
-                EstimatedCostOverDuration = estimatedCostOverDuration.ToCurrencyString(),
-                YearDescription = _dateTimeService.UtcNow.ToTaxYearDescription()
+                EstimatedCostOverDuration = totalCost,
+                YearlyPayments = yearlyBreakdown,
+                YearDescription = _dateTimeService.UtcNow.ToTaxYearDescription(),
+                RemainingFundsIfApproved = remainingAmount - (int) yearlyBreakdown.First().Amount
             };
+        }
+
+        private List<YearlyPayments> CalculateYearlyPayments(decimal totalAmount, int durationInMonths)
+        {
+            if (durationInMonths <= 12)
+            {
+                return new List<YearlyPayments> { new YearlyPayments(string.Empty, (int) totalAmount) };
+            }
+
+            var completionPayment = totalAmount / 5;
+
+            var yearlyPayments = new List<YearlyPayments>();
+
+            var years = durationInMonths / 12;
+            var months = durationInMonths % 12;
+
+            var paymentPerMonth = (totalAmount - completionPayment) / durationInMonths;
+
+            for (var i = 0; i < years; i++)
+            {
+                if ((i == years - 1) && (months == 0))
+                {
+                    var finalYearAmount = (int)Math.Round(paymentPerMonth * 12);
+                    finalYearAmount += (int)completionPayment;
+                    yearlyPayments.Add(new YearlyPayments("final year", finalYearAmount));
+                }
+                else
+                {
+                    var yearAmount = (int)Math.Round(paymentPerMonth * 12);
+                    var yearLabel = $"{(i + 1).ToOrdinalWords()} year";
+                    yearlyPayments.Add(new YearlyPayments(yearLabel, yearAmount));
+                }
+            }
+
+            if (months > 0)
+            {
+                var finalYearAmount = (int)Math.Round(paymentPerMonth * months);
+                finalYearAmount += (int) completionPayment;
+                yearlyPayments.Add(new YearlyPayments("final year", finalYearAmount));
+            }
+
+            return yearlyPayments;
         }
 
         public async Task RejectApplications(RejectApplicationsPostRequest request)

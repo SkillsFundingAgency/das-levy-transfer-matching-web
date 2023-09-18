@@ -1,58 +1,51 @@
-﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.AmountViewModel
+﻿@using System.Globalization
+
+@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.AmountViewModel
 @{
     ViewData["Title"] = "Pledges";
     ViewBag.GaData.Vpv = "/accounts/pledges/create/amount";
+    var culture = new CultureInfo("en-GB");
     ViewBag.ZenDeskLabel = "LTM-S-pledge-amount";
 }
 
 <a href="@Url.Action("Create", "CreatePledge", new { Model.EncodedAccountId, Model.CacheKey })" class="govuk-back-link">Back</a>
 
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
-    <partial name="_ValidationSummary" />
+    
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-xl">Pledge amount and option to hide organisation name</h1>
+            <h1 class="govuk-heading-xl">Pledge amount</h1>
+            <partial name="_ValidationSummary" />
             <form method="post">
-                <div class="app-highlight">
-                    <p class="app-highlight__title">In this financial year you can pledge up to:</p>
-                    <p class="app-highlight__figure">&pound;@Model.RemainingTransferAllowance</p>
-                    @Html.HiddenFor(x => x.RemainingTransferAllowance)
+                <div class="govuk-grid-row">
+                     <div class="govuk-grid-column-one-half">
+                        <div class="app-data">
+                            <p class="govuk-heading-s app-data__title">Transfer allowance as at 6 April @Model.FinancialYearString</p>
+                            <p class="govuk-heading-l app-data__figure">@Model.StartingTransferAllowance.ToString("C0", culture)</p>
+                        </div>  
+                     </div>
+                     <div class="govuk-grid-column-one-half">
+                         <div class="app-data app-data--information">
+                            <p class="govuk-heading-s app-data__title">Estimated remaining transfer balance</p>
+                            <p class="govuk-heading-l app-data__figure" id="remaining-transfer-balance">&pound;@Model.RemainingTransferAllowance</p>
+                            @Html.HiddenFor(x => x.RemainingTransferAllowance)
+                          </div>
+                     </div>
                 </div>
                 <div class="govuk-form-group" das-highlight-error-for="Amount" error-class="govuk-form-group--error">
                     <label class="govuk-label" for="pledge-amount">
-                        How much funding would you like to transfer?
+                        How much funding would you like to pledge?
                     </label>
+                    <p class="govuk-hint">Minimum pledge amount is £2,000</p>
                     <span class="govuk-error-message">@Html.ValidationMessageFor(x => x.Amount)</span>
                     <div class="govuk-input__wrapper">
                         <div class="govuk-input__prefix govuk-!-font-weight-bold" aria-hidden="true">&pound;</div>
                         <input class="govuk-input govuk-input--width-10"  type="text"  asp-for="Amount" das-highlight-error-for="Amount" error-class="govuk-input--error" />
                     </div>
                 </div>
-                <div class="govuk-form-group" das-highlight-error-for="IsNamePublic" error-class="govuk-form-group--error">
-                    @Html.HiddenFor(x => x.DasAccountName)
-                    <fieldset class="govuk-fieldset">
-                        <legend class="govuk-fieldset__legend">
-                            Would you like your pledge to show your organisation's name publicly?
-                        </legend>
-                        <span das-validation-for="IsNamePublic" class="govuk-error-message"></span>
-                        <div class="govuk-radios">
-                            <div class="govuk-radios__item">
-                                <input class="govuk-radios__input" id="IsNamePublic" asp-for="IsNamePublic" type="radio" value="true" das-highlight-error-for="IsNamePublic" error-class="govuk-textarea--error" />
-                                <label class="govuk-label govuk-radios__label" for="IsNamePublic">
-                                    Yes
-                                </label>
-                            </div>
-                            <div class="govuk-radios__item">
-                                <input class="govuk-radios__input" id="IsNamePublic-2" asp-for="IsNamePublic" type="radio" value="false" das-highlight-error-for="IsNamePublic" error-class="govuk-textarea--error" />
-                                <label class="govuk-label govuk-radios__label" for="IsNamePublic-2">
-                                    No, I'd like our organisation to be anonymous
-                                </label>
-                            </div>
-                        </div>
-                    </fieldset>
-                </div>
+                
                 <div class="govuk-button-group">
-                    <button class="govuk-button pledge-amount-continue" id="pledge-criteria-continue">Continue</button>
+                    <button class="govuk-button pledge-amount-continue" id="pledge-criteria-continue">Save and continue</button>
                 </div>
             </form>
         </div>

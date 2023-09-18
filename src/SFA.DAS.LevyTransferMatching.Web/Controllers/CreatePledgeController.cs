@@ -65,6 +65,23 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
         }
 
         [Authorize(Policy = PolicyNames.ManageAccount)]
+        [Route("organisation")]
+        public async Task<IActionResult> Organisation(OrganisationNameRequest request)
+        {
+            var viewModel = await _orchestrator.GetOrganisationNameViewModel(request);
+            return View(viewModel);
+        }
+
+        [Authorize(Policy = PolicyNames.ManageAccount)]
+        [HttpPost]
+        [Route("organisation")]
+        public async Task<IActionResult> Organisation(OrganisationNamePostRequest request)
+        {
+            await _orchestrator.UpdateCacheItem(request);
+            return RedirectToAction("Create", new { request.EncodedAccountId, request.CacheKey });
+        }
+
+        [Authorize(Policy = PolicyNames.ManageAccount)]
         [Route("sector")]
         public async Task<IActionResult> Sector(SectorRequest request)
         {
@@ -152,7 +169,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             return RedirectToAction("Create", new CreateRequest() { EncodedAccountId = request.EncodedAccountId, CacheKey = request.CacheKey });
         }
 
-        [Authorize]
+        [Authorize(Policy=PolicyNames.IsAuthenticated)]
         [Route("location/select")]
         public async Task<IActionResult> LocationSelect(LocationSelectRequest request)
         {
@@ -161,7 +178,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             return View(viewModel);
         }
 
-        [Authorize]
+        [Authorize(Policy=PolicyNames.IsAuthenticated)]
         [Route("location/select")]
         [HttpPost]
         public async Task<IActionResult> LocationSelect([CustomizeValidator(Interceptor = typeof(LocationSelectPostRequestValidatorInterceptor))] LocationSelectPostRequest request)
@@ -185,6 +202,23 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers
             {
                 ModelState.AddModelError($"Locations[{error.Key}]", error.Value);
             }
+        }
+
+        [Authorize(Policy = PolicyNames.ManageAccount)]
+        [Route("auto-approval")]
+        public async Task<IActionResult> AutoApproval(AutoApproveRequest request)
+        {
+            var viewModel = await _orchestrator.GetAutoApproveViewModel(request);
+            return View(viewModel);
+        }
+
+        [Authorize(Policy = PolicyNames.ManageAccount)]
+        [HttpPost]
+        [Route("auto-approval")]
+        public async Task<IActionResult> AutoApproval(AutoApprovePostRequest request)
+        {
+            await _orchestrator.UpdateCacheItem(request);
+            return RedirectToAction("Create", new { request.EncodedAccountId, request.CacheKey });
         }
     }
 }

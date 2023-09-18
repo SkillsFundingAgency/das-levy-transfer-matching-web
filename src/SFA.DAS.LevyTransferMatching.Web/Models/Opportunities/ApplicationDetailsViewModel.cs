@@ -21,5 +21,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
         public SelectStandardViewModel SelectStandardViewModel { get; set; }
         public int SelectedStandardId { get; set; }
         public string CurrentFinancialYear { get; set; }
+        public bool ExceedsAvailableFunding { get; set; }
     }
 }

@@ -1,9 +1,11 @@
 ﻿@using SFA.DAS.LevyTransferMatching.Web.Extensions
 @using SFA.DAS.LevyTransferMatching.Web.Models.Pledges
+@using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration
+@using SFA.DAS.LevyTransferMatching.Domain.Types
 @model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.CreateViewModel
 
 @{
-    ViewData["Title"] = "Create a transfers pledge";
+    ViewData["Title"] = "Create a transfer pledge";
     ViewBag.GaData.Vpv = "/accounts/pledges/create";
     ViewBag.ZenDeskLabel = "LTM-S-pledge";
 }
@@ -28,7 +30,7 @@
                     <div class="govuk-grid-row app-task-list__group-header">
                         <div class="govuk-grid-column-two-thirds">
                             <h2 class="das-task-list__section">
-                                <span class="das-task-list__section-number">1. </span> Pledge amount and option to hide organisation name
+                                <span class="das-task-list__section-number">1. </span> Pledge amount
                             </h2>
                         </div>
                         <div class="govuk-grid-column-one-third">
@@ -59,10 +61,34 @@
                                     <text>-</text>
                                 }
                             </span>
-                        </li>
+                        </li>                        
+                    </ul>
+                </li>
+                <li>
+                    <div class="govuk-grid-row app-task-list__group-header">
+                        <div class="govuk-grid-column-two-thirds">
+                            <h2 class="das-task-list__section">
+                                <span class="das-task-list__section-number">2. </span> Show organisation name <br/>
+                                <span class="govuk-hint app-task-list__group-header-hint">Your organisation's name will be shown on the search funding opportunities page. </span>
+
+                            </h2>
+                        </div>
+                        <div class="govuk-grid-column-one-third">
+                            @if (Model.OrganisationNameSectionComplete)
+                            {
+                                <strong class="govuk-tag app-task-list__group-header-tag">Completed</strong>
+                            }
+                            else
+                            {
+                                <strong class="govuk-tag govuk-tag--grey app-task-list__group-header-tag">Not started</strong>
+                            }
+                        </div>
+                    </div>
+                    <ul class="das-task-list__items">
+                      
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="@Url.Action("Amount", new AmountRequest{EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey}, true)">
+                                <a class="govuk-link" href="@Url.Action("Organisation", new AmountRequest{EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey}, true)">
                                     Show or hide your organisation's name
                                 </a>
                             </span>
@@ -76,8 +102,8 @@
                     <div class="govuk-grid-row app-task-list__group-header">
                         <div class="govuk-grid-column-three-quarters">
                             <h2 class="das-task-list__section">
-                                <span class="das-task-list__section-number">2. </span> Criteria
-                                <span class="govuk-hint app-task-list__group-header-hint">The following criteria are all optional. They will remain set to 'all' unless you choose to change them. </span>
+                                <span class="das-task-list__section-number">3. </span> Select criteria <br />
+                                <span class="govuk-hint app-task-list__group-header-hint">The following criteria are all optional. If you do not change any criteria then it is assumed that any transfer request will automatically be a 100% match. </span>
                             </h2>
                         </div>
                         <div class="govuk-grid-column-one-quarter">
@@ -166,9 +192,56 @@
                         </li>
                     </ul>
                 </li>
+                @if (Model.AutoApprovalIsEnabled)
+                {
+                    <li>
+                        <div class="govuk-grid-row app-task-list__group-header">
+                            <div class="govuk-grid-column-three-quarters">
+                                <h2 class="das-task-list__section">
+                                    <span class="das-task-list__section-number">4. </span> 100% Match <br />
+                                    <span class="govuk-hint app-task-list__group-header-hint">
+                                        Pledges that match 100% will automatically be approved.
+                                        If you want to do further due diligence checks you can delay the automatic approval by up to 6 weeks;
+                                        after which time they will be approved. 
+                                    </span>
+                                </h2>
+                            </div>
+                            <div class="govuk-grid-column-one-quarter">
+                                @if (Model.AutoApproveSectionComplete)
+                                {
+                                    <strong class="govuk-tag app-task-list__group-header-tag">Completed</strong>
+                                }
+                                else
+                                {
+                                    <strong class="govuk-tag govuk-tag--grey app-task-list__group-header-tag">Not started</strong>
+                                }
+                            </div>
+                        </div>
+                        <ul class="das-task-list__items">
+
+                            <li class="das-task-list__item">
+                                <span class="das-task-list__task-name">
+                                    <a class="govuk-link" href="@Url.Action("AutoApproval", new AutoApproveRequest{EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey}, true)">
+                                        Approve or delay
+                                    </a>
+                                </span>
+                                <span class="das-task-list__task-tag">
+                                    @if (Model.AutomaticApprovalOption == AutomaticApprovalOption.ImmediateAutoApproval)
+                                    {
+                                        <text>No delay</text>
+                                    }
+                                    else if (Model.AutomaticApprovalOption == AutomaticApprovalOption.DelayedAutoApproval)
+                                    {
+                                        <text>Delay</text>
+                                    }
+                                </span>
+                            </li>
+                        </ul>
+                    </li>
+                }
             </ol>
         <div class="govuk-grid-column-full">
-            @if (Model.AmountSectionComplete)
+            @if (Model.MandatorySectionsAreComplete)
             {
                 <form method="post">
                     <div class="govuk-grid-row">
@@ -182,14 +255,15 @@
                                 You may wish to undertake your own in-house governance process before committing to fund a transfer. The receiving employer will provide you with their contact details as part of their application in order to do this.
                             </p>
                         </div>
-                        <button class="govuk-button pledge-level-continue" data-module="govuk-button" id="pledge-create-submit">Submit my pledge</button>
-                    </div>
+                            <div class="govuk-button-group govuk-!-margin-top-5">
+                                <button class="govuk-button pledge-level-continue" data-module="govuk-button" id="pledge-create-submit">Submit my pledge</button>
+                            </div>
+                        </div>
                 </form>
             }
-            <div class="govuk-grid-row">
-                <a class="govuk-link" href="@Url.Action("Inform", "CreatePledge", new { Model.EncodedAccountId })">Cancel pledge</a>
-            </div>
         </div>
+
+        <a class="govuk-link" href="@Url.Action("Inform", "CreatePledge", new { Model.EncodedAccountId })">Cancel pledge</a>
 
         </div>
     </div>
