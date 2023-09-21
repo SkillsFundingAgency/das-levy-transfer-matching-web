@@ -16,6 +16,7 @@
     <PackageReference Include="SFA.DAS.CosmosDb" Version="1.0.47" />
     <PackageReference Include="SFA.DAS.Encoding" Version="1.1.76" />
     <PackageReference Include="SFA.DAS.Http" Version="3.2.62" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
