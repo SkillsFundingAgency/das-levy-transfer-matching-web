@@ -44,6 +44,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
             public int MaxFunding { get; set; }
             public string Details { get; set; }
             public int? RemainingDaysForDelayedApproval { get; set; }
+            public int? RemainingDaysForAutoRejection { get; set; }
         }
     }
 }

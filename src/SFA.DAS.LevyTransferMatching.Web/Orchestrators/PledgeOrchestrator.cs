@@ -26,7 +26,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         private readonly Infrastructure.Configuration.FeatureToggles _featureToggles;
         private readonly IDateTimeService _dateTimeService;
         private readonly ICsvHelperService _csvService;
-        
+
         public PledgeOrchestrator(IPledgeService pledgeService, IEncodingService encodingService, IUserService userService, Infrastructure.Configuration.FeatureToggles featureToggles, IDateTimeService dateTimeService, ICsvHelperService csvService)
         {
             _pledgeService = pledgeService;
@@ -84,7 +84,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 UserDisplayName = _userService.GetUserDisplayName()
             };
 
-          await _pledgeService.ClosePledge(request.AccountId, request.PledgeId, closePledgeRequest);            
+            await _pledgeService.ClosePledge(request.AccountId, request.PledgeId, closePledgeRequest);
         }
 
         public async Task<ApplicationApprovedViewModel> GetApplicationApprovedViewModel(ApplicationApprovedRequest request)
@@ -151,10 +151,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         private IEnumerable<dynamic> GetListOfLocations(IEnumerable<GetApplyResponse.PledgeLocation> pledgeLocations, IEnumerable<GetApplicationsResponse.ApplicationLocation> applicationLocations, string specificLocation, string additionalLocations)
         {
             var listOfMatchingLocations = (from location in applicationLocations
-                select pledgeLocations?.FirstOrDefault(o => o.Id == location.PledgeLocationId)
+                                           select pledgeLocations?.FirstOrDefault(o => o.Id == location.PledgeLocationId)
                 into matchedLocation
-                where matchedLocation != null && !string.IsNullOrWhiteSpace(matchedLocation.Name)
-                select matchedLocation.Name).ToList();
+                                           where matchedLocation != null && !string.IsNullOrWhiteSpace(matchedLocation.Name)
+                                           select matchedLocation.Name).ToList();
 
             if (!string.IsNullOrWhiteSpace(specificLocation))
             {
@@ -185,7 +185,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             var isOwnerOrTransactor = _userService.IsOwnerOrTransactor(request.EncodedAccountId);
 
             var viewModels = (from application in result.Applications
-                let pledgeApplication = result.Applications.First(x => x.PledgeId == application.PledgeId)
+                              let pledgeApplication = result.Applications.First(x => x.PledgeId == application.PledgeId)
                               select new ApplicationsViewModel.Application
                               {
                                   EncodedApplicationId = _encodingService.Encode(application.Id, EncodingType.PledgeApplicationId),
@@ -207,30 +207,57 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                                   PledgeRemainingAmount = pledgeApplication.PledgeRemainingAmount,
                                   MaxFunding = pledgeApplication.MaxFunding,
                                   Details = pledgeApplication.Details,
-                                  RemainingDaysForDelayedApproval = GetRemainingDaysForDelayedApproval(application, result.AutomaticApprovalOption)
+                                  RemainingDaysForDelayedApproval = GetRemainingDaysForDelayedApproval(application, result.AutomaticApprovalOption),
+                                  RemainingDaysForAutoRejection = GetRemainingDaysForAutoRejection(application)
                               }).ToList();
-           
+
             return new ApplicationsViewModel
             {
                 EncodedAccountId = request.EncodedAccountId,
                 UserCanClosePledge = result.PledgeStatus != PledgeStatus.Closed && isOwnerOrTransactor,
                 EncodedPledgeId = request.EncodedPledgeId,
-                RenderCreatePledgeButton = isOwnerOrTransactor,                
+                RenderCreatePledgeButton = isOwnerOrTransactor,
                 RenderRejectButton = viewModels.Any(x => x.Status == ApplicationStatus.Pending),
                 PledgeTotalAmount = result.PledgeTotalAmount.ToCurrencyString(),
                 AutomaticApprovalOption = result.AutomaticApprovalOption,
                 PledgeRemainingAmount = result.PledgeRemainingAmount.ToCurrencyString(),
-                Applications = viewModels
+                Applications = viewModels.OrderByDescending(app => app.RemainingDaysForDelayedApproval).ThenByDescending(app => app.RemainingDaysForAutoRejection).ToList()
             };
         }
 
         private static int? GetRemainingDaysForDelayedApproval(GetApplicationsResponse.Application app, AutomaticApprovalOption automaticApprovalOption)
         {
-            if (app.Status == ApplicationStatus.Pending && automaticApprovalOption == AutomaticApprovalOption.DelayedAutoApproval && app.IsJobRoleMatch && app.IsLocationMatch && app.IsSectorMatch && app.IsLevelMatch)
+            if (app.Status == ApplicationStatus.Pending 
+                && automaticApprovalOption == AutomaticApprovalOption.DelayedAutoApproval 
+                && app.IsJobRoleMatch && app.IsLocationMatch && app.IsSectorMatch && app.IsLevelMatch)
             {
-                DateTime sixWeeksAfterCreatedDate = app.CreatedOn.AddDays(42);
-                TimeSpan difference = sixWeeksAfterCreatedDate - DateTime.Today;
-                return -(int)difference.TotalDays;             
+                // doesn't apply to applications over 6 weeks old.
+                DateTime sixWeeksAgo = DateTime.Today.AddDays(-42);
+                if (app.CreatedOn > sixWeeksAgo)
+                {
+                    DateTime autoApprovalDate = app.CreatedOn.AddDays(42);
+                    TimeSpan difference = autoApprovalDate - DateTime.Today;
+                    int? daysUntilAutoApproval = (int)difference.TotalDays;
+                    return daysUntilAutoApproval > 0 && daysUntilAutoApproval <= 7 ? daysUntilAutoApproval : null;
+                }              
+            }
+            return null;
+        }
+
+        private static int? GetRemainingDaysForAutoRejection(GetApplicationsResponse.Application app)
+        {
+            if (app.Status == ApplicationStatus.Pending)
+            {
+                DateTime threeMonthsAgo = DateTime.Today.AddMonths(-3);
+
+                // doesn't apply to applications over 3 months old.
+                if (app.CreatedOn > threeMonthsAgo)
+                {
+                    // Calculate the number of days until rejection
+                    TimeSpan difference = app.CreatedOn - threeMonthsAgo;
+                    int? daysUntilRejection = (int)difference.TotalDays;                
+                    return daysUntilRejection > 0 && daysUntilRejection <= 7 ? daysUntilRejection : null;
+                }
             }
             return null;
         }

@@ -5,13 +5,20 @@ namespace SFA.DAS.LevyTransferMatching.Domain.Extensions
 {
     public static class ApplicationStatusExtensions
     {
-        public static string GetLabelForSender(this ApplicationStatus status,  int? RemainingDaysForDelayedApproval)
+        public static string GetLabelForSender(this ApplicationStatus status,  int? RemainingDaysForDelayedApproval, int? RemainingDaysForAutoRejection)
         {
-            if (RemainingDaysForDelayedApproval.HasValue && RemainingDaysForDelayedApproval <= 7)
+            if (RemainingDaysForDelayedApproval.HasValue)
             {
                 string autoApprovalDate = GetAutoApprovalDate(RemainingDaysForDelayedApproval.Value);
                 return $"AUTO APPROVAL ON {autoApprovalDate}";
             }
+
+            if (RemainingDaysForAutoRejection.HasValue)
+            {
+                string autoApprovalDate = GetAutoApprovalDate(RemainingDaysForAutoRejection.Value);
+                return $"APPLICATION EXPIRES ON {autoApprovalDate}";
+            }
+
             switch (status)
             {
                 case ApplicationStatus.Pending: return "AWAITING YOUR APPROVAL";
@@ -34,11 +41,16 @@ namespace SFA.DAS.LevyTransferMatching.Domain.Extensions
             return formattedDate;
         }
 
-        public static string GetCssClassForSender(this ApplicationStatus status, int? RemainingDaysForDelayedApproval)
+        public static string GetCssClassForSender(this ApplicationStatus status, int? RemainingDaysForDelayedApproval, int? RemainingDaysForAutoRejection)
         {
-            if (RemainingDaysForDelayedApproval.HasValue && RemainingDaysForDelayedApproval.Value <= 7)
+            if (RemainingDaysForDelayedApproval.HasValue)
             {
                 return "govuk-tag govuk-tag--yellow";
+            }
+
+            if (RemainingDaysForAutoRejection.HasValue)
+            {
+                return "govuk-tag govuk-tag--orange";
             }
             switch (status)
             {
