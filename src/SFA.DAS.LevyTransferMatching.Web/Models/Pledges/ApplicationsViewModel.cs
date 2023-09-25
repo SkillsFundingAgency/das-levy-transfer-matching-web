@@ -17,6 +17,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public bool RenderRejectButton { get; set; }
         public string PledgeTotalAmount { get; set; }
         public string PledgeRemainingAmount { get; set; }
+        public AutomaticApprovalOption AutomaticApprovalOption { get; set; }
         public int ApplicationsPendingApproval { get => Applications.Count(x => x.Status == ApplicationStatus.Pending); }
         public bool RenderApplicationsList { get => Applications != null && Applications.Any(); }
 
@@ -42,6 +43,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
             public int PledgeRemainingAmount { get; set; }
             public int MaxFunding { get; set; }
             public string Details { get; set; }
+            public int? RemainingDaysForDelayedApproval { get; set; }
         }
     }
 }

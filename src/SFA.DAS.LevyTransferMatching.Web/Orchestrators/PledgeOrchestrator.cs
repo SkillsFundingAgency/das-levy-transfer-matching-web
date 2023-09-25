@@ -206,7 +206,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                                   JobRole = pledgeApplication.JobRole,
                                   PledgeRemainingAmount = pledgeApplication.PledgeRemainingAmount,
                                   MaxFunding = pledgeApplication.MaxFunding,
-                                  Details = pledgeApplication.Details
+                                  Details = pledgeApplication.Details,
+                                  RemainingDaysForDelayedApproval = GetRemainingDaysForDelayedApproval(application, result.AutomaticApprovalOption)
                               }).ToList();
            
             return new ApplicationsViewModel
@@ -217,9 +218,21 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 RenderCreatePledgeButton = isOwnerOrTransactor,                
                 RenderRejectButton = viewModels.Any(x => x.Status == ApplicationStatus.Pending),
                 PledgeTotalAmount = result.PledgeTotalAmount.ToCurrencyString(),
+                AutomaticApprovalOption = result.AutomaticApprovalOption,
                 PledgeRemainingAmount = result.PledgeRemainingAmount.ToCurrencyString(),
                 Applications = viewModels
             };
+        }
+
+        private static int? GetRemainingDaysForDelayedApproval(GetApplicationsResponse.Application app, AutomaticApprovalOption automaticApprovalOption)
+        {
+            if (app.Status == ApplicationStatus.Pending && automaticApprovalOption == AutomaticApprovalOption.DelayedAutoApproval && app.IsJobRoleMatch && app.IsLocationMatch && app.IsSectorMatch && app.IsLevelMatch)
+            {
+                DateTime sixWeeksAfterCreatedDate = app.CreatedOn.AddDays(42);
+                TimeSpan difference = sixWeeksAfterCreatedDate - DateTime.Today;
+                return -(int)difference.TotalDays;             
+            }
+            return null;
         }
 
         public async Task<ApplicationViewModel> GetApplicationViewModel(ApplicationRequest request, CancellationToken cancellationToken = default)

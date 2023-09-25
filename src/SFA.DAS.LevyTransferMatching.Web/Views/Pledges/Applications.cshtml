@@ -165,7 +165,7 @@
                                                 <td class="govuk-table__cell">
                                                     <criteria-list application="@app"></criteria-list>
                                                 </td>
-                                                <td class="govuk-table__cell"><strong class="@app.Status.GetCssClassForSender()">@app.Status.GetLabelForSender()</strong></td>
+                                            <td class="govuk-table__cell"><strong class="@app.Status.GetCssClassForSender(app.RemainingDaysForDelayedApproval)">@app.Status.GetLabelForSender(app.RemainingDaysForDelayedApproval)</strong></td>
                                             </tr>
                                         }
                                     }
