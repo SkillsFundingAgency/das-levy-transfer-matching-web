@@ -15,7 +15,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Humanizer;
-
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
     public class PledgeOrchestrator : IPledgeOrchestrator
@@ -110,7 +109,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 Applications = result.Applications?.Select(app => new PledgeApplicationDownloadModel
                 {
                     DateApplied = app.CreatedOn,
-                    Status = app.Status,
+                    Status = app.GetDateDependentStatus(result.AutomaticApprovalOption),
                     ApplicationId = app.Id,
                     PledgeId = app.PledgeId,
                     EmployerAccountName = app.DasAccountName,
@@ -147,7 +146,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             return fileContents;
         }
-
+               
         private IEnumerable<dynamic> GetListOfLocations(IEnumerable<GetApplyResponse.PledgeLocation> pledgeLocations, IEnumerable<GetApplicationsResponse.ApplicationLocation> applicationLocations, string specificLocation, string additionalLocations)
         {
             var listOfMatchingLocations = (from location in applicationLocations
@@ -207,8 +206,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                                   PledgeRemainingAmount = pledgeApplication.PledgeRemainingAmount,
                                   MaxFunding = pledgeApplication.MaxFunding,
                                   Details = pledgeApplication.Details,
-                                  RemainingDaysForDelayedApproval = GetRemainingDaysForDelayedApproval(application, result.AutomaticApprovalOption),
-                                  RemainingDaysForAutoRejection = GetRemainingDaysForAutoRejection(application)
+                                  RemainingDaysForDelayedApproval = application.GetRemainingDaysForDelayedApproval(result.AutomaticApprovalOption),
+                                  RemainingDaysForAutoRejection = application.GetRemainingDaysForAutoRejection()
                               }).ToList();
 
             return new ApplicationsViewModel
@@ -221,45 +220,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 PledgeTotalAmount = result.PledgeTotalAmount.ToCurrencyString(),
                 AutomaticApprovalOption = result.AutomaticApprovalOption,
                 PledgeRemainingAmount = result.PledgeRemainingAmount.ToCurrencyString(),
-                Applications = viewModels.OrderByDescending(app => app.RemainingDaysForDelayedApproval).ThenByDescending(app => app.RemainingDaysForAutoRejection).ToList()
+                Applications = viewModels
+                                .OrderBy(app => app.RemainingDaysForDelayedApproval.GetValueOrDefault(int.MaxValue))
+                                .ThenBy(app => app.RemainingDaysForAutoRejection.GetValueOrDefault(int.MaxValue))
+                                .ToList()
             };
-        }
-
-        private static int? GetRemainingDaysForDelayedApproval(GetApplicationsResponse.Application app, AutomaticApprovalOption automaticApprovalOption)
-        {
-            if (app.Status == ApplicationStatus.Pending 
-                && automaticApprovalOption == AutomaticApprovalOption.DelayedAutoApproval 
-                && app.IsJobRoleMatch && app.IsLocationMatch && app.IsSectorMatch && app.IsLevelMatch)
-            {
-                // doesn't apply to applications over 6 weeks old.
-                DateTime sixWeeksAgo = DateTime.Today.AddDays(-42);
-                if (app.CreatedOn > sixWeeksAgo)
-                {
-                    DateTime autoApprovalDate = app.CreatedOn.AddDays(42);
-                    TimeSpan difference = autoApprovalDate - DateTime.Today;
-                    int? daysUntilAutoApproval = (int)difference.TotalDays;
-                    return daysUntilAutoApproval > 0 && daysUntilAutoApproval <= 7 ? daysUntilAutoApproval : null;
-                }              
-            }
-            return null;
-        }
-
-        private static int? GetRemainingDaysForAutoRejection(GetApplicationsResponse.Application app)
-        {
-            if (app.Status == ApplicationStatus.Pending)
-            {
-                DateTime threeMonthsAgo = DateTime.Today.AddMonths(-3);
-
-                // doesn't apply to applications over 3 months old.
-                if (app.CreatedOn > threeMonthsAgo)
-                {
-                    // Calculate the number of days until rejection
-                    TimeSpan difference = app.CreatedOn - threeMonthsAgo;
-                    int? daysUntilRejection = (int)difference.TotalDays;                
-                    return daysUntilRejection > 0 && daysUntilRejection <= 7 ? daysUntilRejection : null;
-                }
-            }
-            return null;
         }
 
         public async Task<ApplicationViewModel> GetApplicationViewModel(ApplicationRequest request, CancellationToken cancellationToken = default)
