@@ -121,6 +121,16 @@
         <p>Pledge funds remaining if application is approved: <strong>@Model.Affordability.RemainingFundsIfApproved.ToCurrencyString()</strong></p>
     }
 
+    @if (Model.Affordability.RemainingFundsIfApproved > 0 && Model.Affordability.RemainingFundsIfApproved < 2000)
+    {
+        <div class="govuk-warning-text">
+            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+            <strong class="govuk-warning-text__text">
+                <span class="govuk-warning-text__assistive">Warning</span>
+                If you approve this application, your pledge will fall below £2,000 and will be closed.
+            </strong>
+        </div>
+    }
     <h3 class="govuk-heading-s govuk-!-margin-bottom-0">What is estimated cost?</h3>
     <p>The total estimated cost of training and assessment is based on the funding band maximum, including completion payment, and is spread across the typical duration of the apprenticeship. First and final year costs will depend on the month when the apprenticeship started.</p>
 
