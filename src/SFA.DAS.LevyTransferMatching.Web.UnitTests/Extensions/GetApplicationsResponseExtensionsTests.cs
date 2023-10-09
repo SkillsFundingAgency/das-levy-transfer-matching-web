@@ -234,7 +234,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
             var result = app.GetDateDependentStatus(automaticApprovalOption);
 
             // Assert
-            Assert.IsTrue(result.Contains(ApplicationStatus.Pending.ToString()));
+            Assert.IsTrue(result.Contains("AWAITING YOUR APPROVAL"));
         }
     }
 }

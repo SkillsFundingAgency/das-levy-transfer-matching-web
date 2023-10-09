@@ -55,7 +55,19 @@ namespace SFA.DAS.LevyTransferMatching.Web.Extensions
                 return $"APPLICATION EXPIRES ON {GetAutoApprovalDate(daysTilAutoRejection.Value)}";
             }
 
-            return app.Status.ToString();
+            switch (app.Status)
+            {
+                case ApplicationStatus.Pending: return "AWAITING YOUR APPROVAL";
+                case ApplicationStatus.Approved: return "AWAITING ACCEPTANCE BY APPLICANT";
+                case ApplicationStatus.Accepted: return "OFFER OF FUNDING ACCEPTED";
+                case ApplicationStatus.FundsUsed: return "FUNDS USED";
+                case ApplicationStatus.Rejected: return "REJECTED";
+                case ApplicationStatus.Declined: return "WITHDRAWN BY APPLICANT";
+                case ApplicationStatus.Withdrawn: return "WITHDRAWN BY APPLICANT";
+                case ApplicationStatus.WithdrawnAfterAcceptance: return "WITHDRAWN BY APPLICANT";
+                default:
+                    return app.Status.ToString();
+            }
         }
 
         private static string GetAutoApprovalDate(int remainingDays)
