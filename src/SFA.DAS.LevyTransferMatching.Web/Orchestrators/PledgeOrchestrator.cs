@@ -15,7 +15,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Humanizer;
-
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 {
     public class PledgeOrchestrator : IPledgeOrchestrator
@@ -26,7 +25,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
         private readonly Infrastructure.Configuration.FeatureToggles _featureToggles;
         private readonly IDateTimeService _dateTimeService;
         private readonly ICsvHelperService _csvService;
-        
+
         public PledgeOrchestrator(IPledgeService pledgeService, IEncodingService encodingService, IUserService userService, Infrastructure.Configuration.FeatureToggles featureToggles, IDateTimeService dateTimeService, ICsvHelperService csvService)
         {
             _pledgeService = pledgeService;
@@ -84,7 +83,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 UserDisplayName = _userService.GetUserDisplayName()
             };
 
-          await _pledgeService.ClosePledge(request.AccountId, request.PledgeId, closePledgeRequest);            
+            await _pledgeService.ClosePledge(request.AccountId, request.PledgeId, closePledgeRequest);
         }
 
         public async Task<ApplicationApprovedViewModel> GetApplicationApprovedViewModel(ApplicationApprovedRequest request)
@@ -110,7 +109,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                 Applications = result.Applications?.Select(app => new PledgeApplicationDownloadModel
                 {
                     DateApplied = app.CreatedOn,
-                    Status = app.Status,
+                    Status = app.GetDateDependentStatus(result.AutomaticApprovalOption),
                     ApplicationId = app.Id,
                     PledgeId = app.PledgeId,
                     EmployerAccountName = app.DasAccountName,
@@ -147,14 +146,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
 
             return fileContents;
         }
-
+               
         private IEnumerable<dynamic> GetListOfLocations(IEnumerable<GetApplyResponse.PledgeLocation> pledgeLocations, IEnumerable<GetApplicationsResponse.ApplicationLocation> applicationLocations, string specificLocation, string additionalLocations)
         {
             var listOfMatchingLocations = (from location in applicationLocations
-                select pledgeLocations?.FirstOrDefault(o => o.Id == location.PledgeLocationId)
+                                           select pledgeLocations?.FirstOrDefault(o => o.Id == location.PledgeLocationId)
                 into matchedLocation
-                where matchedLocation != null && !string.IsNullOrWhiteSpace(matchedLocation.Name)
-                select matchedLocation.Name).ToList();
+                                           where matchedLocation != null && !string.IsNullOrWhiteSpace(matchedLocation.Name)
+                                           select matchedLocation.Name).ToList();
 
             if (!string.IsNullOrWhiteSpace(specificLocation))
             {
@@ -185,7 +184,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
             var isOwnerOrTransactor = _userService.IsOwnerOrTransactor(request.EncodedAccountId);
 
             var viewModels = (from application in result.Applications
-                let pledgeApplication = result.Applications.First(x => x.PledgeId == application.PledgeId)
+                              let pledgeApplication = result.Applications.First(x => x.PledgeId == application.PledgeId)
                               select new ApplicationsViewModel.Application
                               {
                                   EncodedApplicationId = _encodingService.Encode(application.Id, EncodingType.PledgeApplicationId),
@@ -206,19 +205,25 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators
                                   JobRole = pledgeApplication.JobRole,
                                   PledgeRemainingAmount = pledgeApplication.PledgeRemainingAmount,
                                   MaxFunding = pledgeApplication.MaxFunding,
-                                  Details = pledgeApplication.Details
+                                  Details = pledgeApplication.Details,
+                                  RemainingDaysForDelayedApproval = application.GetRemainingDaysForDelayedApproval(result.AutomaticApprovalOption),
+                                  RemainingDaysForAutoRejection = application.GetRemainingDaysForAutoRejection()
                               }).ToList();
-           
+
             return new ApplicationsViewModel
             {
                 EncodedAccountId = request.EncodedAccountId,
                 UserCanClosePledge = result.PledgeStatus != PledgeStatus.Closed && isOwnerOrTransactor,
                 EncodedPledgeId = request.EncodedPledgeId,
-                RenderCreatePledgeButton = isOwnerOrTransactor,                
+                RenderCreatePledgeButton = isOwnerOrTransactor,
                 RenderRejectButton = viewModels.Any(x => x.Status == ApplicationStatus.Pending),
                 PledgeTotalAmount = result.PledgeTotalAmount.ToCurrencyString(),
+                AutomaticApprovalOption = result.AutomaticApprovalOption,
                 PledgeRemainingAmount = result.PledgeRemainingAmount.ToCurrencyString(),
                 Applications = viewModels
+                                .OrderBy(app => app.RemainingDaysForDelayedApproval.GetValueOrDefault(int.MaxValue))
+                                .ThenBy(app => app.RemainingDaysForAutoRejection.GetValueOrDefault(int.MaxValue))
+                                .ToList()
             };
         }
 

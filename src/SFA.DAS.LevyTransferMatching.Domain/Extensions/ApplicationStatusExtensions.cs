@@ -1,11 +1,24 @@
 ﻿using SFA.DAS.LevyTransferMatching.Domain.Types;
+using System;
 
 namespace SFA.DAS.LevyTransferMatching.Domain.Extensions
 {
     public static class ApplicationStatusExtensions
     {
-        public static string GetLabelForSender(this ApplicationStatus status)
+        public static string GetLabelForSender(this ApplicationStatus status,  int? RemainingDaysForDelayedApproval, int? RemainingDaysForAutoRejection)
         {
+            if (RemainingDaysForDelayedApproval.HasValue)
+            {
+                string autoApprovalDate = GetAutoApprovalDate(RemainingDaysForDelayedApproval.Value);
+                return $"AUTO APPROVAL ON {autoApprovalDate}";
+            }
+
+            if (RemainingDaysForAutoRejection.HasValue)
+            {
+                string autoApprovalDate = GetAutoApprovalDate(RemainingDaysForAutoRejection.Value);
+                return $"APPLICATION EXPIRES ON {autoApprovalDate}";
+            }
+
             switch (status)
             {
                 case ApplicationStatus.Pending: return "AWAITING YOUR APPROVAL";
@@ -21,8 +34,24 @@ namespace SFA.DAS.LevyTransferMatching.Domain.Extensions
             }
         }
 
-        public static string GetCssClassForSender(this ApplicationStatus status)
+        private static string GetAutoApprovalDate(int remainingDays)
         {
+            DateTime futureDate = DateTime.Today.AddDays(remainingDays);
+            string formattedDate = futureDate.ToString("dd MMM yyyy").ToUpper();
+            return formattedDate;
+        }
+
+        public static string GetCssClassForSender(this ApplicationStatus status, int? RemainingDaysForDelayedApproval, int? RemainingDaysForAutoRejection)
+        {
+            if (RemainingDaysForDelayedApproval.HasValue)
+            {
+                return "govuk-tag govuk-tag--yellow";
+            }
+
+            if (RemainingDaysForAutoRejection.HasValue)
+            {
+                return "govuk-tag govuk-tag--orange";
+            }
             switch (status)
             {
                 case ApplicationStatus.Pending: return "govuk-tag govuk-tag--blue";
