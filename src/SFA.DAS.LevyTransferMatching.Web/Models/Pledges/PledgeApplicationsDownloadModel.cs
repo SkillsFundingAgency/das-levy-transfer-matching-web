@@ -24,7 +24,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public long ApplicationId { get; set; }
         public string EncodedApplicationId { get; set; }
         public DateTime DateApplied { get; set; }
-        public ApplicationStatus Status { get; set; }
+        public string Status { get; set; }
         public string EmployerAccountName { get; set; }
         public IEnumerable<GetApplicationsResponse.ApplicationLocation> Locations { get; set; }
         public IEnumerable<GetApplyResponse.PledgeLocation> PledgeLocations { get; set; }

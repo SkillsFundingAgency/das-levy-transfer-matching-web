@@ -3,7 +3,6 @@ using System.Dynamic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using CsvHelper;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
@@ -16,7 +15,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Services
         {
             using var memoryStream = new MemoryStream();
             using var writer = new StreamWriter(memoryStream);
-            using var csv = new CsvWriter(writer, CultureInfo.CurrentCulture);
+            using var csv = new CsvWriter(writer,  new CultureInfo("en-GB"));
 
             var records = SetUpColumnsOnCsv(model);
             csv.WriteRecords(records);

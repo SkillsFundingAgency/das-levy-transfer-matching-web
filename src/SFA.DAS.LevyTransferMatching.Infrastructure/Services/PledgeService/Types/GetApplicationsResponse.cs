@@ -12,6 +12,8 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Typ
         public PledgeStatus PledgeStatus { get; set; }
         public int PledgeRemainingAmount { get; set; }
         public int PledgeTotalAmount { get; set; }
+        public AutomaticApprovalOption AutomaticApprovalOption { get; set; }
+
 
         public class Application
         {
