@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Add Contact Details";
     ViewBag.GaData.Vpv = "/accounts/opportunities/apply/contact-details";
+    ViewBag.ZenDeskLabel = "LTM-R-apply-contactdetails";
 }
 
 <a href="@Url.Action("Apply", "Opportunities", new { encodedAccountId = Model.EncodedAccountId, EncodedPledgeId = Model.EncodedPledgeId, cacheKey = Model.CacheKey })" class="govuk-back-link">Back</a>

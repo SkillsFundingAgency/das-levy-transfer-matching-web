@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = "Pledges";
     ViewBag.GaData.Vpv = "/accounts/pledges/create/location";
+    ViewBag.ZenDeskLabel = "LTM-S-pledge-location";
 }
 
 <a href="@Url.Action("Create", "CreatePledge", new { Model.EncodedAccountId, Model.CacheKey })" class="govuk-back-link">Back</a>
