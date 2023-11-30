@@ -1,6 +1,6 @@
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web;
 using Newtonsoft.Json;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsers.Types;
 
@@ -17,7 +17,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsers
 
         public async Task<EmployerUserAccounts> GetUserAccounts(string email, string userId)
         {
-            var response = await _httpClient.GetAsync($"AccountUsers/{userId}/accounts?email={HttpUtility.UrlEncode(email)}");
+            var response = await _httpClient.GetAsync($"AccountUsers/{userId}/accounts?email={WebUtility.UrlEncode(email)}");
 
             if (!response.IsSuccessStatusCode)
             {
