@@ -1,6 +1,5 @@
 ﻿using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types;
-using System;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Extensions
 {

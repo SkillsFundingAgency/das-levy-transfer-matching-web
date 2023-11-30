@@ -1,5 +1,4 @@
-﻿using System;
-using SFA.DAS.Encoding;
+﻿using SFA.DAS.Encoding;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Attributes
 {

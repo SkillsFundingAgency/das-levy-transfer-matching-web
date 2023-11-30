@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace SFA.DAS.LevyTransferMatching.Web.Extensions
+﻿namespace SFA.DAS.LevyTransferMatching.Web.Extensions
 {
     public static class DateTimeExtensions
     {

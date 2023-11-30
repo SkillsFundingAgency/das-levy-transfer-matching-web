@@ -1,6 +1,5 @@
 ﻿using SFA.DAS.LevyTransferMatching.Infrastructure.Services.LocationService;
 using SFA.DAS.LevyTransferMatching.Web.Models.Location;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

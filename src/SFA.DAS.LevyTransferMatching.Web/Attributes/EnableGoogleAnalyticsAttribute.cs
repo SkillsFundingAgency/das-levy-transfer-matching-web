@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
-using System;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Attributes
 {

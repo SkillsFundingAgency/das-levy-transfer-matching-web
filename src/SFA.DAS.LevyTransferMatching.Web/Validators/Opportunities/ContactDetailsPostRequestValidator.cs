@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
-using System;
 using System.Linq;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Validators.Opportunities

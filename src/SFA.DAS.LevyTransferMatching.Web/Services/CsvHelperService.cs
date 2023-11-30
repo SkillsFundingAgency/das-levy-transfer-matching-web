@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Dynamic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using CsvHelper;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;

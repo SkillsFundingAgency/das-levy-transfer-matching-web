@@ -9,7 +9,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
 {
     public static class DataProtectionStartupExtensions
     {
-        public static IServiceCollection AddDasDataProtection(this IServiceCollection services, LevyTransferMatchingWeb webConfiguration, IWebHostEnvironment environment)
+        public static IServiceCollection AddDasDataProtection(this IServiceCollection services, LevyTransferMatchingWeb webConfiguration, IHostEnvironment environment)
         {
             if (!environment.IsDevelopment())
             {
