@@ -67,9 +67,9 @@ public class Startup
         services.AddCookieTempDataProvider();
         services.AddDasDataProtection(config, _environment);
         services.AddDasHealthChecks(config);
-        services.AddEncodingService(_configuration);
+        services.AddEncodingService();
         services.AddServiceRegistrations();
-        services.AddEmployerSharedUI(_configuration);
+        services.AddEmployerSharedUi(_configuration);
         services.AddEmployerUrlHelper();
         services.AddAsyncValidators();
         services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();

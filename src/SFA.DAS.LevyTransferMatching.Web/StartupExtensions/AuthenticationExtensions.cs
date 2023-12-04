@@ -1,36 +1,31 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.GovUK.Auth.AppStart;
 using SFA.DAS.GovUK.Auth.Configuration;
 using SFA.DAS.GovUK.Auth.Services;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
 
-namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
+namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions;
+
+public static class AuthenticationExtensions
 {
-    public static class AuthenticationExtensions
+    public static void AddEmployerAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
-        public static void AddEmployerAuthentication(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddTransient<IStubAuthenticationService, StubAuthenticationService>(); // TODO can be removed once gov login enabled
+        services.AddTransient<IStubAuthenticationService, StubAuthenticationService>(); // TODO can be removed once gov login enabled
             
-            if (configuration[$"{nameof(Infrastructure.Configuration.FeatureToggles)}:UseGovSignIn"] != null 
-                && configuration[$"{nameof(Infrastructure.Configuration.FeatureToggles)}:UseGovSignIn"]
-                    .Equals("true", StringComparison.CurrentCultureIgnoreCase))
-            {
-                services.Configure<GovUkOidcConfiguration>(configuration.GetSection("GovUkOidcConfiguration"));
-                services.AddAndConfigureGovUkAuthentication(configuration,typeof(PostAuthenticationClaimsHandler), "", "/SignIn-Stub");
-            }
-            else
-            {
-                var employerConfig = configuration.GetSection<Infrastructure.Configuration.Authentication>();
+        if (configuration[$"{nameof(Infrastructure.Configuration.FeatureToggles)}:UseGovSignIn"] != null 
+            && configuration[$"{nameof(Infrastructure.Configuration.FeatureToggles)}:UseGovSignIn"]
+                .Equals("true", StringComparison.CurrentCultureIgnoreCase))
+        {
+            services.Configure<GovUkOidcConfiguration>(configuration.GetSection("GovUkOidcConfiguration"));
+            services.AddAndConfigureGovUkAuthentication(configuration,typeof(PostAuthenticationClaimsHandler), "", "/SignIn-Stub");
+        }
+        else
+        {
+            var employerConfig = configuration.GetSection<Infrastructure.Configuration.Authentication>();
                 
-                services
+            services
                 .AddAuthentication(sharedOptions =>
                 {
                     sharedOptions.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -85,10 +80,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions
                         ctx.Principal.Identities.First().AddClaims(claims);
                     };
                 });
-            }
-            
         }
-
-        
     }
 }
