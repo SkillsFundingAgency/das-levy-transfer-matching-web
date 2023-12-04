@@ -1,141 +1,134 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoFixture;
-using Moq;
-using NUnit.Framework;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
+﻿using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.LocationService;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Location;
 
-namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators
+namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators;
+
+[TestFixture]
+public class LocationValidatorServiceTests
 {
-    [TestFixture]
-    public class LocationValidatorServiceTests
+    private Mock<ILocationService> _locationService;
+    private LocationValidatorService _locationValidatorService;
+    private Fixture _fixture;
+
+    [SetUp]
+    public void SetUp()
     {
-        private Mock<ILocationService> _locationService;
-        private LocationValidatorService _locationValidatorService;
-        private Fixture _fixture;
+        _locationService = new Mock<ILocationService>();
+        _fixture = new Fixture();
 
-        [SetUp]
-        public void SetUp()
+        _locationValidatorService = new LocationValidatorService(_locationService.Object);
+    }
+
+    [Test]
+    public async Task ValidateLocations_One_Auto_Update_Two_With_Multiple_Valid_Results()
+    {
+        // Arrange
+        var enteredLocations = new List<string>()
         {
-            _locationService = new Mock<ILocationService>();
-            _fixture = new Fixture();
+            "Middleton",
+            "Leicester",
+            "London",
+        };
 
-            _locationValidatorService = new LocationValidatorService(_locationService.Object);
-        }
+        var middletonSuggestions = _fixture.Create<LocationsDto>();
+        var leicesterSuggestions = _fixture
+            .Build<LocationsDto>()
+            .With(x => x.Names, _fixture.CreateMany<string>(1))
+            .Create();
+        var londonSuggestions = _fixture.Create<LocationsDto>();
 
-        [Test]
-        public async Task ValidateLocations_One_Auto_Update_Two_With_Multiple_Valid_Results()
-        {
-            // Arrange
-            var enteredLocations = new List<string>()
-            {
-                "Middleton",
-                "Leicester",
-                "London",
-            };
+        var request = _fixture
+            .Build<LocationPostRequest>()
+            .With(x => x.Locations, enteredLocations)
+            .Create();
 
-            var middletonSuggestions = _fixture.Create<LocationsDto>();
-            var leicesterSuggestions = _fixture
-                .Build<LocationsDto>()
-                .With(x => x.Names, _fixture.CreateMany<string>(1))
-                .Create();
-            var londonSuggestions = _fixture.Create<LocationsDto>();
+        var multipleValidResults = new Dictionary<int, IEnumerable<string>>();
 
-            var request = _fixture
-                .Build<LocationPostRequest>()
-                .With(x => x.Locations, enteredLocations)
-                .Create();
-
-            var multipleValidResults = new Dictionary<int, IEnumerable<string>>();
-
-            _locationService
-                .Setup(x => x.GetLocations(It.Is<string>(y => y == "Middleton")))
-                .ReturnsAsync(middletonSuggestions);
+        _locationService
+            .Setup(x => x.GetLocations(It.Is<string>(y => y == "Middleton")))
+            .ReturnsAsync(middletonSuggestions);
             
-            _locationService
-                .Setup(x => x.GetLocations(It.Is<string>(y => y == "Leicester")))
-                .ReturnsAsync(leicesterSuggestions);
+        _locationService
+            .Setup(x => x.GetLocations(It.Is<string>(y => y == "Leicester")))
+            .ReturnsAsync(leicesterSuggestions);
 
-            var leicesterInformation = _fixture.Create<LocationInformationDto>();
+        var leicesterInformation = _fixture.Create<LocationInformationDto>();
 
-            _locationService
-                .Setup(x => x.GetLocationInformation(It.Is<string>(y => y == "Leicester")))
-                .ReturnsAsync(leicesterInformation);
+        _locationService
+            .Setup(x => x.GetLocationInformation(It.Is<string>(y => y == "Leicester")))
+            .ReturnsAsync(leicesterInformation);
 
-            _locationService
-                .Setup(x => x.GetLocations(It.Is<string>(y => y == "London")))
-                .ReturnsAsync(londonSuggestions);
+        _locationService
+            .Setup(x => x.GetLocations(It.Is<string>(y => y == "London")))
+            .ReturnsAsync(londonSuggestions);
 
-            // Act
-            var result = await _locationValidatorService.ValidateLocations(request, multipleValidResults);
+        // Act
+        var result = await _locationValidatorService.ValidateLocations(request, multipleValidResults);
 
-            // Assert
-            Assert.That(multipleValidResults.Keys, Has.Member(0));
-            Assert.That(middletonSuggestions.Names, Is.EqualTo(multipleValidResults[0]).AsCollection);
+        // Assert
+        Assert.That(multipleValidResults.Keys, Has.Member(0));
+        Assert.That(middletonSuggestions.Names, Is.EqualTo(multipleValidResults[0]).AsCollection);
 
-            Assert.That(leicesterInformation.Name, Is.EqualTo(request.Locations[1]));
+        Assert.That(leicesterInformation.Name, Is.EqualTo(request.Locations[1]));
 
-            Assert.That(multipleValidResults.Keys, Has.Member(2));
-            Assert.That(londonSuggestions.Names, Is.EqualTo(multipleValidResults[2]).AsCollection);
-        }
+        Assert.That(multipleValidResults.Keys, Has.Member(2));
+        Assert.That(londonSuggestions.Names, Is.EqualTo(multipleValidResults[2]).AsCollection);
+    }
 
-        [Test]
-        public async Task ValidateLocations_One_Typo_One_Duplicate()
+    [Test]
+    public async Task ValidateLocations_One_Typo_One_Duplicate()
+    {
+        // Arrange
+        var enteredLocations = new List<string>()
         {
-            // Arrange
-            var enteredLocations = new List<string>()
-            {
-                "Macester",
-                "Leicester",
-                "Leicester",
-            };
+            "Macester",
+            "Leicester",
+            "Leicester",
+        };
 
-            var macesterSuggestions = _fixture
-                .Build<LocationsDto>()
-                .With(x => x.Names, _fixture.CreateMany<string>(0))
-                .Create();
-            var leicesterSuggestions = _fixture
-                .Build<LocationsDto>()
-                .With(x => x.Names, _fixture.CreateMany<string>(1))
-                .Create();
+        var macesterSuggestions = _fixture
+            .Build<LocationsDto>()
+            .With(x => x.Names, _fixture.CreateMany<string>(0))
+            .Create();
+        var leicesterSuggestions = _fixture
+            .Build<LocationsDto>()
+            .With(x => x.Names, _fixture.CreateMany<string>(1))
+            .Create();
 
-            var request = _fixture
-                .Build<LocationPostRequest>()
-                .With(x => x.Locations, enteredLocations)
-                .Create();
+        var request = _fixture
+            .Build<LocationPostRequest>()
+            .With(x => x.Locations, enteredLocations)
+            .Create();
 
-            var multipleValidResults = new Dictionary<int, IEnumerable<string>>();
+        var multipleValidResults = new Dictionary<int, IEnumerable<string>>();
 
-            _locationService
-                .Setup(x => x.GetLocations(It.Is<string>(y => y == "Macester")))
-                .ReturnsAsync(macesterSuggestions);
+        _locationService
+            .Setup(x => x.GetLocations(It.Is<string>(y => y == "Macester")))
+            .ReturnsAsync(macesterSuggestions);
             
-            _locationService
-                .Setup(x => x.GetLocations(It.Is<string>(y => y == "Leicester")))
-                .ReturnsAsync(leicesterSuggestions);
+        _locationService
+            .Setup(x => x.GetLocations(It.Is<string>(y => y == "Leicester")))
+            .ReturnsAsync(leicesterSuggestions);
 
-            var leicesterInformation = _fixture.Create<LocationInformationDto>();
+        var leicesterInformation = _fixture.Create<LocationInformationDto>();
 
-            _locationService
-                .Setup(x => x.GetLocationInformation(It.Is<string>(y => y == "Leicester")))
-                .ReturnsAsync(leicesterInformation);
+        _locationService
+            .Setup(x => x.GetLocationInformation(It.Is<string>(y => y == "Leicester")))
+            .ReturnsAsync(leicesterInformation);
 
-            // Act
-            var result = await _locationValidatorService.ValidateLocations(request, multipleValidResults);
+        // Act
+        var result = await _locationValidatorService.ValidateLocations(request, multipleValidResults);
 
-            // Assert
-            Assert.That(result.Keys, Has.Member(0));
-            Assert.That(result[0], Is.EqualTo("Check the spelling of your location"));
+        // Assert
+        Assert.That(result.Keys, Has.Member(0));
+        Assert.That(result[0], Is.EqualTo("Check the spelling of your location"));
 
-            Assert.That(result.Keys, Has.Member(1));
-            Assert.That(result[1], Is.EqualTo("Duplicates of the same location are not allowed"));
+        Assert.That(result.Keys, Has.Member(1));
+        Assert.That(result[1], Is.EqualTo("Duplicates of the same location are not allowed"));
 
-            Assert.That(result.Keys, Has.Member(2));
-            Assert.That(result[2], Is.EqualTo("Duplicates of the same location are not allowed"));
-        }
+        Assert.That(result.Keys, Has.Member(2));
+        Assert.That(result[2], Is.EqualTo("Duplicates of the same location are not allowed"));
     }
 }

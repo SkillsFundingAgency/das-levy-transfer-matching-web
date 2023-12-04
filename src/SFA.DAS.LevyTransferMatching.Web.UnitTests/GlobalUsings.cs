@@ -1,0 +1,14 @@
+﻿global using System.Collections.Generic;
+global using System.Security.Claims;
+global using System.Threading.Tasks;
+global using System.Linq;
+global using AutoFixture.NUnit3;
+global using FluentAssertions;
+global using Microsoft.AspNetCore.Http;
+global using Microsoft.AspNetCore.Http.Features;
+global using Moq;
+global using Newtonsoft.Json;
+global using NUnit.Framework;
+global using System;
+global using AutoFixture;
+global using Microsoft.AspNetCore.Mvc;
