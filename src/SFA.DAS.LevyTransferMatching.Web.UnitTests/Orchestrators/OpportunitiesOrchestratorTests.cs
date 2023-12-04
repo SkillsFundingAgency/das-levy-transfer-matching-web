@@ -461,19 +461,28 @@ public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
 
         var result = await _orchestrator.GetSectorViewModel(new SectorRequest { EncodedAccountId = encodedAccountId, CacheKey = cacheKey, EncodedPledgeId = encodedPledgeId, PledgeId = 1, AccountId = 1 });
 
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result.CacheKey, Is.EqualTo(cacheKey));
-        Assert.That(result.EncodedAccountId, Is.EqualTo(encodedAccountId));
-        Assert.That(result.EncodedPledgeId, Is.EqualTo(encodedPledgeId));
-        Assert.That(result.Sectors, Is.EqualTo(cacheItem.Sectors));
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.CacheKey, Is.EqualTo(cacheKey));
+            Assert.That(result.EncodedAccountId, Is.EqualTo(encodedAccountId));
+            Assert.That(result.EncodedPledgeId, Is.EqualTo(encodedPledgeId));
+            Assert.That(result.Sectors, Is.EqualTo(cacheItem.Sectors));
 
-        Assert.That(result.OpportunitySummaryViewModel, Is.Not.Null);
-        Assert.That(result.OpportunitySummaryViewModel.Amount, Is.EqualTo(getSectorResponse.Opportunity.Amount));
-        Assert.That(getSectorResponse.Opportunity.Sectors.ToReferenceDataDescriptionList(getSectorResponse.Sectors), Is.EqualTo(result.OpportunitySummaryViewModel.SectorList));
-        Assert.That(getSectorResponse.Opportunity.JobRoles.ToReferenceDataDescriptionList(getSectorResponse.JobRoles), Is.EqualTo(result.OpportunitySummaryViewModel.JobRoleList));
-        Assert.That(getSectorResponse.Opportunity.Levels.ToReferenceDataDescriptionList(getSectorResponse.Levels, x => x.ShortDescription), Is.EqualTo(result.OpportunitySummaryViewModel.LevelList));
+            Assert.That(result.OpportunitySummaryViewModel, Is.Not.Null);
+            Assert.That(result.OpportunitySummaryViewModel.Amount, Is.EqualTo(getSectorResponse.Opportunity.Amount));
+            Assert.That(getSectorResponse.Opportunity.Sectors.ToReferenceDataDescriptionList(getSectorResponse.Sectors),
+                Is.EqualTo(result.OpportunitySummaryViewModel.SectorList));
+            Assert.That(
+                getSectorResponse.Opportunity.JobRoles.ToReferenceDataDescriptionList(getSectorResponse.JobRoles),
+                Is.EqualTo(result.OpportunitySummaryViewModel.JobRoleList));
+            Assert.That(
+                getSectorResponse.Opportunity.Levels.ToReferenceDataDescriptionList(getSectorResponse.Levels,
+                    x => x.ShortDescription), Is.EqualTo(result.OpportunitySummaryViewModel.LevelList));
 
-        _cacheStorageService.Verify(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()), Times.Once);
-        _opportunitiesService.Verify(x => x.GetSector(1, 1), Times.Once);
+            _cacheStorageService.Verify(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()),
+                Times.Once);
+            _opportunitiesService.Verify(x => x.GetSector(1, 1), Times.Once);
+        });
     }
 }

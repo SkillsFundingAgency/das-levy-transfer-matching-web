@@ -54,9 +54,11 @@ public class ApplicationsOrchestratorTests
         // Act
         var viewModel = await _applicationsOrchestrator.GetApplication(request);
 
-        // Assert
-        Assert.That(viewModel, Is.Not.Null);
-        Assert.That(viewModel.EncodedOpportunityId, Is.EqualTo(encodedPledgeId));
+        Assert.Multiple(() =>
+        {
+            Assert.That(viewModel, Is.Not.Null);
+            Assert.That(viewModel.EncodedOpportunityId, Is.EqualTo(encodedPledgeId));
+        });
     }
 
 
@@ -86,8 +88,11 @@ public class ApplicationsOrchestratorTests
         var viewModel = await _applicationsOrchestrator.GetApplication(request);
 
         // Assert
-        Assert.That(viewModel, Is.Not.Null);
-        Assert.That(viewModel.CanWithdraw, Is.EqualTo(expectCanWithdraw));
+        Assert.Multiple(() =>
+        {
+            Assert.That(viewModel, Is.Not.Null);
+            Assert.That(viewModel.CanWithdraw, Is.EqualTo(expectCanWithdraw));
+        });
     }
 
     [Test]
@@ -141,10 +146,13 @@ public class ApplicationsOrchestratorTests
         await _applicationsOrchestrator.SetApplicationAcceptance(request);
 
         // Assert
-        Assert.That(actualRequest, Is.Not.Null);
-        Assert.That(actualRequest.UserId, Is.EqualTo(expectedUserId));
-        Assert.That(actualRequest.UserDisplayName, Is.EqualTo(expectedUserDisplayName));
-        Assert.That(actualRequest.Acceptance, Is.EqualTo(expectedAcceptance));
+        Assert.Multiple(() =>
+        {
+            Assert.That(actualRequest, Is.Not.Null);
+            Assert.That(actualRequest.UserId, Is.EqualTo(expectedUserId));
+            Assert.That(actualRequest.UserDisplayName, Is.EqualTo(expectedUserDisplayName));
+            Assert.That(actualRequest.Acceptance, Is.EqualTo(expectedAcceptance));
+        });
     }
 
     [Test]
@@ -169,9 +177,12 @@ public class ApplicationsOrchestratorTests
         var viewModel = await _applicationsOrchestrator.GetAcceptedViewModel(request);
 
         // Assert
-        Assert.That(viewModel, Is.Not.Null);
-        Assert.That(viewModel.EmployerNameAndReference,
-            Is.EqualTo($"{response.EmployerAccountName} ({encodedPledgeId})"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(viewModel, Is.Not.Null);
+            Assert.That(viewModel.EmployerNameAndReference,
+                Is.EqualTo($"{response.EmployerAccountName} ({encodedPledgeId})"));
+        });
     }
 
     [Test]
@@ -214,9 +225,12 @@ public class ApplicationsOrchestratorTests
         var viewModel = await _applicationsOrchestrator.GetDeclinedViewModel(request);
 
         // Assert
-        Assert.That(viewModel, Is.Not.Null);
-        Assert.That(viewModel.EmployerNameAndReference,
-            Is.EqualTo($"{response.EmployerAccountName} ({encodedPledgeId})"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(viewModel, Is.Not.Null);
+            Assert.That(viewModel.EmployerNameAndReference,
+                Is.EqualTo($"{response.EmployerAccountName} ({encodedPledgeId})"));
+        });
     }
 
     [Test]
@@ -263,8 +277,11 @@ public class ApplicationsOrchestratorTests
         var viewModel = await _applicationsOrchestrator.GetApplication(request);
 
         // Assert
-        Assert.That(viewModel, Is.Not.Null);
-        Assert.That(viewModel.CanAcceptFunding, Is.EqualTo(true));
+        Assert.Multiple(() =>
+        {
+            Assert.That(viewModel, Is.Not.Null);
+            Assert.That(viewModel.CanAcceptFunding, Is.EqualTo(true));
+        });
     }
 
     [Test]
@@ -293,8 +310,11 @@ public class ApplicationsOrchestratorTests
         var viewModel = await _applicationsOrchestrator.GetApplication(request);
 
         // Assert
-        Assert.That(viewModel, Is.Not.Null);
-        Assert.That(viewModel.CanUseTransferFunds, Is.EqualTo(true));
+        Assert.Multiple(() =>
+        {
+            Assert.That(viewModel, Is.Not.Null);
+            Assert.That(viewModel.CanUseTransferFunds, Is.EqualTo(true));
+        });
     }
 
     [Test]
@@ -324,8 +344,11 @@ public class ApplicationsOrchestratorTests
         var viewModel = await _applicationsOrchestrator.GetApplication(request);
 
         // Assert
-        Assert.That(viewModel, Is.Not.Null);
-        Assert.That(viewModel.RenderWithdrawAfterAcceptanceButton, Is.EqualTo(true));
+        Assert.Multiple(() =>
+        {
+            Assert.That(viewModel, Is.Not.Null);
+            Assert.That(viewModel.RenderWithdrawAfterAcceptanceButton, Is.EqualTo(true));
+        });
     }
 
     [Test]
@@ -362,11 +385,14 @@ public class ApplicationsOrchestratorTests
         var viewModel = await _applicationsOrchestrator.GetWithdrawalConfirmationViewModel(request);
 
         // Assert
-        Assert.That(viewModel, Is.Not.Null);
-        Assert.That(viewModel.PledgeEmployerName, Is.EqualTo(response.PledgeEmployerName));
-        Assert.That(viewModel.EncodedPledgeId, Is.EqualTo(encodedPledgeId));
-        Assert.That(viewModel.EncodedAccountId, Is.EqualTo(encodedAccountId));
-        Assert.That(viewModel.EncodedApplicationId, Is.EqualTo(encodedApplicationId));
+        Assert.Multiple(() =>
+        {
+            Assert.That(viewModel, Is.Not.Null);
+            Assert.That(viewModel.PledgeEmployerName, Is.EqualTo(response.PledgeEmployerName));
+            Assert.That(viewModel.EncodedPledgeId, Is.EqualTo(encodedPledgeId));
+            Assert.That(viewModel.EncodedAccountId, Is.EqualTo(encodedAccountId));
+            Assert.That(viewModel.EncodedApplicationId, Is.EqualTo(encodedApplicationId));
+        });
     }
 
     [Test]

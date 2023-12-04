@@ -38,9 +38,12 @@ public class OpportunitiesControllerTests
         var viewResult = await _opportunitiesController.Index(_indexRequest) as ViewResult;
         var indexViewModel = viewResult?.Model as IndexViewModel;
 
-        // Assert
-        Assert.That(viewResult, Is.Not.Null);
-        Assert.That(indexViewModel, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            // Assert
+            Assert.That(viewResult, Is.Not.Null);
+            Assert.That(indexViewModel, Is.Not.Null);
+        });
     }
 
     [Test]
@@ -54,9 +57,12 @@ public class OpportunitiesControllerTests
         var viewResult = await _opportunitiesController.Index(indexRequest) as ViewResult;
         var indexViewModel = viewResult?.Model as IndexViewModel;
 
-        // Assert
-        Assert.That(viewResult, Is.Not.Null);
-        Assert.That(indexViewModel, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            // Assert
+            Assert.That(viewResult, Is.Not.Null);
+            Assert.That(indexViewModel, Is.Not.Null);
+        });
     }
 
     [Test]
@@ -74,10 +80,13 @@ public class OpportunitiesControllerTests
         var viewResult = await _opportunitiesController.Detail(detailRequest) as ViewResult;
         var actualDetailViewModel = viewResult?.Model as DetailViewModel;
 
-        // Assert
-        Assert.That(viewResult, Is.Not.Null);
-        Assert.That(actualDetailViewModel, Is.Not.Null);
-        Assert.That(actualDetailViewModel, Is.EqualTo(expectedDetailViewModel));
+        Assert.Multiple(() =>
+        {
+            // Assert
+            Assert.That(viewResult, Is.Not.Null);
+            Assert.That(actualDetailViewModel, Is.Not.Null);
+            Assert.That(actualDetailViewModel, Is.EqualTo(expectedDetailViewModel));
+        });
     }
 
     [Test]
@@ -153,10 +162,12 @@ public class OpportunitiesControllerTests
         var actionResult = await _opportunitiesController.SelectAccount(selectAccountRequest);
         var redirectToActionResult = actionResult as RedirectToActionResult;
 
-        Assert.That(actionResult, Is.Not.Null);
-        Assert.That(redirectToActionResult, Is.Not.Null);
-
-        Assert.That(redirectToActionResult.ActionName, Is.EqualTo(nameof(OpportunitiesController.Apply)));
+        Assert.Multiple(() =>
+        {
+            Assert.That(actionResult, Is.Not.Null);
+            Assert.That(redirectToActionResult, Is.Not.Null);
+            Assert.That(redirectToActionResult.ActionName, Is.EqualTo(nameof(OpportunitiesController.Apply)));
+        });
     }
 
     [Test]
@@ -171,20 +182,20 @@ public class OpportunitiesControllerTests
         _orchestrator
             .Setup(x => x.GetSelectAccountViewModel(It.Is<SelectAccountRequest>(y => y == selectAccountRequest)))
             .ReturnsAsync(expectedViewModel);
-
-        var encodedPledgeId = _fixture.Create<string>();
-
+        
         var actionResult = await _opportunitiesController.SelectAccount(selectAccountRequest);
         var viewResult = actionResult as ViewResult;
         var model = viewResult.Model;
         var actualViewModel = model as SelectAccountViewModel;
 
-        Assert.That(actionResult, Is.Not.Null);
-        Assert.That(viewResult, Is.Not.Null);
-        Assert.That(model, Is.Not.Null);
-        Assert.That(actualViewModel, Is.Not.Null);
-
-        Assert.That(actualViewModel, Is.EqualTo(expectedViewModel));
+        Assert.Multiple(() =>
+        {
+            Assert.That(actionResult, Is.Not.Null);
+            Assert.That(viewResult, Is.Not.Null);
+            Assert.That(model, Is.Not.Null);
+            Assert.That(actualViewModel, Is.Not.Null);
+            Assert.That(actualViewModel, Is.EqualTo(expectedViewModel));
+        });
     }
 
     [Test]
@@ -200,19 +211,19 @@ public class OpportunitiesControllerTests
             .Setup(x => x.GetSelectAccountViewModel(It.Is<SelectAccountRequest>(y => y == selectAccountRequest)))
             .ReturnsAsync(expectedViewModel);
 
-        var encodedPledgeId = _fixture.Create<string>();
-
         var actionResult = await _opportunitiesController.SelectAccount(selectAccountRequest);
         var viewResult = actionResult as ViewResult;
         var model = viewResult.Model;
         var actualViewModel = model as SelectAccountViewModel;
 
-        Assert.That(actionResult, Is.Not.Null);
-        Assert.That(viewResult, Is.Not.Null);
-        Assert.That(model, Is.Not.Null);
-        Assert.That(actualViewModel, Is.Not.Null);
-
-        Assert.That(actualViewModel, Is.EqualTo(expectedViewModel));
+        Assert.Multiple(() =>
+        {
+            Assert.That(actionResult, Is.Not.Null);
+            Assert.That(viewResult, Is.Not.Null);
+            Assert.That(model, Is.Not.Null);
+            Assert.That(actualViewModel, Is.Not.Null);
+            Assert.That(actualViewModel, Is.EqualTo(expectedViewModel));
+        });
     }
 
     [Test]
@@ -228,10 +239,13 @@ public class OpportunitiesControllerTests
         var viewResult = await _opportunitiesController.MoreDetails(request) as ViewResult;
         var actualViewModel = viewResult.Model as MoreDetailsViewModel;
 
-        Assert.That(viewResult, Is.Not.Null);
-        Assert.That(actualViewModel, Is.Not.Null);
-        Assert.That(actualViewModel, Is.EqualTo(expectedViewModel));
-        _orchestrator.Verify(x => x.GetMoreDetailsViewModel(request), Times.Once);
+        Assert.Multiple(() =>
+        {
+            Assert.That(viewResult, Is.Not.Null);
+            Assert.That(actualViewModel, Is.Not.Null);
+            Assert.That(actualViewModel, Is.EqualTo(expectedViewModel));
+            _orchestrator.Verify(x => x.GetMoreDetailsViewModel(request), Times.Once);
+        });
     }
 
     [Test]
@@ -257,12 +271,15 @@ public class OpportunitiesControllerTests
             (await _opportunitiesController.MoreDetails(request)) as RedirectToActionResult;
 
         // Assert
-        Assert.That(redirectToActionResult, Is.Not.Null);
-        Assert.That(redirectToActionResult.ActionName, Is.EqualTo(nameof(OpportunitiesController.Apply)));
-        Assert.That(encodedPledgeId, Is.EqualTo(redirectToActionResult.RouteValues["EncodedPledgeId"]));
-        Assert.That(encodedAccountId, Is.EqualTo(redirectToActionResult.RouteValues["EncodedAccountId"]));
-        Assert.That(cacheKey, Is.EqualTo(redirectToActionResult.RouteValues["CacheKey"]));
-        _orchestrator.Verify(x => x.UpdateCacheItem(request), Times.Once);
+        Assert.Multiple(() =>
+        {
+            Assert.That(redirectToActionResult, Is.Not.Null);
+            Assert.That(redirectToActionResult.ActionName, Is.EqualTo(nameof(OpportunitiesController.Apply)));
+            Assert.That(encodedPledgeId, Is.EqualTo(redirectToActionResult.RouteValues["EncodedPledgeId"]));
+            Assert.That(encodedAccountId, Is.EqualTo(redirectToActionResult.RouteValues["EncodedAccountId"]));
+            Assert.That(cacheKey, Is.EqualTo(redirectToActionResult.RouteValues["CacheKey"]));
+            _orchestrator.Verify(x => x.UpdateCacheItem(request), Times.Once);
+        });
     }
 
     [Test]
@@ -279,9 +296,12 @@ public class OpportunitiesControllerTests
         var viewResult = await _opportunitiesController.ContactDetails(contactDetailsRequest) as ViewResult;
         var contactDetailsViewModel = viewResult?.Model as ContactDetailsViewModel;
 
-        // Assert
-        Assert.That(viewResult, Is.Not.Null);
-        Assert.That(contactDetailsViewModel, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            // Assert
+            Assert.That(viewResult, Is.Not.Null);
+            Assert.That(contactDetailsViewModel, Is.Not.Null);
+        });
     }
 
     [Test]
@@ -308,12 +328,15 @@ public class OpportunitiesControllerTests
             await _opportunitiesController.ContactDetails(contactDetailsPostRequest) as RedirectToActionResult;
 
         // Assert
-        Assert.That(redirectToActionResult, Is.Not.Null);
-        Assert.That(redirectToActionResult.ActionName, Is.EqualTo(nameof(OpportunitiesController.Apply)));
-        Assert.That(cacheUpdated, Is.True);
-        Assert.That(encodedAccountId, Is.EqualTo(redirectToActionResult.RouteValues["encodedAccountId"]));
-        Assert.That(encodedPledgeId, Is.EqualTo(redirectToActionResult.RouteValues["encodedPledgeId"]));
-        Assert.That(cacheKey, Is.EqualTo(redirectToActionResult.RouteValues["cacheKey"]));
+        Assert.Multiple(() =>
+        {
+            Assert.That(redirectToActionResult, Is.Not.Null);
+            Assert.That(redirectToActionResult.ActionName, Is.EqualTo(nameof(OpportunitiesController.Apply)));
+            Assert.That(cacheUpdated, Is.True);
+            Assert.That(encodedAccountId, Is.EqualTo(redirectToActionResult.RouteValues["encodedAccountId"]));
+            Assert.That(encodedPledgeId, Is.EqualTo(redirectToActionResult.RouteValues["encodedPledgeId"]));
+            Assert.That(cacheKey, Is.EqualTo(redirectToActionResult.RouteValues["cacheKey"]));
+        });
     }
 
     [Test]
@@ -329,10 +352,13 @@ public class OpportunitiesControllerTests
         var viewResult = await _opportunitiesController.ApplicationDetails(request) as ViewResult;
         var actualViewModel = viewResult.Model as ApplicationDetailsViewModel;
 
-        Assert.That(viewResult, Is.Not.Null);
-        Assert.That(actualViewModel, Is.Not.Null);
-        Assert.That(actualViewModel, Is.EqualTo(expectedViewModel));
-        _orchestrator.Verify(x => x.GetApplicationViewModel(request), Times.Once);
+        Assert.Multiple(() =>
+        {
+            Assert.That(viewResult, Is.Not.Null);
+            Assert.That(actualViewModel, Is.Not.Null);
+            Assert.That(actualViewModel, Is.EqualTo(expectedViewModel));
+            _orchestrator.Verify(x => x.GetApplicationViewModel(request), Times.Once);
+        });
     }
 
     [Test]
@@ -401,11 +427,14 @@ public class OpportunitiesControllerTests
                 request)) as RedirectToActionResult;
 
         // Assert
-        Assert.That(redirectToActionResult, Is.Not.Null);
-        Assert.That(redirectToActionResult.ActionName, Is.EqualTo(nameof(OpportunitiesController.Apply)));
-        Assert.That(redirectToActionResult.RouteValues["EncodedPledgeId"], Is.EqualTo(encodedPledgeId));
-        Assert.That(redirectToActionResult.RouteValues["EncodedAccountId"], Is.EqualTo(encodedAccountId));
-        Assert.That(redirectToActionResult.RouteValues["CacheKey"], Is.EqualTo(cacheKey));
+        Assert.Multiple(() =>
+        {
+            Assert.That(redirectToActionResult, Is.Not.Null);
+            Assert.That(redirectToActionResult.ActionName, Is.EqualTo(nameof(OpportunitiesController.Apply)));
+            Assert.That(redirectToActionResult.RouteValues["EncodedPledgeId"], Is.EqualTo(encodedPledgeId));
+            Assert.That(redirectToActionResult.RouteValues["EncodedAccountId"], Is.EqualTo(encodedAccountId));
+            Assert.That(redirectToActionResult.RouteValues["CacheKey"], Is.EqualTo(cacheKey));
+        });
     }
 
     [Test]
@@ -476,11 +505,14 @@ public class OpportunitiesControllerTests
                 request)) as RedirectToActionResult;
 
         // Assert
-        Assert.That(redirectToActionResult, Is.Not.Null);
-        Assert.That(redirectToActionResult.ActionName, Is.EqualTo(nameof(OpportunitiesController.ApplicationDetails)));
-        Assert.That(redirectToActionResult.RouteValues["EncodedPledgeId"], Is.EqualTo(encodedPledgeId));
-        Assert.That(redirectToActionResult.RouteValues["EncodedAccountId"], Is.EqualTo(encodedAccountId));
-        Assert.That(redirectToActionResult.RouteValues["CacheKey"], Is.EqualTo(cacheKey));
+        Assert.Multiple(() =>
+        {
+            Assert.That(redirectToActionResult, Is.Not.Null);
+            Assert.That(redirectToActionResult.ActionName, Is.EqualTo(nameof(OpportunitiesController.ApplicationDetails)));
+            Assert.That(redirectToActionResult.RouteValues["EncodedPledgeId"], Is.EqualTo(encodedPledgeId));
+            Assert.That(redirectToActionResult.RouteValues["EncodedAccountId"], Is.EqualTo(encodedAccountId));
+            Assert.That(redirectToActionResult.RouteValues["CacheKey"], Is.EqualTo(cacheKey));
+        });
     }
 
     [Test]
@@ -496,9 +528,12 @@ public class OpportunitiesControllerTests
         var viewResult = await _opportunitiesController.Confirmation(request) as ViewResult;
         var actualViewModel = viewResult.Model as ConfirmationViewModel;
 
-        Assert.That(viewResult, Is.Not.Null);
-        Assert.That(actualViewModel, Is.Not.Null);
-        Assert.That(actualViewModel, Is.EqualTo(expectedViewModel));
+        Assert.Multiple(() =>
+        {
+            Assert.That(viewResult, Is.Not.Null);
+            Assert.That(actualViewModel, Is.Not.Null);
+            Assert.That(actualViewModel, Is.EqualTo(expectedViewModel));
+        });
     }
 
     [Test]
@@ -525,7 +560,6 @@ public class OpportunitiesControllerTests
         Assert.That(result, Is.Not.Null);
         Assert.That(result.ActionName, Is.EqualTo("Confirmation"));
     }
-
 
     [Test]
     public async Task GET_GetFundingEstimate_Returns_Expected_Json_Result()
@@ -555,10 +589,13 @@ public class OpportunitiesControllerTests
         var viewResult = await _opportunitiesController.Sector(request) as ViewResult;
         var actualViewModel = viewResult.Model as SectorViewModel;
 
-        Assert.That(viewResult, Is.Not.Null);
-        Assert.That(actualViewModel, Is.Not.Null);
-        Assert.That(actualViewModel, Is.EqualTo(expectedViewModel));
-        _orchestrator.Verify(x => x.GetSectorViewModel(request), Times.Once);
+        Assert.Multiple(() =>
+        {
+            Assert.That(viewResult, Is.Not.Null);
+            Assert.That(actualViewModel, Is.Not.Null);
+            Assert.That(actualViewModel, Is.EqualTo(expectedViewModel));
+            _orchestrator.Verify(x => x.GetSectorViewModel(request), Times.Once);
+        });
     }
 
     [Test]
@@ -583,12 +620,14 @@ public class OpportunitiesControllerTests
         var redirectToActionResult = await _opportunitiesController.Sector(request) as RedirectToActionResult;
 
         // Assert
-        Assert.That(redirectToActionResult, Is.Not.Null);
-        Assert.That(redirectToActionResult.ActionName, Is.EqualTo(nameof(OpportunitiesController.Apply)));
-        Assert.That(encodedPledgeId, Is.EqualTo(redirectToActionResult.RouteValues["EncodedPledgeId"]));
-        Assert.That(encodedAccountId, Is.EqualTo(redirectToActionResult.RouteValues["EncodedAccountId"]));
-        Assert.That(cacheKey, Is.EqualTo(redirectToActionResult.RouteValues["CacheKey"]));
-
-        _orchestrator.Verify(x => x.UpdateCacheItem(request), Times.Once);
+        Assert.Multiple(() =>
+        {
+            Assert.That(redirectToActionResult, Is.Not.Null);
+            Assert.That(redirectToActionResult.ActionName, Is.EqualTo(nameof(OpportunitiesController.Apply)));
+            Assert.That(encodedPledgeId, Is.EqualTo(redirectToActionResult.RouteValues["EncodedPledgeId"]));
+            Assert.That(encodedAccountId, Is.EqualTo(redirectToActionResult.RouteValues["EncodedAccountId"]));
+            Assert.That(cacheKey, Is.EqualTo(redirectToActionResult.RouteValues["CacheKey"]));
+            _orchestrator.Verify(x => x.UpdateCacheItem(request), Times.Once);
+        });
     }
 }

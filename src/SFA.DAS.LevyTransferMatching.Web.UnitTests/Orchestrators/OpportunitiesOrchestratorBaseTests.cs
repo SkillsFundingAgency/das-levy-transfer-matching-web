@@ -32,7 +32,7 @@ public class OpportunitiesOrchestratorBaseTests
     public void GetOpportunitySummaryViewModel_One_Selected_For_Everything_Tax_Year_Calculated_Successfully()
     {
         // Arrange
-        string encodedPledgeId = _fixture.Create<string>();
+        var encodedPledgeId = _fixture.Create<string>();
 
         this.SetupGetOpportunityViewModelServices();
 
@@ -66,20 +66,23 @@ public class OpportunitiesOrchestratorBaseTests
         var result = _orchestrator.GetOpportunitySummaryViewModel(opportunitySummaryViewModelOptions);
 
         // Assert
-        var jobRoleDescriptions = JobRoleReferenceDataItems
-            .Where(x => opportunity.JobRoles.Contains(x.Id))
-            .Select(x => x.Description);
-        Assert.That(jobRoleDescriptions.Single(), Is.EqualTo(result.JobRoleList));
+        Assert.Multiple(() =>
+        {
+            var jobRoleDescriptions = JobRoleReferenceDataItems
+                .Where(x => opportunity.JobRoles.Contains(x.Id))
+                .Select(x => x.Description);
+            Assert.That(jobRoleDescriptions.Single(), Is.EqualTo(result.JobRoleList));
 
-        var levelDescriptions = LevelReferenceDataItems
-            .Where(x => opportunity.Levels.Contains(x.Id))
-            .Select(x => x.ShortDescription);
-        Assert.That(levelDescriptions.Single(), Is.EqualTo(result.LevelList));
+            var levelDescriptions = LevelReferenceDataItems
+                .Where(x => opportunity.Levels.Contains(x.Id))
+                .Select(x => x.ShortDescription);
+            Assert.That(levelDescriptions.Single(), Is.EqualTo(result.LevelList));
 
-        var sectorDescriptions = SectorReferenceDataItems
-            .Where(x => opportunity.Sectors.Contains(x.Id))
-            .Select(x => x.Description);
-        Assert.That(sectorDescriptions.Single(), Is.EqualTo(result.SectorList));
+            var sectorDescriptions = SectorReferenceDataItems
+                .Where(x => opportunity.Sectors.Contains(x.Id))
+                .Select(x => x.Description);
+            Assert.That(sectorDescriptions.Single(), Is.EqualTo(result.SectorList));
+        });
 
     }
 
@@ -87,9 +90,9 @@ public class OpportunitiesOrchestratorBaseTests
     public void GetOpportunitySummaryViewModel_All_Selected_For_Everything_Tax_Year_Calculated_Successfully_And_Description_Is_Anonymous()
     {
         // Arrange
-        string encodedPledgeId = _fixture.Create<string>();
+        var encodedPledgeId = _fixture.Create<string>();
 
-        this.SetupGetOpportunityViewModelServices();
+        SetupGetOpportunityViewModelServices();
 
         var opportunity = _fixture
             .Build<OpportunityDto>()
@@ -118,19 +121,22 @@ public class OpportunitiesOrchestratorBaseTests
         var result = _orchestrator.GetOpportunitySummaryViewModel(opportunitySummaryViewModelOptions);
 
         // Assert
-        Assert.That(result.JobRoleList, Is.EqualTo("All"));
-        Assert.That(result.LevelList, Is.EqualTo("All"));
-        Assert.That(result.SectorList, Is.EqualTo("All"));
-        Assert.That(result.Description.Contains(encodedPledgeId), Is.False);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.JobRoleList, Is.EqualTo("All"));
+            Assert.That(result.LevelList, Is.EqualTo("All"));
+            Assert.That(result.SectorList, Is.EqualTo("All"));
+            Assert.That(result.Description.Contains(encodedPledgeId), Is.False);
+        });
     }
 
     [Test]
     public void GetOpportunitySummaryViewModel_Some_Selected_For_Everything_Tax_Year_Calculated_Successfully_And_Description_Contains_EncodedPledgeId()
     {
         // Arrange
-        string encodedPledgeId = _fixture.Create<string>();
+        var encodedPledgeId = _fixture.Create<string>();
 
-        this.SetupGetOpportunityViewModelServices();
+        SetupGetOpportunityViewModelServices();
 
         var sectors = SectorReferenceDataItems.Take(4);
         var jobRoles = JobRoleReferenceDataItems.Take(5);
@@ -163,23 +169,26 @@ public class OpportunitiesOrchestratorBaseTests
         var result = _orchestrator.GetOpportunitySummaryViewModel(opportunitySummaryViewModelOptions);
 
         // Assert
-        var jobRoleDescriptions = JobRoleReferenceDataItems
-            .Where(x => opportunity.JobRoles.Contains(x.Id))
-            .Select(x => x.Description);
-        Assert.That(string.Join("; ", jobRoleDescriptions), Is.EqualTo(result.JobRoleList));
+        Assert.Multiple(() =>
+        {
+            var jobRoleDescriptions = JobRoleReferenceDataItems
+                .Where(x => opportunity.JobRoles.Contains(x.Id))
+                .Select(x => x.Description);
+            Assert.That(string.Join("; ", jobRoleDescriptions), Is.EqualTo(result.JobRoleList));
 
-        var levelDescriptions = LevelReferenceDataItems
-            .Where(x => opportunity.Levels.Contains(x.Id))
-            .Select(x => x.ShortDescription);
-        Assert.That(string.Join(", ", levelDescriptions), Is.EqualTo(result.LevelList));
+            var levelDescriptions = LevelReferenceDataItems
+                .Where(x => opportunity.Levels.Contains(x.Id))
+                .Select(x => x.ShortDescription);
+            Assert.That(string.Join(", ", levelDescriptions), Is.EqualTo(result.LevelList));
 
-        var sectorDescriptions = SectorReferenceDataItems
-            .Where(x => opportunity.Sectors.Contains(x.Id))
-            .Select(x => x.Description);
-        Assert.That(string.Join("; ", sectorDescriptions), Is.EqualTo(result.SectorList));
+            var sectorDescriptions = SectorReferenceDataItems
+                .Where(x => opportunity.Sectors.Contains(x.Id))
+                .Select(x => x.Description);
+            Assert.That(string.Join("; ", sectorDescriptions), Is.EqualTo(result.SectorList));
 
 
-        Assert.That(result.Description.Contains(encodedPledgeId), Is.True);
+            Assert.That(result.Description.Contains(encodedPledgeId), Is.True);
+        });
     }
 
     protected void SetupGetOpportunityViewModelServices()

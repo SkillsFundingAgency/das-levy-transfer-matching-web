@@ -34,9 +34,12 @@ public class PledgesControllerTests
         var viewResult = await _pledgesController.Pledges(request) as ViewResult;
         var pledgesViewModel = viewResult?.Model as PledgesViewModel;
 
-        // Assert
-        Assert.That(viewResult, Is.Not.Null);
-        Assert.That(pledgesViewModel, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            // Assert
+            Assert.That(viewResult, Is.Not.Null);
+            Assert.That(pledgesViewModel, Is.Not.Null);
+        });
     }
 
     [Test]
@@ -50,9 +53,12 @@ public class PledgesControllerTests
         var viewResult = _pledgesController.Detail(request) as ViewResult;
         var detailViewModel = viewResult?.Model as DetailViewModel;
 
-        // Assert
-        Assert.That(viewResult, Is.Not.Null);
-        Assert.That(detailViewModel, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            // Assert
+            Assert.That(viewResult, Is.Not.Null);
+            Assert.That(detailViewModel, Is.Not.Null);
+        });
     }
 
     [Test]
@@ -66,9 +72,12 @@ public class PledgesControllerTests
         var viewResult = _pledgesController.Close(request) as ViewResult;
         var actualViewModel = viewResult?.Model as CloseViewModel;
 
-        // Assert
-        Assert.That(viewResult, Is.Not.Null);
-        Assert.That(actualViewModel, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            // Assert
+            Assert.That(viewResult, Is.Not.Null);
+            Assert.That(actualViewModel, Is.Not.Null);
+        });
     }
 
     [Test]
@@ -88,9 +97,12 @@ public class PledgesControllerTests
         var actionResult = await _pledgesController.Close(request) as RedirectToActionResult;
 
         // Assert
-        Assert.That(actionResult, Is.Not.Null);
-        Assert.That(actionResult.ActionName, Is.EqualTo("Pledges"));
-        Assert.That(actionResult.RouteValues["EncodedAccountId"], Is.EqualTo(request.EncodedAccountId));
+        Assert.Multiple(() =>
+        {
+            Assert.That(actionResult, Is.Not.Null);
+            Assert.That(actionResult.ActionName, Is.EqualTo("Pledges"));
+            Assert.That(actionResult.RouteValues["EncodedAccountId"], Is.EqualTo(request.EncodedAccountId));
+        });
     }
 
     [Test]
@@ -104,9 +116,12 @@ public class PledgesControllerTests
         var viewResult = await _pledgesController.Applications(request) as ViewResult;
         var applicationsViewModel = viewResult?.Model as ApplicationsViewModel;
 
-        // Assert
-        Assert.That(viewResult, Is.Not.Null);
-        Assert.That(applicationsViewModel, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            // Assert
+            Assert.That(viewResult, Is.Not.Null);
+            Assert.That(applicationsViewModel, Is.Not.Null);
+        });
     }
 
     [Test]
@@ -118,8 +133,11 @@ public class PledgesControllerTests
         var viewResult = await _pledgesController.Application(request) as ViewResult;
         var viewModel = viewResult?.Model as ApplicationViewModel;
 
-        Assert.That(viewResult, Is.Not.Null);
-        Assert.That(viewModel, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(viewResult, Is.Not.Null);
+            Assert.That(viewModel, Is.Not.Null);
+        });
     }
 
     [Test]
@@ -131,9 +149,12 @@ public class PledgesControllerTests
         _orchestrator.Setup(x => x.SetApplicationOutcome(It.Is<ApplicationPostRequest>(r => r.AccountId == request.AccountId && r.ApplicationId == request.ApplicationId && r.PledgeId == request.PledgeId))).Returns(Task.CompletedTask);
 
         var redirectResult = await _pledgesController.Application(request) as RedirectToActionResult;
-
-        Assert.That(redirectResult, Is.Not.Null);
-        Assert.That(redirectResult.ActionName, Is.EqualTo("ApplicationApprovalOptions"));
+       
+        Assert.Multiple(() =>
+        {
+            Assert.That(redirectResult, Is.Not.Null);
+            Assert.That(redirectResult.ActionName, Is.EqualTo("ApplicationApprovalOptions"));
+        });
     }
 
     [Test]
@@ -146,8 +167,11 @@ public class PledgesControllerTests
 
         var redirectResult = await _pledgesController.Application(request) as RedirectToActionResult;
 
-        Assert.That(redirectResult, Is.Not.Null);
-        Assert.That(redirectResult.ActionName, Is.EqualTo("ApplicationApproved"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(redirectResult, Is.Not.Null);
+            Assert.That(redirectResult.ActionName, Is.EqualTo("ApplicationApproved"));
+        });
     }
 
     [Test]
@@ -162,8 +186,11 @@ public class PledgesControllerTests
 
         var redirectResult = await _pledgesController.Application(request) as RedirectToActionResult;
 
-        Assert.That(redirectResult, Is.Not.Null);
-        Assert.That(redirectResult.ActionName, Is.EqualTo("Applications"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(redirectResult, Is.Not.Null);
+            Assert.That(redirectResult.ActionName, Is.EqualTo("Applications"));
+        });
     }
 
     [Test]
@@ -181,8 +208,11 @@ public class PledgesControllerTests
         var redirectResult = _pledgesController.Applications(request) as RedirectToActionResult;
 
         // Assert
-        Assert.That(redirectResult, Is.Not.Null);
-        Assert.That(redirectResult.ActionName, Is.EqualTo("RejectApplications"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(redirectResult, Is.Not.Null);
+            Assert.That(redirectResult.ActionName, Is.EqualTo("RejectApplications"));
+        });
     }
 
     [Test]
@@ -206,8 +236,11 @@ public class PledgesControllerTests
         var redirectResult = await _pledgesController.RejectApplications(request) as RedirectToActionResult;
 
         //Assert
-        Assert.That(redirectResult, Is.Not.Null);
-        Assert.That(redirectResult.ActionName, Is.EqualTo("Applications"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(redirectResult, Is.Not.Null);
+            Assert.That(redirectResult.ActionName, Is.EqualTo("Applications"));
+        });
     }
 
     [Test]
@@ -222,8 +255,11 @@ public class PledgesControllerTests
         var applicationApprovedViewModel = viewResult?.Model as ApplicationApprovedViewModel;
 
         // Assert
-        Assert.That(viewResult, Is.Not.Null);
-        Assert.That(applicationApprovedViewModel, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(viewResult, Is.Not.Null);
+            Assert.That(applicationApprovedViewModel, Is.Not.Null);
+        });
     }
 
     [Test]
@@ -238,8 +274,11 @@ public class PledgesControllerTests
         var applicationApprovalOptionsViewModel = viewResult?.Model as ApplicationApprovalOptionsViewModel;
 
         // Assert
-        Assert.That(viewResult, Is.Not.Null);
-        Assert.That(applicationApprovalOptionsViewModel, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(viewResult, Is.Not.Null);
+            Assert.That(applicationApprovalOptionsViewModel, Is.Not.Null);
+        });
     }
 
     [Test]
@@ -253,11 +292,14 @@ public class PledgesControllerTests
         var actionResult = await _pledgesController.ApplicationApprovalOptions(request) as RedirectToActionResult;
 
         // Assert
-        Assert.That(actionResult, Is.Not.Null);
-        Assert.That(actionResult.ActionName, Is.EqualTo("Application"));
-        Assert.That(actionResult.RouteValues["encodedAccountId"], Is.EqualTo(request.EncodedAccountId));
-        Assert.That(actionResult.RouteValues["encodedPledgeId"], Is.EqualTo(request.EncodedPledgeId));
-        Assert.That(actionResult.RouteValues["encodedApplicationId"], Is.EqualTo(request.EncodedApplicationId));
+        Assert.Multiple(() =>
+        {
+            Assert.That(actionResult, Is.Not.Null);
+            Assert.That(actionResult.ActionName, Is.EqualTo("Application"));
+            Assert.That(actionResult.RouteValues["encodedAccountId"], Is.EqualTo(request.EncodedAccountId));
+            Assert.That(actionResult.RouteValues["encodedPledgeId"], Is.EqualTo(request.EncodedPledgeId));
+            Assert.That(actionResult.RouteValues["encodedApplicationId"], Is.EqualTo(request.EncodedApplicationId));
+        });
     }
 
     [Test]
@@ -270,10 +312,13 @@ public class PledgesControllerTests
         var actionResult = await _pledgesController.ApplicationApprovalOptions(request) as RedirectToActionResult;
 
         // Assert
-        Assert.That(actionResult, Is.Not.Null);
-        Assert.That(actionResult.ActionName, Is.EqualTo("ApplicationApproved"));
-        Assert.That(actionResult.RouteValues["encodedAccountId"], Is.EqualTo(request.EncodedAccountId));
-        Assert.That(actionResult.RouteValues["encodedPledgeId"], Is.EqualTo(request.EncodedPledgeId));
-        Assert.That(actionResult.RouteValues["encodedApplicationId"], Is.EqualTo(request.EncodedApplicationId));
+        Assert.Multiple(() =>
+        {
+            Assert.That(actionResult, Is.Not.Null);
+            Assert.That(actionResult.ActionName, Is.EqualTo("ApplicationApproved"));
+            Assert.That(actionResult.RouteValues["encodedAccountId"], Is.EqualTo(request.EncodedAccountId));
+            Assert.That(actionResult.RouteValues["encodedPledgeId"], Is.EqualTo(request.EncodedPledgeId));
+            Assert.That(actionResult.RouteValues["encodedApplicationId"], Is.EqualTo(request.EncodedApplicationId));
+        });
     }
 }

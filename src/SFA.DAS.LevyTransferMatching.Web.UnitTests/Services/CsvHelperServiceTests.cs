@@ -26,7 +26,7 @@ public class CsvHelperServiceTests
         }
         var actual = _csvService.GenerateCsvFileFromModel(model);
 
-        Assert.That(actual.Length > 0, Is.True);
+        Assert.That(actual, Is.Not.Empty);
     }
 
     [TestCase(0, false)]
