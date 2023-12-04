@@ -1,13 +1,9 @@
 ﻿@using SFA.DAS.LevyTransferMatching.Domain.Extensions
-
 @model SFA.DAS.LevyTransferMatching.Web.Models.Applications.ApplicationViewModel
 
 @{
     ViewData["Title"] = Model.Title;
     ViewBag.GaData.Vpv = "/accounts/applications/application";
-
-    var accept = SFA.DAS.LevyTransferMatching.Web.Models.Applications.ApplicationPostRequest.ApprovalAction.Accept;
-    var decline = SFA.DAS.LevyTransferMatching.Web.Models.Applications.ApplicationPostRequest.ApprovalAction.Decline;
 }
 
 <a href="@Url.Action("Applications", new { EncodedAccountId = Model.EncodedAccountId })" class="govuk-back-link">Back</a>

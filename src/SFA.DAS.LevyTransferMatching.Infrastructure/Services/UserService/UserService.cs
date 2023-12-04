@@ -64,8 +64,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService
 
         public IEnumerable<string> GetUserOwnerTransactorAccountIds()
         {
-            
-            
             var result = TryGetUserClaimValue(ClaimIdentifierConfiguration.Account, out var employerAccountClaim);
             if (!result)
             {
@@ -85,8 +83,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService
             {
                 return null;
             }
-
-            return null;
         }
 
         public bool IsOwnerOrTransactor(string accountId)
