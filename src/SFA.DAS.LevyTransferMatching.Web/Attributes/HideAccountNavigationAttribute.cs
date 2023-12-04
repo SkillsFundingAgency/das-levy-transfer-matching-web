@@ -27,7 +27,7 @@ public class HideAccountNavigationAttribute : ResultFilterAttribute
             return;
         }
             
-        controller.ViewData[ViewDataKeys.HideAccountNavigation] = HideNavigation;
-        controller.ViewData[ViewDataKeys.ShowNav] = !HideNavigationLinks;
+        controller.ViewData[ViewDataKeys.ViewDataKeys.HideAccountNavigation] = HideNavigation;
+        controller.ViewData[ViewDataKeys.ViewDataKeys.ShowNav] = !HideNavigationLinks;
     }
 }

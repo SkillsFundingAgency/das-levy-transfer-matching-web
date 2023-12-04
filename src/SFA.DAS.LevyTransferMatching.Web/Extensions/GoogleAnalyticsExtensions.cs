@@ -12,7 +12,7 @@ public static class GoogleAnalyticsExtensions
         => GetConfiguration(viewData)?.GoogleTagManagerId;
 
     private static GoogleAnalytics GetConfiguration(ViewDataDictionary viewData)
-        => viewData.TryGetValue(ViewDataKeys.GoogleAnalyticsConfiguration, out var section)
+        => viewData.TryGetValue(ViewDataKeys.ViewDataKeys.GoogleAnalyticsConfiguration, out var section)
             ? section as GoogleAnalytics
             : null;
 }

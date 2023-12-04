@@ -30,7 +30,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Attributes
             return;
 
             void SetViewData(ViewDataDictionary viewData)
-                => viewData[ViewDataKeys.GoogleAnalyticsConfiguration] = _googleAnalyticsConfiguration;
+                => viewData[ViewDataKeys.ViewDataKeys.GoogleAnalyticsConfiguration] = _googleAnalyticsConfiguration;
         }
     }
 }

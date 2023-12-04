@@ -33,7 +33,9 @@ public class Startup
         });
         
         services.AddConfigurationOptions(_configuration);
+        
         var config = _configuration.GetSection<LevyTransferMatchingWeb>();
+        
         services.AddSingleton(config);
         services.AddSingleton(_configuration.GetSection<LevyTransferMatchingApi>());
 
