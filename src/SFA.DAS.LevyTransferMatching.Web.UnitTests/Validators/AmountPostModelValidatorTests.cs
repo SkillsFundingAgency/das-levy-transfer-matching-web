@@ -7,12 +7,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators;
 [TestFixture]
 public class AmountPostModelValidatorTests
 {
-    private AmountPostModelValidator amountPostModelValidator;
+    private AmountPostModelValidator _amountPostModelValidator;
 
     [SetUp]
     public void SetUp()
     {
-        amountPostModelValidator = new AmountPostModelValidator();
+        _amountPostModelValidator = new AmountPostModelValidator();
     }
 
     [TestCase("test")]
@@ -24,14 +24,14 @@ public class AmountPostModelValidatorTests
     public void Validator_Returns_Expected_Errors_For_Invalid_Amount(string amount)
     {
         //Arrange
-        AmountViewModel amountViewModel = new AmountViewModel()
+        var amountViewModel = new AmountViewModel()
         {
             Amount = amount,
             RemainingTransferAllowance = "6,000"
         };
 
         //Act
-        var result = amountPostModelValidator.TestValidate(amountViewModel);
+        var result = _amountPostModelValidator.TestValidate(amountViewModel);
 
         //Assert
         result.ShouldHaveValidationErrorFor(x => x.Amount)
@@ -44,14 +44,14 @@ public class AmountPostModelValidatorTests
     public void Validator_Returns_No_Errors_For_Valid_Amount(string amount)
     {
         //Arrange
-        AmountPostRequest amountPostRequest = new AmountPostRequest()
+        var amountPostRequest = new AmountPostRequest()
         {
             Amount = amount,
             RemainingTransferAllowance = "6,000"
         };
 
         //Act
-        var result = amountPostModelValidator.TestValidate(amountPostRequest);
+        var result = _amountPostModelValidator.TestValidate(amountPostRequest);
 
         //Assert
         result.ShouldNotHaveValidationErrorFor(x => x.Amount);

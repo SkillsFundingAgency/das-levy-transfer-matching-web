@@ -114,8 +114,8 @@ public class ApplicationPostRequestValidatorTests
         Assert.That(actual.IsValid, Is.False);
     }
 
-    private ApplicationPostRequest CreateApplicationStatusPostRequest(bool truthfulInformation = false, bool complyWithRules = false, ApprovalAction? approvalAction = ApprovalAction.Decline, bool canAcceptFunding = false, bool canWithdraw = false, bool isWithdrawalConfirmed = false) =>
-        new ApplicationPostRequest()
+    private static ApplicationPostRequest CreateApplicationStatusPostRequest(bool truthfulInformation = false, bool complyWithRules = false, ApprovalAction? approvalAction = ApprovalAction.Decline, bool canAcceptFunding = false, bool canWithdraw = false, bool isWithdrawalConfirmed = false) =>
+        new()
         {
             EncodedAccountId = "HGVVMY",
             AccountId = 1,

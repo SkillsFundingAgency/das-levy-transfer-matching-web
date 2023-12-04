@@ -19,7 +19,7 @@ public class DetailPostRequestValidatorTests
     public void Validator_Returns_Expected_Error_For_Null_HasConfirmed_Value(bool? hasConfirmed)
     {
         // Arrange
-        DetailPostRequest detailPostRequest = new DetailPostRequest()
+        var detailPostRequest = new DetailPostRequest()
         {
             HasConfirmed = hasConfirmed,
         };
@@ -38,7 +38,7 @@ public class DetailPostRequestValidatorTests
     public void Validator_Returns_No_Errors_For_NonNull_Has_Confirmed_Value(bool? hasConfirmed)
     {
         // Arrange
-        DetailPostRequest detailPostRequest = new DetailPostRequest()
+        var detailPostRequest = new DetailPostRequest()
         {
             HasConfirmed = hasConfirmed,
         };

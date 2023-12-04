@@ -18,10 +18,7 @@ public class CloseApprovalOptionsPostRequestValidatorTests
     [Test]
     public void Validator_Returns_Error_When_HasConfirmed_Is_Null()
     {
-        var request = new ClosePostRequest
-        {
-            HasConfirmed = null
-        };
+        var request = new ClosePostRequest { HasConfirmed = null };
 
         var result = _validator.TestValidate(request);
 
@@ -33,10 +30,7 @@ public class CloseApprovalOptionsPostRequestValidatorTests
     [TestCase(false)]
     public void Validator_Returns_No_Error_When_HasConfirmed_Has_Value(bool hasConfirmed)
     {
-        var request = new ClosePostRequest
-        {
-            HasConfirmed = hasConfirmed
-        };
+        var request = new ClosePostRequest { HasConfirmed = hasConfirmed };
 
         var result = _validator.TestValidate(request);
 

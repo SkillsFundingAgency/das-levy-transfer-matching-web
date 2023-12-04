@@ -21,7 +21,7 @@ public class ContactDetailsPostRequestValidatorTests
     public void Validator_Returns_Expected_Errors_For_Empty_Values()
     {
         // Arrange
-        ContactDetailsPostRequest contactDetailsPostRequest = _fixture
+        var contactDetailsPostRequest = _fixture
             .Build<ContactDetailsPostRequest>()
             .With(x => x.FirstName, string.Empty)
             .With(x => x.LastName, string.Empty)
@@ -41,9 +41,9 @@ public class ContactDetailsPostRequestValidatorTests
     public void Validator_Returns_Expected_Error_For_Badly_Formed_EmailAddress()
     {
         // Arrange
-        string emailAddress = "aaa";
+        const string emailAddress = "aaa";
 
-        ContactDetailsPostRequest contactDetailsPostRequest = _fixture
+        var contactDetailsPostRequest = _fixture
             .Build<ContactDetailsPostRequest>()
             .With(x => x.EmailAddress, emailAddress)
             .Create();
@@ -59,8 +59,8 @@ public class ContactDetailsPostRequestValidatorTests
     public void Validator_Returns_Expected_Error_For_Badly_Formed_AdditionalEmailAddress()
     {
         // Arrange
-        string emailAddress = "dd@ee";
-        string[] additionalEmailAddresses = new string[]
+        const string emailAddress = "dd@ee";
+        var additionalEmailAddresses = new[]
         {
             null,
             "aaa",
@@ -68,7 +68,7 @@ public class ContactDetailsPostRequestValidatorTests
             "bbb@ccc",
         };
 
-        ContactDetailsPostRequest contactDetailsPostRequest = _fixture
+        var contactDetailsPostRequest = _fixture
             .Build<ContactDetailsPostRequest>()
             .With(x => x.EmailAddress, emailAddress)
             .With(x => x.AdditionalEmailAddresses, additionalEmailAddresses)
@@ -85,8 +85,8 @@ public class ContactDetailsPostRequestValidatorTests
     public void Validator_Returns_No_Errors_For_NonNull_Valid_Values()
     {
         // Arrange
-        string emailAddress = "aa@bb";
-        string[] additionalEmailAddresses = new string[]
+        const string emailAddress = "aa@bb";
+        var additionalEmailAddresses = new[]
         {
             "cc@dd",
             null,
@@ -94,7 +94,7 @@ public class ContactDetailsPostRequestValidatorTests
             null,
         };
 
-        ContactDetailsPostRequest contactDetailsPostRequest = _fixture
+        var contactDetailsPostRequest = _fixture
             .Build<ContactDetailsPostRequest>()
             .With(x => x.FirstName, new string(_fixture.CreateMany<char>(25).ToArray()))
             .With(x => x.LastName, new string(_fixture.CreateMany<char>(25).ToArray()))
@@ -113,8 +113,8 @@ public class ContactDetailsPostRequestValidatorTests
     public void Validator_Returns_Expected_Error_For_Duplicate_Of_Primary_Email_Address()
     {
         // Arrange
-        string emailAddress = "aa@bb";
-        string[] additionalEmailAddresses = new string[]
+        const string emailAddress = "aa@bb";
+        var additionalEmailAddresses = new[]
         {
             "cc@dd", // 0
             null,    // 1
@@ -122,7 +122,7 @@ public class ContactDetailsPostRequestValidatorTests
             "aa@bb", // 3
         };
 
-        ContactDetailsPostRequest contactDetailsPostRequest = _fixture
+        var contactDetailsPostRequest = _fixture
             .Build<ContactDetailsPostRequest>()
             .With(x => x.EmailAddress, emailAddress)
             .With(x => x.AdditionalEmailAddresses, additionalEmailAddresses)
@@ -147,8 +147,8 @@ public class ContactDetailsPostRequestValidatorTests
     public void Validator_Returns_Expected_Error_For_Duplicate_Of_Other_Additional_Email_Address()
     {
         // Arrange
-        string emailAddress = "aa@bb";
-        string[] additionalEmailAddresses = new string[]
+        const string emailAddress = "aa@bb";
+        var additionalEmailAddresses = new[]
         {
             "cc@dd", // 0
             "cc@dd", // 1
@@ -156,7 +156,7 @@ public class ContactDetailsPostRequestValidatorTests
             "cc@dd", // 3
         };
 
-        ContactDetailsPostRequest contactDetailsPostRequest = _fixture
+        var contactDetailsPostRequest = _fixture
             .Build<ContactDetailsPostRequest>()
             .With(x => x.EmailAddress, emailAddress)
             .With(x => x.AdditionalEmailAddresses, additionalEmailAddresses)
@@ -185,8 +185,8 @@ public class ContactDetailsPostRequestValidatorTests
     public void Validator_Returns_Expected_Errors_For_Strings_Over_Maximum_Lengths()
     {
         // Arrange
-        string emailAddress = "this.is.a.very.very.very.very.very.long@email.address.example.com"; 
-        string[] additionalEmailAddresses = new string[]
+        const string emailAddress = "this.is.a.very.very.very.very.very.long@email.address.example.com"; 
+        var additionalEmailAddresses = new[]
         {
             null,
             null,
@@ -194,7 +194,7 @@ public class ContactDetailsPostRequestValidatorTests
             null,
         };
 
-        ContactDetailsPostRequest contactDetailsPostRequest = _fixture
+        var contactDetailsPostRequest = _fixture
             .Build<ContactDetailsPostRequest>()
             .With(x => x.FirstName, new string(_fixture.CreateMany<char>(26).ToArray()))
             .With(x => x.LastName, new string(_fixture.CreateMany<char>(26).ToArray()))

@@ -9,7 +9,6 @@ public class SectorPostRequestValidatorTests
 {
     private SectorPostRequestValidator _validator;
 
-
     [SetUp]
     public void SetUp()
     {
@@ -90,8 +89,6 @@ public class SectorPostRequestValidatorTests
         result.ShouldNotHaveAnyValidationErrors();
     }
 
-
-
     [Test]
     public void Returns_Error_When_No_Pledge_Locations_And_Specific_Location_Is_Not_Provided()
     {
@@ -107,8 +104,6 @@ public class SectorPostRequestValidatorTests
         result.ShouldHaveValidationErrorFor(x => x.SpecificLocation);
     }
 
-
-
     [Test]
     public void Returns_No_Error_When_No_Pledge_Locations_And_Specific_Location_Is_Provided()
     {
@@ -123,6 +118,4 @@ public class SectorPostRequestValidatorTests
 
         result.ShouldNotHaveAnyValidationErrors();
     }
-
-
 }

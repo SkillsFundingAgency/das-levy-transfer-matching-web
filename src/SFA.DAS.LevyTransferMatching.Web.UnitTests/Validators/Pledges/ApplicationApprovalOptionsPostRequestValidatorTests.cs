@@ -19,10 +19,7 @@ public class ApplicationApprovalOptionsPostRequestValidatorTests
     public void Validator_Returns_Error_When_AutomaticApproval_Is_Null()
     {
         //Arrange
-        var request = new ApplicationApprovalOptionsPostRequest
-        {
-            AutomaticApproval = null
-        };
+        var request = new ApplicationApprovalOptionsPostRequest { AutomaticApproval = null };
 
         //Act
         var result = _validator.TestValidate(request);
@@ -37,10 +34,7 @@ public class ApplicationApprovalOptionsPostRequestValidatorTests
     public void Validator_Returns_No_Error_When_AutomaticApproval_Has_Value(bool automaticApproval)
     {
         //Arrange
-        var request = new ApplicationApprovalOptionsPostRequest
-        {
-            AutomaticApproval = automaticApproval
-        };
+        var request = new ApplicationApprovalOptionsPostRequest { AutomaticApproval = automaticApproval };
 
         //Act
         var result = _validator.TestValidate(request);

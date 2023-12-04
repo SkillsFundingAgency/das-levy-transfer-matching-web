@@ -7,26 +7,19 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators;
 [TestFixture]
 public class OrganisationNamePostRequestValidatorTests
 {
-    private OrganisationNamePostRequestValidator organisationNamePostRequestValidator;
+    private OrganisationNamePostRequestValidator _organisationNamePostRequestValidator;
 
     [SetUp]
-    public void SetUp()
-    {
-        organisationNamePostRequestValidator = new OrganisationNamePostRequestValidator();
-    }
+    public void SetUp() => _organisationNamePostRequestValidator = new OrganisationNamePostRequestValidator();
 
-      
     [TestCase(null)]        
     public void Validator_Returns_Expected_Errors_For_Invalid_OrganisationNameResponse(bool? isPublic)
     {
         //Arrange
-        OrganisationNamePostRequest postRequest = new OrganisationNamePostRequest()
-        {
-            IsNamePublic = isPublic
-        };
-
+        var postRequest = new OrganisationNamePostRequest { IsNamePublic = isPublic };
+        
         //Act
-        var result = organisationNamePostRequestValidator.TestValidate(postRequest);
+        var result = _organisationNamePostRequestValidator.TestValidate(postRequest);
 
         //Assert
         result.ShouldHaveValidationErrorFor(x => x.IsNamePublic)
@@ -38,16 +31,12 @@ public class OrganisationNamePostRequestValidatorTests
     public void Validator_Returns_No_Errors_For_Valid_OrganisationNameResponse(bool? isPublic)
     {
         //Arrange
-        OrganisationNamePostRequest postRequest = new OrganisationNamePostRequest()
-        {
-            IsNamePublic = isPublic
-        };
+        var postRequest = new OrganisationNamePostRequest { IsNamePublic = isPublic };
 
         //Act
-        var result = organisationNamePostRequestValidator.TestValidate(postRequest);
+        var result = _organisationNamePostRequestValidator.TestValidate(postRequest);
 
         //Assert
         result.ShouldNotHaveValidationErrorFor(x => x.IsNamePublic);
     }
-
 }

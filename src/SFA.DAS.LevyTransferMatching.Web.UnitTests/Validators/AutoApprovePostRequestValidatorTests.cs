@@ -49,5 +49,4 @@ public class AutoApprovePostRequestValidatorTests
         //Assert
         result.ShouldNotHaveValidationErrorFor(x => x.AutomaticApprovalOption);
     }
-
 }

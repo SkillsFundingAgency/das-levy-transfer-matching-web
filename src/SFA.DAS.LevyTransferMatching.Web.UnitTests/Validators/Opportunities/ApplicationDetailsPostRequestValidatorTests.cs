@@ -9,7 +9,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities;
 public class ApplicationDetailsPostRequestValidatorTests
 {
     private ApplicationDetailsPostRequestAsyncValidator _validator;
-    private Mock<IOpportunitiesService> _service = new Mock<IOpportunitiesService>(MockBehavior.Strict);
+    private readonly Mock<IOpportunitiesService> _service = new(MockBehavior.Strict);
     private Fixture _fixture;
 
     [SetUp]
@@ -137,8 +137,7 @@ public class ApplicationDetailsPostRequestValidatorTests
         Assert.That(result.Errors.First().ErrorMessage, Is.EqualTo("You must select whether or not you have found a training provider"));
     }
 
-    private ApplicationDetailsPostRequest CreateApplicationDetailsPostRequest() =>
-        new ApplicationDetailsPostRequest()
+    private ApplicationDetailsPostRequest CreateApplicationDetailsPostRequest() => new()
         {
             SelectedStandardId = _fixture.Create<string>(),
             Year = DateTime.UtcNow.Year,
@@ -153,27 +152,27 @@ public class ApplicationDetailsPostRequestValidatorTests
             AccountId = 1
         };
 
-    private GetApplicationDetailsResponse CreateApplicationDetailsResponse() => new GetApplicationDetailsResponse()
+    private GetApplicationDetailsResponse CreateApplicationDetailsResponse() => new()
     {
-        Opportunity = new GetApplicationDetailsResponse.OpportunityData()
+        Opportunity = new GetApplicationDetailsResponse.OpportunityData
         {
             Amount = 100_000,
             RemainingAmount = 100_000
         },
-        Standards = new List<StandardsListItemDto>()
+        Standards = new List<StandardsListItemDto>
         {
-            new StandardsListItemDto()
+            new()
             {
-                ApprenticeshipFunding = new List<ApprenticeshipFundingDto>()
+                ApprenticeshipFunding = new List<ApprenticeshipFundingDto>
                 {
-                    new ApprenticeshipFundingDto()
+                    new()
                     {
                         Duration = 12,
                         MaxEmployerLevyCap = 9_000,
                         EffectiveFrom = new DateTime(DateTime.UtcNow.AddYears(-1).Year, DateTime.UtcNow.Month, 1),
                         EffectiveTo = null
                     },
-                    new ApprenticeshipFundingDto()
+                    new()
                     {
                         Duration = 15,
                         MaxEmployerLevyCap = 12_000,
