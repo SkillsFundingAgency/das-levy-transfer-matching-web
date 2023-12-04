@@ -476,7 +476,7 @@ public class PledgeOrchestratorTests
             Assert.That(viewModel.RemainingFundsIfApproved, Is.EqualTo(expectedRemainingFundsIfApproved));
             Assert.That(viewModel.EstimatedCostOverDuration, Is.EqualTo(expectedEstimatedCostOverDuration));
             Assert.That(viewModel.YearDescription, Is.EqualTo(_dateTimeService.Object.UtcNow.ToTaxYearDescription()));
-            Assert.That(viewModel.YearlyPayments.Count, Is.GreaterThan(0));
+            Assert.That(viewModel.YearlyPayments, Is.Not.Empty);
         });
     }
 
