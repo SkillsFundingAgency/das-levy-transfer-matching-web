@@ -1,13 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
+﻿using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace SFA.DAS.LevyTransferMatching.Web.FeatureToggles
+namespace SFA.DAS.LevyTransferMatching.Web.FeatureToggles;
+
+public class DisabledActionFilter : ActionFilterAttribute
 {
-    public class DisabledActionFilter : ActionFilterAttribute
+    public override void OnActionExecuting(ActionExecutingContext context)
     {
-        public override void OnActionExecuting(ActionExecutingContext context)
-        {
-            context.Result = new UnauthorizedResult();
-        }
+        context.Result = new UnauthorizedResult();
     }
 }

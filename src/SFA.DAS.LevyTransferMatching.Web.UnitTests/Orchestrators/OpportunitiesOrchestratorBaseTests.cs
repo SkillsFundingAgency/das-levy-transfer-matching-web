@@ -31,7 +31,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             DateTimeService = new Mock<IDateTimeService>();
 
-            _orchestrator = new TestOrchestrator(DateTimeService.Object);
+            _orchestrator = new TestOrchestrator();
         }
 
         [Test]
@@ -208,11 +208,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                 .Returns(CurrentDateTime);
         }
 
-        private class TestOrchestrator : OpportunitiesOrchestratorBase
-        {
-            public TestOrchestrator(IDateTimeService dateTimeService) : base(dateTimeService)
-            {
-            }
-        }
+        private class TestOrchestrator : OpportunitiesOrchestratorBase { }
     }
 }

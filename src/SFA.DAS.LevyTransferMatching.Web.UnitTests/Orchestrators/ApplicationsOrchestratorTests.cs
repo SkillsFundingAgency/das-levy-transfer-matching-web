@@ -18,10 +18,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
     [TestFixture]
     public class ApplicationsOrchestratorTests
     {
-        private readonly Fixture _fixture = new Fixture();
+        private readonly Fixture _fixture = new();
 
         private Mock<IApplicationsService> _mockApplicationsService;
-        private Mock<IDateTimeService> _mockDateTimeService;
         private Mock<IEncodingService> _mockEncodingService;
         private Mock<IUserService> _mockUserService;
         private ApplicationsOrchestrator _applicationsOrchestrator;
@@ -30,18 +29,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         public void Arrange()
         {
             _mockApplicationsService = new Mock<IApplicationsService>();
-            _mockDateTimeService = new Mock<IDateTimeService>();
-
-            _mockDateTimeService
-                .Setup(x => x.UtcNow)
-                .Returns(_fixture.Create<DateTime>());
             _mockUserService = new Mock<IUserService>();
             _mockEncodingService = new Mock<IEncodingService>();
             var featureToggles = _fixture.Create<Infrastructure.Configuration.FeatureToggles>();
 
             _mockUserService.Setup(x => x.IsOwnerOrTransactor(It.IsAny<string>())).Returns(true);
 
-            _applicationsOrchestrator = new ApplicationsOrchestrator(_mockApplicationsService.Object, _mockDateTimeService.Object, _mockEncodingService.Object, featureToggles, _mockUserService.Object);
+            _applicationsOrchestrator = new ApplicationsOrchestrator(_mockApplicationsService.Object,
+                _mockEncodingService.Object, featureToggles, _mockUserService.Object);
         }
 
         [Test]
@@ -49,16 +44,18 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         {
             // Arrange
             var request = _fixture.Create<ApplicationRequest>();
-            var response = _fixture.Create <GetApplicationResponse>();
+            var response = _fixture.Create<GetApplicationResponse>();
 
             var encodedPledgeId = _fixture.Create<string>();
 
             _mockApplicationsService
-                .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId), It.IsAny<CancellationToken>()))
+                .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId),
+                    It.Is<int>(y => y == request.ApplicationId), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(response);
 
             _mockEncodingService
-                .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
+                .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId),
+                    It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
                 .Returns(encodedPledgeId);
 
             // Act
@@ -72,7 +69,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
         [TestCase(ApplicationStatus.Pending, true)]
         [TestCase(ApplicationStatus.Approved, false)]
-        public async Task GetApplicationViewModel_CanWithdraw_Is_True_When_Application_Is_Pending(ApplicationStatus status, bool expectCanWithdraw)
+        public async Task GetApplicationViewModel_CanWithdraw_Is_True_When_Application_Is_Pending(
+            ApplicationStatus status, bool expectCanWithdraw)
         {
             // Arrange
             var request = _fixture.Create<ApplicationRequest>();
@@ -82,11 +80,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var encodedPledgeId = _fixture.Create<string>();
 
             _mockApplicationsService
-                .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId), It.IsAny<CancellationToken>()))
+                .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId),
+                    It.Is<int>(y => y == request.ApplicationId), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(response);
 
             _mockEncodingService
-                .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
+                .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId),
+                    It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
                 .Returns(encodedPledgeId);
 
             // Act
@@ -104,7 +104,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var request = _fixture.Create<ApplicationRequest>();
 
             _mockApplicationsService
-                .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId), It.IsAny<CancellationToken>()))
+                .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId),
+                    It.Is<int>(y => y == request.ApplicationId), It.IsAny<CancellationToken>()))
                 .ReturnsAsync((GetApplicationResponse)null);
 
             // Act
@@ -123,16 +124,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var expectedUserId = _fixture.Create<string>();
             var expectedUserDisplayName = _fixture.Create<string>();
 
-            var expectedAcceptance = request.SelectedAction == ApplicationViewModel.ApprovalAction.Accept ?
-                SetApplicationAcceptanceRequest.ApplicationAcceptance.Accept :
-                SetApplicationAcceptanceRequest.ApplicationAcceptance.Decline;
+            var expectedAcceptance = request.SelectedAction == ApplicationViewModel.ApprovalAction.Accept
+                ? SetApplicationAcceptanceRequest.ApplicationAcceptance.Accept
+                : SetApplicationAcceptanceRequest.ApplicationAcceptance.Decline;
 
             SetApplicationAcceptanceRequest actualRequest = null;
             Action<SetApplicationAcceptanceRequest, CancellationToken> setApplicationAcceptanceCallback =
-                (x, y) =>
-                {
-                    actualRequest = x;
-                };
+                (x, y) => { actualRequest = x; };
 
             _mockUserService
                 .Setup(x => x.GetUserId())
@@ -142,7 +140,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
                 .Returns(expectedUserDisplayName);
 
             _mockApplicationsService
-                .Setup(x => x.SetApplicationAcceptance(It.IsAny<SetApplicationAcceptanceRequest>(), It.IsAny<CancellationToken>()))
+                .Setup(x => x.SetApplicationAcceptance(It.IsAny<SetApplicationAcceptanceRequest>(),
+                    It.IsAny<CancellationToken>()))
                 .Callback(setApplicationAcceptanceCallback);
 
             // Act
@@ -164,11 +163,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var encodedPledgeId = _fixture.Create<string>();
 
             _mockApplicationsService
-                .Setup(x => x.GetAccepted(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId)))
+                .Setup(x => x.GetAccepted(It.Is<long>(y => y == request.AccountId),
+                    It.Is<int>(y => y == request.ApplicationId)))
                 .ReturnsAsync(response);
 
             _mockEncodingService
-                .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
+                .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId),
+                    It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
                 .Returns(encodedPledgeId);
 
             // Act
@@ -176,7 +177,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             // Assert
             Assert.That(viewModel, Is.Not.Null);
-            Assert.That(viewModel.EmployerNameAndReference, Is.EqualTo($"{response.EmployerAccountName} ({encodedPledgeId})"));
+            Assert.That(viewModel.EmployerNameAndReference,
+                Is.EqualTo($"{response.EmployerAccountName} ({encodedPledgeId})"));
         }
 
         [Test]
@@ -186,7 +188,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var request = _fixture.Create<AcceptedRequest>();
 
             _mockApplicationsService
-                .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId), CancellationToken.None))
+                .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId),
+                    It.Is<int>(y => y == request.ApplicationId), CancellationToken.None))
                 .ReturnsAsync((GetApplicationResponse)null);
 
             // Act
@@ -205,11 +208,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var encodedPledgeId = _fixture.Create<string>();
 
             _mockApplicationsService
-                .Setup(x => x.GetDeclined(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId)))
+                .Setup(x => x.GetDeclined(It.Is<long>(y => y == request.AccountId),
+                    It.Is<int>(y => y == request.ApplicationId)))
                 .ReturnsAsync(response);
 
             _mockEncodingService
-                .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
+                .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId),
+                    It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
                 .Returns(encodedPledgeId);
 
             // Act
@@ -217,7 +222,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             // Assert
             Assert.That(viewModel, Is.Not.Null);
-            Assert.That(viewModel.EmployerNameAndReference, Is.EqualTo($"{response.EmployerAccountName} ({encodedPledgeId})"));
+            Assert.That(viewModel.EmployerNameAndReference,
+                Is.EqualTo($"{response.EmployerAccountName} ({encodedPledgeId})"));
         }
 
         [Test]
@@ -227,7 +233,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var request = _fixture.Create<DeclinedRequest>();
 
             _mockApplicationsService
-                .Setup(x => x.GetDeclined(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId)))
+                .Setup(x => x.GetDeclined(It.Is<long>(y => y == request.AccountId),
+                    It.Is<int>(y => y == request.ApplicationId)))
                 .ReturnsAsync((GetDeclinedResponse)null);
 
             // Act
@@ -238,7 +245,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         }
 
         [Test]
-        public async Task GetApplicationViewModel_IsOwnerAndTransactorAndStatusEqualsApproved_ReturnsViewModelWithCanAcceptFunding()
+        public async Task
+            GetApplicationViewModel_IsOwnerAndTransactorAndStatusEqualsApproved_ReturnsViewModelWithCanAcceptFunding()
         {
             // Arrange
             var request = _fixture.Create<ApplicationRequest>();
@@ -246,13 +254,15 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var encodedPledgeId = _fixture.Create<string>();
 
             _mockApplicationsService
-                .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId), CancellationToken.None))
+                .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId),
+                    It.Is<int>(y => y == request.ApplicationId), CancellationToken.None))
                 .ReturnsAsync(response);
 
             _mockEncodingService
-                .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
+                .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId),
+                    It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
                 .Returns(encodedPledgeId);
-            
+
             response.Status = ApplicationStatus.Approved;
             _mockUserService.Setup(o => o.IsOwnerOrTransactor(It.IsAny<string>())).Returns(true);
 
@@ -265,7 +275,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         }
 
         [Test]
-        public async Task GetApplicationViewModel_IsOwnerAndTransactorAndStatusEqualsAccepted_ReturnsViewModelWithCanUseTransferFunds()
+        public async Task
+            GetApplicationViewModel_IsOwnerAndTransactorAndStatusEqualsAccepted_ReturnsViewModelWithCanUseTransferFunds()
         {
             // Arrange
             var request = _fixture.Create<ApplicationRequest>();
@@ -273,11 +284,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var encodedPledgeId = _fixture.Create<string>();
 
             _mockApplicationsService
-                .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId), CancellationToken.None))
+                .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId),
+                    It.Is<int>(y => y == request.ApplicationId), CancellationToken.None))
                 .ReturnsAsync(response);
 
             _mockEncodingService
-                .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
+                .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId),
+                    It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
                 .Returns(encodedPledgeId);
 
             response.Status = ApplicationStatus.Accepted;
@@ -292,7 +305,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         }
 
         [Test]
-        public async Task GetApplicationViewModel_IsOwnerAndTransactorAndStatusEqualsAcceptedAndIsWithdrawable_ReturnsViewModelWithRenderWithdrawButton()
+        public async Task
+            GetApplicationViewModel_IsOwnerAndTransactorAndStatusEqualsAcceptedAndIsWithdrawable_ReturnsViewModelWithRenderWithdrawButton()
         {
             // Arrange
             var request = _fixture.Create<ApplicationRequest>();
@@ -300,11 +314,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var encodedPledgeId = _fixture.Create<string>();
 
             _mockApplicationsService
-                .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId), CancellationToken.None))
+                .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId),
+                    It.Is<int>(y => y == request.ApplicationId), CancellationToken.None))
                 .ReturnsAsync(response);
 
             _mockEncodingService
-                .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
+                .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId),
+                    It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
                 .Returns(encodedPledgeId);
 
             response.Status = ApplicationStatus.Accepted;
@@ -330,19 +346,23 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var encodedApplicationId = _fixture.Create<string>();
 
             _mockApplicationsService
-                .Setup(x => x.GetWithdrawalConfirmation(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId)))
+                .Setup(x => x.GetWithdrawalConfirmation(It.Is<long>(y => y == request.AccountId),
+                    It.Is<int>(y => y == request.ApplicationId)))
                 .ReturnsAsync(response);
 
             _mockEncodingService
-                .Setup(x => x.Encode(It.Is<long>(y => y == response.PledgeId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
+                .Setup(x => x.Encode(It.Is<long>(y => y == response.PledgeId),
+                    It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
                 .Returns(encodedPledgeId);
 
             _mockEncodingService
-                .Setup(x => x.Encode(It.Is<long>(y => y == request.AccountId), It.Is<EncodingType>(y => y == EncodingType.AccountId)))
+                .Setup(x => x.Encode(It.Is<long>(y => y == request.AccountId),
+                    It.Is<EncodingType>(y => y == EncodingType.AccountId)))
                 .Returns(encodedAccountId);
 
             _mockEncodingService
-                .Setup(x => x.Encode(It.Is<long>(y => y == request.ApplicationId), It.Is<EncodingType>(y => y == EncodingType.PledgeApplicationId)))
+                .Setup(x => x.Encode(It.Is<long>(y => y == request.ApplicationId),
+                    It.Is<EncodingType>(y => y == EncodingType.PledgeApplicationId)))
                 .Returns(encodedApplicationId);
 
             // Act
@@ -376,9 +396,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             // Assert
             _mockApplicationsService.Verify(x => x.WithdrawApplicationAfterAcceptance(
-                                                    It.Is<WithdrawApplicationAfterAcceptanceRequest>(y => y.UserId == expectedUserId && y.UserDisplayName == expectedUserDisplayName),
-                                                    request.AccountId,
-                                                    request.ApplicationId), Times.Once);
+                It.Is<WithdrawApplicationAfterAcceptanceRequest>(y =>
+                    y.UserId == expectedUserId && y.UserDisplayName == expectedUserDisplayName),
+                request.AccountId,
+                request.ApplicationId), Times.Once);
         }
     }
 }

@@ -1,7 +1,6 @@
-﻿namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
+﻿namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications;
+
+public class ConfirmWithdrawalPostRequest : WithdrawalConfirmationRequest
 {
-    public class ConfirmWithdrawalPostRequest : WithdrawalConfirmationRequest
-    {
-        public bool? HasConfirmed { get; set; }
-    }
+    public bool? HasConfirmed { get; set; }
 }
