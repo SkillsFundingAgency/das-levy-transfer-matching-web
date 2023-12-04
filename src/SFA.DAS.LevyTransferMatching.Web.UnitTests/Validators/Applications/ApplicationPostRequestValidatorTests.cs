@@ -29,7 +29,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Applications
 
             var actual = _validator.Validate(request);
 
-            Assert.IsFalse(actual.IsValid);
+            Assert.That(actual.IsValid, Is.False);
         }
 
         [Test]
@@ -43,7 +43,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Applications
 
             var actual = _validator.Validate(request);
 
-            Assert.IsFalse(actual.IsValid);
+            Assert.That(actual.IsValid, Is.False);
         }
 
         [Test]
@@ -57,7 +57,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Applications
 
             var actual = _validator.Validate(request);
 
-            Assert.IsFalse(actual.IsValid);
+            Assert.That(actual.IsValid, Is.False);
         }
 
         [Test]
@@ -71,7 +71,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Applications
                 .Create();
 
             var actual = _validator.Validate(request);
-            Assert.IsTrue(actual.IsValid);
+            Assert.That(actual.IsValid, Is.True);
         }
 
         [Test]
@@ -85,7 +85,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Applications
 
             var actual = _validator.Validate(request);
 
-            Assert.IsFalse(actual.IsValid);
+            Assert.That(actual.IsValid, Is.False);
         }
 
         [Test]
@@ -99,21 +99,21 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Applications
 
             var actual = _validator.Validate(request);
 
-            Assert.IsTrue(actual.IsValid);
+            Assert.That(actual.IsValid, Is.True);
         }
 
         [Test]
         public void ValidatorReturnsFalseWhenWithdrawalNotConfirmed()
         {
             var actual = _validator.Validate(CreateApplicationStatusPostRequest(approvalAction: ApprovalAction.Withdraw));
-            Assert.IsFalse(actual.IsValid);
+            Assert.That(actual.IsValid, Is.False);
         }
 
         [Test]
         public void ValidatorReturnsFalseWhenNoWithdrawalActionSelected()
         {
             var actual = _validator.Validate(CreateApplicationStatusPostRequest(approvalAction: null, canWithdraw: true));
-            Assert.IsFalse(actual.IsValid);
+            Assert.That(actual.IsValid, Is.False);
         }
 
         private ApplicationPostRequest CreateApplicationStatusPostRequest(bool truthfulInformation = false, bool complyWithRules = false, ApprovalAction? approvalAction = ApprovalAction.Decline, bool canAcceptFunding = false, bool canWithdraw = false, bool isWithdrawalConfirmed = false) =>

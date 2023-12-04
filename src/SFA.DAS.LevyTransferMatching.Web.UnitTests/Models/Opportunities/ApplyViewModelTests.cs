@@ -14,7 +14,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Opportunities
         {
             var model = _fixture.Create<ApplyViewModel>();
 
-            Assert.IsTrue(model.IsApprenticeshipTrainingSectionComplete);
+            Assert.That(model.IsApprenticeshipTrainingSectionComplete, Is.True);
         }
 
         [Test]
@@ -23,7 +23,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Opportunities
             var model = _fixture.Create<ApplyViewModel>();
             model.HaveTrainingProvider = IncompleteString;
 
-            Assert.IsFalse(model.IsApprenticeshipTrainingSectionComplete);
+            Assert.That(model.IsApprenticeshipTrainingSectionComplete, Is.False);
         }
 
         [Test]
@@ -31,7 +31,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Opportunities
         {
             var model = _fixture.Create<ApplyViewModel>();
 
-            Assert.IsTrue(model.IsBusinessDetailsSectionComplete);
+            Assert.That(model.IsBusinessDetailsSectionComplete, Is.True);
         }
 
         [Test]
@@ -40,7 +40,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Opportunities
             var model = _fixture.Create<ApplyViewModel>();
             model.Sectors = null;
 
-            Assert.IsFalse(model.IsBusinessDetailsSectionComplete);
+            Assert.That(model.IsBusinessDetailsSectionComplete, Is.False);
         }
 
         [Test]
@@ -48,7 +48,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Opportunities
         {
             var model = _fixture.Create<ApplyViewModel>();
 
-            Assert.IsTrue(model.IsContactDetailsSectionComplete);
+            Assert.That(model.IsContactDetailsSectionComplete, Is.True);
         }
 
         [Test]
@@ -57,7 +57,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Opportunities
             var model = _fixture.Create<ApplyViewModel>();
             model.ContactName = IncompleteString;
 
-            Assert.IsFalse(model.IsContactDetailsSectionComplete);
+            Assert.That(model.IsContactDetailsSectionComplete, Is.False);
         }
 
         [Test]
@@ -65,7 +65,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Opportunities
         {
             var model = _fixture.Create<ApplyViewModel>();
 
-            Assert.IsTrue(model.IsComplete);
+            Assert.That(model.IsComplete, Is.True);
         }
 
         [Test]
@@ -74,7 +74,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Opportunities
             var model = _fixture.Create<ApplyViewModel>();
             model.JobRole = IncompleteString;
 
-            Assert.IsFalse(model.IsComplete);
+            Assert.That(model.IsComplete, Is.False);
         }
 
         [Test]
@@ -83,7 +83,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Opportunities
             var model = _fixture.Create<ApplyViewModel>();
             model.Sectors = null;
 
-            Assert.IsFalse(model.IsComplete);
+            Assert.That(model.IsComplete, Is.False);
         }
 
         [Test]
@@ -92,7 +92,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Opportunities
             var model = _fixture.Create<ApplyViewModel>();
             model.ContactName = IncompleteString;
 
-            Assert.IsFalse(model.IsComplete);
+            Assert.That(model.IsComplete, Is.False);
         }
     }
 }

@@ -39,7 +39,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
             var result = app.GetRemainingDaysForDelayedApproval(automaticApprovalOption);
 
             // Assert
-            Assert.IsNull(result, "Result should be null");            
+            Assert.That(result, Is.Null, "Result should be null");            
         }
 
         [Test]
@@ -63,9 +63,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
             var result = app.GetRemainingDaysForDelayedApproval(automaticApprovalOption);
 
             // Assert
-            Assert.IsNotNull(result, "Result should not be null");
-            Assert.IsTrue(result > 0, "Result should be a positive number");
-            Assert.IsTrue(result < 7, "Result should be less than 7");
+            Assert.That(result, Is.Not.Null, "Result should not be null");
+            Assert.That(result > 0, Is.True, "Result should be a positive number");
+            Assert.That(result < 7, Is.True, "Result should be less than 7");
         }
 
         [Test]
@@ -89,7 +89,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
             var result = app.GetRemainingDaysForDelayedApproval(automaticApprovalOption);
 
             // Assert
-            Assert.IsNull(result, "Result should be null");        
+            Assert.That(result, Is.Null, "Result should be null");        
         }
 
 
@@ -113,7 +113,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
             var result = app.GetRemainingDaysForAutoRejection();
 
             // Assert
-            Assert.IsNull(result, "Result should be null");
+            Assert.That(result, Is.Null, "Result should be null");
         }
 
         [Test]
@@ -136,7 +136,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
             var result = app.GetRemainingDaysForAutoRejection();
 
             // Assert
-            Assert.IsNull(result, "Result should be null");
+            Assert.That(result, Is.Null, "Result should be null");
         }
 
         [Test]
@@ -159,9 +159,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
             var result = app.GetRemainingDaysForAutoRejection();
 
             // Assert
-            Assert.IsNotNull(result, "Result should not be null");
-            Assert.IsTrue(result > 0, "Result should be a positive number");
-            Assert.IsTrue(result < 7, "Result should be less than 7");
+            Assert.That(result, Is.Not.Null, "Result should not be null");
+            Assert.That(result > 0, Is.True, "Result should be a positive number");
+            Assert.That(result < 7, Is.True, "Result should be less than 7");
         }
 
         [Test]
@@ -185,7 +185,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
             var result = app.GetDateDependentStatus(automaticApprovalOption);
 
             // Assert
-            Assert.IsTrue(result.Contains("AUTO APPROVAL ON"));
+            Assert.That(result.Contains("AUTO APPROVAL ON"), Is.True);
         }
 
 
@@ -210,7 +210,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
             var result = app.GetDateDependentStatus(automaticApprovalOption);
 
             // Assert
-            Assert.IsTrue(result.Contains("APPLICATION EXPIRES ON"));
+            Assert.That(result.Contains("APPLICATION EXPIRES ON"), Is.True);
         }
 
         [Test]
@@ -234,7 +234,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
             var result = app.GetDateDependentStatus(automaticApprovalOption);
 
             // Assert
-            Assert.IsTrue(result.Contains("AWAITING YOUR APPROVAL"));
+            Assert.That(result.Contains("AWAITING YOUR APPROVAL"), Is.True);
         }
     }
 }

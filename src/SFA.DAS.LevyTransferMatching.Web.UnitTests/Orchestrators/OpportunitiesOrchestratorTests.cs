@@ -66,14 +66,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             for (int i = 0; i < _getIndexResponse.Opportunities.Count; i++)
             {
-                Assert.AreEqual(_getIndexResponse.Opportunities[i].IsNamePublic ? _getIndexResponse.Opportunities[i].DasAccountName : "Opportunity", viewModel.Opportunities[i].EmployerName);
+                Assert.That(viewModel.Opportunities[i].EmployerName, Is.EqualTo(_getIndexResponse.Opportunities[i].IsNamePublic ? _getIndexResponse.Opportunities[i].DasAccountName : "Opportunity"));
             }
-            CollectionAssert.AreEqual(_getIndexResponse.Opportunities.Select(x => x.Amount), viewModel.Opportunities.Select(x => x.Amount));
-            Assert.AreEqual(encodedId, viewModel.Opportunities[0].ReferenceNumber);
-            CollectionAssert.AreEqual(_getIndexResponse.Opportunities.Select(x => x.Locations.ToLocationsList()), viewModel.Opportunities.Select(x => x.Locations));
-            CollectionAssert.AreEqual(_getIndexResponse.Opportunities.Select(x => x.Sectors.ToReferenceDataDescriptionList(_getIndexResponse.Sectors)), viewModel.Opportunities.Select(x => x.Sectors));
-            CollectionAssert.AreEqual(_getIndexResponse.Opportunities.Select(x => x.JobRoles.ToReferenceDataDescriptionList(_getIndexResponse.JobRoles)), viewModel.Opportunities.Select(x => x.JobRoles));
-            CollectionAssert.AreEqual(_getIndexResponse.Opportunities.Select(x => x.Levels.ToReferenceDataDescriptionList(_getIndexResponse.Levels, descriptionSource: y => y.ShortDescription)), viewModel.Opportunities.Select(x => x.Levels));
+            Assert.That(viewModel.Opportunities.Select(x => x.Amount), Is.EqualTo(_getIndexResponse.Opportunities.Select(x => x.Amount)).AsCollection);
+            Assert.That(viewModel.Opportunities[0].ReferenceNumber, Is.EqualTo(encodedId));
+            Assert.That(viewModel.Opportunities.Select(x => x.Locations), Is.EqualTo(_getIndexResponse.Opportunities.Select(x => x.Locations.ToLocationsList())).AsCollection);
+            Assert.That(viewModel.Opportunities.Select(x => x.Sectors), Is.EqualTo(_getIndexResponse.Opportunities.Select(x => x.Sectors.ToReferenceDataDescriptionList(_getIndexResponse.Sectors))).AsCollection);
+            Assert.That(viewModel.Opportunities.Select(x => x.JobRoles), Is.EqualTo(_getIndexResponse.Opportunities.Select(x => x.JobRoles.ToReferenceDataDescriptionList(_getIndexResponse.JobRoles))).AsCollection);
+            Assert.That(viewModel.Opportunities.Select(x => x.Levels), Is.EqualTo(_getIndexResponse.Opportunities.Select(x => x.Levels.ToReferenceDataDescriptionList(_getIndexResponse.Levels, descriptionSource: y => y.ShortDescription))).AsCollection);
         }
 
         [Test]
@@ -90,7 +90,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var result = await _orchestrator.GetDetailViewModel(id);
 
             // Assert
-            Assert.IsNull(result);
+            Assert.That(result, Is.Null);
         }
 
         [Test]
@@ -130,8 +130,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var result = await _orchestrator.GetDetailViewModel(id);
 
             // Assert
-            Assert.IsNotNull(result.OpportunitySummaryView);
-            Assert.AreEqual(encodedId, result.EncodedPledgeId);
+            Assert.That(result.OpportunitySummaryView, Is.Not.Null);
+            Assert.That(result.EncodedPledgeId, Is.EqualTo(encodedId));
         }
 
         [Test]
@@ -170,8 +170,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var viewModel = await _orchestrator.GetSelectAccountViewModel(selectAccountRequest);
 
             // Assert
-            Assert.AreEqual(2, viewModel.Accounts.Count());
-            Assert.AreEqual(selectAccountRequest.EncodedOpportunityId, viewModel.EncodedOpportunityId);
+            Assert.That(viewModel.Accounts.Count(), Is.EqualTo(2));
+            Assert.That(viewModel.EncodedOpportunityId, Is.EqualTo(selectAccountRequest.EncodedOpportunityId));
         }
 
         [Test]
@@ -188,7 +188,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             ContactDetailsViewModel contactDetailsViewModel = await _orchestrator.GetContactDetailsViewModel(contactDetailsRequest);
 
             // Assert
-            Assert.IsNull(contactDetailsViewModel);
+            Assert.That(contactDetailsViewModel, Is.Null);
         }
 
         [Test]
@@ -213,7 +213,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             ContactDetailsViewModel contactDetailsViewModel = await _orchestrator.GetContactDetailsViewModel(contactDetailsRequest);
 
             // Assert
-            CollectionAssert.AreEqual(expectedAdditionalEmailAddresses, contactDetailsViewModel.AdditionalEmailAddresses);
+            Assert.That(contactDetailsViewModel.AdditionalEmailAddresses, Is.EqualTo(expectedAdditionalEmailAddresses).AsCollection);
         }
 
         [Test]
@@ -241,8 +241,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             ContactDetailsViewModel contactDetailsViewModel = await _orchestrator.GetContactDetailsViewModel(contactDetailsRequest);
 
             // Assert
-            Assert.AreEqual(expectedEmailAddress, contactDetailsViewModel.EmailAddress);
-            CollectionAssert.AreEqual(expectedAdditionalEmailAddresses, contactDetailsViewModel.AdditionalEmailAddresses);
+            Assert.That(contactDetailsViewModel.EmailAddress, Is.EqualTo(expectedEmailAddress));
+            Assert.That(contactDetailsViewModel.AdditionalEmailAddresses, Is.EqualTo(expectedAdditionalEmailAddresses).AsCollection);
         }
 
         [Test]
@@ -262,16 +262,16 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var request = new MoreDetailsRequest { EncodedAccountId = encodedAccountId, CacheKey = cacheKey, EncodedPledgeId = encodedPledgeId };
             var result = await _orchestrator.GetMoreDetailsViewModel(request);
 
-            Assert.IsNotNull(result);            
-            Assert.AreEqual(cacheKey, result.CacheKey);
-            Assert.AreEqual(encodedAccountId, result.EncodedAccountId);
-            Assert.AreEqual(encodedPledgeId, result.EncodedPledgeId);
-            Assert.AreEqual(cacheItem.Details, result.Details);
-            Assert.IsNotNull(result.OpportunitySummaryViewModel);
-            Assert.AreEqual(getMoreDetailsResponse.Opportunity.Amount, result.OpportunitySummaryViewModel.Amount);
-            Assert.AreEqual(string.Join(", ", getMoreDetailsResponse.Opportunity.JobRoles.ToReferenceDataDescriptionList(getMoreDetailsResponse.JobRoles)), result.OpportunitySummaryViewModel.JobRoleList);
-            Assert.AreEqual(string.Join(", ", getMoreDetailsResponse.Opportunity.Levels.ToReferenceDataDescriptionList(getMoreDetailsResponse.Levels, (x) => x.ShortDescription)), result.OpportunitySummaryViewModel.LevelList);
-            Assert.AreEqual(string.Join(", ", getMoreDetailsResponse.Opportunity.Sectors.ToReferenceDataDescriptionList(getMoreDetailsResponse.Sectors)), result.OpportunitySummaryViewModel.SectorList);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.CacheKey, Is.EqualTo(cacheKey));
+            Assert.That(result.EncodedAccountId, Is.EqualTo(encodedAccountId));
+            Assert.That(result.EncodedPledgeId, Is.EqualTo(encodedPledgeId));
+            Assert.That(result.Details, Is.EqualTo(cacheItem.Details));
+            Assert.That(result.OpportunitySummaryViewModel, Is.Not.Null);
+            Assert.That(result.OpportunitySummaryViewModel.Amount, Is.EqualTo(getMoreDetailsResponse.Opportunity.Amount));
+            Assert.That(result.OpportunitySummaryViewModel.JobRoleList, Is.EqualTo(string.Join(", ", getMoreDetailsResponse.Opportunity.JobRoles.ToReferenceDataDescriptionList(getMoreDetailsResponse.JobRoles))));
+            Assert.That(result.OpportunitySummaryViewModel.LevelList, Is.EqualTo(string.Join(", ", getMoreDetailsResponse.Opportunity.Levels.ToReferenceDataDescriptionList(getMoreDetailsResponse.Levels, (x) => x.ShortDescription))));
+            Assert.That(result.OpportunitySummaryViewModel.SectorList, Is.EqualTo(string.Join(", ", getMoreDetailsResponse.Opportunity.Sectors.ToReferenceDataDescriptionList(getMoreDetailsResponse.Sectors))));
 
             _cacheStorageService.Verify(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()), Times.Once);
             _opportunitiesService.Verify(x => x.GetMoreDetails(request.AccountId, request.PledgeId), Times.Once);
@@ -293,25 +293,25 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             var result = await _orchestrator.GetApplicationViewModel(new ApplicationDetailsRequest { EncodedAccountId = encodedAccountId, CacheKey = cacheKey, EncodedPledgeId = encodedPledgeId, PledgeId = 1, AccountId = 1  });
 
-            Assert.IsNotNull(result);
-            Assert.NotNull(result.SelectStandardViewModel);
-            Assert.NotNull(result.SelectStandardViewModel.Standards);
-            Assert.AreEqual(cacheKey, result.CacheKey);
-            Assert.AreEqual(encodedAccountId, result.EncodedAccountId);
-            Assert.AreEqual(encodedPledgeId, result.EncodedPledgeId);
-            Assert.AreEqual(cacheItem.JobRole, result.JobRole);
-            Assert.AreEqual(cacheItem.NumberOfApprentices, result.NumberOfApprentices);
-            Assert.AreEqual(DateTime.Now.Year, result.MinYear);
-            Assert.AreEqual(DateTime.Now.FinancialYearEnd().Year, result.MaxYear);
-            Assert.AreEqual(cacheItem.HasTrainingProvider, result.HasTrainingProvider);
-            Assert.IsNotNull(result.OpportunitySummaryViewModel);
-            Assert.AreEqual(applicationDetailsResponse.Opportunity.RemainingAmount, result.OpportunitySummaryViewModel.Amount);
-            Assert.AreEqual(result.OpportunitySummaryViewModel.SectorList, applicationDetailsResponse.Opportunity.Sectors.ToReferenceDataDescriptionList(applicationDetailsResponse.Sectors));
-            Assert.AreEqual(result.OpportunitySummaryViewModel.JobRoleList, applicationDetailsResponse.Opportunity.JobRoles.ToReferenceDataDescriptionList(applicationDetailsResponse.JobRoles));
-            Assert.AreEqual(result.OpportunitySummaryViewModel.LevelList, applicationDetailsResponse.Opportunity.Levels.ToReferenceDataDescriptionList(applicationDetailsResponse.Levels, x => x.ShortDescription));
-            Assert.AreEqual(cacheItem.StartDate.Value.Month, result.Month);
-            Assert.AreEqual(cacheItem.StartDate.Value.Year, result.Year);
-            Assert.AreEqual(applicationDetailsResponse.Standards.Count(), result.SelectStandardViewModel.Standards.Count());
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.SelectStandardViewModel, Is.Not.Null);
+            Assert.That(result.SelectStandardViewModel.Standards, Is.Not.Null);
+            Assert.That(result.CacheKey, Is.EqualTo(cacheKey));
+            Assert.That(result.EncodedAccountId, Is.EqualTo(encodedAccountId));
+            Assert.That(result.EncodedPledgeId, Is.EqualTo(encodedPledgeId));
+            Assert.That(result.JobRole, Is.EqualTo(cacheItem.JobRole));
+            Assert.That(result.NumberOfApprentices, Is.EqualTo(cacheItem.NumberOfApprentices));
+            Assert.That(result.MinYear, Is.EqualTo(DateTime.Now.Year));
+            Assert.That(result.MaxYear, Is.EqualTo(DateTime.Now.FinancialYearEnd().Year));
+            Assert.That(result.HasTrainingProvider, Is.EqualTo(cacheItem.HasTrainingProvider));
+            Assert.That(result.OpportunitySummaryViewModel, Is.Not.Null);
+            Assert.That(result.OpportunitySummaryViewModel.Amount, Is.EqualTo(applicationDetailsResponse.Opportunity.RemainingAmount));
+            Assert.That(applicationDetailsResponse.Opportunity.Sectors.ToReferenceDataDescriptionList(applicationDetailsResponse.Sectors), Is.EqualTo(result.OpportunitySummaryViewModel.SectorList));
+            Assert.That(applicationDetailsResponse.Opportunity.JobRoles.ToReferenceDataDescriptionList(applicationDetailsResponse.JobRoles), Is.EqualTo(result.OpportunitySummaryViewModel.JobRoleList));
+            Assert.That(applicationDetailsResponse.Opportunity.Levels.ToReferenceDataDescriptionList(applicationDetailsResponse.Levels, x => x.ShortDescription), Is.EqualTo(result.OpportunitySummaryViewModel.LevelList));
+            Assert.That(result.Month, Is.EqualTo(cacheItem.StartDate.Value.Month));
+            Assert.That(result.Year, Is.EqualTo(cacheItem.StartDate.Value.Year));
+            Assert.That(result.SelectStandardViewModel.Standards.Count(), Is.EqualTo(applicationDetailsResponse.Standards.Count()));
 
             _cacheStorageService.Verify(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()), Times.Once);
             _opportunitiesService.Verify(x => x.GetApplicationDetails(1, 1, default), Times.Once);
@@ -327,7 +327,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             var result = await orchestrator.GetApplyViewModel(applicationRequest);
 
-            Assert.AreEqual("-", result.HaveTrainingProvider);
+            Assert.That(result.HaveTrainingProvider, Is.EqualTo("-"));
         }
 
         [Test]
@@ -339,7 +339,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             var result = await orchestrator.GetApplyViewModel(applicationRequest);
 
-            Assert.AreEqual("Yes", result.HaveTrainingProvider);
+            Assert.That(result.HaveTrainingProvider, Is.EqualTo("Yes"));
         }
 
         [Test]
@@ -351,7 +351,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             var result = await orchestrator.GetApplyViewModel(applicationRequest);
 
-            Assert.AreEqual("No", result.HaveTrainingProvider);
+            Assert.That(result.HaveTrainingProvider, Is.EqualTo("No"));
         }
 
         [Test]
@@ -372,10 +372,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var result =
                 await _orchestrator.GetConfirmationViewModel(new ConfirmationRequest {PledgeId = opportunityId, AccountId = accountId, EncodedAccountId = encodedAccountId});
 
-            Assert.AreEqual(response.AccountName, result.AccountName);
-            Assert.AreEqual(response.IsNamePublic, result.IsNamePublic);
-            Assert.AreEqual(reference, result.Reference);
-            Assert.AreEqual(encodedAccountId, result.EncodedAccountId);
+            Assert.That(result.AccountName, Is.EqualTo(response.AccountName));
+            Assert.That(result.IsNamePublic, Is.EqualTo(response.IsNamePublic));
+            Assert.That(result.Reference, Is.EqualTo(reference));
+            Assert.That(result.EncodedAccountId, Is.EqualTo(encodedAccountId));
         }
 
         [Test]
@@ -467,17 +467,17 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             var result = await _orchestrator.GetSectorViewModel(new SectorRequest { EncodedAccountId = encodedAccountId, CacheKey = cacheKey, EncodedPledgeId = encodedPledgeId, PledgeId = 1, AccountId = 1 });
 
-            Assert.IsNotNull(result);
-            Assert.AreEqual(cacheKey, result.CacheKey);
-            Assert.AreEqual(encodedAccountId, result.EncodedAccountId);
-            Assert.AreEqual(encodedPledgeId, result.EncodedPledgeId);
-            Assert.AreEqual(cacheItem.Sectors, result.Sectors);
-            
-            Assert.IsNotNull(result.OpportunitySummaryViewModel);
-            Assert.AreEqual(getSectorResponse.Opportunity.Amount, result.OpportunitySummaryViewModel.Amount);
-            Assert.AreEqual(result.OpportunitySummaryViewModel.SectorList, getSectorResponse.Opportunity.Sectors.ToReferenceDataDescriptionList(getSectorResponse.Sectors));
-            Assert.AreEqual(result.OpportunitySummaryViewModel.JobRoleList, getSectorResponse.Opportunity.JobRoles.ToReferenceDataDescriptionList(getSectorResponse.JobRoles));
-            Assert.AreEqual(result.OpportunitySummaryViewModel.LevelList, getSectorResponse.Opportunity.Levels.ToReferenceDataDescriptionList(getSectorResponse.Levels, x => x.ShortDescription));
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.CacheKey, Is.EqualTo(cacheKey));
+            Assert.That(result.EncodedAccountId, Is.EqualTo(encodedAccountId));
+            Assert.That(result.EncodedPledgeId, Is.EqualTo(encodedPledgeId));
+            Assert.That(result.Sectors, Is.EqualTo(cacheItem.Sectors));
+
+            Assert.That(result.OpportunitySummaryViewModel, Is.Not.Null);
+            Assert.That(result.OpportunitySummaryViewModel.Amount, Is.EqualTo(getSectorResponse.Opportunity.Amount));
+            Assert.That(getSectorResponse.Opportunity.Sectors.ToReferenceDataDescriptionList(getSectorResponse.Sectors), Is.EqualTo(result.OpportunitySummaryViewModel.SectorList));
+            Assert.That(getSectorResponse.Opportunity.JobRoles.ToReferenceDataDescriptionList(getSectorResponse.JobRoles), Is.EqualTo(result.OpportunitySummaryViewModel.JobRoleList));
+            Assert.That(getSectorResponse.Opportunity.Levels.ToReferenceDataDescriptionList(getSectorResponse.Levels, x => x.ShortDescription), Is.EqualTo(result.OpportunitySummaryViewModel.LevelList));
 
             _cacheStorageService.Verify(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()), Times.Once);
             _opportunitiesService.Verify(x => x.GetSector(1, 1), Times.Once);

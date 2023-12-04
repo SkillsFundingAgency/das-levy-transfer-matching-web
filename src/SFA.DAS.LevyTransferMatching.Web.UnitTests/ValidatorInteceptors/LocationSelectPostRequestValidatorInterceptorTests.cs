@@ -47,7 +47,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.ValidatorInteceptors
 
             foreach (var expectedKey in expectedModelStateKeys)
             {
-                CollectionAssert.Contains(actualModelStateKeys, expectedKey);
+                Assert.That(actualModelStateKeys, Has.Member(expectedKey));
             }
         }
     }

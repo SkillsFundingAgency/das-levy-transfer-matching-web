@@ -65,8 +65,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var viewModel = await _applicationsOrchestrator.GetApplication(request);
 
             // Assert
-            Assert.IsNotNull(viewModel);
-            Assert.AreEqual(encodedPledgeId, viewModel.EncodedOpportunityId);
+            Assert.That(viewModel, Is.Not.Null);
+            Assert.That(viewModel.EncodedOpportunityId, Is.EqualTo(encodedPledgeId));
         }
 
 
@@ -93,8 +93,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var viewModel = await _applicationsOrchestrator.GetApplication(request);
 
             // Assert
-            Assert.IsNotNull(viewModel);
-            Assert.AreEqual(expectCanWithdraw, viewModel.CanWithdraw);
+            Assert.That(viewModel, Is.Not.Null);
+            Assert.That(viewModel.CanWithdraw, Is.EqualTo(expectCanWithdraw));
         }
 
         [Test]
@@ -111,7 +111,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var viewModel = await _applicationsOrchestrator.GetApplication(request);
 
             // Assert
-            Assert.IsNull(viewModel);
+            Assert.That(viewModel, Is.Null);
         }
 
         [Test]
@@ -149,10 +149,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             await _applicationsOrchestrator.SetApplicationAcceptance(request);
 
             // Assert
-            Assert.NotNull(actualRequest);
-            Assert.AreEqual(expectedUserId, actualRequest.UserId);
-            Assert.AreEqual(expectedUserDisplayName, actualRequest.UserDisplayName);
-            Assert.AreEqual(expectedAcceptance, actualRequest.Acceptance);
+            Assert.That(actualRequest, Is.Not.Null);
+            Assert.That(actualRequest.UserId, Is.EqualTo(expectedUserId));
+            Assert.That(actualRequest.UserDisplayName, Is.EqualTo(expectedUserDisplayName));
+            Assert.That(actualRequest.Acceptance, Is.EqualTo(expectedAcceptance));
         }
 
         [Test]
@@ -175,8 +175,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var viewModel = await _applicationsOrchestrator.GetAcceptedViewModel(request);
 
             // Assert
-            Assert.IsNotNull(viewModel);
-            Assert.AreEqual($"{response.EmployerAccountName} ({encodedPledgeId})", viewModel.EmployerNameAndReference);
+            Assert.That(viewModel, Is.Not.Null);
+            Assert.That(viewModel.EmployerNameAndReference, Is.EqualTo($"{response.EmployerAccountName} ({encodedPledgeId})"));
         }
 
         [Test]
@@ -193,7 +193,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var viewModel = await _applicationsOrchestrator.GetAcceptedViewModel(request);
 
             // Assert
-            Assert.IsNull(viewModel);
+            Assert.That(viewModel, Is.Null);
         }
 
         [Test]
@@ -216,8 +216,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var viewModel = await _applicationsOrchestrator.GetDeclinedViewModel(request);
 
             // Assert
-            Assert.IsNotNull(viewModel);
-            Assert.AreEqual($"{response.EmployerAccountName} ({encodedPledgeId})", viewModel.EmployerNameAndReference);
+            Assert.That(viewModel, Is.Not.Null);
+            Assert.That(viewModel.EmployerNameAndReference, Is.EqualTo($"{response.EmployerAccountName} ({encodedPledgeId})"));
         }
 
         [Test]
@@ -234,7 +234,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var viewModel = await _applicationsOrchestrator.GetDeclinedViewModel(request);
 
             // Assert
-            Assert.IsNull(viewModel);
+            Assert.That(viewModel, Is.Null);
         }
 
         [Test]
@@ -260,8 +260,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var viewModel = await _applicationsOrchestrator.GetApplication(request);
 
             // Assert
-            Assert.IsNotNull(viewModel);
-            Assert.AreEqual(true, viewModel.CanAcceptFunding);
+            Assert.That(viewModel, Is.Not.Null);
+            Assert.That(viewModel.CanAcceptFunding, Is.EqualTo(true));
         }
 
         [Test]
@@ -287,8 +287,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var viewModel = await _applicationsOrchestrator.GetApplication(request);
 
             // Assert
-            Assert.IsNotNull(viewModel);
-            Assert.AreEqual(true, viewModel.CanUseTransferFunds);
+            Assert.That(viewModel, Is.Not.Null);
+            Assert.That(viewModel.CanUseTransferFunds, Is.EqualTo(true));
         }
 
         [Test]
@@ -315,8 +315,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var viewModel = await _applicationsOrchestrator.GetApplication(request);
 
             // Assert
-            Assert.IsNotNull(viewModel);
-            Assert.AreEqual(true, viewModel.RenderWithdrawAfterAcceptanceButton);
+            Assert.That(viewModel, Is.Not.Null);
+            Assert.That(viewModel.RenderWithdrawAfterAcceptanceButton, Is.EqualTo(true));
         }
 
         [Test]
@@ -349,11 +349,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var viewModel = await _applicationsOrchestrator.GetWithdrawalConfirmationViewModel(request);
 
             // Assert
-            Assert.IsNotNull(viewModel);
-            Assert.AreEqual(response.PledgeEmployerName, viewModel.PledgeEmployerName);
-            Assert.AreEqual(encodedPledgeId, viewModel.EncodedPledgeId);
-            Assert.AreEqual(encodedAccountId, viewModel.EncodedAccountId);
-            Assert.AreEqual(encodedApplicationId, viewModel.EncodedApplicationId);
+            Assert.That(viewModel, Is.Not.Null);
+            Assert.That(viewModel.PledgeEmployerName, Is.EqualTo(response.PledgeEmployerName));
+            Assert.That(viewModel.EncodedPledgeId, Is.EqualTo(encodedPledgeId));
+            Assert.That(viewModel.EncodedAccountId, Is.EqualTo(encodedAccountId));
+            Assert.That(viewModel.EncodedApplicationId, Is.EqualTo(encodedApplicationId));
         }
 
         [Test]

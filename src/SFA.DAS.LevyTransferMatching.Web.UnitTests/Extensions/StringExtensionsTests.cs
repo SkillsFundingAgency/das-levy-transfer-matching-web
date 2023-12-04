@@ -29,7 +29,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
             var result = selectedReferenceDataItemIds.ToReferenceDataDescriptionList(referenceDataItems);
 
             // Assert
-            Assert.AreEqual("All", result);
+            Assert.That(result, Is.EqualTo("All"));
         }
 
         [Test]
@@ -48,7 +48,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
                 .Select(x => x.Description)
                 .ToArray());
 
-            Assert.AreEqual(result, expectedList);
+            Assert.That(expectedList, Is.EqualTo(result));
         }
 
         [Test]
@@ -64,7 +64,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
             // Assert
             var expectedTagDesc = referenceDataItems.Where(x => referenceDataItemIds.Contains(x.Id)).Select(x => x.Description).Single();
 
-            Assert.AreEqual(result, expectedTagDesc);
+            Assert.That(expectedTagDesc, Is.EqualTo(result));
         }
         
         [Test]
@@ -78,13 +78,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
             var result = referenceDataItemIds.ToReferenceDataDescriptionList(referenceDataItems);
 
             // Assert
-            Assert.AreEqual("All", result);
+            Assert.That(result, Is.EqualTo("All"));
         }
 
         [Test]
         public void IsComplete_Returns_False_When_Text_Is_NotCompletedString()
         {
-            Assert.IsFalse("-".IsComplete());
+            Assert.That("-".IsComplete(), Is.False);
         }
 
         [Test]
@@ -92,13 +92,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
         {
             string str = null;
 
-            Assert.IsFalse(str.IsComplete());
+            Assert.That(str.IsComplete(), Is.False);
         }
 
         [Test]
         public void IsComplete_Returns_False_When_Text_Is_Empty()
         {
-            Assert.IsFalse(string.Empty.IsComplete());
+            Assert.That(string.Empty.IsComplete(), Is.False);
         }
 
         [TestCase("AdditionalLocation", "Manchester, Coventry, AdditionalLocation")]
@@ -113,7 +113,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
 
             var locationsString = locations.ToApplicationLocationsString(", ", additionalLocation);
 
-            Assert.AreEqual(expected, locationsString);
+            Assert.That(locationsString, Is.EqualTo(expected));
         }
 
         [Test]
@@ -124,7 +124,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
 
             var locationsString = locations.ToApplicationLocationsString(", ", additionalLocation);
 
-            Assert.AreEqual(additionalLocation, locationsString);
+            Assert.That(locationsString, Is.EqualTo(additionalLocation));
         }
     }
 }

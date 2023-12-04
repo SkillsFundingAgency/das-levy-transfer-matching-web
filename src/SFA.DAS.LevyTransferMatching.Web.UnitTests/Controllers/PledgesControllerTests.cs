@@ -28,6 +28,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             _pledgesController = new PledgesController(_orchestrator.Object);
         }
 
+        [TearDown]
+        public void TearDown() => _pledgesController?.Dispose();
+
 
         [Test]
         public async Task GET_Pledges_Returns_Expected_View_With_Expected_ViewModel()
@@ -41,8 +44,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var pledgesViewModel = viewResult?.Model as PledgesViewModel;
 
             // Assert
-            Assert.NotNull(viewResult);
-            Assert.NotNull(pledgesViewModel);
+            Assert.That(viewResult, Is.Not.Null);
+            Assert.That(pledgesViewModel, Is.Not.Null);
         }
 
         [Test]
@@ -57,8 +60,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var detailViewModel = viewResult?.Model as DetailViewModel;
 
             // Assert
-            Assert.NotNull(viewResult);
-            Assert.NotNull(detailViewModel);
+            Assert.That(viewResult, Is.Not.Null);
+            Assert.That(detailViewModel, Is.Not.Null);
         }
 
         [Test]
@@ -73,8 +76,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var actualViewModel = viewResult?.Model as CloseViewModel;
 
             // Assert
-            Assert.NotNull(viewResult);
-            Assert.NotNull(actualViewModel);
+            Assert.That(viewResult, Is.Not.Null);
+            Assert.That(actualViewModel, Is.Not.Null);
         }
 
         [Test]
@@ -94,9 +97,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var actionResult = await _pledgesController.Close(request) as RedirectToActionResult;
 
             // Assert
-            Assert.NotNull(actionResult);
-            Assert.AreEqual("Pledges", actionResult.ActionName);
-            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["EncodedAccountId"]);
+            Assert.That(actionResult, Is.Not.Null);
+            Assert.That(actionResult.ActionName, Is.EqualTo("Pledges"));
+            Assert.That(actionResult.RouteValues["EncodedAccountId"], Is.EqualTo(request.EncodedAccountId));
         }
 
         [Test]
@@ -111,8 +114,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var applicationsViewModel = viewResult?.Model as ApplicationsViewModel;
 
             // Assert
-            Assert.NotNull(viewResult);
-            Assert.NotNull(applicationsViewModel);
+            Assert.That(viewResult, Is.Not.Null);
+            Assert.That(applicationsViewModel, Is.Not.Null);
         }
 
         [Test]
@@ -124,8 +127,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var viewResult = await _pledgesController.Application(request) as ViewResult;
             var viewModel = viewResult?.Model as ApplicationViewModel;
 
-            Assert.NotNull(viewResult);
-            Assert.NotNull(viewModel);
+            Assert.That(viewResult, Is.Not.Null);
+            Assert.That(viewModel, Is.Not.Null);
         }
 
         [Test]
@@ -138,8 +141,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
 
             var redirectResult = await _pledgesController.Application(request) as RedirectToActionResult;
 
-            Assert.NotNull(redirectResult);
-            Assert.AreEqual("ApplicationApprovalOptions", redirectResult.ActionName);
+            Assert.That(redirectResult, Is.Not.Null);
+            Assert.That(redirectResult.ActionName, Is.EqualTo("ApplicationApprovalOptions"));
         }
 
         [Test]
@@ -152,8 +155,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
 
             var redirectResult = await _pledgesController.Application(request) as RedirectToActionResult;
 
-            Assert.NotNull(redirectResult);
-            Assert.AreEqual("ApplicationApproved", redirectResult.ActionName);
+            Assert.That(redirectResult, Is.Not.Null);
+            Assert.That(redirectResult.ActionName, Is.EqualTo("ApplicationApproved"));
         }
 
         [Test]
@@ -168,8 +171,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
 
             var redirectResult = await _pledgesController.Application(request) as RedirectToActionResult;
 
-            Assert.NotNull(redirectResult);
-            Assert.AreEqual("Applications", redirectResult.ActionName);
+            Assert.That(redirectResult, Is.Not.Null);
+            Assert.That(redirectResult.ActionName, Is.EqualTo("Applications"));
         }
 
         [Test]
@@ -187,8 +190,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var redirectResult = _pledgesController.Applications(request) as RedirectToActionResult;
 
             // Assert
-            Assert.NotNull(redirectResult);
-            Assert.AreEqual("RejectApplications", redirectResult.ActionName);
+            Assert.That(redirectResult, Is.Not.Null);
+            Assert.That(redirectResult.ActionName, Is.EqualTo("RejectApplications"));
         }
 
         [Test]
@@ -212,8 +215,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var redirectResult = await _pledgesController.RejectApplications(request) as RedirectToActionResult;
 
             //Assert
-            Assert.NotNull(redirectResult);
-            Assert.AreEqual("Applications", redirectResult.ActionName);
+            Assert.That(redirectResult, Is.Not.Null);
+            Assert.That(redirectResult.ActionName, Is.EqualTo("Applications"));
         }
 
         [Test]
@@ -228,8 +231,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var applicationApprovedViewModel = viewResult?.Model as ApplicationApprovedViewModel;
 
             // Assert
-            Assert.NotNull(viewResult);
-            Assert.NotNull(applicationApprovedViewModel);
+            Assert.That(viewResult, Is.Not.Null);
+            Assert.That(applicationApprovedViewModel, Is.Not.Null);
         }
 
         [Test]
@@ -244,8 +247,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var applicationApprovalOptionsViewModel = viewResult?.Model as ApplicationApprovalOptionsViewModel;
 
             // Assert
-            Assert.NotNull(viewResult);
-            Assert.NotNull(applicationApprovalOptionsViewModel);
+            Assert.That(viewResult, Is.Not.Null);
+            Assert.That(applicationApprovalOptionsViewModel, Is.Not.Null);
         }
 
         [Test]
@@ -259,11 +262,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var actionResult = await _pledgesController.ApplicationApprovalOptions(request) as RedirectToActionResult;
 
             // Assert
-            Assert.NotNull(actionResult);
-            Assert.AreEqual("Application", actionResult.ActionName);
-            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
-            Assert.AreEqual(request.EncodedPledgeId, actionResult.RouteValues["encodedPledgeId"]);
-            Assert.AreEqual(request.EncodedApplicationId, actionResult.RouteValues["encodedApplicationId"]);
+            Assert.That(actionResult, Is.Not.Null);
+            Assert.That(actionResult.ActionName, Is.EqualTo("Application"));
+            Assert.That(actionResult.RouteValues["encodedAccountId"], Is.EqualTo(request.EncodedAccountId));
+            Assert.That(actionResult.RouteValues["encodedPledgeId"], Is.EqualTo(request.EncodedPledgeId));
+            Assert.That(actionResult.RouteValues["encodedApplicationId"], Is.EqualTo(request.EncodedApplicationId));
         }
 
         [Test]
@@ -276,11 +279,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var actionResult = await _pledgesController.ApplicationApprovalOptions(request) as RedirectToActionResult;
 
             // Assert
-            Assert.NotNull(actionResult);
-            Assert.AreEqual("ApplicationApproved", actionResult.ActionName);
-            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
-            Assert.AreEqual(request.EncodedPledgeId, actionResult.RouteValues["encodedPledgeId"]);
-            Assert.AreEqual(request.EncodedApplicationId, actionResult.RouteValues["encodedApplicationId"]);
+            Assert.That(actionResult, Is.Not.Null);
+            Assert.That(actionResult.ActionName, Is.EqualTo("ApplicationApproved"));
+            Assert.That(actionResult.RouteValues["encodedAccountId"], Is.EqualTo(request.EncodedAccountId));
+            Assert.That(actionResult.RouteValues["encodedPledgeId"], Is.EqualTo(request.EncodedPledgeId));
+            Assert.That(actionResult.RouteValues["encodedApplicationId"], Is.EqualTo(request.EncodedApplicationId));
         }
 
     }

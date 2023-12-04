@@ -31,7 +31,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Services
             }
             var actual = _csvService.GenerateCsvFileFromModel(model);
 
-            Assert.IsTrue(actual.Length > 0);
+            Assert.That(actual.Length > 0, Is.True);
         }
 
         [TestCase(0, false)]
@@ -51,7 +51,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Services
             CsvHelperService.AddLocationColumns(model, returnModel, totalLocationColumnsRequired);
 
             var expandoDict = returnModel as IDictionary<string, object>;
-            Assert.AreEqual(expectedOutcome, expandoDict.ContainsKey($"Location{totalLocationColumnsRequired}"));
+            Assert.That(expandoDict.ContainsKey($"Location{totalLocationColumnsRequired}"), Is.EqualTo(expectedOutcome));
         }
     }
 }

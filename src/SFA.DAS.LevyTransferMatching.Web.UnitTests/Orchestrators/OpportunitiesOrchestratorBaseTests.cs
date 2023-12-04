@@ -75,17 +75,17 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var jobRoleDescriptions = JobRoleReferenceDataItems
                 .Where(x => opportunity.JobRoles.Contains(x.Id))
                 .Select(x => x.Description);
-            Assert.AreEqual(result.JobRoleList, jobRoleDescriptions.Single());
+            Assert.That(jobRoleDescriptions.Single(), Is.EqualTo(result.JobRoleList));
 
             var levelDescriptions = LevelReferenceDataItems
                 .Where(x => opportunity.Levels.Contains(x.Id))
                 .Select(x => x.ShortDescription);
-            Assert.AreEqual(result.LevelList, levelDescriptions.Single());
+            Assert.That(levelDescriptions.Single(), Is.EqualTo(result.LevelList));
 
             var sectorDescriptions = SectorReferenceDataItems
                 .Where(x => opportunity.Sectors.Contains(x.Id))
                 .Select(x => x.Description);
-            Assert.AreEqual(result.SectorList, sectorDescriptions.Single());
+            Assert.That(sectorDescriptions.Single(), Is.EqualTo(result.SectorList));
 
         }
 
@@ -124,10 +124,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var result = _orchestrator.GetOpportunitySummaryViewModel(opportunitySummaryViewModelOptions);
 
             // Assert
-            Assert.AreEqual("All", result.JobRoleList);
-            Assert.AreEqual("All", result.LevelList);
-            Assert.AreEqual("All", result.SectorList);
-            Assert.IsFalse(result.Description.Contains(encodedPledgeId));
+            Assert.That(result.JobRoleList, Is.EqualTo("All"));
+            Assert.That(result.LevelList, Is.EqualTo("All"));
+            Assert.That(result.SectorList, Is.EqualTo("All"));
+            Assert.That(result.Description.Contains(encodedPledgeId), Is.False);
         }
 
         [Test]
@@ -172,20 +172,20 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             var jobRoleDescriptions = JobRoleReferenceDataItems
                 .Where(x => opportunity.JobRoles.Contains(x.Id))
                 .Select(x => x.Description);
-            Assert.AreEqual(result.JobRoleList, string.Join("; ", jobRoleDescriptions));
+            Assert.That(string.Join("; ", jobRoleDescriptions), Is.EqualTo(result.JobRoleList));
 
             var levelDescriptions = LevelReferenceDataItems
                 .Where(x => opportunity.Levels.Contains(x.Id))
                 .Select(x => x.ShortDescription);
-            Assert.AreEqual(result.LevelList, string.Join(", ", levelDescriptions));
+            Assert.That(string.Join(", ", levelDescriptions), Is.EqualTo(result.LevelList));
 
             var sectorDescriptions = SectorReferenceDataItems
                 .Where(x => opportunity.Sectors.Contains(x.Id))
                 .Select(x => x.Description);
-            Assert.AreEqual(result.SectorList, string.Join("; ", sectorDescriptions));
+            Assert.That(string.Join("; ", sectorDescriptions), Is.EqualTo(result.SectorList));
 
 
-            Assert.IsTrue(result.Description.Contains(encodedPledgeId));
+            Assert.That(result.Description.Contains(encodedPledgeId), Is.True);
         }
 
         protected void SetupGetOpportunityViewModelServices()

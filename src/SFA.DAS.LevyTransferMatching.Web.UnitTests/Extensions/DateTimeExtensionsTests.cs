@@ -17,7 +17,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
             string taxYear = dateTime.ToTaxYear("yyyy");
 
             // Assert
-            Assert.AreEqual("2008", taxYear);
+            Assert.That(taxYear, Is.EqualTo("2008"));
         }
 
         [Test]
@@ -30,7 +30,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
             string taxYear = dateTime.ToTaxYear("yy");
 
             // Assert
-            Assert.AreEqual("84", taxYear);
+            Assert.That(taxYear, Is.EqualTo("84"));
         }
 
         [Test]
@@ -43,7 +43,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
             string taxYear = dateTime.ToTaxYearDescription();
 
             // Assert
-            Assert.AreEqual("1991/92", taxYear);
+            Assert.That(taxYear, Is.EqualTo("1991/92"));
         }
 
         [Test]
@@ -56,7 +56,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
             string taxYear = dateTime.ToTaxYearDescription();
 
             // Assert
-            Assert.AreEqual("2015/16", taxYear);
+            Assert.That(taxYear, Is.EqualTo("2015/16"));
         }
     }
 }

@@ -140,10 +140,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
             // Note - we should have 2 validation errors,
             //        for AdditionalEmailAddresses[2] and AdditionalEmailAddresses[3]
             var index2Error = results.Errors.SingleOrDefault(x => x.PropertyName == "AdditionalEmailAddresses[2]");
-            Assert.NotNull(index2Error);
+            Assert.That(index2Error, Is.Not.Null);
 
             var index3Error = results.Errors.SingleOrDefault(x => x.PropertyName == "AdditionalEmailAddresses[3]");
-            Assert.IsNotNull(index3Error);
+            Assert.That(index3Error, Is.Not.Null);
         }
 
         [Test]
@@ -175,13 +175,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
             //        for AdditionalEmailAddresses[1] and AdditionalEmailAddresses[3]
             //        But *not* for AdditionalEmailAddresses[0]!
             var index1Error = results.Errors.SingleOrDefault(x => x.PropertyName == "AdditionalEmailAddresses[1]");
-            Assert.NotNull(index1Error);
+            Assert.That(index1Error, Is.Not.Null);
 
             var index3Error = results.Errors.SingleOrDefault(x => x.PropertyName == "AdditionalEmailAddresses[3]");
-            Assert.IsNotNull(index3Error);
+            Assert.That(index3Error, Is.Not.Null);
 
             var index0Error = results.Errors.SingleOrDefault(x => x.PropertyName == "AdditionalEmailAddresses[0]");
-            Assert.IsNull(index0Error);
+            Assert.That(index0Error, Is.Null);
         }
 
         [Test]

@@ -54,7 +54,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.TagHelpers
 
             _tagHelper.Process(_tagHelperContext, _tagHelperOutput);
 
-            Assert.AreEqual(expectedOutput, _tagHelperOutput.PostContent.GetContent());
+            Assert.That(_tagHelperOutput.PostContent.GetContent(), Is.EqualTo(expectedOutput));
         }
     }
 }

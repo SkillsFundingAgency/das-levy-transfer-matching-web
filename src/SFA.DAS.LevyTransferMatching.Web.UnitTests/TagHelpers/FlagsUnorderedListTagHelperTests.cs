@@ -80,7 +80,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.TagHelpers
 
             var output = _tagHelperOutput.PostContent;
 
-            Assert.AreEqual(expectedOutput, output.GetContent());
+            Assert.That(output.GetContent(), Is.EqualTo(expectedOutput));
         }
 
         public class TestClass

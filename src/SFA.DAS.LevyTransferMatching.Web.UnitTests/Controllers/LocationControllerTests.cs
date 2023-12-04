@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using AutoFixture;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
@@ -22,6 +21,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             _controller = new LocationController(_orchestrator.Object);
         }
 
+        [TearDown]
+        public void TearDown() => _controller?.Dispose();
+
         [Test]
         public async Task GET_GetLocations_ReturnsJsonResult()
         {
@@ -33,7 +35,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
                 });
 
             var result = await _controller.GetLocations("test") as JsonResult;
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
     }
 }

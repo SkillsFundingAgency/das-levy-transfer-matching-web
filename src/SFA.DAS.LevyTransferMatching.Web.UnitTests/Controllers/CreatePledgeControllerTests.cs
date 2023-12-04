@@ -26,6 +26,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             _pledgesController = new CreatePledgeController(_orchestrator.Object);
         }
 
+        [TearDown]
+        public void TearDown() => _pledgesController?.Dispose();
+
         [Test]
         public void GET_Inform_Returns_Expected_View_With_Expected_ViewModel()
         {
@@ -38,8 +41,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var indexViewModel = viewResult?.Model as InformViewModel;
 
             // Assert
-            Assert.NotNull(viewResult);
-            Assert.NotNull(indexViewModel);
+            Assert.That(viewResult, Is.Not.Null);
+            Assert.That(indexViewModel, Is.Not.Null);
         }
 
         [Test]
@@ -54,8 +57,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var createViewModel = viewResult?.Model as CreateViewModel;
 
             // Assert
-            Assert.NotNull(viewResult);
-            Assert.NotNull(createViewModel);
+            Assert.That(viewResult, Is.Not.Null);
+            Assert.That(createViewModel, Is.Not.Null);
         }
 
         [Test]
@@ -70,8 +73,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var amountViewModel = viewResult?.Model as AmountViewModel;
 
             // Assert
-            Assert.NotNull(viewResult);
-            Assert.NotNull(amountViewModel);
+            Assert.That(viewResult, Is.Not.Null);
+            Assert.That(amountViewModel, Is.Not.Null);
         }
 
         [Test]
@@ -84,9 +87,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var actionResult = await _pledgesController.Amount(request) as RedirectToActionResult;
 
             // Assert
-            Assert.NotNull(actionResult);
-            Assert.AreEqual("Create", actionResult.ActionName);
-            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
+            Assert.That(actionResult, Is.Not.Null);
+            Assert.That(actionResult.ActionName, Is.EqualTo("Create"));
+            Assert.That(actionResult.RouteValues["encodedAccountId"], Is.EqualTo(request.EncodedAccountId));
         }
 
         [Test]
@@ -101,8 +104,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var organisationNameViewModel = viewResult?.Model as OrganisationNameViewModel;
 
             // Assert
-            Assert.NotNull(viewResult);
-            Assert.NotNull(organisationNameViewModel);
+            Assert.That(viewResult, Is.Not.Null);
+            Assert.That(organisationNameViewModel, Is.Not.Null);
         }
 
         [Test]
@@ -115,9 +118,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var actionResult = await _pledgesController.Organisation(request) as RedirectToActionResult;
 
             // Assert
-            Assert.NotNull(actionResult);
-            Assert.AreEqual("Create", actionResult.ActionName);
-            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
+            Assert.That(actionResult, Is.Not.Null);
+            Assert.That(actionResult.ActionName, Is.EqualTo("Create"));
+            Assert.That(actionResult.RouteValues["encodedAccountId"], Is.EqualTo(request.EncodedAccountId));
         }
 
         [Test]
@@ -132,8 +135,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var organisationNameViewModel = viewResult?.Model as AutoApproveViewModel;
 
             // Assert
-            Assert.NotNull(viewResult);
-            Assert.NotNull(organisationNameViewModel);
+            Assert.That(viewResult, Is.Not.Null);
+            Assert.That(organisationNameViewModel, Is.Not.Null);
         }
 
         [Test]
@@ -146,9 +149,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var actionResult = await _pledgesController.AutoApproval(request) as RedirectToActionResult;
 
             // Assert
-            Assert.NotNull(actionResult);
-            Assert.AreEqual("Create", actionResult.ActionName);
-            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
+            Assert.That(actionResult, Is.Not.Null);
+            Assert.That(actionResult.ActionName, Is.EqualTo("Create"));
+            Assert.That(actionResult.RouteValues["encodedAccountId"], Is.EqualTo(request.EncodedAccountId));
         }
 
         [Test]
@@ -163,8 +166,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var amountViewModel = viewResult?.Model as SectorViewModel;
 
             // Assert
-            Assert.NotNull(viewResult);
-            Assert.NotNull(amountViewModel);
+            Assert.That(viewResult, Is.Not.Null);
+            Assert.That(amountViewModel, Is.Not.Null);
         }
 
         [Test]
@@ -177,9 +180,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var actionResult = await _pledgesController.Sector(request) as RedirectToActionResult;
 
             // Assert
-            Assert.NotNull(actionResult);
-            Assert.AreEqual("Create", actionResult.ActionName);
-            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
+            Assert.That(actionResult, Is.Not.Null);
+            Assert.That(actionResult.ActionName, Is.EqualTo("Create"));
+            Assert.That(actionResult.RouteValues["encodedAccountId"], Is.EqualTo(request.EncodedAccountId));
         }
 
         [Test]
@@ -194,8 +197,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var amountViewModel = viewResult?.Model as LevelViewModel;
 
             // Assert
-            Assert.NotNull(viewResult);
-            Assert.NotNull(amountViewModel);
+            Assert.That(viewResult, Is.Not.Null);
+            Assert.That(amountViewModel, Is.Not.Null);
         }
 
         [Test]
@@ -208,9 +211,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var actionResult = await _pledgesController.Level(request) as RedirectToActionResult;
 
             // Assert
-            Assert.NotNull(actionResult);
-            Assert.AreEqual("Create", actionResult.ActionName);
-            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
+            Assert.That(actionResult, Is.Not.Null);
+            Assert.That(actionResult.ActionName, Is.EqualTo("Create"));
+            Assert.That(actionResult.RouteValues["encodedAccountId"], Is.EqualTo(request.EncodedAccountId));
         }
 
         [Test]
@@ -225,8 +228,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var jobRoleViewModel = viewResult?.Model as JobRoleViewModel;
 
             // Assert
-            Assert.NotNull(viewResult);
-            Assert.NotNull(jobRoleViewModel);
+            Assert.That(viewResult, Is.Not.Null);
+            Assert.That(jobRoleViewModel, Is.Not.Null);
         }
 
         [Test]
@@ -239,9 +242,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var actionResult = await _pledgesController.JobRole(request) as RedirectToActionResult;
 
             // Assert
-            Assert.NotNull(actionResult);
-            Assert.AreEqual("Create", actionResult.ActionName);
-            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
+            Assert.That(actionResult, Is.Not.Null);
+            Assert.That(actionResult.ActionName, Is.EqualTo("Create"));
+            Assert.That(actionResult.RouteValues["encodedAccountId"], Is.EqualTo(request.EncodedAccountId));
         }
 
         [Test]
@@ -256,8 +259,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var locationViewModel = viewResult?.Model as LocationViewModel;
 
             // Assert
-            Assert.NotNull(viewResult);
-            Assert.NotNull(locationViewModel);
+            Assert.That(viewResult, Is.Not.Null);
+            Assert.That(locationViewModel, Is.Not.Null);
         }
 
         [Test]
@@ -273,10 +276,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var actionResult = await _pledgesController.Location(request) as RedirectToActionResult;
 
             // Assert
-            Assert.NotNull(actionResult);
-            Assert.AreEqual("Create", actionResult.ActionName);
-            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
-            Assert.AreEqual(request.CacheKey, actionResult.RouteValues["cacheKey"]);
+            Assert.That(actionResult, Is.Not.Null);
+            Assert.That(actionResult.ActionName, Is.EqualTo("Create"));
+            Assert.That(actionResult.RouteValues["encodedAccountId"], Is.EqualTo(request.EncodedAccountId));
+            Assert.That(actionResult.RouteValues["cacheKey"], Is.EqualTo(request.CacheKey));
         }
 
         [Test]
@@ -292,10 +295,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var actionResult = await _pledgesController.Location(request) as RedirectToActionResult;
 
             // Assert
-            Assert.NotNull(actionResult);
-            Assert.AreEqual("Location", actionResult.ActionName);
-            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
-            Assert.AreEqual(request.CacheKey, actionResult.RouteValues["cacheKey"]);
+            Assert.That(actionResult, Is.Not.Null);
+            Assert.That(actionResult.ActionName, Is.EqualTo("Location"));
+            Assert.That(actionResult.RouteValues["encodedAccountId"], Is.EqualTo(request.EncodedAccountId));
+            Assert.That(actionResult.RouteValues["cacheKey"], Is.EqualTo(request.CacheKey));
         }
 
         [Test]
@@ -322,10 +325,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var actionResult = await _pledgesController.Location(request) as RedirectToActionResult;
 
             // Assert
-            Assert.NotNull(actionResult);
-            Assert.AreEqual("LocationSelect", actionResult.ActionName);
-            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
-            Assert.AreEqual(request.CacheKey, actionResult.RouteValues["cacheKey"]);
+            Assert.That(actionResult, Is.Not.Null);
+            Assert.That(actionResult.ActionName, Is.EqualTo("LocationSelect"));
+            Assert.That(actionResult.RouteValues["encodedAccountId"], Is.EqualTo(request.EncodedAccountId));
+            Assert.That(actionResult.RouteValues["cacheKey"], Is.EqualTo(request.CacheKey));
         }
 
         [Test]
@@ -345,10 +348,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var actionResult = await _pledgesController.Location(request) as RedirectToActionResult;
 
             // Assert
-            Assert.NotNull(actionResult);
-            Assert.AreEqual("Create", actionResult.ActionName);
-            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
-            Assert.AreEqual(request.CacheKey, actionResult.RouteValues["cacheKey"]);
+            Assert.That(actionResult, Is.Not.Null);
+            Assert.That(actionResult.ActionName, Is.EqualTo("Create"));
+            Assert.That(actionResult.RouteValues["encodedAccountId"], Is.EqualTo(request.EncodedAccountId));
+            Assert.That(actionResult.RouteValues["cacheKey"], Is.EqualTo(request.CacheKey));
         }
 
         [Test]
@@ -369,11 +372,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var actualViewModel = model as LocationSelectViewModel;
 
             // Assert
-            Assert.NotNull(actionResult);
-            Assert.NotNull(viewResult);
-            Assert.NotNull(model);
-            Assert.NotNull(actualViewModel);
-            Assert.AreEqual(expectedViewModel, actualViewModel);
+            Assert.That(actionResult, Is.Not.Null);
+            Assert.That(viewResult, Is.Not.Null);
+            Assert.That(model, Is.Not.Null);
+            Assert.That(actualViewModel, Is.Not.Null);
+            Assert.That(actualViewModel, Is.EqualTo(expectedViewModel));
         }
 
         [Test]
@@ -387,9 +390,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var redirectToAction = actionResult as RedirectToActionResult;
 
             // Assert
-            Assert.NotNull(actionResult);
-            Assert.NotNull(redirectToAction);
-            Assert.AreEqual(nameof(CreatePledgeController.Create), redirectToAction.ActionName);
+            Assert.That(actionResult, Is.Not.Null);
+            Assert.That(redirectToAction, Is.Not.Null);
+            Assert.That(redirectToAction.ActionName, Is.EqualTo(nameof(CreatePledgeController.Create)));
         }
 
         [Test]
@@ -402,9 +405,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var actionResult = await _pledgesController.Create(request) as RedirectToActionResult;
 
             // Assert
-            Assert.NotNull(actionResult);
-            Assert.AreEqual("Confirmation", actionResult.ActionName);
-            Assert.AreEqual(request.EncodedAccountId, actionResult.RouteValues["encodedAccountId"]);
+            Assert.That(actionResult, Is.Not.Null);
+            Assert.That(actionResult.ActionName, Is.EqualTo("Confirmation"));
+            Assert.That(actionResult.RouteValues["encodedAccountId"], Is.EqualTo(request.EncodedAccountId));
         }
 
         [Test]
@@ -415,8 +418,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Controllers
             var viewResult = _pledgesController.Confirmation(request) as ViewResult;
             var viewmodel = viewResult?.Model as ConfirmationViewModel;
 
-            Assert.NotNull(viewResult);
-            Assert.NotNull(viewmodel);
+            Assert.That(viewResult, Is.Not.Null);
+            Assert.That(viewmodel, Is.Not.Null);
         }
     }
 }

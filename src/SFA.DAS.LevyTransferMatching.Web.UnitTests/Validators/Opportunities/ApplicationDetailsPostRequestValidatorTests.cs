@@ -34,7 +34,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
 
             var result = (await _validator.ValidateAsync(request));
 
-            Assert.IsTrue(result.IsValid);
+            Assert.That(result.IsValid, Is.True);
         }
 
         [Test]
@@ -49,8 +49,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
 
             var result = (await _validator.ValidateAsync(request));
 
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual("There is not enough funding to support this many apprentices", result.Errors.First().ErrorMessage);
+            Assert.That(result.IsValid, Is.False);
+            Assert.That(result.Errors.First().ErrorMessage, Is.EqualTo("There is not enough funding to support this many apprentices"));
         }
 
         [Test]
@@ -62,8 +62,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
 
             var result = (await _validator.ValidateAsync(request));
 
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual("You must enter the number of apprentices", result.Errors.First().ErrorMessage);
+            Assert.That(result.IsValid, Is.False);
+            Assert.That(result.Errors.First().ErrorMessage, Is.EqualTo("You must enter the number of apprentices"));
         }
 
         [Test]
@@ -75,8 +75,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
 
             var result = (await _validator.ValidateAsync(request));
 
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual("You must enter the number of apprentices", result.Errors.First().ErrorMessage);
+            Assert.That(result.IsValid, Is.False);
+            Assert.That(result.Errors.First().ErrorMessage, Is.EqualTo("You must enter the number of apprentices"));
         }
 
         [Test]
@@ -88,8 +88,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
 
             var result = (await _validator.ValidateAsync(request));
 
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual("You must enter the number of apprentices", result.Errors.First().ErrorMessage);
+            Assert.That(result.IsValid, Is.False);
+            Assert.That(result.Errors.First().ErrorMessage, Is.EqualTo("You must enter the number of apprentices"));
         }
 
         [Test]
@@ -101,8 +101,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
 
             var result = (await _validator.ValidateAsync(request));
 
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual("Enter a valid job role", result.Errors.First().ErrorMessage);
+            Assert.That(result.IsValid, Is.False);
+            Assert.That(result.Errors.First().ErrorMessage, Is.EqualTo("Enter a valid job role"));
         }
 
         [Test]
@@ -114,8 +114,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
 
             var result = (await _validator.ValidateAsync(request));
 
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual("Enter a valid job role", result.Errors.First().ErrorMessage);
+            Assert.That(result.IsValid, Is.False);
+            Assert.That(result.Errors.First().ErrorMessage, Is.EqualTo("Enter a valid job role"));
         }
 
         [Test]
@@ -128,7 +128,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
 
             var result = (await _validator.ValidateAsync(request));
 
-            Assert.IsFalse(result.IsValid);
+            Assert.That(result.IsValid, Is.False);
         }
 
         [Test]
@@ -140,8 +140,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators.Opportunities
 
             var result = (await _validator.ValidateAsync(request));
 
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual("You must select whether or not you have found a training provider", result.Errors.First().ErrorMessage);
+            Assert.That(result.IsValid, Is.False);
+            Assert.That(result.Errors.First().ErrorMessage, Is.EqualTo("You must select whether or not you have found a training provider"));
         }
 
         private ApplicationDetailsPostRequest CreateApplicationDetailsPostRequest() =>

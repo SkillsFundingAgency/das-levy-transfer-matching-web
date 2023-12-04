@@ -32,11 +32,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
 
             var result = sut.GetEffectiveFundingLine(DateTime.UtcNow.Date);
 
-            Assert.IsNotNull(result);
-            Assert.AreEqual(12, result.Duration);
-            Assert.AreEqual(new DateTime(2021, 1, 1), result.EffectiveFrom);
-            Assert.IsNull(result.EffectiveTo);
-            Assert.AreEqual(9_000, result.MaxEmployerLevyCap);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Duration, Is.EqualTo(12));
+            Assert.That(result.EffectiveFrom, Is.EqualTo(new DateTime(2021, 1, 1)));
+            Assert.That(result.EffectiveTo, Is.Null);
+            Assert.That(result.MaxEmployerLevyCap, Is.EqualTo(9_000));
         }
 
         [Test]
@@ -64,11 +64,11 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
 
             var result = sut.GetEffectiveFundingLine(now.Date);
 
-            Assert.IsNotNull(result);
-            Assert.AreEqual(15, result.Duration);
-            Assert.AreEqual(new DateTime(now.AddYears(-2).Year, now.AddMonths(-1).Month, 1), result.EffectiveFrom);
-            Assert.AreEqual(new DateTime(now.Year, now.Month, 30), result.EffectiveTo);
-            Assert.AreEqual(12_000, result.MaxEmployerLevyCap);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Duration, Is.EqualTo(15));
+            Assert.That(result.EffectiveFrom, Is.EqualTo(new DateTime(now.AddYears(-2).Year, now.AddMonths(-1).Month, 1)));
+            Assert.That(result.EffectiveTo, Is.EqualTo(new DateTime(now.Year, now.Month, 30)));
+            Assert.That(result.MaxEmployerLevyCap, Is.EqualTo(12_000));
         }
 
         [TestCase(48000, 24, 0)]
@@ -92,7 +92,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
 
             var result = sut.CalculateOneYearCost(numberOfApprentices);
 
-            Assert.AreEqual(expectedResult, result);
+            Assert.That(result, Is.EqualTo(expectedResult));
         }
 
         [TestCase(1, 15000, 15000)]
@@ -109,7 +109,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
 
             var result = dto.CalculateEstimatedTotalCost(numberOfApprentices);
 
-            Assert.AreEqual(expected, result);
+            Assert.That(result, Is.EqualTo(expected));
         }
     }
 }

@@ -74,13 +74,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators
             var result = await _locationValidatorService.ValidateLocations(request, multipleValidResults);
 
             // Assert
-            CollectionAssert.Contains(multipleValidResults.Keys, 0);
-            CollectionAssert.AreEqual(multipleValidResults[0], middletonSuggestions.Names);
+            Assert.That(multipleValidResults.Keys, Has.Member(0));
+            Assert.That(middletonSuggestions.Names, Is.EqualTo(multipleValidResults[0]).AsCollection);
 
-            Assert.AreEqual(request.Locations[1], leicesterInformation.Name);
+            Assert.That(leicesterInformation.Name, Is.EqualTo(request.Locations[1]));
 
-            CollectionAssert.Contains(multipleValidResults.Keys, 2);
-            CollectionAssert.AreEqual(multipleValidResults[2], londonSuggestions.Names);
+            Assert.That(multipleValidResults.Keys, Has.Member(2));
+            Assert.That(londonSuggestions.Names, Is.EqualTo(multipleValidResults[2]).AsCollection);
         }
 
         [Test]
@@ -128,14 +128,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators
             var result = await _locationValidatorService.ValidateLocations(request, multipleValidResults);
 
             // Assert
-            CollectionAssert.Contains(result.Keys, 0);
-            Assert.AreEqual("Check the spelling of your location", result[0]);
+            Assert.That(result.Keys, Has.Member(0));
+            Assert.That(result[0], Is.EqualTo("Check the spelling of your location"));
 
-            CollectionAssert.Contains(result.Keys, 1);
-            Assert.AreEqual("Duplicates of the same location are not allowed", result[1]);
+            Assert.That(result.Keys, Has.Member(1));
+            Assert.That(result[1], Is.EqualTo("Duplicates of the same location are not allowed"));
 
-            CollectionAssert.Contains(result.Keys, 2);
-            Assert.AreEqual("Duplicates of the same location are not allowed", result[2]);
+            Assert.That(result.Keys, Has.Member(2));
+            Assert.That(result[2], Is.EqualTo("Duplicates of the same location are not allowed"));
         }
     }
 }

@@ -59,7 +59,7 @@ public class UserServiceTests
         var actualAccountIds = _userService.GetUserOwnerTransactorAccountIds();
 
         // Assert
-        CollectionAssert.AreEqual(expectedAccountIds, actualAccountIds);
+        Assert.That(actualAccountIds, Is.EqualTo(expectedAccountIds).AsCollection);
     }
 
     [Test]
@@ -74,7 +74,7 @@ public class UserServiceTests
         var actualAccountIds = _userService.GetUserOwnerTransactorAccountIds();
 
         // Assert
-        Assert.IsNull(actualAccountIds);
+        Assert.That(actualAccountIds, Is.Null);
     }
 
     [Test]
@@ -89,6 +89,6 @@ public class UserServiceTests
         var actualAccountIds = _userService.GetUserOwnerTransactorAccountIds();
 
         // Assert
-        Assert.IsNull(actualAccountIds);
+        Assert.That(actualAccountIds, Is.Null);
     }
 }

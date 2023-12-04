@@ -14,13 +14,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
             [Test]
             public void IsComplete_Returns_True_When_Collection_Is_Not_NullOrEmpty()
             {
-                Assert.IsTrue(new List<string>() { "complete" }.IsComplete());
+                Assert.That(new List<string>() { "complete" }.IsComplete(), Is.True);
             }
 
             [Test]
             public void IsComplete_Returns_False_When_Collection_Is_Empty()
             {
-                Assert.IsFalse(new List<string>().IsComplete());
+                Assert.That(new List<string>().IsComplete(), Is.False);
             }
         }
     }

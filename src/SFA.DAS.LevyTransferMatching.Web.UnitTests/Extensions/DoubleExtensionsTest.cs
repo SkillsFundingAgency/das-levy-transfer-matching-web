@@ -11,19 +11,19 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
         [Test]
         public void ToNearest_Accuratley_Rounds_Up_OnMidPoint()
         {
-            Assert.AreEqual(4700, 4_650d.ToNearest(100));
+            Assert.That(4_650d.ToNearest(100), Is.EqualTo(4700));
         }
 
         [Test]
         public void ToNearest_Accuratley_Rounds_Down()
         {
-            Assert.AreEqual(4600, 4_649d.ToNearest(100));
+            Assert.That(4_649d.ToNearest(100), Is.EqualTo(4600));
         }
 
         [Test]
         public void ToNearest_Accuratley_Rounds_Up()
         {
-            Assert.AreEqual(4700, 4_651d.ToNearest(100));
+            Assert.That(4_651d.ToNearest(100), Is.EqualTo(4700));
         }
     }
 }

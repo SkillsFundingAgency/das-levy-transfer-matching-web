@@ -43,7 +43,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Authorisation
                 .ReturnsAsync(false);
             
             await _handler.HandleAsync(_context);
-            Assert.IsFalse(_context.HasSucceeded);
+            Assert.That(_context.HasSucceeded, Is.False);
         }
 
         [Test]
@@ -54,7 +54,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Authorisation
                 .ReturnsAsync(true);
             
             await _handler.HandleAsync(_context);
-            Assert.IsTrue(_context.HasSucceeded);
+            Assert.That(_context.HasSucceeded, Is.True);
         }
     }
 }

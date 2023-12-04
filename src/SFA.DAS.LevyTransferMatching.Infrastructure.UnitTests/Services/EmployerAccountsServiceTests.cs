@@ -38,7 +38,7 @@ public class EmployerAccountsServiceTests
     {
         var roles = new HashSet<UserRole> {UserRole.Owner};
         var result = await _employerAccountsApiClient.IsUserInRole(_userRef, 123, roles, CancellationToken.None);
-        Assert.IsTrue(result);
+        Assert.That(result, Is.True);
     }
 
 #pragma warning disable S3881 // "IDisposable" should be implemented correctly

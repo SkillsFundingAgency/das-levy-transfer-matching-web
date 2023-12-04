@@ -114,21 +114,21 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         public async Task GetPledgesViewModel_EncodedId_Is_Correct()
         {
             var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest { EncodedAccountId = _encodedAccountId, AccountId = _accountId });
-            Assert.AreEqual(_encodedAccountId, result.EncodedAccountId);
+            Assert.That(result.EncodedAccountId, Is.EqualTo(_encodedAccountId));
         }
 
         [Test]
         public async Task GetPledgesViewModel_RenderCreatePledgeButton_Is_True_When_Authorized()
         {
             var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest { EncodedAccountId = _encodedAccountId, AccountId = _accountId });
-            Assert.IsTrue(result.RenderCreatePledgeButton);
+            Assert.That(result.RenderCreatePledgeButton, Is.True);
         }
 
         [Test]
         public async Task GetPledgesViewModel_Pledges_Is_Populated()
         {
             var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest { EncodedAccountId = _encodedAccountId, AccountId = _accountId });
-            Assert.NotNull(result.Pledges);
+            Assert.That(result.Pledges, Is.Not.Null);
         }
 
 
@@ -153,12 +153,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             var result = await _orchestrator.GetApplications(new ApplicationsRequest() { EncodedAccountId = _encodedAccountId, EncodedPledgeId = _encodedPledgeId });
 
-            Assert.AreEqual(_encodedAccountId, result.EncodedAccountId);
-            Assert.AreEqual(_encodedPledgeId, result.EncodedPledgeId);
+            Assert.That(result.EncodedAccountId, Is.EqualTo(_encodedAccountId));
+            Assert.That(result.EncodedPledgeId, Is.EqualTo(_encodedPledgeId));
             result.Applications.ToList().ForEach(application =>
             {
-                Assert.AreEqual("123", application.EncodedApplicationId);
-                Assert.AreEqual(ApplicationStatus.Pending, application.Status);
+                Assert.That(application.EncodedApplicationId, Is.EqualTo("123"));
+                Assert.That(application.Status, Is.EqualTo(ApplicationStatus.Pending));
             });
         }
 
@@ -181,7 +181,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _encodingService.Setup(x => x.Encode(0, EncodingType.PledgeApplicationId)).Returns("123");
 
             var result = await _orchestrator.GetApplications(new ApplicationsRequest() { EncodedAccountId = _encodedAccountId, EncodedPledgeId = _encodedPledgeId });
-            Assert.AreEqual(expectedRenderButton, result.RenderRejectButton);
+            Assert.That(result.RenderRejectButton, Is.EqualTo(expectedRenderButton));
         }
 
         [TestCase(ApplicationStatus.Withdrawn)]
@@ -204,7 +204,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
             _encodingService.Setup(x => x.Encode(0, EncodingType.PledgeApplicationId)).Returns("123");
 
             var result = await _orchestrator.GetApplications(new ApplicationsRequest() { EncodedAccountId = _encodedAccountId, EncodedPledgeId = _encodedPledgeId });
-            Assert.AreEqual(false, result.RenderRejectButton);
+            Assert.That(result.RenderRejectButton, Is.EqualTo(false));
         }
 
         [Test]
@@ -237,12 +237,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             var result = await _orchestrator.GetRejectApplicationsViewModel(request);
 
-            Assert.AreEqual(_encodedAccountId, result.EncodedAccountId);
-            Assert.AreEqual(_encodedPledgeId, result.EncodedPledgeId);
+            Assert.That(result.EncodedAccountId, Is.EqualTo(_encodedAccountId));
+            Assert.That(result.EncodedPledgeId, Is.EqualTo(_encodedPledgeId));
 
             result.DasAccountNames.ToList().ForEach(application =>
             {
-                Assert.AreEqual("Mega Corp", application);
+                Assert.That(application, Is.EqualTo("Mega Corp"));
             });
         }
 
@@ -268,7 +268,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
            
             var result = await _orchestrator.GetApplications(new ApplicationsRequest() { EncodedAccountId = _encodedAccountId, EncodedPledgeId = _encodedPledgeId });
 
-            Assert.AreEqual(expectWhetherUserCanClosePledges, result.UserCanClosePledge);
+            Assert.That(result.UserCanClosePledge, Is.EqualTo(expectWhetherUserCanClosePledges));
         }
 
         [Test]
@@ -283,9 +283,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0, EncodedAccountId = _encodedAccountId});
 
-            Assert.IsFalse(string.IsNullOrWhiteSpace(result.JobRole));
-            Assert.IsTrue(result.AllowApproval);
-            Assert.IsTrue(result.AllowRejection);
+            Assert.That(string.IsNullOrWhiteSpace(result.JobRole), Is.False);
+            Assert.That(result.AllowApproval, Is.True);
+            Assert.That(result.AllowRejection, Is.True);
         }
 
         [TestCase(100, 0, true)]
@@ -301,7 +301,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0, EncodedAccountId = _encodedAccountId });
 
-            Assert.AreEqual(expectAllowApproval, result.AllowApproval);
+            Assert.That(result.AllowApproval, Is.EqualTo(expectAllowApproval));
         }
 
 
@@ -319,7 +319,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
 
-            Assert.IsFalse(result.AllowApproval);
+            Assert.That(result.AllowApproval, Is.False);
         }
 
         [TestCase(ApplicationStatus.Approved)]
@@ -336,7 +336,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
 
-            Assert.IsFalse(result.AllowRejection);
+            Assert.That(result.AllowRejection, Is.False);
         }
 
         [Test]
@@ -352,7 +352,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
 
-            Assert.IsFalse(result.AllowApproval);
+            Assert.That(result.AllowApproval, Is.False);
         }
 
         [Test]
@@ -368,7 +368,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
 
-            Assert.IsFalse(result.AllowRejection);
+            Assert.That(result.AllowRejection, Is.False);
         }
 
         [TestCase(true, "SelectedAction-2")]
@@ -383,7 +383,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0, EncodedAccountId = _encodedAccountId});
 
-            Assert.AreEqual(expectedRejectOptionElementId, result.RejectOptionElementId);
+            Assert.That(result.RejectOptionElementId, Is.EqualTo(expectedRejectOptionElementId));
         }
 
         [Test]
@@ -432,7 +432,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
 
-            Assert.AreEqual(expectedUrl, result.BusinessWebsite);
+            Assert.That(result.BusinessWebsite, Is.EqualTo(expectedUrl));
         }
 
         [Test]
@@ -453,10 +453,10 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             var viewModel = _orchestrator.GetAffordabilityViewModel(remainingAmount, numberOfApprentices, maxFunding, estimatedDurationMonths, startDate);
 
-            Assert.AreEqual(expectedRemainingFundsIfApproved, viewModel.RemainingFundsIfApproved);
-            Assert.AreEqual(expectedEstimatedCostOverDuration, viewModel.EstimatedCostOverDuration);
-            Assert.AreEqual(_dateTimeService.Object.UtcNow.ToTaxYearDescription(), viewModel.YearDescription);
-            Assert.IsTrue(viewModel.YearlyPayments.Count > 0);
+            Assert.That(viewModel.RemainingFundsIfApproved, Is.EqualTo(expectedRemainingFundsIfApproved));
+            Assert.That(viewModel.EstimatedCostOverDuration, Is.EqualTo(expectedEstimatedCostOverDuration));
+            Assert.That(viewModel.YearDescription, Is.EqualTo(_dateTimeService.Object.UtcNow.ToTaxYearDescription()));
+            Assert.That(viewModel.YearlyPayments.Count > 0, Is.True);
         }
 
         [Test]
@@ -488,12 +488,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             var viewModel = _orchestrator.GetAffordabilityViewModel(remainingAmount, numberOfApprentices, maxFunding, estimatedDurationMonths, startDate);
 
-            Assert.AreEqual(12, viewModel.YearlyPayments.Count);
+            Assert.That(viewModel.YearlyPayments.Count, Is.EqualTo(12));
 
             for (int i = 0; i < viewModel.YearlyPayments.Count; i++)
             {
-                Assert.AreEqual(expectedPayments[i].Year, viewModel.YearlyPayments[i].Year);
-                Assert.AreEqual(expectedPayments[i].Amount, viewModel.YearlyPayments[i].Amount);
+                Assert.That(viewModel.YearlyPayments[i].Year, Is.EqualTo(expectedPayments[i].Year));
+                Assert.That(viewModel.YearlyPayments[i].Amount, Is.EqualTo(expectedPayments[i].Amount));
             }
         }
 
@@ -501,21 +501,21 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
         public async Task GetApplicationApprovedViewModel_EncodedAccountId_Is_Correct()
         {
             var result = await _orchestrator.GetApplicationApprovedViewModel(new ApplicationApprovedRequest { EncodedAccountId = _encodedAccountId, EncodedPledgeId = _encodedPledgeId, EncodedApplicationId = _encodedApplicationId, AccountId = _accountId, PledgeId = _pledgeId, ApplicationId = _applicationId });
-            Assert.AreEqual(_encodedAccountId, result.EncodedAccountId);
+            Assert.That(result.EncodedAccountId, Is.EqualTo(_encodedAccountId));
         }
 
         [Test]
         public async Task GetApplicationApprovedViewModel_EncodedPledgeId_Has_Value()
         {
             var result = await _orchestrator.GetApplicationApprovedViewModel(new ApplicationApprovedRequest { EncodedAccountId = _encodedAccountId, EncodedPledgeId = _encodedPledgeId, EncodedApplicationId = _encodedApplicationId, AccountId = _accountId, PledgeId = _pledgeId, ApplicationId = _applicationId });
-            Assert.AreEqual(_encodedPledgeId, result.EncodedPledgeId);
+            Assert.That(result.EncodedPledgeId, Is.EqualTo(_encodedPledgeId));
         }
 
         [Test]
         public async Task GetApplicationApprovedViewModel_DasAccountName_Has_Value()
         {
             var result = await _orchestrator.GetApplicationApprovedViewModel(new ApplicationApprovedRequest { EncodedAccountId = _encodedAccountId, EncodedPledgeId = _encodedAccountId, EncodedApplicationId = _encodedApplicationId, AccountId = _accountId, PledgeId = _pledgeId, ApplicationId = _applicationId });
-            Assert.AreEqual(_applicationApprovedResponse.EmployerAccountName, result.DasAccountName);
+            Assert.That(result.DasAccountName, Is.EqualTo(_applicationApprovedResponse.EmployerAccountName));
         }
 
         [Test]
@@ -550,7 +550,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
 
             var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
 
-            Assert.AreEqual(result.PercentageMatchCssClass, expectedResult);
+            Assert.That(expectedResult, Is.EqualTo(result.PercentageMatchCssClass));
         }
     }
 }
