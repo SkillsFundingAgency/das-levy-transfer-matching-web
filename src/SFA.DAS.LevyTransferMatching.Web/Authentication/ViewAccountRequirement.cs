@@ -1,8 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿namespace SFA.DAS.LevyTransferMatching.Web.Authentication;
 
-namespace SFA.DAS.LevyTransferMatching.Web.Authentication
+public class ViewAccountRequirement : IAuthorizationRequirement
 {
-    public class ViewAccountRequirement : IAuthorizationRequirement
-    {
-    }
 }
