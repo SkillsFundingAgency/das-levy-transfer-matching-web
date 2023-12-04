@@ -57,24 +57,28 @@ public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
         _encodingService.Setup(x => x.Encode(It.IsAny<long>(), EncodingType.PledgeId)).Returns(encodedId);
 
         var viewModel = await _orchestrator.GetIndexViewModel(_indexRequest);
-
-        for (int i = 0; i < _getIndexResponse.Opportunities.Count; i++)
+        
+        Assert.Multiple(() =>
         {
-            Assert.That(viewModel.Opportunities[i].EmployerName, Is.EqualTo(_getIndexResponse.Opportunities[i].IsNamePublic ? _getIndexResponse.Opportunities[i].DasAccountName : "Opportunity"));
-        }
-        Assert.That(viewModel.Opportunities.Select(x => x.Amount), Is.EqualTo(_getIndexResponse.Opportunities.Select(x => x.Amount)).AsCollection);
-        Assert.That(viewModel.Opportunities[0].ReferenceNumber, Is.EqualTo(encodedId));
-        Assert.That(viewModel.Opportunities.Select(x => x.Locations), Is.EqualTo(_getIndexResponse.Opportunities.Select(x => x.Locations.ToLocationsList())).AsCollection);
-        Assert.That(viewModel.Opportunities.Select(x => x.Sectors), Is.EqualTo(_getIndexResponse.Opportunities.Select(x => x.Sectors.ToReferenceDataDescriptionList(_getIndexResponse.Sectors))).AsCollection);
-        Assert.That(viewModel.Opportunities.Select(x => x.JobRoles), Is.EqualTo(_getIndexResponse.Opportunities.Select(x => x.JobRoles.ToReferenceDataDescriptionList(_getIndexResponse.JobRoles))).AsCollection);
-        Assert.That(viewModel.Opportunities.Select(x => x.Levels), Is.EqualTo(_getIndexResponse.Opportunities.Select(x => x.Levels.ToReferenceDataDescriptionList(_getIndexResponse.Levels, descriptionSource: y => y.ShortDescription))).AsCollection);
+            for (var i = 0; i < _getIndexResponse.Opportunities.Count; i++)
+            {
+                Assert.That(viewModel.Opportunities[i].EmployerName, Is.EqualTo(_getIndexResponse.Opportunities[i].IsNamePublic ? _getIndexResponse.Opportunities[i].DasAccountName : "Opportunity"));
+            }
+            
+            Assert.That(viewModel.Opportunities.Select(x => x.Amount), Is.EqualTo(_getIndexResponse.Opportunities.Select(x => x.Amount)).AsCollection);
+            Assert.That(viewModel.Opportunities[0].ReferenceNumber, Is.EqualTo(encodedId));
+            Assert.That(viewModel.Opportunities.Select(x => x.Locations), Is.EqualTo(_getIndexResponse.Opportunities.Select(x => x.Locations.ToLocationsList())).AsCollection);
+            Assert.That(viewModel.Opportunities.Select(x => x.Sectors), Is.EqualTo(_getIndexResponse.Opportunities.Select(x => x.Sectors.ToReferenceDataDescriptionList(_getIndexResponse.Sectors))).AsCollection);
+            Assert.That(viewModel.Opportunities.Select(x => x.JobRoles), Is.EqualTo(_getIndexResponse.Opportunities.Select(x => x.JobRoles.ToReferenceDataDescriptionList(_getIndexResponse.JobRoles))).AsCollection);
+            Assert.That(viewModel.Opportunities.Select(x => x.Levels), Is.EqualTo(_getIndexResponse.Opportunities.Select(x => x.Levels.ToReferenceDataDescriptionList(_getIndexResponse.Levels, descriptionSource: y => y.ShortDescription))).AsCollection);
+        });
     }
 
     [Test]
     public async Task GetDetailViewModel_Opportunity_Not_Found_Returns_Null()
     {
         // Arrange
-        int id = _fixture.Create<int>();
+        var id = _fixture.Create<int>();
 
         _opportunitiesService
             .Setup(x => x.GetDetail(It.Is<int>(y => y == id)))
@@ -91,10 +95,10 @@ public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
     public async Task GetDetailViewModel_Opportunity_Found_Model_Populated()
     {
         // Arrange
-        string encodedId = _fixture.Create<string>();
-        int id = _fixture.Create<int>();
+        var encodedId = _fixture.Create<string>();
+        var id = _fixture.Create<int>();
 
-        this.SetupGetOpportunityViewModelServices();
+        SetupGetOpportunityViewModelServices();
 
         var sectors = SectorReferenceDataItems.Take(4);
         var jobRoles = JobRoleReferenceDataItems.Take(5);
@@ -123,9 +127,12 @@ public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
         // Act
         var result = await _orchestrator.GetDetailViewModel(id);
 
-        // Assert
-        Assert.That(result.OpportunitySummaryView, Is.Not.Null);
-        Assert.That(result.EncodedPledgeId, Is.EqualTo(encodedId));
+        Assert.Multiple(() =>
+        {
+            // Assert
+            Assert.That(result.OpportunitySummaryView, Is.Not.Null);
+            Assert.That(result.EncodedPledgeId, Is.EqualTo(encodedId));
+        });
     }
 
     [Test]
@@ -163,23 +170,26 @@ public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
         // Act
         var viewModel = await _orchestrator.GetSelectAccountViewModel(selectAccountRequest);
 
-        // Assert
-        Assert.That(viewModel.Accounts.Count(), Is.EqualTo(2));
-        Assert.That(viewModel.EncodedOpportunityId, Is.EqualTo(selectAccountRequest.EncodedOpportunityId));
+        Assert.Multiple(() =>
+        {
+            // Assert
+            Assert.That(viewModel.Accounts.Count(), Is.EqualTo(2));
+            Assert.That(viewModel.EncodedOpportunityId, Is.EqualTo(selectAccountRequest.EncodedOpportunityId));
+        });
     }
 
     [Test]
     public async Task GetContactDetailsViewModel_No_Opportunity_Found_Returns_Null()
     {
         // Arrange
-        ContactDetailsRequest contactDetailsRequest = _fixture.Create<ContactDetailsRequest>();
+        var contactDetailsRequest = _fixture.Create<ContactDetailsRequest>();
 
         _opportunitiesService
             .Setup(x => x.GetContactDetails(It.Is<long>(y => y == contactDetailsRequest.AccountId), It.Is<int>(y => y == contactDetailsRequest.PledgeId)))
             .ReturnsAsync((GetContactDetailsResponse)null);
 
         // Act
-        ContactDetailsViewModel contactDetailsViewModel = await _orchestrator.GetContactDetailsViewModel(contactDetailsRequest);
+        var contactDetailsViewModel = await _orchestrator.GetContactDetailsViewModel(contactDetailsRequest);
 
         // Assert
         Assert.That(contactDetailsViewModel, Is.Null);
@@ -189,22 +199,22 @@ public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
     public async Task GetContactDetailsViewModel_Not_In_Cache_AdditionalEmailAddresses_Populated_Correctly()
     {
         // Arrange
-        ContactDetailsRequest contactDetailsRequest = _fixture.Create<ContactDetailsRequest>();
+        var contactDetailsRequest = _fixture.Create<ContactDetailsRequest>();
 
-        GetContactDetailsResponse getContactDetailsResult = _fixture.Create<GetContactDetailsResponse>();
+        var getContactDetailsResult = _fixture.Create<GetContactDetailsResponse>();
 
         _opportunitiesService
             .Setup(x => x.GetContactDetails(It.Is<long>(y => y == contactDetailsRequest.AccountId), It.Is<int>(y => y == contactDetailsRequest.PledgeId)))
             .ReturnsAsync(getContactDetailsResult);
 
-        string[] expectedAdditionalEmailAddresses = new string[] { null, null, null, null, };
+        var expectedAdditionalEmailAddresses = new string[] { null, null, null, null, };
 
         _cacheStorageService
             .Setup(x => x.RetrieveFromCache<CreateApplicationCacheItem>(It.Is<string>(y => y == contactDetailsRequest.CacheKey.ToString())))
             .ReturnsAsync((CreateApplicationCacheItem)null);
 
         // Act
-        ContactDetailsViewModel contactDetailsViewModel = await _orchestrator.GetContactDetailsViewModel(contactDetailsRequest);
+        var contactDetailsViewModel = await _orchestrator.GetContactDetailsViewModel(contactDetailsRequest);
 
         // Assert
         Assert.That(contactDetailsViewModel.AdditionalEmailAddresses, Is.EqualTo(expectedAdditionalEmailAddresses).AsCollection);
@@ -214,15 +224,15 @@ public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
     public async Task GetContactDetailsViewModel_Already_In_Cache_Result_Populated_Correctly()
     {
         // Arrange
-        ContactDetailsRequest contactDetailsRequest = _fixture.Create<ContactDetailsRequest>();
+        var contactDetailsRequest = _fixture.Create<ContactDetailsRequest>();
 
-        GetContactDetailsResponse getContactDetailsResult = _fixture.Create<GetContactDetailsResponse>();
+        var getContactDetailsResult = _fixture.Create<GetContactDetailsResponse>();
 
         _opportunitiesService
             .Setup(x => x.GetContactDetails(It.Is<long>(y => y == contactDetailsRequest.AccountId), It.Is<int>(y => y == contactDetailsRequest.PledgeId)))
             .ReturnsAsync(getContactDetailsResult);
 
-        CreateApplicationCacheItem createApplicationCacheItem = _fixture.Create<CreateApplicationCacheItem>();
+        var createApplicationCacheItem = _fixture.Create<CreateApplicationCacheItem>();
 
         _cacheStorageService
             .Setup(x => x.RetrieveFromCache<CreateApplicationCacheItem>(It.Is<string>(y => y == contactDetailsRequest.CacheKey.ToString())))
@@ -232,11 +242,14 @@ public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
         var expectedAdditionalEmailAddresses = createApplicationCacheItem.EmailAddresses.Skip(1).Concat(new string[] { null, null });
 
         // Act
-        ContactDetailsViewModel contactDetailsViewModel = await _orchestrator.GetContactDetailsViewModel(contactDetailsRequest);
+        var contactDetailsViewModel = await _orchestrator.GetContactDetailsViewModel(contactDetailsRequest);
 
-        // Assert
-        Assert.That(contactDetailsViewModel.EmailAddress, Is.EqualTo(expectedEmailAddress));
-        Assert.That(contactDetailsViewModel.AdditionalEmailAddresses, Is.EqualTo(expectedAdditionalEmailAddresses).AsCollection);
+        Assert.Multiple(() =>
+        {
+            // Assert
+            Assert.That(contactDetailsViewModel.EmailAddress, Is.EqualTo(expectedEmailAddress));
+            Assert.That(contactDetailsViewModel.AdditionalEmailAddresses, Is.EqualTo(expectedAdditionalEmailAddresses).AsCollection);
+        });
     }
 
     [Test]
@@ -256,19 +269,22 @@ public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
         var request = new MoreDetailsRequest { EncodedAccountId = encodedAccountId, CacheKey = cacheKey, EncodedPledgeId = encodedPledgeId };
         var result = await _orchestrator.GetMoreDetailsViewModel(request);
 
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result.CacheKey, Is.EqualTo(cacheKey));
-        Assert.That(result.EncodedAccountId, Is.EqualTo(encodedAccountId));
-        Assert.That(result.EncodedPledgeId, Is.EqualTo(encodedPledgeId));
-        Assert.That(result.Details, Is.EqualTo(cacheItem.Details));
-        Assert.That(result.OpportunitySummaryViewModel, Is.Not.Null);
-        Assert.That(result.OpportunitySummaryViewModel.Amount, Is.EqualTo(getMoreDetailsResponse.Opportunity.Amount));
-        Assert.That(result.OpportunitySummaryViewModel.JobRoleList, Is.EqualTo(string.Join(", ", getMoreDetailsResponse.Opportunity.JobRoles.ToReferenceDataDescriptionList(getMoreDetailsResponse.JobRoles))));
-        Assert.That(result.OpportunitySummaryViewModel.LevelList, Is.EqualTo(string.Join(", ", getMoreDetailsResponse.Opportunity.Levels.ToReferenceDataDescriptionList(getMoreDetailsResponse.Levels, (x) => x.ShortDescription))));
-        Assert.That(result.OpportunitySummaryViewModel.SectorList, Is.EqualTo(string.Join(", ", getMoreDetailsResponse.Opportunity.Sectors.ToReferenceDataDescriptionList(getMoreDetailsResponse.Sectors))));
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.CacheKey, Is.EqualTo(cacheKey));
+            Assert.That(result.EncodedAccountId, Is.EqualTo(encodedAccountId));
+            Assert.That(result.EncodedPledgeId, Is.EqualTo(encodedPledgeId));
+            Assert.That(result.Details, Is.EqualTo(cacheItem.Details));
+            Assert.That(result.OpportunitySummaryViewModel, Is.Not.Null);
+            Assert.That(result.OpportunitySummaryViewModel.Amount, Is.EqualTo(getMoreDetailsResponse.Opportunity.Amount));
+            Assert.That(result.OpportunitySummaryViewModel.JobRoleList, Is.EqualTo(string.Join(", ", getMoreDetailsResponse.Opportunity.JobRoles.ToReferenceDataDescriptionList(getMoreDetailsResponse.JobRoles))));
+            Assert.That(result.OpportunitySummaryViewModel.LevelList, Is.EqualTo(string.Join(", ", getMoreDetailsResponse.Opportunity.Levels.ToReferenceDataDescriptionList(getMoreDetailsResponse.Levels, (x) => x.ShortDescription))));
+            Assert.That(result.OpportunitySummaryViewModel.SectorList, Is.EqualTo(string.Join(", ", getMoreDetailsResponse.Opportunity.Sectors.ToReferenceDataDescriptionList(getMoreDetailsResponse.Sectors))));
 
-        _cacheStorageService.Verify(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()), Times.Once);
-        _opportunitiesService.Verify(x => x.GetMoreDetails(request.AccountId, request.PledgeId), Times.Once);
+            _cacheStorageService.Verify(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()), Times.Once);
+            _opportunitiesService.Verify(x => x.GetMoreDetails(request.AccountId, request.PledgeId), Times.Once);
+        });
     }
 
     [Test]
@@ -287,28 +303,31 @@ public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
 
         var result = await _orchestrator.GetApplicationViewModel(new ApplicationDetailsRequest { EncodedAccountId = encodedAccountId, CacheKey = cacheKey, EncodedPledgeId = encodedPledgeId, PledgeId = 1, AccountId = 1  });
 
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result.SelectStandardViewModel, Is.Not.Null);
-        Assert.That(result.SelectStandardViewModel.Standards, Is.Not.Null);
-        Assert.That(result.CacheKey, Is.EqualTo(cacheKey));
-        Assert.That(result.EncodedAccountId, Is.EqualTo(encodedAccountId));
-        Assert.That(result.EncodedPledgeId, Is.EqualTo(encodedPledgeId));
-        Assert.That(result.JobRole, Is.EqualTo(cacheItem.JobRole));
-        Assert.That(result.NumberOfApprentices, Is.EqualTo(cacheItem.NumberOfApprentices));
-        Assert.That(result.MinYear, Is.EqualTo(DateTime.Now.Year));
-        Assert.That(result.MaxYear, Is.EqualTo(DateTime.Now.FinancialYearEnd().Year));
-        Assert.That(result.HasTrainingProvider, Is.EqualTo(cacheItem.HasTrainingProvider));
-        Assert.That(result.OpportunitySummaryViewModel, Is.Not.Null);
-        Assert.That(result.OpportunitySummaryViewModel.Amount, Is.EqualTo(applicationDetailsResponse.Opportunity.RemainingAmount));
-        Assert.That(applicationDetailsResponse.Opportunity.Sectors.ToReferenceDataDescriptionList(applicationDetailsResponse.Sectors), Is.EqualTo(result.OpportunitySummaryViewModel.SectorList));
-        Assert.That(applicationDetailsResponse.Opportunity.JobRoles.ToReferenceDataDescriptionList(applicationDetailsResponse.JobRoles), Is.EqualTo(result.OpportunitySummaryViewModel.JobRoleList));
-        Assert.That(applicationDetailsResponse.Opportunity.Levels.ToReferenceDataDescriptionList(applicationDetailsResponse.Levels, x => x.ShortDescription), Is.EqualTo(result.OpportunitySummaryViewModel.LevelList));
-        Assert.That(result.Month, Is.EqualTo(cacheItem.StartDate.Value.Month));
-        Assert.That(result.Year, Is.EqualTo(cacheItem.StartDate.Value.Year));
-        Assert.That(result.SelectStandardViewModel.Standards.Count(), Is.EqualTo(applicationDetailsResponse.Standards.Count()));
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.SelectStandardViewModel, Is.Not.Null);
+            Assert.That(result.SelectStandardViewModel.Standards, Is.Not.Null);
+            Assert.That(result.CacheKey, Is.EqualTo(cacheKey));
+            Assert.That(result.EncodedAccountId, Is.EqualTo(encodedAccountId));
+            Assert.That(result.EncodedPledgeId, Is.EqualTo(encodedPledgeId));
+            Assert.That(result.JobRole, Is.EqualTo(cacheItem.JobRole));
+            Assert.That(result.NumberOfApprentices, Is.EqualTo(cacheItem.NumberOfApprentices));
+            Assert.That(result.MinYear, Is.EqualTo(DateTime.Now.Year));
+            Assert.That(result.MaxYear, Is.EqualTo(DateTime.Now.FinancialYearEnd().Year));
+            Assert.That(result.HasTrainingProvider, Is.EqualTo(cacheItem.HasTrainingProvider));
+            Assert.That(result.OpportunitySummaryViewModel, Is.Not.Null);
+            Assert.That(result.OpportunitySummaryViewModel.Amount, Is.EqualTo(applicationDetailsResponse.Opportunity.RemainingAmount));
+            Assert.That(applicationDetailsResponse.Opportunity.Sectors.ToReferenceDataDescriptionList(applicationDetailsResponse.Sectors), Is.EqualTo(result.OpportunitySummaryViewModel.SectorList));
+            Assert.That(applicationDetailsResponse.Opportunity.JobRoles.ToReferenceDataDescriptionList(applicationDetailsResponse.JobRoles), Is.EqualTo(result.OpportunitySummaryViewModel.JobRoleList));
+            Assert.That(applicationDetailsResponse.Opportunity.Levels.ToReferenceDataDescriptionList(applicationDetailsResponse.Levels, x => x.ShortDescription), Is.EqualTo(result.OpportunitySummaryViewModel.LevelList));
+            Assert.That(result.Month, Is.EqualTo(cacheItem.StartDate.Value.Month));
+            Assert.That(result.Year, Is.EqualTo(cacheItem.StartDate.Value.Year));
+            Assert.That(result.SelectStandardViewModel.Standards.Count(), Is.EqualTo(applicationDetailsResponse.Standards.Count()));
 
-        _cacheStorageService.Verify(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()), Times.Once);
-        _opportunitiesService.Verify(x => x.GetApplicationDetails(1, 1, default), Times.Once);
+            _cacheStorageService.Verify(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()), Times.Once);
+            _opportunitiesService.Verify(x => x.GetApplicationDetails(1, 1, default), Times.Once);
+        });
     }
 
     [Test]
@@ -366,10 +385,13 @@ public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
         var result =
             await _orchestrator.GetConfirmationViewModel(new ConfirmationRequest {PledgeId = opportunityId, AccountId = accountId, EncodedAccountId = encodedAccountId});
 
-        Assert.That(result.AccountName, Is.EqualTo(response.AccountName));
-        Assert.That(result.IsNamePublic, Is.EqualTo(response.IsNamePublic));
-        Assert.That(result.Reference, Is.EqualTo(reference));
-        Assert.That(result.EncodedAccountId, Is.EqualTo(encodedAccountId));
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.AccountName, Is.EqualTo(response.AccountName));
+            Assert.That(result.IsNamePublic, Is.EqualTo(response.IsNamePublic));
+            Assert.That(result.Reference, Is.EqualTo(reference));
+            Assert.That(result.EncodedAccountId, Is.EqualTo(encodedAccountId));
+        });
     }
 
     [Test]

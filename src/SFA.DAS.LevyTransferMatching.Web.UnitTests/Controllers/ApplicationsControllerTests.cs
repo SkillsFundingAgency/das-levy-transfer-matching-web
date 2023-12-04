@@ -52,11 +52,14 @@ public class ApplicationsControllerTests
         var model = viewResult.Model;
         var applicationViewModel = model as ApplicationViewModel;
 
-        // Assert
-        Assert.That(actionResult, Is.Not.Null);
-        Assert.That(viewResult, Is.Not.Null);
-        Assert.That(model, Is.Not.Null);
-        Assert.That(applicationViewModel, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            // Assert
+            Assert.That(actionResult, Is.Not.Null);
+            Assert.That(viewResult, Is.Not.Null);
+            Assert.That(model, Is.Not.Null);
+            Assert.That(applicationViewModel, Is.Not.Null);
+        });
     }
 
     [Test]
@@ -72,9 +75,12 @@ public class ApplicationsControllerTests
         var actionResult = await _controller.Application(request);
         var notFoundResult = actionResult as NotFoundResult;
 
-        // Assert
-        Assert.That(actionResult, Is.Not.Null);
-        Assert.That(notFoundResult, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            // Assert
+            Assert.That(actionResult, Is.Not.Null);
+            Assert.That(notFoundResult, Is.Not.Null);
+        });
     }
 
     [Test]
@@ -92,11 +98,14 @@ public class ApplicationsControllerTests
         var model = viewResult.Model;
         var acceptedViewModel = model as AcceptedViewModel;
 
-        // Assert
-        Assert.That(actionResult, Is.Not.Null);
-        Assert.That(viewResult, Is.Not.Null);
-        Assert.That(model, Is.Not.Null);
-        Assert.That(acceptedViewModel, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            // Assert
+            Assert.That(actionResult, Is.Not.Null);
+            Assert.That(viewResult, Is.Not.Null);
+            Assert.That(model, Is.Not.Null);
+            Assert.That(acceptedViewModel, Is.Not.Null);
+        });
     }
 
     [Test]
@@ -112,9 +121,12 @@ public class ApplicationsControllerTests
         var actionResult = await _controller.Accepted(request);
         var notFoundResult = actionResult as NotFoundResult;
 
-        // Assert
-        Assert.That(actionResult, Is.Not.Null);
-        Assert.That(notFoundResult, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            // Assert
+            Assert.That(actionResult, Is.Not.Null);
+            Assert.That(notFoundResult, Is.Not.Null);
+        });
     }
 
     [Test]
@@ -130,12 +142,15 @@ public class ApplicationsControllerTests
         var actionResult = await _controller.Application(request);
         var redirectResult = actionResult as RedirectResult;
 
-        // Assert
-        Assert.That(actionResult, Is.Not.Null);
-        Assert.That(redirectResult, Is.Not.Null);
-        Assert.That(
-            redirectResult.Url,
-            Is.EqualTo($"/accounts/{request.EncodedAccountId}/applications/{request.EncodedApplicationId}/accepted"));
+        Assert.Multiple(() =>
+        {
+            // Assert
+            Assert.That(actionResult, Is.Not.Null);
+            Assert.That(redirectResult, Is.Not.Null);
+            Assert.That(
+                redirectResult.Url,
+                Is.EqualTo($"/accounts/{request.EncodedAccountId}/applications/{request.EncodedApplicationId}/accepted"));
+        });
     }
 
     [Test]
@@ -291,9 +306,9 @@ public class ApplicationsControllerTests
         var actionResult = await _controller.ConfirmWithdrawal(request) as RedirectToActionResult;
 
         // Assert
-        Assert.That(actionResult, Is.Not.Null);
         Assert.Multiple(() =>
         {
+            Assert.That(actionResult, Is.Not.Null);
             Assert.That(actionResult.ActionName, Is.EqualTo("Withdrawn"));
             Assert.That(actionResult.RouteValues["encodedAccountId"], Is.EqualTo(request.EncodedAccountId));
             Assert.That(actionResult.RouteValues["encodedApplicationId"], Is.EqualTo(request.EncodedApplicationId));
@@ -312,9 +327,9 @@ public class ApplicationsControllerTests
         var actionResult = await _controller.ConfirmWithdrawal(request) as RedirectToActionResult;
 
         // Assert
-        Assert.That(actionResult, Is.Not.Null);
         Assert.Multiple(() =>
         {
+            Assert.That(actionResult, Is.Not.Null);
             Assert.That(actionResult.ActionName, Is.EqualTo("Applications"));
             Assert.That(actionResult.RouteValues["encodedAccountId"], Is.EqualTo(request.EncodedAccountId));
         });

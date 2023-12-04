@@ -34,7 +34,7 @@ public class OpportunitiesOrchestratorBaseTests
         // Arrange
         var encodedPledgeId = _fixture.Create<string>();
 
-        this.SetupGetOpportunityViewModelServices();
+        SetupGetOpportunityViewModelServices();
 
         var sectors = SectorReferenceDataItems.Take(1);
         var jobRoles = JobRoleReferenceDataItems.Take(1);
@@ -126,7 +126,7 @@ public class OpportunitiesOrchestratorBaseTests
             Assert.That(result.JobRoleList, Is.EqualTo("All"));
             Assert.That(result.LevelList, Is.EqualTo("All"));
             Assert.That(result.SectorList, Is.EqualTo("All"));
-            Assert.That(result.Description.Contains(encodedPledgeId), Is.False);
+            Assert.That(result.Description, Does.Not.Contain(encodedPledgeId));
         });
     }
 
@@ -187,7 +187,7 @@ public class OpportunitiesOrchestratorBaseTests
             Assert.That(string.Join("; ", sectorDescriptions), Is.EqualTo(result.SectorList));
 
 
-            Assert.That(result.Description.Contains(encodedPledgeId), Is.True);
+            Assert.That(result.Description, Does.Contain(encodedPledgeId));
         });
     }
 

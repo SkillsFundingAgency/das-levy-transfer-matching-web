@@ -20,7 +20,7 @@ public static class StringExtensions
         var referenceDataItemsArray = allReferenceDataItems as ReferenceDataItem[] ?? allReferenceDataItems.ToArray();
         var referenceDataItemIdsArray = selectedReferenceDataItemIds as string[] ?? selectedReferenceDataItemIds.ToArray();
         
-        if (referenceDataItemsArray.Length == referenceDataItemIdsArray.Count() || referenceDataItemIdsArray.Length <= 0)
+        if (referenceDataItemsArray.Length == referenceDataItemIdsArray.Length || referenceDataItemIdsArray.Length <= 0)
         {
             descriptions = All;
         }
