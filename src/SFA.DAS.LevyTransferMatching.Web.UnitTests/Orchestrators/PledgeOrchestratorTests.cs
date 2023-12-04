@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using SFA.DAS.Encoding;
+﻿using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
@@ -36,7 +35,6 @@ public class PledgeOrchestratorTests
     private GetPledgesResponse _pledgesResponse;
     private GetApplicationApprovedResponse _applicationApprovedResponse;
     private string _encodedAccountId;
-    private Guid _cacheKey;
     private readonly long _accountId = 1;
     private readonly int _pledgeId = 1;
     private string _encodedPledgeId;
@@ -50,7 +48,6 @@ public class PledgeOrchestratorTests
     {
         _fixture = new Fixture();
         _encodedAccountId = _fixture.Create<string>();
-        _cacheKey = Guid.NewGuid();
         _pledgeService = new Mock<IPledgeService>();
         _encodingService = new Mock<IEncodingService>();
         _userService = new Mock<IUserService>();
@@ -126,11 +123,11 @@ public class PledgeOrchestratorTests
     [Test]
     public async Task GetApplications_Returns_Valid_ViewModel()
     {
-        var response = new GetApplicationsResponse()
+        var response = new GetApplicationsResponse
         {
-            Applications = new List<GetApplicationsResponse.Application>()
+            Applications = new List<GetApplicationsResponse.Application>
             {
-                new GetApplicationsResponse.Application()
+                new()
                 {
                     Id = 0,
                     StartDate = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1),
@@ -142,7 +139,7 @@ public class PledgeOrchestratorTests
         _pledgeService.Setup(x => x.GetApplications(0, 0, null, null)).ReturnsAsync(response);
         _encodingService.Setup(x => x.Encode(0, EncodingType.PledgeApplicationId)).Returns("123");
 
-        var result = await _orchestrator.GetApplications(new ApplicationsRequest() { EncodedAccountId = _encodedAccountId, EncodedPledgeId = _encodedPledgeId });
+        var result = await _orchestrator.GetApplications(new ApplicationsRequest { EncodedAccountId = _encodedAccountId, EncodedPledgeId = _encodedPledgeId });
 
         Assert.That(result.EncodedAccountId, Is.EqualTo(_encodedAccountId));
         Assert.That(result.EncodedPledgeId, Is.EqualTo(_encodedPledgeId));
@@ -158,10 +155,10 @@ public class PledgeOrchestratorTests
     [TestCase(2, true)]
     public async Task GetApplications_With_Pending_Status_Will_Renders_Reject_Button(int numberOfPendingApplications, bool expectedRenderButton)
     {
-        var response = new GetApplicationsResponse()
+        var response = new GetApplicationsResponse
         {
             Applications = Enumerable.Range(0, numberOfPendingApplications)
-                .Select(x => _fixture.Build<GetApplicationsResponse.Application>()
+                .Select(_ => _fixture.Build<GetApplicationsResponse.Application>()
                     .With(p => p.Id, 0)
                     .With(p => p.Status, ApplicationStatus.Pending)
                     .With(p => p.StartDate, new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1))
@@ -171,7 +168,7 @@ public class PledgeOrchestratorTests
         _pledgeService.Setup(x => x.GetApplications(0, 0, null, null)).ReturnsAsync(response);
         _encodingService.Setup(x => x.Encode(0, EncodingType.PledgeApplicationId)).Returns("123");
 
-        var result = await _orchestrator.GetApplications(new ApplicationsRequest() { EncodedAccountId = _encodedAccountId, EncodedPledgeId = _encodedPledgeId });
+        var result = await _orchestrator.GetApplications(new ApplicationsRequest { EncodedAccountId = _encodedAccountId, EncodedPledgeId = _encodedPledgeId });
         Assert.That(result.RenderRejectButton, Is.EqualTo(expectedRenderButton));
     }
 
@@ -181,10 +178,10 @@ public class PledgeOrchestratorTests
     [TestCase(ApplicationStatus.Declined)]
     public async Task GetApplications_Without_Pending_Status_Will_Not_Render_Reject_Button(ApplicationStatus status)
     {
-        var response = new GetApplicationsResponse()
+        var response = new GetApplicationsResponse
         {
             Applications = Enumerable.Range(0, 1)
-                .Select(x => _fixture.Build<GetApplicationsResponse.Application>()
+                .Select(_ => _fixture.Build<GetApplicationsResponse.Application>()
                     .With(p => p.Id, 0)
                     .With(p => p.Status, status)
                     .With(p => p.StartDate, new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1))
@@ -194,7 +191,7 @@ public class PledgeOrchestratorTests
         _pledgeService.Setup(x => x.GetApplications(0, 0, null, null)).ReturnsAsync(response);
         _encodingService.Setup(x => x.Encode(0, EncodingType.PledgeApplicationId)).Returns("123");
 
-        var result = await _orchestrator.GetApplications(new ApplicationsRequest() { EncodedAccountId = _encodedAccountId, EncodedPledgeId = _encodedPledgeId });
+        var result = await _orchestrator.GetApplications(new ApplicationsRequest { EncodedAccountId = _encodedAccountId, EncodedPledgeId = _encodedPledgeId });
         Assert.That(result.RenderRejectButton, Is.EqualTo(false));
     }
 
@@ -203,19 +200,19 @@ public class PledgeOrchestratorTests
     {
         var request = new RejectApplicationsRequest {
             EncodedAccountId = _encodedAccountId,
-            EncodedPledgeId = _encodedPledgeId
+            EncodedPledgeId = _encodedPledgeId,
+            ApplicationsToReject = new List<string> { "9RMK6Y"}
         };
-        request.ApplicationsToReject = new List<string> { "9RMK6Y"};
-            
+
         var response = _fixture.Create<GetRejectApplicationsResponse>();
-        response.Applications = new List<GetRejectApplicationsResponse.Application>()
+        response.Applications = new List<GetRejectApplicationsResponse.Application>
         {
-            new GetRejectApplicationsResponse.Application()
+            new()
             {
                 Id = 4,
                 DasAccountName = "Mega Corp"
             },
-            new GetRejectApplicationsResponse.Application()
+            new()
             {
                 Id = 5,
                 DasAccountName = "Mega Corp"
@@ -241,11 +238,11 @@ public class PledgeOrchestratorTests
     [TestCase(false, false)]
     public async Task GetApplications_Returns_Valid_ViewModel_With_UserCanClosePledge(bool ownerOrTransactorStatus, bool expectWhetherUserCanClosePledges)
     {
-        var response = new GetApplicationsResponse()
+        var response = new GetApplicationsResponse
         {
-            Applications = new List<GetApplicationsResponse.Application>()
+            Applications = new List<GetApplicationsResponse.Application>
             {
-                new GetApplicationsResponse.Application()
+                new()
                 {
                     Id = 0,
                     StartDate = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1),
@@ -257,7 +254,7 @@ public class PledgeOrchestratorTests
         _userService.Setup(x => x.IsOwnerOrTransactor(_encodedAccountId)).Returns(ownerOrTransactorStatus);
         _pledgeService.Setup(x => x.GetApplications(0, 0, null, null)).ReturnsAsync(response);
            
-        var result = await _orchestrator.GetApplications(new ApplicationsRequest() { EncodedAccountId = _encodedAccountId, EncodedPledgeId = _encodedPledgeId });
+        var result = await _orchestrator.GetApplications(new ApplicationsRequest { EncodedAccountId = _encodedAccountId, EncodedPledgeId = _encodedPledgeId });
 
         Assert.That(result.UserCanClosePledge, Is.EqualTo(expectWhetherUserCanClosePledges));
     }
@@ -272,7 +269,7 @@ public class PledgeOrchestratorTests
             
         _pledgeService.Setup(o => o.GetApplication(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
 
-        var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0, EncodedAccountId = _encodedAccountId});
+        var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest { AccountId = 0, PledgeId = 0, ApplicationId = 0, EncodedAccountId = _encodedAccountId});
 
         Assert.That(string.IsNullOrWhiteSpace(result.JobRole), Is.False);
         Assert.That(result.AllowApproval, Is.True);
@@ -290,7 +287,7 @@ public class PledgeOrchestratorTests
         response.Status = ApplicationStatus.Pending;
         _pledgeService.Setup(o => o.GetApplication(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
 
-        var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0, EncodedAccountId = _encodedAccountId });
+        var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest { AccountId = 0, PledgeId = 0, ApplicationId = 0, EncodedAccountId = _encodedAccountId });
 
         Assert.That(result.AllowApproval, Is.EqualTo(expectAllowApproval));
     }
@@ -308,7 +305,7 @@ public class PledgeOrchestratorTests
         response.Status = status;
         _pledgeService.Setup(o => o.GetApplication(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
 
-        var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
+        var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
 
         Assert.That(result.AllowApproval, Is.False);
     }
@@ -325,7 +322,7 @@ public class PledgeOrchestratorTests
         response.Status = status;
         _pledgeService.Setup(o => o.GetApplication(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
 
-        var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
+        var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
 
         Assert.That(result.AllowRejection, Is.False);
     }
@@ -341,7 +338,7 @@ public class PledgeOrchestratorTests
 
         _userService.Setup(x => x.IsOwnerOrTransactor(It.IsAny<string>())).Returns(false);
 
-        var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
+        var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
 
         Assert.That(result.AllowApproval, Is.False);
     }
@@ -357,7 +354,7 @@ public class PledgeOrchestratorTests
 
         _userService.Setup(x => x.IsOwnerOrTransactor(It.IsAny<string>())).Returns(false);
 
-        var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
+        var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
 
         Assert.That(result.AllowRejection, Is.False);
     }
@@ -372,7 +369,7 @@ public class PledgeOrchestratorTests
         response.Status = ApplicationStatus.Pending;
         _pledgeService.Setup(o => o.GetApplication(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
 
-        var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0, EncodedAccountId = _encodedAccountId});
+        var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest { AccountId = 0, PledgeId = 0, ApplicationId = 0, EncodedAccountId = _encodedAccountId});
 
         Assert.That(result.RejectOptionElementId, Is.EqualTo(expectedRejectOptionElementId));
     }
@@ -421,7 +418,7 @@ public class PledgeOrchestratorTests
         response.BusinessWebsite = url;
         _pledgeService.Setup(o => o.GetApplication(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
 
-        var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
+        var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
 
         Assert.That(result.BusinessWebsite, Is.EqualTo(expectedUrl));
     }
@@ -463,18 +460,18 @@ public class PledgeOrchestratorTests
 
         List<YearlyPayments> expectedPayments = new List<YearlyPayments>
         {
-            new YearlyPayments("first year", 3896),
-            new YearlyPayments("second year", 3896),
-            new YearlyPayments("third year", 3896),
-            new YearlyPayments("fourth year", 3896),
-            new YearlyPayments("fifth year", 3896),
-            new YearlyPayments("sixth year", 3896),
-            new YearlyPayments("seventh year", 3896),
-            new YearlyPayments("eighth year", 3896),
-            new YearlyPayments("ninth year", 3896),
-            new YearlyPayments("tenth year", 3896),
-            new YearlyPayments("eleventh year", 3896),
-            new YearlyPayments("final year", (3896 / 2) + (int)completionPayment)
+            new("first year", 3896),
+            new("second year", 3896),
+            new("third year", 3896),
+            new("fourth year", 3896),
+            new("fifth year", 3896),
+            new("sixth year", 3896),
+            new("seventh year", 3896),
+            new("eighth year", 3896),
+            new("ninth year", 3896),
+            new("tenth year", 3896),
+            new("eleventh year", 3896),
+            new("final year", (3896 / 2) + (int)completionPayment)
         };
 
         var viewModel = _orchestrator.GetAffordabilityViewModel(remainingAmount, numberOfApprentices, maxFunding, estimatedDurationMonths, startDate);
@@ -539,7 +536,7 @@ public class PledgeOrchestratorTests
         response.MatchPercentage = matchPercentage;
         _pledgeService.Setup(o => o.GetApplication(0, 0, 0, CancellationToken.None)).ReturnsAsync(response);
 
-        var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest() { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
+        var result = await _orchestrator.GetApplicationViewModel(new ApplicationRequest { AccountId = 0, PledgeId = 0, ApplicationId = 0 });
 
         Assert.That(expectedResult, Is.EqualTo(result.PercentageMatchCssClass));
     }

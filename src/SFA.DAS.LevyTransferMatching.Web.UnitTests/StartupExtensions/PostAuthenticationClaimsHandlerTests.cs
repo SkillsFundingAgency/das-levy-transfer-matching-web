@@ -19,8 +19,6 @@ public class PostAuthenticationClaimsHandlerTests
     private Mock<IAccountUserService> _accountUserService;
     private Infrastructure.Configuration.FeatureToggles _configuration;
     private string _legacyId;
-    private long _ownerAccountId;
-    private long _transactorAccountId;
     private GetUserAccountsResponse _responseSuspended;
 
     [SetUp]
@@ -38,8 +36,6 @@ public class PostAuthenticationClaimsHandlerTests
         _legacyId = fixture.Create<string>();
         _emailNotMatching = fixture.Create<string>();
         _emailSuspended = fixture.Create<string>();
-        _ownerAccountId = fixture.Create<long>();
-        _transactorAccountId = fixture.Create<long>();
 
         _configuration = new Infrastructure.Configuration.FeatureToggles
         {
@@ -78,7 +74,7 @@ public class PostAuthenticationClaimsHandlerTests
         var actual = (await _handler.GetClaims(tokenValidatedContext)).ToList();
 
         var actualClaimValue = actual.First(c => c.Type.Equals(ClaimIdentifierConfiguration.Account)).Value;
-        actual.FirstOrDefault(c => c.Type.Equals(ClaimTypes.AuthorizationDecision))?.Value?.Should().BeNullOrEmpty();
+        actual.FirstOrDefault(c => c.Type.Equals(ClaimTypes.AuthorizationDecision))?.Value.Should().BeNullOrEmpty();
         JsonConvert.SerializeObject(_response.EmployerAccounts.ToDictionary(k => k.AccountId)).Should().Be(actualClaimValue);
     }
 
@@ -101,13 +97,13 @@ public class PostAuthenticationClaimsHandlerTests
 
         actual.First(c=>c.Type.Equals(ClaimTypes.AuthorizationDecision)).Value.Should().Be("Suspended");
     }
-    private TokenValidatedContext ArrangeTokenValidatedContext(string nameIdentifier, string emailAddress, string legacyId)
+    private static TokenValidatedContext ArrangeTokenValidatedContext(string nameIdentifier, string emailAddress, string legacyId)
     {
         var identity = new ClaimsIdentity(new List<Claim>
         {
-            new Claim(ClaimIdentifierConfiguration.Id, legacyId),
-            new Claim(ClaimTypes.NameIdentifier, nameIdentifier),
-            new Claim(ClaimTypes.Email, emailAddress)
+            new(ClaimIdentifierConfiguration.Id, legacyId),
+            new(ClaimTypes.NameIdentifier, nameIdentifier),
+            new(ClaimTypes.Email, emailAddress)
         });
         
         var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(identity));

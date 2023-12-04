@@ -109,7 +109,7 @@ public class CreatePledgeOrchestratorTests
     public void GetIndexViewModel_CacheKey_Has_Value()
     {
         var result = _orchestrator.GetInformViewModel(_encodedAccountId);
-        Assert.AreNotEqual(Guid.Empty, result.CacheKey);
+        Assert.That(result.CacheKey, Is.Not.EqualTo(Guid.Empty));
     }
 
 

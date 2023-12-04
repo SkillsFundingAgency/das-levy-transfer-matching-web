@@ -33,14 +33,14 @@ public class BreadCrumbTagHelperTests
     [Test]
     public void Process_Renders_Expected_Elements()
     {
-        List<Tuple<string, string>> _tagHelperSource = new List<Tuple<string, string>>
+        var tagHelperSource = new List<Tuple<string, string>>
         {
-            new Tuple<string, string>( "http://localhost/one", "One" ),
-            new Tuple<string, string>( "http://localhost/two", "Two" ),
-            new Tuple<string, string>( "http://localhost/three", "Three" )
+            new( "http://localhost/one", "One" ),
+            new( "http://localhost/two", "Two" ),
+            new( "http://localhost/three", "Three" )
         };
-        var expectedOutput = $"<div class=\"govuk-breadcrumbs\"><ol class=\"govuk-breadcrumbs__list\"><li class=\"govuk-breadcrumbs__list-item\"><a class=\"govuk-breadcrumbs__link\" href=\"{_tagHelperSource[0].Item1}\">{_tagHelperSource[0].Item2}</a></li><li class=\"govuk-breadcrumbs__list-item\"><a class=\"govuk-breadcrumbs__link\" href=\"{_tagHelperSource[1].Item1}\">{_tagHelperSource[1].Item2}</a></li><li class=\"govuk-breadcrumbs__list-item\">{_tagHelperSource[2].Item2}</li></ol></div>";
-        _tagHelper.Source = _tagHelperSource;
+        var expectedOutput = $"<div class=\"govuk-breadcrumbs\"><ol class=\"govuk-breadcrumbs__list\"><li class=\"govuk-breadcrumbs__list-item\"><a class=\"govuk-breadcrumbs__link\" href=\"{tagHelperSource[0].Item1}\">{tagHelperSource[0].Item2}</a></li><li class=\"govuk-breadcrumbs__list-item\"><a class=\"govuk-breadcrumbs__link\" href=\"{tagHelperSource[1].Item1}\">{tagHelperSource[1].Item2}</a></li><li class=\"govuk-breadcrumbs__list-item\">{tagHelperSource[2].Item2}</li></ol></div>";
+        _tagHelper.Source = tagHelperSource;
 
         _tagHelper.Process(_tagHelperContext, _tagHelperOutput);
 

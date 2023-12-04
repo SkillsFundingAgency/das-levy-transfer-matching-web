@@ -5,7 +5,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Opportunities;
 public class ApplyViewModelTests
 {
     private const string IncompleteString = "-";
-    private readonly Fixture _fixture = new Fixture();
+    private readonly Fixture _fixture = new();
 
     [Test]
     public void ApplyViewModel_IsApprenticeshipTrainingSectionComplete_Returns_True_When_All_Fields_Entered()

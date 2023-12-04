@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using SFA.DAS.LevyTransferMatching.Web.Controllers;
+﻿using SFA.DAS.LevyTransferMatching.Web.Controllers;
 using SFA.DAS.LevyTransferMatching.Web.Models.Applications;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 

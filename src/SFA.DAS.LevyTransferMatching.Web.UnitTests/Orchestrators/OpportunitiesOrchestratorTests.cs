@@ -142,7 +142,7 @@ public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
         var accountIds = _fixture.CreateMany<string>(3).ToArray();
             
         // The list of accounts that the user has access to with
-        // Owner/Transactor privilages (a subset of the above)
+        // Owner/Transactor privileges (a subset of the above)
         var userAccessAccountIds = accountIds.Take(2).ToArray();
 
         _userService
@@ -428,12 +428,12 @@ public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
         _cacheStorageService.Verify(x => x.DeleteFromCache(cacheKey.ToString()), Times.Once);
     }
 
-    private ApplicationRequest SetupForGetApplyViewModel(bool? hasTraininProvider = null)
+    private ApplicationRequest SetupForGetApplyViewModel(bool? hasTrainingProvider = null)
     {
         var getApplyResponse = _fixture.Create<GetApplyResponse>();
         var applicationRequest = _fixture.Create<ApplicationRequest>();
         var cacheItem = _fixture.Create<CreateApplicationCacheItem>();
-        cacheItem.HasTrainingProvider = hasTraininProvider;
+        cacheItem.HasTrainingProvider = hasTrainingProvider;
 
         var cacheKey = _fixture.Create<Guid>();
         applicationRequest.CacheKey = cacheKey;

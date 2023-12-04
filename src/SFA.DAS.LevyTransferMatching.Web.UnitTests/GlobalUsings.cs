@@ -2,6 +2,7 @@
 global using System.Security.Claims;
 global using System.Threading.Tasks;
 global using System.Linq;
+global using System.Threading;
 global using AutoFixture.NUnit3;
 global using FluentAssertions;
 global using Microsoft.AspNetCore.Http;

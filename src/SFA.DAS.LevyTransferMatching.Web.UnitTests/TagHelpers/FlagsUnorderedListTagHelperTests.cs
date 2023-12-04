@@ -25,9 +25,9 @@ public class FlagsUnorderedListTagHelperTests
 
         _tagHelperSource = new List<ReferenceDataItem>
         {
-            new ReferenceDataItem { Id = "Option1", Description = "Option one" },
-            new ReferenceDataItem { Id = "Option2", Description = "Option two" },
-            new ReferenceDataItem { Id = "Option3", Description = "Option three" }
+            new() { Id = "Option1", Description = "Option one" },
+            new() { Id = "Option2", Description = "Option two" },
+            new() { Id = "Option3", Description = "Option three" }
         };
 
         _tagHelperContext = new TagHelperContext(
@@ -77,7 +77,7 @@ public class FlagsUnorderedListTagHelperTests
         Assert.That(output.GetContent(), Is.EqualTo(expectedOutput));
     }
 
-    public class TestClass
+    private class TestClass
     {
         public List<string> TestProperty { get; set; }
     }

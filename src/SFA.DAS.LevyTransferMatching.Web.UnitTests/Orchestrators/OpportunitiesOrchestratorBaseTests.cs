@@ -11,7 +11,7 @@ public class OpportunitiesOrchestratorBaseTests
     private Fixture _fixture;
     private TestOrchestrator _orchestrator;
 
-    protected DateTime CurrentDateTime { get; set; }
+    private DateTime _currentDateTime;
     protected Mock<IDateTimeService> DateTimeService { get; private set; }
 
     protected List<ReferenceDataItem> SectorReferenceDataItems { get; private set; }
@@ -196,10 +196,10 @@ public class OpportunitiesOrchestratorBaseTests
             .CreateMany<ReferenceDataItem>(7)
             .ToList();           
 
-        CurrentDateTime = _fixture.Create<DateTime>();
+        _currentDateTime = _fixture.Create<DateTime>();
         DateTimeService
             .Setup(x => x.UtcNow)
-            .Returns(CurrentDateTime);
+            .Returns(_currentDateTime);
     }
 
     private class TestOrchestrator : OpportunitiesOrchestratorBase { }
