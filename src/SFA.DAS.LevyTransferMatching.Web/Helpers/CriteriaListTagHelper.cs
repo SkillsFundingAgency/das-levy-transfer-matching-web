@@ -51,7 +51,7 @@ public class CriteriaListTagHelper : TagHelper
         if (matches is > 0 and < 4)
         {
             content.Append("<ul class=\"app-criteria-list govuk-list govuk-list--bullet\">");
-            content.Append(matchesList.ToString());
+            content.Append(matchesList);
             content.Append("</ul>");
         }
 

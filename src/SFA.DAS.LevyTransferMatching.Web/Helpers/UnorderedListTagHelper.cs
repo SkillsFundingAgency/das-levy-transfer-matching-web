@@ -36,13 +36,13 @@ public class UnorderedListTagHelper : TagHelper
                 continue;
             }
             
-            content.Append($"<li");
+            content.Append("<li");
             
             if (!string.IsNullOrWhiteSpace(ItemClass))
             {
                 content.Append($" class=\"{ItemClass}\"");
             }
-            content.Append(">");
+            content.Append('>');
             content.Append($"{tag.Description}");
             content.Append("</li>");
         }

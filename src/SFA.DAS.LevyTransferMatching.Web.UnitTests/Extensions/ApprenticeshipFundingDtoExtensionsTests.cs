@@ -28,11 +28,14 @@ public class ApprenticeshipFundingDtoExtensionsTests
 
         var result = sut.GetEffectiveFundingLine(DateTime.UtcNow.Date);
 
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result.Duration, Is.EqualTo(12));
-        Assert.That(result.EffectiveFrom, Is.EqualTo(new DateTime(2021, 1, 1)));
-        Assert.That(result.EffectiveTo, Is.Null);
-        Assert.That(result.MaxEmployerLevyCap, Is.EqualTo(9_000));
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Duration, Is.EqualTo(12));
+            Assert.That(result.EffectiveFrom, Is.EqualTo(new DateTime(2021, 1, 1)));
+            Assert.That(result.EffectiveTo, Is.Null);
+            Assert.That(result.MaxEmployerLevyCap, Is.EqualTo(9_000));
+        });
     }
 
     [Test]
@@ -60,11 +63,14 @@ public class ApprenticeshipFundingDtoExtensionsTests
 
         var result = sut.GetEffectiveFundingLine(now.Date);
 
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result.Duration, Is.EqualTo(15));
-        Assert.That(result.EffectiveFrom, Is.EqualTo(new DateTime(now.AddYears(-2).Year, now.AddMonths(-1).Month, 1)));
-        Assert.That(result.EffectiveTo, Is.EqualTo(new DateTime(now.Year, now.Month, 30)));
-        Assert.That(result.MaxEmployerLevyCap, Is.EqualTo(12_000));
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Duration, Is.EqualTo(15));
+            Assert.That(result.EffectiveFrom, Is.EqualTo(new DateTime(now.AddYears(-2).Year, now.AddMonths(-1).Month, 1)));
+            Assert.That(result.EffectiveTo, Is.EqualTo(new DateTime(now.Year, now.Month, 30)));
+            Assert.That(result.MaxEmployerLevyCap, Is.EqualTo(12_000));
+        });
     }
 
     [TestCase(48000, 24, 0)]

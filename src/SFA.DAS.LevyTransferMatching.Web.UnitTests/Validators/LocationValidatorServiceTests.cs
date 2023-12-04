@@ -67,14 +67,15 @@ public class LocationValidatorServiceTests
         // Act
         var result = await _locationValidatorService.ValidateLocations(request, multipleValidResults);
 
-        // Assert
-        Assert.That(multipleValidResults.Keys, Has.Member(0));
-        Assert.That(middletonSuggestions.Names, Is.EqualTo(multipleValidResults[0]).AsCollection);
-
-        Assert.That(leicesterInformation.Name, Is.EqualTo(request.Locations[1]));
-
-        Assert.That(multipleValidResults.Keys, Has.Member(2));
-        Assert.That(londonSuggestions.Names, Is.EqualTo(multipleValidResults[2]).AsCollection);
+        Assert.Multiple(() =>
+        {
+            // Assert
+            Assert.That(multipleValidResults.Keys, Has.Member(0));
+            Assert.That(middletonSuggestions.Names, Is.EqualTo(multipleValidResults[0]).AsCollection);
+            Assert.That(leicesterInformation.Name, Is.EqualTo(request.Locations[1]));
+            Assert.That(multipleValidResults.Keys, Has.Member(2));
+            Assert.That(londonSuggestions.Names, Is.EqualTo(multipleValidResults[2]).AsCollection);
+        });
     }
 
     [Test]
@@ -121,14 +122,17 @@ public class LocationValidatorServiceTests
         // Act
         var result = await _locationValidatorService.ValidateLocations(request, multipleValidResults);
 
-        // Assert
-        Assert.That(result.Keys, Has.Member(0));
-        Assert.That(result[0], Is.EqualTo("Check the spelling of your location"));
+        Assert.Multiple(() =>
+        {
+            // Assert
+            Assert.That(result.Keys, Has.Member(0));
+            Assert.That(result[0], Is.EqualTo("Check the spelling of your location"));
+            
+            Assert.That(result.Keys, Has.Member(1));
+            Assert.That(result[1], Is.EqualTo("Duplicates of the same location are not allowed"));
 
-        Assert.That(result.Keys, Has.Member(1));
-        Assert.That(result[1], Is.EqualTo("Duplicates of the same location are not allowed"));
-
-        Assert.That(result.Keys, Has.Member(2));
-        Assert.That(result[2], Is.EqualTo("Duplicates of the same location are not allowed"));
+            Assert.That(result.Keys, Has.Member(2));
+            Assert.That(result[2], Is.EqualTo("Duplicates of the same location are not allowed"));
+        });
     }
 }

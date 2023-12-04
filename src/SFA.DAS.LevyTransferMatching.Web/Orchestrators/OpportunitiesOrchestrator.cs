@@ -252,7 +252,7 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
 
         var additionalEmailAddresses = cacheItem.EmailAddresses.Skip(1).ToList();
 
-        var placeholders = Enumerable.Range(0, MaximumNumberAdditionalEmailAddresses - additionalEmailAddresses.Count())
+        var placeholders = Enumerable.Range(0, MaximumNumberAdditionalEmailAddresses - additionalEmailAddresses.Count)
             .Select(x => (string)null);
             
         additionalEmailAddresses.AddRange(placeholders);
