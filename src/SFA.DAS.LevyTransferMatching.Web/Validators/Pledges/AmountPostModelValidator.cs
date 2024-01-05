@@ -8,11 +8,16 @@ namespace SFA.DAS.LevyTransferMatching.Web.Validators.Pledges
     {
         public AmountPostModelValidator()
         {
-            Transform(x => x.Amount, StringToNullableInt)
-                .NotNull().WithMessage(m => $"You need to enter an amount greater than £2,000 and less than £{ m.RemainingTransferAllowance }")
-                .GreaterThanOrEqualTo(2000).WithMessage(m => $"You need to enter an amount greater than £2,000 and less than £{ m.RemainingTransferAllowance }")
-                .LessThanOrEqualTo(m => int.Parse(m.RemainingTransferAllowance, NumberStyles.AllowThousands)).WithMessage(m => $"You need to enter an amount greater than £2,000 and less than £{ m.RemainingTransferAllowance }");
-
+            Transform(x => x.RemainingTransferAllowance, StringToNullableInt)
+                .GreaterThan(0).WithMessage("You do not currently have any funds available to pledge")
+                .GreaterThan(2000).WithMessage("You do not currently have enough funds available to pledge")
+                .DependentRules(() =>
+                {
+                    Transform(x => x.Amount, StringToNullableInt)
+                       .NotNull().WithMessage(m => $"You need to enter an amount greater than £2,000 and less than £{m.RemainingTransferAllowance}")
+                       .GreaterThanOrEqualTo(2000).WithMessage(m => $"You need to enter an amount greater than £2,000 and less than £{m.RemainingTransferAllowance}")
+                       .LessThanOrEqualTo(m => int.Parse(m.RemainingTransferAllowance, NumberStyles.AllowThousands)).WithMessage(m => $"You need to enter an amount greater than £2,000 and less than £{m.RemainingTransferAllowance}");
+                });
         }
 
         int? StringToNullableInt(string value) => int.TryParse(value, NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out int val) ? (int?)val : null;

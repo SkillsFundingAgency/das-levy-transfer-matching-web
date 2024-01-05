@@ -1,10 +1,8 @@
-﻿using FluentValidation.TestHelper;
+﻿using System.Globalization;
+using FluentValidation.TestHelper;
 using NUnit.Framework;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Pledges;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators
 {
@@ -61,5 +59,59 @@ namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators
             result.ShouldNotHaveValidationErrorFor(x => x.Amount);
         }
 
+        [Test]
+        public void Validator_Returns_Expected_Error_For_Zero_RemainingTransferAllowance()
+        {
+            //Arrange
+            AmountViewModel amountViewModel = new AmountViewModel()
+            {
+                Amount = "3,000",
+                RemainingTransferAllowance = "0"
+            };
+
+            //Act
+            var result = amountPostModelValidator.TestValidate(amountViewModel);
+
+            //Assert
+            result.ShouldHaveValidationErrorFor(x => x.RemainingTransferAllowance)
+                .WithErrorMessage("You do not currently have any funds available to pledge");
+        }
+
+        [TestCase("10")]
+        [TestCase("1999")]
+        public void Validator_Returns_Expected_Errors_For_Insufficient_RemainingTransferAllowance(string remainingTransferAllowance)
+        {
+            //Arrange
+            AmountViewModel amountViewModel = new AmountViewModel()
+            {
+                Amount = "3,000",
+                RemainingTransferAllowance = remainingTransferAllowance
+            };
+
+            //Act
+            var result = amountPostModelValidator.TestValidate(amountViewModel);
+
+            //Assert
+            result.ShouldHaveValidationErrorFor(x => x.RemainingTransferAllowance)
+                .WithErrorMessage("You do not currently have enough funds available to pledge");
+        }
+      
+        [TestCase("3,000")]
+        [TestCase("6000")]
+        public void Validator_Returns_No_Errors_For_Valid_RemainingTransferAllowance(string remainingTransferAllowance)
+        {
+            //Arrange
+            AmountPostRequest amountPostRequest = new AmountPostRequest()
+            {
+                Amount = "3,000",
+                RemainingTransferAllowance = remainingTransferAllowance
+            };
+
+            //Act
+            var result = amountPostModelValidator.TestValidate(amountPostRequest);
+
+            //Assert
+            result.ShouldNotHaveValidationErrorFor(x => x.RemainingTransferAllowance);
+        }
     }
 }
