@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Web;
+using System.Net;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Extensions
 {
@@ -15,7 +15,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Extensions
             {
                 foreach (var value in source.GetValues(key)!)
                 {
-                    list.Add($"{HttpUtility.UrlEncode(key)}={HttpUtility.UrlEncode(value)}");
+                    list.Add($"{WebUtility.UrlEncode(key)}={WebUtility.UrlEncode(value)}");
                 }
             }
 

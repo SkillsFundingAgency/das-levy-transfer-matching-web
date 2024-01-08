@@ -1,58 +1,42 @@
 ﻿using FluentValidation.TestHelper;
-using NUnit.Framework;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Validators.Pledges;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators
+namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Validators;
+
+[TestFixture]
+public class OrganisationNamePostRequestValidatorTests
 {
-    [TestFixture]
-    public class OrganisationNamePostRequestValidatorTests
+    private OrganisationNamePostRequestValidator _organisationNamePostRequestValidator;
+
+    [SetUp]
+    public void SetUp() => _organisationNamePostRequestValidator = new OrganisationNamePostRequestValidator();
+
+    [TestCase(null)]        
+    public void Validator_Returns_Expected_Errors_For_Invalid_OrganisationNameResponse(bool? isPublic)
     {
-        private OrganisationNamePostRequestValidator organisationNamePostRequestValidator;
+        //Arrange
+        var postRequest = new OrganisationNamePostRequest { IsNamePublic = isPublic };
+        
+        //Act
+        var result = _organisationNamePostRequestValidator.TestValidate(postRequest);
 
-        [SetUp]
-        public void SetUp()
-        {
-            organisationNamePostRequestValidator = new OrganisationNamePostRequestValidator();
-        }
+        //Assert
+        result.ShouldHaveValidationErrorFor(x => x.IsNamePublic)
+            .WithErrorMessage("You need to tell us if you want to show or hide your organisation name");
+    }
 
-      
-        [TestCase(null)]        
-        public void Validator_Returns_Expected_Errors_For_Invalid_OrganisationNameResponse(bool? isPublic)
-        {
-            //Arrange
-            OrganisationNamePostRequest postRequest = new OrganisationNamePostRequest()
-            {
-                IsNamePublic = isPublic
-            };
+    [TestCase(true)]
+    [TestCase(false)]
+    public void Validator_Returns_No_Errors_For_Valid_OrganisationNameResponse(bool? isPublic)
+    {
+        //Arrange
+        var postRequest = new OrganisationNamePostRequest { IsNamePublic = isPublic };
 
-            //Act
-            var result = organisationNamePostRequestValidator.TestValidate(postRequest);
+        //Act
+        var result = _organisationNamePostRequestValidator.TestValidate(postRequest);
 
-            //Assert
-            result.ShouldHaveValidationErrorFor(x => x.IsNamePublic)
-                .WithErrorMessage("You need to tell us if you want to show or hide your organisation name");
-        }
-
-        [TestCase(true)]
-        [TestCase(false)]
-        public void Validator_Returns_No_Errors_For_Valid_OrganisationNameResponse(bool? isPublic)
-        {
-            //Arrange
-            OrganisationNamePostRequest postRequest = new OrganisationNamePostRequest()
-            {
-                IsNamePublic = isPublic
-            };
-
-            //Act
-            var result = organisationNamePostRequestValidator.TestValidate(postRequest);
-
-            //Assert
-            result.ShouldNotHaveValidationErrorFor(x => x.IsNamePublic);
-        }
-
+        //Assert
+        result.ShouldNotHaveValidationErrorFor(x => x.IsNamePublic);
     }
 }

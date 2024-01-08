@@ -1,14 +1,6 @@
-using System;
-using System.IO;
+using FluentValidation;
 using FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.EmployerUrlHelper.DependencyResolution;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
@@ -16,64 +8,47 @@ using SFA.DAS.LevyTransferMatching.Web.Attributes;
 using SFA.DAS.LevyTransferMatching.Web.FeatureToggles;
 using SFA.DAS.LevyTransferMatching.Web.Filters;
 using SFA.DAS.LevyTransferMatching.Web.ModelBinders;
-using SFA.DAS.LevyTransferMatching.Web.Models.Shared;
 using SFA.DAS.LevyTransferMatching.Web.StartupExtensions;
 using SFA.DAS.Validation.Mvc.Extensions;
 
-namespace SFA.DAS.LevyTransferMatching.Web
+namespace SFA.DAS.LevyTransferMatching.Web;
+
+public class Startup
 {
-    public class Startup
+    private readonly IHostEnvironment _environment;
+    private readonly IConfiguration _configuration;
+
+    public Startup(IConfiguration configuration, IHostEnvironment environment)
     {
-        private readonly IWebHostEnvironment _environment;
-        private IConfiguration Configuration { get; }
+        _environment = environment;
+        _configuration = configuration.BuildDasConfiguration();
+    }
 
-        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services.AddLogging(builder =>
         {
-            _environment = environment;
-            Configuration = configuration;
+            builder.AddFilter<ApplicationInsightsLoggerProvider>(string.Empty, LogLevel.Information);
+            builder.AddFilter<ApplicationInsightsLoggerProvider>("Microsoft", LogLevel.Information);
+        });
+        
+        services.AddConfigurationOptions(_configuration);
+        
+        var config = _configuration.GetSection<LevyTransferMatchingWeb>();
+        
+        services.AddSingleton(config);
+        services.AddSingleton(_configuration.GetSection<LevyTransferMatchingApi>());
 
-            var config = new ConfigurationBuilder()
-                .AddConfiguration(configuration)
-                .SetBasePath(Directory.GetCurrentDirectory())
-#if DEBUG
-                .AddJsonFile("appsettings.json", true)
-                .AddJsonFile("appsettings.Development.json", true)
-#endif
-                .AddEnvironmentVariables();
+        services.AddControllersWithViews();
 
-            if (!configuration["Environment"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
-            {
-                config.AddAzureTableStorage(options =>
-                    {
-                        options.ConfigurationKeys = configuration["ConfigNames"].Split(",");
-                        options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
-                        options.EnvironmentName = configuration["Environment"];
-                        options.PreFixConfigurationKeys = false;
-                    }
-                );
-            }
-
-            Configuration = config.Build();
-        }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddConfigurationOptions(Configuration);
-            var config = Configuration.GetSection<LevyTransferMatchingWeb>();
-            services.AddSingleton(config);
-            services.AddSingleton(Configuration.GetSection<LevyTransferMatchingApi>());
-
-            services.AddControllersWithViews();
-
-            services.AddMvc(options =>
+        services.AddMvc(options =>
             {
                 options.AddValidation();
                 options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
                 options.Filters.Add(new HideAccountNavigationAttribute(false));
-                options.Filters.Add(new EnableGoogleAnalyticsAttribute(Configuration.GetSection<GoogleAnalytics>()));
+                options.Filters.Add(new EnableGoogleAnalyticsAttribute(_configuration.GetSection<GoogleAnalytics>()));
                 options.Filters.Add(new GoogleAnalyticsFilter());
-                options.Filters.Add(new AccountActiveFilter(Configuration));
+                options.Filters.Add(new AccountActiveFilter(_configuration));
 
                 if (!config.IsLive)
                 {
@@ -82,57 +57,57 @@ namespace SFA.DAS.LevyTransferMatching.Web
                 options.ModelBinderProviders.Insert(0, new AutoDecodeModelBinderProvider());
             })
             .AddControllersAsServices()
-            .SetDefaultNavigationSection(NavigationSection.AccountsFinance)
-            .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
+            .SetDefaultNavigationSection(NavigationSection.AccountsFinance);
 
-            services.AddApplicationInsightsTelemetry(Configuration.GetValue<string>("APPINSIGHTS_INSTRUMENTATIONKEY"));
-            services.AddEmployerAuthentication(Configuration);
-            services.AddAuthorizationPolicies();
-            services.AddCache(_environment, config);
-            services.AddMemoryCache();
-            services.AddCookieTempDataProvider();
-            services.AddDasDataProtection(config, _environment);
-            services.AddDasHealthChecks(config);
-            services.AddEncodingService(Configuration);
-            services.AddServiceRegistrations();
-            services.AddEmployerSharedUI(Configuration);
-            services.AddEmployerUrlHelper();
-            services.AddAsyncValidators();
-            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+        services.AddFluentValidationAutoValidation();
+        services.AddValidatorsFromAssemblyContaining<Startup>();
 
-            #if DEBUG
-            services.AddControllersWithViews().AddRazorRuntimeCompilation();
-            #endif
-        }
+        services.AddEmployerAuthentication(_configuration);
+        services.AddAuthorizationPolicies();
+        services.AddCache(_environment, config);
+        services.AddMemoryCache();
+        services.AddCookieTempDataProvider();
+        services.AddDasDataProtection(config, _environment);
+        services.AddDasHealthChecks(config);
+        services.AddEncodingService();
+        services.AddServiceRegistrations();
+        services.AddEmployerSharedUi(_configuration);
+        services.AddEmployerUrlHelper();
+        services.AddAsyncValidators();
+        services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+        services.AddApplicationInsightsTelemetry();
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+#if DEBUG
+        services.AddControllersWithViews().AddRazorRuntimeCompilation();
+#endif
+    }
+
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        if (env.IsDevelopment())
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
-
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
-            app.UseDasHealthChecks();
-            app.UseRouting();
-            app.UseAuthentication();
-            app.UseAuthorization();
-            app.UseMiddleware<SecurityHeadersMiddleware>();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
-            });
+            app.UseDeveloperExceptionPage();
         }
+        else
+        {
+            app.UseExceptionHandler("/Home/Error");
+            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            app.UseHsts();
+        }
+
+        app.UseHttpsRedirection();
+        app.UseStaticFiles();
+        app.UseDasHealthChecks();
+        app.UseRouting();
+        app.UseAuthentication();
+        app.UseAuthorization();
+        app.UseMiddleware<SecurityHeadersMiddleware>();
+
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllerRoute(
+                name: "default",
+                pattern: "{controller=Home}/{action=Index}/{id?}");
+        });
     }
 }

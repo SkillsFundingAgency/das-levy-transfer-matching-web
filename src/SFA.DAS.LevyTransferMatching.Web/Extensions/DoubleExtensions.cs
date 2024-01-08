@@ -1,18 +1,16 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 
-namespace SFA.DAS.LevyTransferMatching.Web.Extensions
+namespace SFA.DAS.LevyTransferMatching.Web.Extensions;
+
+public static class DoubleExtensions
 {
-    public static class DoubleExtensions
+    public static int ToNearest(this double value, int roundTo)
     {
-        public static int ToNearest(this double value, int roundTo)
-        {
-            return (int)Math.Round(value / roundTo, MidpointRounding.AwayFromZero) * roundTo;
-        }
+        return (int)Math.Round(value / roundTo, MidpointRounding.AwayFromZero) * roundTo;
+    }
 
-        public static string ToCurrencyString(this double amount)
-        {
-            return amount.ToString("C0", new CultureInfo("en-GB"));
-        }
+    public static string ToCurrencyString(this double amount)
+    {
+        return amount.ToString("C0", new CultureInfo("en-GB"));
     }
 }

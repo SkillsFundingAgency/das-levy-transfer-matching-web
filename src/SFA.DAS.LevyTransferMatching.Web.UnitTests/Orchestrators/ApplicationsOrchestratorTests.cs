@@ -1,384 +1,423 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using AutoFixture;
-using Moq;
-using NUnit.Framework;
-using SFA.DAS.Encoding;
+﻿using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService.Types;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using SFA.DAS.LevyTransferMatching.Web.Models.Applications;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 
-namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators
+namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators;
+
+[TestFixture]
+public class ApplicationsOrchestratorTests
 {
-    [TestFixture]
-    public class ApplicationsOrchestratorTests
+    private readonly Fixture _fixture = new();
+
+    private Mock<IApplicationsService> _mockApplicationsService;
+    private Mock<IEncodingService> _mockEncodingService;
+    private Mock<IUserService> _mockUserService;
+    private ApplicationsOrchestrator _applicationsOrchestrator;
+
+    [SetUp]
+    public void Arrange()
     {
-        private readonly Fixture _fixture = new Fixture();
+        _mockApplicationsService = new Mock<IApplicationsService>();
+        _mockUserService = new Mock<IUserService>();
+        _mockEncodingService = new Mock<IEncodingService>();
+        var featureToggles = _fixture.Create<Infrastructure.Configuration.FeatureToggles>();
 
-        private Mock<IApplicationsService> _mockApplicationsService;
-        private Mock<IDateTimeService> _mockDateTimeService;
-        private Mock<IEncodingService> _mockEncodingService;
-        private Mock<IUserService> _mockUserService;
-        private ApplicationsOrchestrator _applicationsOrchestrator;
+        _mockUserService.Setup(x => x.IsOwnerOrTransactor(It.IsAny<string>())).Returns(true);
 
-        [SetUp]
-        public void Arrange()
+        _applicationsOrchestrator = new ApplicationsOrchestrator(_mockApplicationsService.Object,
+            _mockEncodingService.Object, featureToggles, _mockUserService.Object);
+    }
+
+    [Test]
+    public async Task GetApplicationViewModel_ApplicationExists_ReturnsViewModel()
+    {
+        // Arrange
+        var request = _fixture.Create<ApplicationRequest>();
+        var response = _fixture.Create<GetApplicationResponse>();
+
+        var encodedPledgeId = _fixture.Create<string>();
+
+        _mockApplicationsService
+            .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId),
+                It.Is<int>(y => y == request.ApplicationId), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(response);
+
+        _mockEncodingService
+            .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId),
+                It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
+            .Returns(encodedPledgeId);
+
+        // Act
+        var viewModel = await _applicationsOrchestrator.GetApplication(request);
+
+        Assert.Multiple(() =>
         {
-            _mockApplicationsService = new Mock<IApplicationsService>();
-            _mockDateTimeService = new Mock<IDateTimeService>();
+            Assert.That(viewModel, Is.Not.Null);
+            Assert.That(viewModel.EncodedOpportunityId, Is.EqualTo(encodedPledgeId));
+        });
+    }
 
-            _mockDateTimeService
-                .Setup(x => x.UtcNow)
-                .Returns(_fixture.Create<DateTime>());
-            _mockUserService = new Mock<IUserService>();
-            _mockEncodingService = new Mock<IEncodingService>();
-            var featureToggles = _fixture.Create<Infrastructure.Configuration.FeatureToggles>();
 
-            _mockUserService.Setup(x => x.IsOwnerOrTransactor(It.IsAny<string>())).Returns(true);
+    [TestCase(ApplicationStatus.Pending, true)]
+    [TestCase(ApplicationStatus.Approved, false)]
+    public async Task GetApplicationViewModel_CanWithdraw_Is_True_When_Application_Is_Pending(
+        ApplicationStatus status, bool expectCanWithdraw)
+    {
+        // Arrange
+        var request = _fixture.Create<ApplicationRequest>();
+        var response = _fixture.Create<GetApplicationResponse>();
+        response.Status = status;
 
-            _applicationsOrchestrator = new ApplicationsOrchestrator(_mockApplicationsService.Object, _mockDateTimeService.Object, _mockEncodingService.Object, featureToggles, _mockUserService.Object);
-        }
+        var encodedPledgeId = _fixture.Create<string>();
 
-        [Test]
-        public async Task GetApplicationViewModel_ApplicationExists_ReturnsViewModel()
+        _mockApplicationsService
+            .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId),
+                It.Is<int>(y => y == request.ApplicationId), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(response);
+
+        _mockEncodingService
+            .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId),
+                It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
+            .Returns(encodedPledgeId);
+
+        // Act
+        var viewModel = await _applicationsOrchestrator.GetApplication(request);
+
+        // Assert
+        Assert.Multiple(() =>
         {
-            // Arrange
-            var request = _fixture.Create<ApplicationRequest>();
-            var response = _fixture.Create <GetApplicationResponse>();
+            Assert.That(viewModel, Is.Not.Null);
+            Assert.That(viewModel.CanWithdraw, Is.EqualTo(expectCanWithdraw));
+        });
+    }
 
-            var encodedPledgeId = _fixture.Create<string>();
+    [Test]
+    public async Task GetApplicationViewModel_ApplicationDoesntExist_ReturnsNull()
+    {
+        // Arrange
+        var request = _fixture.Create<ApplicationRequest>();
 
-            _mockApplicationsService
-                .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(response);
+        _mockApplicationsService
+            .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId),
+                It.Is<int>(y => y == request.ApplicationId), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((GetApplicationResponse)null);
 
-            _mockEncodingService
-                .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
-                .Returns(encodedPledgeId);
+        // Act
+        var viewModel = await _applicationsOrchestrator.GetApplication(request);
 
-            // Act
-            var viewModel = await _applicationsOrchestrator.GetApplication(request);
+        // Assert
+        Assert.That(viewModel, Is.Null);
+    }
 
-            // Assert
-            Assert.IsNotNull(viewModel);
-            Assert.AreEqual(encodedPledgeId, viewModel.EncodedOpportunityId);
-        }
+    [Test]
+    public async Task SetApplicationAcceptance_OuterApiCalled_RequestMappedCorrectly()
+    {
+        // Arrange
+        var request = _fixture.Create<ApplicationPostRequest>();
 
+        var expectedUserId = _fixture.Create<string>();
+        var expectedUserDisplayName = _fixture.Create<string>();
 
-        [TestCase(ApplicationStatus.Pending, true)]
-        [TestCase(ApplicationStatus.Approved, false)]
-        public async Task GetApplicationViewModel_CanWithdraw_Is_True_When_Application_Is_Pending(ApplicationStatus status, bool expectCanWithdraw)
+        var expectedAcceptance = request.SelectedAction == ApplicationViewModel.ApprovalAction.Accept
+            ? SetApplicationAcceptanceRequest.ApplicationAcceptance.Accept
+            : SetApplicationAcceptanceRequest.ApplicationAcceptance.Decline;
+
+        SetApplicationAcceptanceRequest actualRequest = null;
+        Action<SetApplicationAcceptanceRequest, CancellationToken> setApplicationAcceptanceCallback =
+            (x, y) => { actualRequest = x; };
+
+        _mockUserService
+            .Setup(x => x.GetUserId())
+            .Returns(expectedUserId);
+        _mockUserService
+            .Setup(x => x.GetUserDisplayName())
+            .Returns(expectedUserDisplayName);
+
+        _mockApplicationsService
+            .Setup(x => x.SetApplicationAcceptance(It.IsAny<SetApplicationAcceptanceRequest>(),
+                It.IsAny<CancellationToken>()))
+            .Callback(setApplicationAcceptanceCallback);
+
+        // Act
+        await _applicationsOrchestrator.SetApplicationAcceptance(request);
+
+        // Assert
+        Assert.Multiple(() =>
         {
-            // Arrange
-            var request = _fixture.Create<ApplicationRequest>();
-            var response = _fixture.Create<GetApplicationResponse>();
-            response.Status = status;
+            Assert.That(actualRequest, Is.Not.Null);
+            Assert.That(actualRequest.UserId, Is.EqualTo(expectedUserId));
+            Assert.That(actualRequest.UserDisplayName, Is.EqualTo(expectedUserDisplayName));
+            Assert.That(actualRequest.Acceptance, Is.EqualTo(expectedAcceptance));
+        });
+    }
 
-            var encodedPledgeId = _fixture.Create<string>();
+    [Test]
+    public async Task GetAcceptedViewModel_ApplicationExists_ReturnsViewModel()
+    {
+        // Arrange
+        var request = _fixture.Create<AcceptedRequest>();
+        var response = _fixture.Create<GetAcceptedResponse>();
+        var encodedPledgeId = _fixture.Create<string>();
 
-            _mockApplicationsService
-                .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(response);
+        _mockApplicationsService
+            .Setup(x => x.GetAccepted(It.Is<long>(y => y == request.AccountId),
+                It.Is<int>(y => y == request.ApplicationId)))
+            .ReturnsAsync(response);
 
-            _mockEncodingService
-                .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
-                .Returns(encodedPledgeId);
+        _mockEncodingService
+            .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId),
+                It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
+            .Returns(encodedPledgeId);
 
-            // Act
-            var viewModel = await _applicationsOrchestrator.GetApplication(request);
+        // Act
+        var viewModel = await _applicationsOrchestrator.GetAcceptedViewModel(request);
 
-            // Assert
-            Assert.IsNotNull(viewModel);
-            Assert.AreEqual(expectCanWithdraw, viewModel.CanWithdraw);
-        }
-
-        [Test]
-        public async Task GetApplicationViewModel_ApplicationDoesntExist_ReturnsNull()
+        // Assert
+        Assert.Multiple(() =>
         {
-            // Arrange
-            var request = _fixture.Create<ApplicationRequest>();
+            Assert.That(viewModel, Is.Not.Null);
+            Assert.That(viewModel.EmployerNameAndReference,
+                Is.EqualTo($"{response.EmployerAccountName} ({encodedPledgeId})"));
+        });
+    }
 
-            _mockApplicationsService
-                .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId), It.IsAny<CancellationToken>()))
-                .ReturnsAsync((GetApplicationResponse)null);
+    [Test]
+    public async Task GetAcceptedViewModel_ApplicationDoesntExist_ReturnsNull()
+    {
+        // Arrange
+        var request = _fixture.Create<AcceptedRequest>();
 
-            // Act
-            var viewModel = await _applicationsOrchestrator.GetApplication(request);
+        _mockApplicationsService
+            .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId),
+                It.Is<int>(y => y == request.ApplicationId), CancellationToken.None))
+            .ReturnsAsync((GetApplicationResponse)null);
 
-            // Assert
-            Assert.IsNull(viewModel);
-        }
+        // Act
+        var viewModel = await _applicationsOrchestrator.GetAcceptedViewModel(request);
 
-        [Test]
-        public async Task SetApplicationAcceptance_OuterApiCalled_RequestMappedCorrectly()
+        // Assert
+        Assert.That(viewModel, Is.Null);
+    }
+
+    [Test]
+    public async Task GetDeclinedViewModel_ApplicationExists_ReturnsViewModel()
+    {
+        // Arrange
+        var request = _fixture.Create<DeclinedRequest>();
+        var response = _fixture.Create<GetDeclinedResponse>();
+        var encodedPledgeId = _fixture.Create<string>();
+
+        _mockApplicationsService
+            .Setup(x => x.GetDeclined(It.Is<long>(y => y == request.AccountId),
+                It.Is<int>(y => y == request.ApplicationId)))
+            .ReturnsAsync(response);
+
+        _mockEncodingService
+            .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId),
+                It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
+            .Returns(encodedPledgeId);
+
+        // Act
+        var viewModel = await _applicationsOrchestrator.GetDeclinedViewModel(request);
+
+        // Assert
+        Assert.Multiple(() =>
         {
-            // Arrange
-            var request = _fixture.Create<ApplicationPostRequest>();
+            Assert.That(viewModel, Is.Not.Null);
+            Assert.That(viewModel.EmployerNameAndReference,
+                Is.EqualTo($"{response.EmployerAccountName} ({encodedPledgeId})"));
+        });
+    }
 
-            var expectedUserId = _fixture.Create<string>();
-            var expectedUserDisplayName = _fixture.Create<string>();
+    [Test]
+    public async Task GetDeclinedViewModel_ApplicationDoesntExist_ReturnsNull()
+    {
+        // Arrange
+        var request = _fixture.Create<DeclinedRequest>();
 
-            var expectedAcceptance = request.SelectedAction == ApplicationViewModel.ApprovalAction.Accept ?
-                SetApplicationAcceptanceRequest.ApplicationAcceptance.Accept :
-                SetApplicationAcceptanceRequest.ApplicationAcceptance.Decline;
+        _mockApplicationsService
+            .Setup(x => x.GetDeclined(It.Is<long>(y => y == request.AccountId),
+                It.Is<int>(y => y == request.ApplicationId)))
+            .ReturnsAsync((GetDeclinedResponse)null);
 
-            SetApplicationAcceptanceRequest actualRequest = null;
-            Action<SetApplicationAcceptanceRequest, CancellationToken> setApplicationAcceptanceCallback =
-                (x, y) =>
-                {
-                    actualRequest = x;
-                };
+        // Act
+        var viewModel = await _applicationsOrchestrator.GetDeclinedViewModel(request);
 
-            _mockUserService
-                .Setup(x => x.GetUserId())
-                .Returns(expectedUserId);
-            _mockUserService
-                .Setup(x => x.GetUserDisplayName())
-                .Returns(expectedUserDisplayName);
+        // Assert
+        Assert.That(viewModel, Is.Null);
+    }
 
-            _mockApplicationsService
-                .Setup(x => x.SetApplicationAcceptance(It.IsAny<SetApplicationAcceptanceRequest>(), It.IsAny<CancellationToken>()))
-                .Callback(setApplicationAcceptanceCallback);
+    [Test]
+    public async Task
+        GetApplicationViewModel_IsOwnerAndTransactorAndStatusEqualsApproved_ReturnsViewModelWithCanAcceptFunding()
+    {
+        // Arrange
+        var request = _fixture.Create<ApplicationRequest>();
+        var response = _fixture.Create<GetApplicationResponse>();
+        var encodedPledgeId = _fixture.Create<string>();
 
-            // Act
-            await _applicationsOrchestrator.SetApplicationAcceptance(request);
+        _mockApplicationsService
+            .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId),
+                It.Is<int>(y => y == request.ApplicationId), CancellationToken.None))
+            .ReturnsAsync(response);
 
-            // Assert
-            Assert.NotNull(actualRequest);
-            Assert.AreEqual(expectedUserId, actualRequest.UserId);
-            Assert.AreEqual(expectedUserDisplayName, actualRequest.UserDisplayName);
-            Assert.AreEqual(expectedAcceptance, actualRequest.Acceptance);
-        }
+        _mockEncodingService
+            .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId),
+                It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
+            .Returns(encodedPledgeId);
 
-        [Test]
-        public async Task GetAcceptedViewModel_ApplicationExists_ReturnsViewModel()
+        response.Status = ApplicationStatus.Approved;
+        _mockUserService.Setup(o => o.IsOwnerOrTransactor(It.IsAny<string>())).Returns(true);
+
+        // Act
+        var viewModel = await _applicationsOrchestrator.GetApplication(request);
+
+        // Assert
+        Assert.Multiple(() =>
         {
-            // Arrange
-            var request = _fixture.Create<AcceptedRequest>();
-            var response = _fixture.Create<GetAcceptedResponse>();
-            var encodedPledgeId = _fixture.Create<string>();
+            Assert.That(viewModel, Is.Not.Null);
+            Assert.That(viewModel.CanAcceptFunding, Is.EqualTo(true));
+        });
+    }
 
-            _mockApplicationsService
-                .Setup(x => x.GetAccepted(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId)))
-                .ReturnsAsync(response);
+    [Test]
+    public async Task
+        GetApplicationViewModel_IsOwnerAndTransactorAndStatusEqualsAccepted_ReturnsViewModelWithCanUseTransferFunds()
+    {
+        // Arrange
+        var request = _fixture.Create<ApplicationRequest>();
+        var response = _fixture.Create<GetApplicationResponse>();
+        var encodedPledgeId = _fixture.Create<string>();
 
-            _mockEncodingService
-                .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
-                .Returns(encodedPledgeId);
+        _mockApplicationsService
+            .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId),
+                It.Is<int>(y => y == request.ApplicationId), CancellationToken.None))
+            .ReturnsAsync(response);
 
-            // Act
-            var viewModel = await _applicationsOrchestrator.GetAcceptedViewModel(request);
+        _mockEncodingService
+            .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId),
+                It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
+            .Returns(encodedPledgeId);
 
-            // Assert
-            Assert.IsNotNull(viewModel);
-            Assert.AreEqual($"{response.EmployerAccountName} ({encodedPledgeId})", viewModel.EmployerNameAndReference);
-        }
+        response.Status = ApplicationStatus.Accepted;
+        _mockUserService.Setup(o => o.IsOwnerOrTransactor(It.IsAny<string>())).Returns(true);
 
-        [Test]
-        public async Task GetAcceptedViewModel_ApplicationDoesntExist_ReturnsNull()
+        // Act
+        var viewModel = await _applicationsOrchestrator.GetApplication(request);
+
+        // Assert
+        Assert.Multiple(() =>
         {
-            // Arrange
-            var request = _fixture.Create<AcceptedRequest>();
+            Assert.That(viewModel, Is.Not.Null);
+            Assert.That(viewModel.CanUseTransferFunds, Is.EqualTo(true));
+        });
+    }
 
-            _mockApplicationsService
-                .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId), CancellationToken.None))
-                .ReturnsAsync((GetApplicationResponse)null);
+    [Test]
+    public async Task
+        GetApplicationViewModel_IsOwnerAndTransactorAndStatusEqualsAcceptedAndIsWithdrawable_ReturnsViewModelWithRenderWithdrawButton()
+    {
+        // Arrange
+        var request = _fixture.Create<ApplicationRequest>();
+        var response = _fixture.Create<GetApplicationResponse>();
+        var encodedPledgeId = _fixture.Create<string>();
 
-            // Act
-            var viewModel = await _applicationsOrchestrator.GetAcceptedViewModel(request);
+        _mockApplicationsService
+            .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId),
+                It.Is<int>(y => y == request.ApplicationId), CancellationToken.None))
+            .ReturnsAsync(response);
 
-            // Assert
-            Assert.IsNull(viewModel);
-        }
+        _mockEncodingService
+            .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId),
+                It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
+            .Returns(encodedPledgeId);
 
-        [Test]
-        public async Task GetDeclinedViewModel_ApplicationExists_ReturnsViewModel()
+        response.Status = ApplicationStatus.Accepted;
+        response.IsWithdrawableAfterAcceptance = true;
+        _mockUserService.Setup(o => o.IsOwnerOrTransactor(It.IsAny<string>())).Returns(true);
+
+        // Act
+        var viewModel = await _applicationsOrchestrator.GetApplication(request);
+
+        // Assert
+        Assert.Multiple(() =>
         {
-            // Arrange
-            var request = _fixture.Create<DeclinedRequest>();
-            var response = _fixture.Create<GetDeclinedResponse>();
-            var encodedPledgeId = _fixture.Create<string>();
+            Assert.That(viewModel, Is.Not.Null);
+            Assert.That(viewModel.RenderWithdrawAfterAcceptanceButton, Is.EqualTo(true));
+        });
+    }
 
-            _mockApplicationsService
-                .Setup(x => x.GetDeclined(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId)))
-                .ReturnsAsync(response);
+    [Test]
+    public async Task GetWithdrawalConfirmationViewModel_ReturnsViewModel()
+    {
+        // Arrange
+        var request = _fixture.Create<WithdrawalConfirmationRequest>();
+        var response = _fixture.Create<GetWithdrawalConfirmationResponse>();
+        var encodedPledgeId = _fixture.Create<string>();
+        var encodedAccountId = _fixture.Create<string>();
+        var encodedApplicationId = _fixture.Create<string>();
 
-            _mockEncodingService
-                .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
-                .Returns(encodedPledgeId);
+        _mockApplicationsService
+            .Setup(x => x.GetWithdrawalConfirmation(It.Is<long>(y => y == request.AccountId),
+                It.Is<int>(y => y == request.ApplicationId)))
+            .ReturnsAsync(response);
 
-            // Act
-            var viewModel = await _applicationsOrchestrator.GetDeclinedViewModel(request);
+        _mockEncodingService
+            .Setup(x => x.Encode(It.Is<long>(y => y == response.PledgeId),
+                It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
+            .Returns(encodedPledgeId);
 
-            // Assert
-            Assert.IsNotNull(viewModel);
-            Assert.AreEqual($"{response.EmployerAccountName} ({encodedPledgeId})", viewModel.EmployerNameAndReference);
-        }
+        _mockEncodingService
+            .Setup(x => x.Encode(It.Is<long>(y => y == request.AccountId),
+                It.Is<EncodingType>(y => y == EncodingType.AccountId)))
+            .Returns(encodedAccountId);
 
-        [Test]
-        public async Task GetDeclinedViewModel_ApplicationDoesntExist_ReturnsNull()
+        _mockEncodingService
+            .Setup(x => x.Encode(It.Is<long>(y => y == request.ApplicationId),
+                It.Is<EncodingType>(y => y == EncodingType.PledgeApplicationId)))
+            .Returns(encodedApplicationId);
+
+        // Act
+        var viewModel = await _applicationsOrchestrator.GetWithdrawalConfirmationViewModel(request);
+
+        // Assert
+        Assert.Multiple(() =>
         {
-            // Arrange
-            var request = _fixture.Create<DeclinedRequest>();
+            Assert.That(viewModel, Is.Not.Null);
+            Assert.That(viewModel.PledgeEmployerName, Is.EqualTo(response.PledgeEmployerName));
+            Assert.That(viewModel.EncodedPledgeId, Is.EqualTo(encodedPledgeId));
+            Assert.That(viewModel.EncodedAccountId, Is.EqualTo(encodedAccountId));
+            Assert.That(viewModel.EncodedApplicationId, Is.EqualTo(encodedApplicationId));
+        });
+    }
 
-            _mockApplicationsService
-                .Setup(x => x.GetDeclined(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId)))
-                .ReturnsAsync((GetDeclinedResponse)null);
+    [Test]
+    public async Task WithdrawConfirmationAfterAcceptance_CallsService()
+    {
+        // Arrange
+        var request = _fixture.Create<ConfirmWithdrawalPostRequest>();
+        var expectedUserId = _fixture.Create<string>();
+        var expectedUserDisplayName = _fixture.Create<string>();
 
-            // Act
-            var viewModel = await _applicationsOrchestrator.GetDeclinedViewModel(request);
+        _mockUserService
+            .Setup(x => x.GetUserId())
+            .Returns(expectedUserId);
+        _mockUserService
+            .Setup(x => x.GetUserDisplayName())
+            .Returns(expectedUserDisplayName);
 
-            // Assert
-            Assert.IsNull(viewModel);
-        }
+        // Act
+        await _applicationsOrchestrator.WithdrawApplicationAfterAcceptance(request);
 
-        [Test]
-        public async Task GetApplicationViewModel_IsOwnerAndTransactorAndStatusEqualsApproved_ReturnsViewModelWithCanAcceptFunding()
-        {
-            // Arrange
-            var request = _fixture.Create<ApplicationRequest>();
-            var response = _fixture.Create<GetApplicationResponse>();
-            var encodedPledgeId = _fixture.Create<string>();
-
-            _mockApplicationsService
-                .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId), CancellationToken.None))
-                .ReturnsAsync(response);
-
-            _mockEncodingService
-                .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
-                .Returns(encodedPledgeId);
-            
-            response.Status = ApplicationStatus.Approved;
-            _mockUserService.Setup(o => o.IsOwnerOrTransactor(It.IsAny<string>())).Returns(true);
-
-            // Act
-            var viewModel = await _applicationsOrchestrator.GetApplication(request);
-
-            // Assert
-            Assert.IsNotNull(viewModel);
-            Assert.AreEqual(true, viewModel.CanAcceptFunding);
-        }
-
-        [Test]
-        public async Task GetApplicationViewModel_IsOwnerAndTransactorAndStatusEqualsAccepted_ReturnsViewModelWithCanUseTransferFunds()
-        {
-            // Arrange
-            var request = _fixture.Create<ApplicationRequest>();
-            var response = _fixture.Create<GetApplicationResponse>();
-            var encodedPledgeId = _fixture.Create<string>();
-
-            _mockApplicationsService
-                .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId), CancellationToken.None))
-                .ReturnsAsync(response);
-
-            _mockEncodingService
-                .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
-                .Returns(encodedPledgeId);
-
-            response.Status = ApplicationStatus.Accepted;
-            _mockUserService.Setup(o => o.IsOwnerOrTransactor(It.IsAny<string>())).Returns(true);
-
-            // Act
-            var viewModel = await _applicationsOrchestrator.GetApplication(request);
-
-            // Assert
-            Assert.IsNotNull(viewModel);
-            Assert.AreEqual(true, viewModel.CanUseTransferFunds);
-        }
-
-        [Test]
-        public async Task GetApplicationViewModel_IsOwnerAndTransactorAndStatusEqualsAcceptedAndIsWithdrawable_ReturnsViewModelWithRenderWithdrawButton()
-        {
-            // Arrange
-            var request = _fixture.Create<ApplicationRequest>();
-            var response = _fixture.Create<GetApplicationResponse>();
-            var encodedPledgeId = _fixture.Create<string>();
-
-            _mockApplicationsService
-                .Setup(x => x.GetApplication(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId), CancellationToken.None))
-                .ReturnsAsync(response);
-
-            _mockEncodingService
-                .Setup(x => x.Encode(It.Is<long>(y => y == response.OpportunityId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
-                .Returns(encodedPledgeId);
-
-            response.Status = ApplicationStatus.Accepted;
-            response.IsWithdrawableAfterAcceptance = true;
-            _mockUserService.Setup(o => o.IsOwnerOrTransactor(It.IsAny<string>())).Returns(true);
-
-            // Act
-            var viewModel = await _applicationsOrchestrator.GetApplication(request);
-
-            // Assert
-            Assert.IsNotNull(viewModel);
-            Assert.AreEqual(true, viewModel.RenderWithdrawAfterAcceptanceButton);
-        }
-
-        [Test]
-        public async Task GetWithdrawalConfirmationViewModel_ReturnsViewModel()
-        {
-            // Arrange
-            var request = _fixture.Create<WithdrawalConfirmationRequest>();
-            var response = _fixture.Create<GetWithdrawalConfirmationResponse>();
-            var encodedPledgeId = _fixture.Create<string>();
-            var encodedAccountId = _fixture.Create<string>();
-            var encodedApplicationId = _fixture.Create<string>();
-
-            _mockApplicationsService
-                .Setup(x => x.GetWithdrawalConfirmation(It.Is<long>(y => y == request.AccountId), It.Is<int>(y => y == request.ApplicationId)))
-                .ReturnsAsync(response);
-
-            _mockEncodingService
-                .Setup(x => x.Encode(It.Is<long>(y => y == response.PledgeId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
-                .Returns(encodedPledgeId);
-
-            _mockEncodingService
-                .Setup(x => x.Encode(It.Is<long>(y => y == request.AccountId), It.Is<EncodingType>(y => y == EncodingType.AccountId)))
-                .Returns(encodedAccountId);
-
-            _mockEncodingService
-                .Setup(x => x.Encode(It.Is<long>(y => y == request.ApplicationId), It.Is<EncodingType>(y => y == EncodingType.PledgeApplicationId)))
-                .Returns(encodedApplicationId);
-
-            // Act
-            var viewModel = await _applicationsOrchestrator.GetWithdrawalConfirmationViewModel(request);
-
-            // Assert
-            Assert.IsNotNull(viewModel);
-            Assert.AreEqual(response.PledgeEmployerName, viewModel.PledgeEmployerName);
-            Assert.AreEqual(encodedPledgeId, viewModel.EncodedPledgeId);
-            Assert.AreEqual(encodedAccountId, viewModel.EncodedAccountId);
-            Assert.AreEqual(encodedApplicationId, viewModel.EncodedApplicationId);
-        }
-
-        [Test]
-        public async Task WithdrawConfirmationAfterAcceptance_CallsService()
-        {
-            // Arrange
-            var request = _fixture.Create<ConfirmWithdrawalPostRequest>();
-            var expectedUserId = _fixture.Create<string>();
-            var expectedUserDisplayName = _fixture.Create<string>();
-
-            _mockUserService
-                .Setup(x => x.GetUserId())
-                .Returns(expectedUserId);
-            _mockUserService
-                .Setup(x => x.GetUserDisplayName())
-                .Returns(expectedUserDisplayName);
-
-            // Act
-            await _applicationsOrchestrator.WithdrawApplicationAfterAcceptance(request);
-
-            // Assert
-            _mockApplicationsService.Verify(x => x.WithdrawApplicationAfterAcceptance(
-                                                    It.Is<WithdrawApplicationAfterAcceptanceRequest>(y => y.UserId == expectedUserId && y.UserDisplayName == expectedUserDisplayName),
-                                                    request.AccountId,
-                                                    request.ApplicationId), Times.Once);
-        }
+        // Assert
+        _mockApplicationsService.Verify(x => x.WithdrawApplicationAfterAcceptance(
+            It.Is<WithdrawApplicationAfterAcceptanceRequest>(y =>
+                y.UserId == expectedUserId && y.UserDisplayName == expectedUserDisplayName),
+            request.AccountId,
+            request.ApplicationId), Times.Once);
     }
 }

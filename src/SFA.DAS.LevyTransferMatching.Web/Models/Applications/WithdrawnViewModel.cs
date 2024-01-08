@@ -1,7 +1,6 @@
-﻿namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
+﻿namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications;
+
+public class WithdrawnViewModel : WithdrawnRequest
 {
-    public class WithdrawnViewModel : WithdrawnRequest
-    {
-        public string EmployerNameAndReference { get; set; }
-    }
+    public string EmployerNameAndReference { get; set; }
 }

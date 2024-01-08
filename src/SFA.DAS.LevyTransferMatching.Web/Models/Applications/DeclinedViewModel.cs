@@ -1,7 +1,6 @@
-﻿namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
+﻿namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications;
+
+public class DeclinedViewModel : DeclinedRequest
 {
-    public class DeclinedViewModel : DeclinedRequest
-    {
-        public string EmployerNameAndReference { get; set; }
-    }
+    public string EmployerNameAndReference { get; set; }
 }

@@ -1,32 +1,33 @@
-﻿using System;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
+﻿using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace SFA.DAS.LevyTransferMatching.Web.Attributes
+namespace SFA.DAS.LevyTransferMatching.Web.Attributes;
+
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
+public class HideAccountNavigationAttribute : ResultFilterAttribute
 {
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-    public class HideAccountNavigationAttribute : ResultFilterAttribute
+    private bool HideNavigation { get; }
+    private bool HideNavigationLinks { get; }
+
+    public HideAccountNavigationAttribute()
     {
-        private bool HideNavigation { get; }
-        private bool HideNavigationLinks { get; }
+        HideNavigation = false;
+        HideNavigationLinks = false;
+    }
 
-        public HideAccountNavigationAttribute()
-        {
-            HideNavigation = false;
-            HideNavigationLinks = false;
-        }
+    public HideAccountNavigationAttribute(bool hideNavigation, bool hideNavigationLinks = false)
+    {
+        HideNavigation = hideNavigation;
+        HideNavigationLinks = hideNavigationLinks;
+    }
 
-        public HideAccountNavigationAttribute(bool hideNavigation, bool hideNavigationLinks = false)
+    public override void OnResultExecuting(ResultExecutingContext context)
+    {
+        if (context.Controller is not Controller controller)
         {
-            HideNavigation = hideNavigation;
-            HideNavigationLinks = hideNavigationLinks;
+            return;
         }
-
-        public override void OnResultExecuting(ResultExecutingContext context)
-        {
-            if (!(context.Controller is Controller controller)) return;
-            controller.ViewData[ViewDataKeys.HideAccountNavigation] = HideNavigation;
-            controller.ViewData[ViewDataKeys.ShowNav] = !HideNavigationLinks;
-        }
+            
+        controller.ViewData[ViewDataKeys.ViewDataKeys.HideAccountNavigation] = HideNavigation;
+        controller.ViewData[ViewDataKeys.ViewDataKeys.ShowNav] = !HideNavigationLinks;
     }
 }

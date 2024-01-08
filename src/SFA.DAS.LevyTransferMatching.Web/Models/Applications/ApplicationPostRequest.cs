@@ -1,6 +1,5 @@
-﻿namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
+﻿namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications;
+
+public class ApplicationPostRequest : ApplicationViewModel
 {
-    public class ApplicationPostRequest : ApplicationViewModel
-    {
-    }
 }

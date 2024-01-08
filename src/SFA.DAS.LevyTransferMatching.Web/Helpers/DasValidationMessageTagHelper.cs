@@ -2,40 +2,39 @@
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
-namespace SFA.DAS.LevyTransferMatching.Web.Helpers
+namespace SFA.DAS.LevyTransferMatching.Web.Helpers;
+
+[HtmlTargetElement("span", Attributes = ValidationForAttributeName)]
+public class DasValidationMessageTagHelper : TagHelper
 {
-    [HtmlTargetElement("span", Attributes = ValidationForAttributeName)]
-    public class DasValidationMessageTagHelper : TagHelper
+    private const string ValidationForAttributeName = "das-validation-for";
+
+    [HtmlAttributeName(ValidationForAttributeName)]
+    public ModelExpression Property { get; set; }
+
+    [ViewContext]
+    [HtmlAttributeNotBound]
+    public ViewContext ViewContext { get; set; }
+
+    protected IHtmlGenerator Generator { get; }
+
+    public DasValidationMessageTagHelper(IHtmlGenerator generator)
     {
-        private const string ValidationForAttributeName = "das-validation-for";
+        Generator = generator;
+    }
 
-        [HtmlAttributeName(ValidationForAttributeName)]
-        public ModelExpression Property { get; set; }
+    public override void Process(TagHelperContext context, TagHelperOutput output)
+    {
+        output.Attributes.Add("id", $"{Property.Name}-error");
 
-        [ViewContext]
-        [HtmlAttributeNotBound]
-        public ViewContext ViewContext { get; set; }
+        var tagBuilder = Generator.GenerateValidationMessage(
+            ViewContext,
+            Property.ModelExplorer,
+            Property.Name,
+            message: string.Empty,
+            tag: null,
+            htmlAttributes: null);
 
-        protected IHtmlGenerator Generator { get; }
-
-        public DasValidationMessageTagHelper(IHtmlGenerator generator)
-        {
-            Generator = generator;
-        }
-
-        public override void Process(TagHelperContext context, TagHelperOutput output)
-        {
-            output.Attributes.Add("id", $"{Property.Name}-error");
-
-            var tagBuilder = Generator.GenerateValidationMessage(
-                ViewContext,
-                Property.ModelExplorer,
-                Property.Name,
-                message: string.Empty,
-                tag: null,
-                htmlAttributes: null);
-
-            output.Content.SetHtmlContent(tagBuilder.InnerHtml);
-        }
+        output.Content.SetHtmlContent(tagBuilder.InnerHtml);
     }
 }

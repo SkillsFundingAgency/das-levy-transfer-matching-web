@@ -1,5 +1,3 @@
-using System;
-
 namespace SFA.DAS.LevyTransferMatching.Web.Models
 {
     public class ErrorViewModel

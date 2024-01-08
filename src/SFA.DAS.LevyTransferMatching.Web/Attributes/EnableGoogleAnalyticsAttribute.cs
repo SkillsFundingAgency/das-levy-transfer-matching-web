@@ -1,32 +1,35 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
+﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
-using System;
 
-namespace SFA.DAS.LevyTransferMatching.Web.Attributes
+namespace SFA.DAS.LevyTransferMatching.Web.Attributes;
+
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
+public class EnableGoogleAnalyticsAttribute : ResultFilterAttribute
 {
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-    public class EnableGoogleAnalyticsAttribute : ResultFilterAttribute
+    private readonly GoogleAnalytics _googleAnalyticsConfiguration;
+
+    public EnableGoogleAnalyticsAttribute(GoogleAnalytics configuration)
     {
-        public GoogleAnalytics GoogleAnalyticsConfiguration { get; }
+        _googleAnalyticsConfiguration = configuration;
+    }
 
-        public EnableGoogleAnalyticsAttribute(GoogleAnalytics configuration)
+    public override void OnResultExecuting(ResultExecutingContext context)
+    {
+        switch (context.Controller)
         {
-            GoogleAnalyticsConfiguration = configuration;
-        }
-
-        public override void OnResultExecuting(ResultExecutingContext context)
-        {
-            if (context.Controller is PageModel page)
+            case PageModel page:
                 SetViewData(page.ViewData);
-
-            if (context.Controller is Controller controller)
+                break;
+            case Controller controller:
                 SetViewData(controller.ViewData);
-
-            void SetViewData(ViewDataDictionary viewData)
-                => viewData[ViewDataKeys.GoogleAnalyticsConfiguration] = GoogleAnalyticsConfiguration;
+                break;
         }
+    }
+
+    private void SetViewData(ViewDataDictionary viewData)
+    {
+        viewData[ViewDataKeys.ViewDataKeys.GoogleAnalyticsConfiguration] = _googleAnalyticsConfiguration;
     }
 }

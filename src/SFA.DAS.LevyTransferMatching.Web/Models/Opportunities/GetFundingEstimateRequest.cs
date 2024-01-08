@@ -1,5 +1,4 @@
-﻿using System;
-using SFA.DAS.LevyTransferMatching.Web.Attributes;
+﻿using SFA.DAS.LevyTransferMatching.Web.Attributes;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
 {
