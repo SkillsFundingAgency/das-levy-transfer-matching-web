@@ -8,7 +8,6 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsers;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CosmosDb;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.LocationService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
@@ -26,8 +25,6 @@ public static class AddServiceRegistrationExtensions
     public static void AddServiceRegistrations(this IServiceCollection services)
     {
         services.AddHttpClient<IApiClient, ApiClient>();
-
-        services.AddSingleton<IDocumentClientFactory, DocumentClientFactory>();
 
         services.AddSingleton<IAuthorizationHandler, ManageAccountAuthorizationHandler>();
         services.AddSingleton<IAuthorizationHandler, ViewAccountAuthorizationHandler>();
