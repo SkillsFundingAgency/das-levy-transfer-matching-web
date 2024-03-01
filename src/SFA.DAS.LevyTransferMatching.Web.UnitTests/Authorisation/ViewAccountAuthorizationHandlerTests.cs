@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.EmployerAccountsService.Types;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsers.Types;
 using SFA.DAS.LevyTransferMatching.Web.Authentication;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Authorisation;

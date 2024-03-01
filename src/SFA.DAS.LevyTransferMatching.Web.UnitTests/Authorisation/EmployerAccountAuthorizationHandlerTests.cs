@@ -3,7 +3,6 @@ using Microsoft.Extensions.Configuration;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsers;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsers.Types;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.EmployerAccountsService.Types;
 using SFA.DAS.LevyTransferMatching.Web.Authentication;
 using SFA.DAS.LevyTransferMatching.Web.Authorization;
 using SFA.DAS.Testing.AutoFixture;

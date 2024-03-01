@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsers;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsers.Types;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.EmployerAccountsService.Types;
 using SFA.DAS.LevyTransferMatching.Web.StartupExtensions;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.StartupExtensions;

@@ -6,12 +6,9 @@ using SFA.DAS.LevyTransferMatching.Domain.Interfaces;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Api;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsers;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsersReadStore;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CosmosDb;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.EmployerAccountsService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.LocationService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService;
@@ -29,16 +26,12 @@ public static class AddServiceRegistrationExtensions
     {
         services.AddHttpClient<IApiClient, ApiClient>();
 
-        services.AddSingleton<IDocumentClientFactory, DocumentClientFactory>();
-        services.AddTransient<IAccountUsersReadOnlyRepository, AccountUsersReadOnlyRepository>();
-
         services.AddSingleton<IAuthorizationHandler, ManageAccountAuthorizationHandler>();
         services.AddSingleton<IAuthorizationHandler, ViewAccountAuthorizationHandler>();
             
         services.AddSingleton<IAuthorizationHandler, AccountActiveAuthorizationHandler>();//TODO remove after gov login go live
         services.AddTransient<IEmployerAccountAuthorizationHandler, EmployerAccountAuthorizationHandler>();
             
-        services.AddTransient<IEmployerAccountsService, EmployerAccountsService>();
         services.AddTransient<ILocationValidatorService, LocationValidatorService>();
         services.AddTransient<ICacheStorageService, CacheStorageService>();
         services.AddTransient<IPledgeOrchestrator, PledgeOrchestrator>();
