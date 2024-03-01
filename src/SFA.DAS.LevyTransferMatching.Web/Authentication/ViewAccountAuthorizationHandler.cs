@@ -1,4 +1,4 @@
-﻿using SFA.DAS.LevyTransferMatching.Infrastructure.Services.EmployerAccountsService.Types;
+﻿using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsers.Types;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Authentication;
 

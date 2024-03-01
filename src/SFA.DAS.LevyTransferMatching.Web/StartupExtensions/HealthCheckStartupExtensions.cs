@@ -12,7 +12,6 @@ public static class HealthCheckStartupExtensions
         services
             .AddHealthChecks()
             .AddCheck<ApiHealthCheck>("Api health check")
-            .AddCheck<EmployerAccountsApiHealthCheck>("Employer Accounts Api health check")
             .AddRedis(config.RedisConnectionString, "Redis health check");
 
         return services;

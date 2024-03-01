@@ -16,7 +16,6 @@
     <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="7.0.3" />
     <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="7.0.3" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="SFA.DAS.CosmosDb" Version="1.0.47" />
     <PackageReference Include="SFA.DAS.Encoding" Version="1.1.76" />
     <PackageReference Include="SFA.DAS.Http" Version="3.2.69" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.0.3" />
