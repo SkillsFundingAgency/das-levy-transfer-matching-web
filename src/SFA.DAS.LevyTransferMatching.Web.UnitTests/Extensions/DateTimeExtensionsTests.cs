@@ -1,62 +1,59 @@
-﻿using NUnit.Framework;
-using SFA.DAS.LevyTransferMatching.Web.Extensions;
-using System;
+﻿using SFA.DAS.LevyTransferMatching.Web.Extensions;
 
-namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions
+namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Extensions;
+
+[TestFixture]
+public class DateTimeExtensionsTests
 {
-    [TestFixture]
-    public class DateTimeExtensionsTests
+    [Test]
+    public void ToTaxYear_Returns_Previous_Year_When_April_Fifth_Full_Format()
     {
-        [Test]
-        public void ToTaxYear_Returns_Previous_Year_When_April_Fifth_Full_Format()
-        {
-            // Arrange
-            DateTime dateTime = new DateTime(2009, 4, 5);
+        // Arrange
+        var dateTime = new DateTime(2009, 4, 5);
 
-            // Act
-            string taxYear = dateTime.ToTaxYear("yyyy");
+        // Act
+        var taxYear = dateTime.ToTaxYear("yyyy");
 
-            // Assert
-            Assert.AreEqual("2008", taxYear);
-        }
+        // Assert
+        Assert.That(taxYear, Is.EqualTo("2008"));
+    }
 
-        [Test]
-        public void ToTaxYear_Returns_Current_Year_When_April_Sixth_Short_Format()
-        {
-            // Arrange
-            DateTime dateTime = new DateTime(1984, 4, 6);
+    [Test]
+    public void ToTaxYear_Returns_Current_Year_When_April_Sixth_Short_Format()
+    {
+        // Arrange
+        var dateTime = new DateTime(1984, 4, 6);
 
-            // Act
-            string taxYear = dateTime.ToTaxYear("yy");
+        // Act
+        var taxYear = dateTime.ToTaxYear("yy");
 
-            // Assert
-            Assert.AreEqual("84", taxYear);
-        }
+        // Assert
+        Assert.That(taxYear, Is.EqualTo("84"));
+    }
 
-        [Test]
-        public void ToTaxYearDescription_Returns_Previous_Year_And_This_Year_When_April_Fifth()
-        {
-            // Arrange
-            DateTime dateTime = new DateTime(1992, 4, 5);
+    [Test]
+    public void ToTaxYearDescription_Returns_Previous_Year_And_This_Year_When_April_Fifth()
+    {
+        // Arrange
+        var dateTime = new DateTime(1992, 4, 5);
 
-            // Act
-            string taxYear = dateTime.ToTaxYearDescription();
+        // Act
+        var taxYear = dateTime.ToTaxYearDescription();
 
-            // Assert
-            Assert.AreEqual("1991/92", taxYear);
-        }
+        // Assert
+        Assert.That(taxYear, Is.EqualTo("1991/92"));
+    }
 
-        [Test]
-        public void ToTaxYearDescription_Returns_Current_Year_And_Next_Year_When_April_Sixth()
-        {
-            // Arrange
-            DateTime dateTime = new DateTime(2015, 4, 6);
+    [Test]
+    public void ToTaxYearDescription_Returns_Current_Year_And_Next_Year_When_April_Sixth()
+    {
+        // Arrange
+        var dateTime = new DateTime(2015, 4, 6);
 
-            // Act
-            string taxYear = dateTime.ToTaxYearDescription();
+        // Act
+        var taxYear = dateTime.ToTaxYearDescription();
 
-            // Assert
-            Assert.AreEqual("2015/16", taxYear);
-        }
+        // Assert
+        Assert.That(taxYear, Is.EqualTo("2015/16"));
     }
 }

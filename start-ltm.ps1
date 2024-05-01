@@ -31,8 +31,7 @@
 # All the LTM code repositories are assumed to be in a folder called "transfers" under the project root. External code dependencies are assumed to be in the project root.
 #
 # Potential further work:
-# * Create the Accounts readstore in the CosmosDB
-# * Download and insert config values to the Storeage emulator
+# * Download and insert config values to the Storage emulator
 
 [CmdletBinding()]
 param (

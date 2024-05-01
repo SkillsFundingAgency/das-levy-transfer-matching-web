@@ -1,84 +1,88 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.LocationService;
+﻿using SFA.DAS.LevyTransferMatching.Infrastructure.Services.LocationService;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 
-namespace SFA.DAS.LevyTransferMatching.Web.Validators.Location
+namespace SFA.DAS.LevyTransferMatching.Web.Validators.Location;
+
+public interface ILocationValidatorService
 {
-    public class LocationValidatorService : ILocationValidatorService
+    Task<Dictionary<int, string>> ValidateLocations(LocationPostRequest request, IDictionary<int, IEnumerable<string>> multipleValidResults);
+}
+    
+public class LocationValidatorService : ILocationValidatorService
+{
+    private readonly ILocationService _locationService;
+
+    public LocationValidatorService(ILocationService locationService)
     {
-        private readonly ILocationService _locationService;
+        _locationService = locationService;
+    }
 
-        public LocationValidatorService(ILocationService locationService)
+    public async Task<Dictionary<int, string>> ValidateLocations(LocationPostRequest request, IDictionary<int, IEnumerable<string>> multipleValidResults)
+    {
+        var errors = new Dictionary<int, string>();
+
+        await CheckLocationsExist(request.Locations, errors, multipleValidResults);
+        CheckForDuplicateLocations(errors, request.Locations);
+
+        return errors;
+    }
+
+    private async Task CheckLocationsExist(List<string> locations, Dictionary<int, string> errors, IDictionary<int, IEnumerable<string>> multipleValidResults)
+    {
+        for (var index = 0; index < locations.Count; index++)
         {
-            _locationService = locationService;
-        }
-
-        public async Task<Dictionary<int, string>> ValidateLocations(LocationPostRequest request, IDictionary<int, IEnumerable<string>> multipleValidResults)
-        {
-            var errors = new Dictionary<int, string>();
-
-            await CheckLocationsExist(request.Locations, errors, multipleValidResults);
-            CheckForDuplicateLocations(errors, request.Locations);
-
-            return errors;
-        }
-
-        private async Task CheckLocationsExist(List<string> locations, Dictionary<int, string> errors, IDictionary<int, IEnumerable<string>> multipleValidResults)
-        {
-            for (int i = 0; i < locations.Count; i++)
+            if (locations[index] != null)
             {
-                if (locations[i] != null)
-                {
-                    await CheckLocationExists(locations, errors, multipleValidResults, i);
-                }
+                await CheckLocationExists(locations, errors, multipleValidResults, index);
             }
         }
+    }
 
-        private async Task CheckLocationExists(List<string> locations, Dictionary<int, string> errors, IDictionary<int, IEnumerable<string>> multipleValidResults, int i)
+    private async Task CheckLocationExists(List<string> locations, Dictionary<int, string> errors, IDictionary<int, IEnumerable<string>> multipleValidResults, int i)
+    {
+        var locationSuggestions = await _locationService.GetLocations(locations[i]);
+
+        if (!locationSuggestions.Names.Any())
         {
-            var locationSuggestions = await _locationService.GetLocations(locations[i]);
-
-            if (!locationSuggestions.Names.Any())
-            {
-                await CheckIfValidLocationSuggestion(errors, locations, i);
-            }
-            else if (locationSuggestions.Names.Count() == 1)
-            {
-                var locationInformation = await _locationService.GetLocationInformation(locations[i]);
-
-                locations[i] = locationInformation.Name;
-            }
-            else
-            {
-                multipleValidResults.Add(i, locationSuggestions.Names);
-            }
+            await CheckIfValidLocationSuggestion(errors, locations, i);
         }
-
-        private async Task CheckIfValidLocationSuggestion(Dictionary<int, string> errors, List<string> locations, int index)
+        else if (locationSuggestions.Names.Count() == 1)
         {
-            var locationInformation = await _locationService.GetLocationInformation(locations[index]);
+            var locationInformation = await _locationService.GetLocationInformation(locations[i]);
 
-            if (string.IsNullOrEmpty(locationInformation?.Name))
-            {
-                errors.Add(index, $"Check the spelling of your location");
-            }
+            locations[i] = locationInformation.Name;
         }
-
-        private void CheckForDuplicateLocations(Dictionary<int, string> errors, List<string> locations)
+        else
         {
-            for (int i = 0; i < locations.Count; i++)
+            multipleValidResults.Add(i, locationSuggestions.Names);
+        }
+    }
+
+    private async Task CheckIfValidLocationSuggestion(Dictionary<int, string> errors, List<string> locations, int index)
+    {
+        var locationInformation = await _locationService.GetLocationInformation(locations[index]);
+
+        if (string.IsNullOrEmpty(locationInformation?.Name))
+        {
+            errors.Add(index, $"Check the spelling of your location");
+        }
+    }
+
+    private static void CheckForDuplicateLocations(Dictionary<int, string> errors, List<string> locations)
+    {
+        for (var index = 0; index < locations.Count; index++)
+        {
+            if (locations[index] == null)
             {
-                if (locations[i] != null)
-                {
-                    if (locations.Count(x => x == locations[i]) > 1)
-                    {
-                        if (!errors.ContainsKey(i))
-                            errors.Add(i, $"Duplicates of the same location are not allowed");
-                    }
-                }
+                continue;
             }
+
+            if (locations.Count(x => x == locations[index]) <= 1)
+            {
+                continue;
+            }
+            
+            errors.TryAdd(index, "Duplicates of the same location are not allowed");
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using SFA.DAS.Encoding;
+﻿using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Web.Attributes;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges

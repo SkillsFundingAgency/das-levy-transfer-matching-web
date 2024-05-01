@@ -1,17 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsers;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.EmployerAccountsService.Types;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsers.Types;
 using SFA.DAS.LevyTransferMatching.Web.Authorization;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Authentication

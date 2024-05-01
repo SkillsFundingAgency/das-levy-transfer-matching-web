@@ -1,8 +1,7 @@
-﻿namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications
+﻿namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications;
+
+public class WithdrawalConfirmationViewModel : ConfirmWithdrawalPostRequest
 {
-    public class WithdrawalConfirmationViewModel : ConfirmWithdrawalPostRequest
-    {
-        public string PledgeEmployerName { get; set; }
-        public string EncodedPledgeId { get; set; }
-    }
+    public string PledgeEmployerName { get; set; }
+    public string EncodedPledgeId { get; set; }
 }

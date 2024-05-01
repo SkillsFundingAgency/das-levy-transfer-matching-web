@@ -1,6 +1,5 @@
 ﻿using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
-using System;
 using System.Collections.Generic;
 using System.Globalization;
 

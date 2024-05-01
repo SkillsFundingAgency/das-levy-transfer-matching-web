@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsers;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.EmployerAccountsService.Types;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsers.Types;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService
 {
@@ -64,8 +64,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService
 
         public IEnumerable<string> GetUserOwnerTransactorAccountIds()
         {
-            
-            
             var result = TryGetUserClaimValue(ClaimIdentifierConfiguration.Account, out var employerAccountClaim);
             if (!result)
             {
@@ -85,8 +83,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService
             {
                 return null;
             }
-
-            return null;
         }
 
         public bool IsOwnerOrTransactor(string accountId)

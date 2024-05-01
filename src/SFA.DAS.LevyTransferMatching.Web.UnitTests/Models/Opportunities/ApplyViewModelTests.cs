@@ -1,98 +1,95 @@
-﻿using AutoFixture;
-using NUnit.Framework;
-using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
+﻿using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 
-namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Opportunities
+namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Models.Opportunities;
+
+public class ApplyViewModelTests
 {
-    public class ApplyViewModelTests
+    private const string IncompleteString = "-";
+    private readonly Fixture _fixture = new();
+
+    [Test]
+    public void ApplyViewModel_IsApprenticeshipTrainingSectionComplete_Returns_True_When_All_Fields_Entered()
     {
-        private const string IncompleteString = "-";
-        private readonly Fixture _fixture = new Fixture();
+        var model = _fixture.Create<ApplyViewModel>();
 
-        [Test]
-        public void ApplyViewModel_IsApprenticeshipTrainingSectionComplete_Returns_True_When_All_Fields_Entered()
-        {
-            var model = _fixture.Create<ApplyViewModel>();
+        Assert.That(model.IsApprenticeshipTrainingSectionComplete, Is.True);
+    }
 
-            Assert.IsTrue(model.IsApprenticeshipTrainingSectionComplete);
-        }
+    [Test]
+    public void ApplyViewModel_IsApprenticeshipTrainingSectionComplete_Returns_False_When_One_Field_Not_Entered()
+    {
+        var model = _fixture.Create<ApplyViewModel>();
+        model.HaveTrainingProvider = IncompleteString;
 
-        [Test]
-        public void ApplyViewModel_IsApprenticeshipTrainingSectionComplete_Returns_False_When_One_Field_Not_Entered()
-        {
-            var model = _fixture.Create<ApplyViewModel>();
-            model.HaveTrainingProvider = IncompleteString;
+        Assert.That(model.IsApprenticeshipTrainingSectionComplete, Is.False);
+    }
 
-            Assert.IsFalse(model.IsApprenticeshipTrainingSectionComplete);
-        }
+    [Test]
+    public void ApplyViewModel_IsBusinessDetailsSectionComplete_Returns_True_When_All_Fields_Entered()
+    {
+        var model = _fixture.Create<ApplyViewModel>();
 
-        [Test]
-        public void ApplyViewModel_IsBusinessDetailsSectionComplete_Returns_True_When_All_Fields_Entered()
-        {
-            var model = _fixture.Create<ApplyViewModel>();
+        Assert.That(model.IsBusinessDetailsSectionComplete, Is.True);
+    }
 
-            Assert.IsTrue(model.IsBusinessDetailsSectionComplete);
-        }
+    [Test]
+    public void ApplyViewModel_IsBusinessDetailsSectionComplete_Returns_False_When_One_Field_Not_Entered()
+    {
+        var model = _fixture.Create<ApplyViewModel>();
+        model.Sectors = null;
 
-        [Test]
-        public void ApplyViewModel_IsBusinessDetailsSectionComplete_Returns_False_When_One_Field_Not_Entered()
-        {
-            var model = _fixture.Create<ApplyViewModel>();
-            model.Sectors = null;
+        Assert.That(model.IsBusinessDetailsSectionComplete, Is.False);
+    }
 
-            Assert.IsFalse(model.IsBusinessDetailsSectionComplete);
-        }
+    [Test]
+    public void ApplyViewModel_IsContactDetailsSectionComplete_Returns_True_When_All_Fields_Entered()
+    {
+        var model = _fixture.Create<ApplyViewModel>();
 
-        [Test]
-        public void ApplyViewModel_IsContactDetailsSectionComplete_Returns_True_When_All_Fields_Entered()
-        {
-            var model = _fixture.Create<ApplyViewModel>();
+        Assert.That(model.IsContactDetailsSectionComplete, Is.True);
+    }
 
-            Assert.IsTrue(model.IsContactDetailsSectionComplete);
-        }
+    [Test]
+    public void ApplyViewModel_IsContactDetailsSectionComplete_Returns_False_When_One_Field_Not_Entered()
+    {
+        var model = _fixture.Create<ApplyViewModel>();
+        model.ContactName = IncompleteString;
 
-        [Test]
-        public void ApplyViewModel_IsContactDetailsSectionComplete_Returns_False_When_One_Field_Not_Entered()
-        {
-            var model = _fixture.Create<ApplyViewModel>();
-            model.ContactName = IncompleteString;
+        Assert.That(model.IsContactDetailsSectionComplete, Is.False);
+    }
 
-            Assert.IsFalse(model.IsContactDetailsSectionComplete);
-        }
+    [Test]
+    public void ApplyViewModel_IsComplete_Returns_True_When_All_Other_Sections_Complete()
+    {
+        var model = _fixture.Create<ApplyViewModel>();
 
-        [Test]
-        public void ApplyViewModel_IsComplete_Returns_True_When_All_Other_Sections_Complete()
-        {
-            var model = _fixture.Create<ApplyViewModel>();
+        Assert.That(model.IsComplete, Is.True);
+    }
 
-            Assert.IsTrue(model.IsComplete);
-        }
+    [Test]
+    public void ApplyViewModel_IsComplete_Returns_False_When_Training_Sections_Incomplete()
+    {
+        var model = _fixture.Create<ApplyViewModel>();
+        model.JobRole = IncompleteString;
 
-        [Test]
-        public void ApplyViewModel_IsComplete_Returns_False_When_Training_Sections_Incomplete()
-        {
-            var model = _fixture.Create<ApplyViewModel>();
-            model.JobRole = IncompleteString;
+        Assert.That(model.IsComplete, Is.False);
+    }
 
-            Assert.IsFalse(model.IsComplete);
-        }
+    [Test]
+    public void ApplyViewModel_IsComplete_Returns_False_When_BusinessDetails_Sections_Incomplete()
+    {
+        var model = _fixture.Create<ApplyViewModel>();
+        model.Sectors = null;
 
-        [Test]
-        public void ApplyViewModel_IsComplete_Returns_False_When_BusinessDetails_Sections_Incomplete()
-        {
-            var model = _fixture.Create<ApplyViewModel>();
-            model.Sectors = null;
+        Assert.That(model.IsComplete, Is.False);
+    }
 
-            Assert.IsFalse(model.IsComplete);
-        }
+    [Test]
+    public void ApplyViewModel_IsComplete_Returns_False_When_ContactDetails_Sections_Incomplete()
+    {
+        var model = _fixture.Create<ApplyViewModel>();
+        model.ContactName = IncompleteString;
 
-        [Test]
-        public void ApplyViewModel_IsComplete_Returns_False_When_ContactDetails_Sections_Incomplete()
-        {
-            var model = _fixture.Create<ApplyViewModel>();
-            model.ContactName = IncompleteString;
-
-            Assert.IsFalse(model.IsComplete);
-        }
+        Assert.That(model.IsComplete, Is.False);
     }
 }

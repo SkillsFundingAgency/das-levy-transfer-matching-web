@@ -1,13 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿namespace SFA.DAS.LevyTransferMatching.Web.Extensions;
 
-namespace SFA.DAS.LevyTransferMatching.Web.Extensions
+public static class ListExtensions
 {
-    public static class ListExtensions
+    public static bool IsComplete(this List<string> list)
     {
-        public static bool IsComplete(this List<string> list)
-        {
-            return list != null && list.Any();
-        }
+        return list != null && list.Any();
     }
 }

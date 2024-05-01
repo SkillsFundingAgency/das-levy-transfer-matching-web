@@ -1,137 +1,131 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.LevyTransferMatching.Web.Attributes;
+﻿using SFA.DAS.LevyTransferMatching.Web.Attributes;
 using SFA.DAS.LevyTransferMatching.Web.Authentication;
 using SFA.DAS.LevyTransferMatching.Web.Models.Applications;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 
-namespace SFA.DAS.LevyTransferMatching.Web.Controllers
+namespace SFA.DAS.LevyTransferMatching.Web.Controllers;
+
+[Authorize(Policy = PolicyNames.ViewAccount)]
+public class ApplicationsController : Controller
 {
-    [Authorize(Policy = PolicyNames.ViewAccount)]
-    public class ApplicationsController : Controller
+    private readonly IApplicationsOrchestrator _applicationsOrchestrator;
+
+    public ApplicationsController(IApplicationsOrchestrator applicationsOrchestrator)
     {
-        private readonly IApplicationsOrchestrator _applicationsOrchestrator;
+        _applicationsOrchestrator = applicationsOrchestrator;
+    }
 
-        public ApplicationsController(IApplicationsOrchestrator applicationsOrchestrator)
-        {
-            _applicationsOrchestrator = applicationsOrchestrator;
-        }
-
-        [HttpGet]
-        [HideAccountNavigation(false)]
-        [Route("/accounts/{encodedAccountId}/applications")]
-        public async Task<IActionResult> Applications(GetApplicationsRequest request)
-        {
-            var viewModel = await _applicationsOrchestrator.GetApplications(request);
+    [HttpGet]
+    [HideAccountNavigation(false)]
+    [Route("/accounts/{encodedAccountId}/applications")]
+    public async Task<IActionResult> Applications(GetApplicationsRequest request)
+    {
+        var viewModel = await _applicationsOrchestrator.GetApplications(request);
             
+        return View(viewModel);
+    }
+
+    [HttpGet]
+    [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}")]
+    public async Task<IActionResult> Application(ApplicationRequest request)
+    {
+        var viewModel = await _applicationsOrchestrator.GetApplication(request);
+
+        if (viewModel != null)
+        {
             return View(viewModel);
         }
 
-        [HttpGet]
-        [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}")]
-        public async Task<IActionResult> Application(ApplicationRequest request)
+        return NotFound();
+    }
+
+    [HttpPost]
+    [Authorize(Policy = PolicyNames.ManageAccount)]
+    [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}")]
+    public async Task<IActionResult> Application(ApplicationPostRequest request)
+    {
+        if (request.SelectedAction == ApplicationViewModel.ApprovalAction.None)
         {
-            var viewModel = await _applicationsOrchestrator.GetApplication(request);
-
-            if (viewModel != null)
-            {
-                return View(viewModel);
-            }
-
-            return NotFound();
+            return RedirectToAction("Applications", new { EncodedAccountId = request.EncodedAccountId });
         }
 
-        [HttpPost]
-        [Authorize(Policy = PolicyNames.ManageAccount)]
-        [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}")]
-        public async Task<IActionResult> Application(ApplicationPostRequest request)
+        await _applicationsOrchestrator.SetApplicationAcceptance(request);
+
+        if (request.SelectedAction == ApplicationViewModel.ApprovalAction.Accept)
         {
-            if (request.SelectedAction == ApplicationViewModel.ApprovalAction.None)
-            {
-                return RedirectToAction("Applications", new { EncodedAccountId = request.EncodedAccountId });
-            }
-
-            await _applicationsOrchestrator.SetApplicationAcceptance(request);
-
-            if (request.SelectedAction == ApplicationViewModel.ApprovalAction.Accept)
-            {
-                return Redirect($"/accounts/{request.EncodedAccountId}/applications/{request.EncodedApplicationId}/accepted");
-            }
-
-            else if (request.SelectedAction == ApplicationViewModel.ApprovalAction.Withdraw)
-            {
-                return Redirect($"/accounts/{request.EncodedAccountId}/applications/{request.EncodedApplicationId}/withdrawn");
-            }
-            else
-            {
-                return Redirect($"/accounts/{request.EncodedAccountId}/applications/{request.EncodedApplicationId}/declined");
-            }
+            return Redirect($"/accounts/{request.EncodedAccountId}/applications/{request.EncodedApplicationId}/accepted");
         }
 
-        [HttpGet]
-        [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}/accepted")]
-        public async Task<IActionResult> Accepted(AcceptedRequest request)
+        if (request.SelectedAction == ApplicationViewModel.ApprovalAction.Withdraw)
         {
-            var viewModel = await _applicationsOrchestrator.GetAcceptedViewModel(request);
-
-            if (viewModel != null)
-            {
-                return View(viewModel);
-            }
-
-            return NotFound();
+            return Redirect($"/accounts/{request.EncodedAccountId}/applications/{request.EncodedApplicationId}/withdrawn");
         }
+        
+        return Redirect($"/accounts/{request.EncodedAccountId}/applications/{request.EncodedApplicationId}/declined");
+    }
 
-        [HttpGet]
-        [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}/declined")]
-        public async Task<IActionResult> Declined(DeclinedRequest request)
+    [HttpGet]
+    [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}/accepted")]
+    public async Task<IActionResult> Accepted(AcceptedRequest request)
+    {
+        var viewModel = await _applicationsOrchestrator.GetAcceptedViewModel(request);
+
+        if (viewModel != null)
         {
-            var viewModel = await _applicationsOrchestrator.GetDeclinedViewModel(request);
-
-            if (viewModel != null)
-            {
-                return View(viewModel);
-            }
-
-            return NotFound();
-        }
-
-        [HttpGet]
-        [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}/withdrawn")]
-        public async Task<IActionResult> Withdrawn(WithdrawnRequest request)
-        {
-            var viewModel = await _applicationsOrchestrator.GetWithdrawnViewModel(request);
-
-            if (viewModel != null)
-            {
-                return View(viewModel);
-            }
-
-            return NotFound();
-        }
-
-        [HttpGet]
-        [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}/withdrawal-confirmation")]
-        public async Task<IActionResult> WithdrawalConfirmation(WithdrawalConfirmationRequest request)
-        {
-            var viewModel = await _applicationsOrchestrator.GetWithdrawalConfirmationViewModel(request);
-
             return View(viewModel);
         }
 
-        [HttpPost]
-        [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}/withdrawal-confirmation")]
-        public async Task<IActionResult> ConfirmWithdrawal(ConfirmWithdrawalPostRequest request)
+        return NotFound();
+    }
+
+    [HttpGet]
+    [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}/declined")]
+    public async Task<IActionResult> Declined(DeclinedRequest request)
+    {
+        var viewModel = await _applicationsOrchestrator.GetDeclinedViewModel(request);
+
+        if (viewModel != null)
         {
-            if (request.HasConfirmed.Value)
-            {
-                await _applicationsOrchestrator.WithdrawApplicationAfterAcceptance(request);
-
-                return RedirectToAction("Withdrawn", new { request.EncodedAccountId, request.EncodedApplicationId });
-            }
-
-            return RedirectToAction("Applications", new { request.EncodedAccountId });
+            return View(viewModel);
         }
+
+        return NotFound();
+    }
+
+    [HttpGet]
+    [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}/withdrawn")]
+    public async Task<IActionResult> Withdrawn(WithdrawnRequest request)
+    {
+        var viewModel = await _applicationsOrchestrator.GetWithdrawnViewModel(request);
+
+        if (viewModel != null)
+        {
+            return View(viewModel);
+        }
+
+        return NotFound();
+    }
+
+    [HttpGet]
+    [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}/withdrawal-confirmation")]
+    public async Task<IActionResult> WithdrawalConfirmation(WithdrawalConfirmationRequest request)
+    {
+        var viewModel = await _applicationsOrchestrator.GetWithdrawalConfirmationViewModel(request);
+
+        return View(viewModel);
+    }
+
+    [HttpPost]
+    [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}/withdrawal-confirmation")]
+    public async Task<IActionResult> ConfirmWithdrawal(ConfirmWithdrawalPostRequest request)
+    {
+        if (request.HasConfirmed.Value)
+        {
+            await _applicationsOrchestrator.WithdrawApplicationAfterAcceptance(request);
+
+            return RedirectToAction("Withdrawn", new { request.EncodedAccountId, request.EncodedApplicationId });
+        }
+
+        return RedirectToAction("Applications", new { request.EncodedAccountId });
     }
 }
