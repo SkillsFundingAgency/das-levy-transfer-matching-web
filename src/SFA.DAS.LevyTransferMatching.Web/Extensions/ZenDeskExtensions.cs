@@ -1,11 +1,7 @@
-﻿using System.Linq;
-using Microsoft.AspNetCore.Html;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
-using SFA.DAS.LevyTransferMatching.Web.Attributes;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Extensions
 {
@@ -18,7 +14,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Extensions
             => GetZendeskConfiguration(viewData)?.SnippetKey;
 
         private static ZenDesk? GetZendeskConfiguration(ViewDataDictionary viewData)
-            => viewData.TryGetValue(ViewDataKeys.ZenDeskConfiguration, out var section)
+            => viewData.TryGetValue(ViewDataKeys.ViewDataKeys.ZenDeskConfiguration, out var section)
                 ? section as ZenDesk
                 : null;
 
