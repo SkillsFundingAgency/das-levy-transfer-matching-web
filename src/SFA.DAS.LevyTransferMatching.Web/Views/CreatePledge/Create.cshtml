@@ -199,9 +199,8 @@
                                 <h2 class="das-task-list__section">
                                     <span class="das-task-list__section-number">4. </span> 100% Match <br />
                                     <span class="govuk-hint app-task-list__group-header-hint">
-                                        Pledges that match 100% will automatically be approved.
-                                        If you want to do further due diligence checks you can delay the automatic approval by up to 6 weeks;
-                                        after which time they will be approved. 
+                                        100% matches are applications that match all your criteria. You can choose to automatically approve 100% match applications immediately, 
+                                        or take 6 weeks to review, approve, or reject them before they are automatically approved.
                                     </span>
                                 </h2>
                             </div>
@@ -221,7 +220,7 @@
                             <li class="das-task-list__item">
                                 <span class="das-task-list__task-name">
                                     <a class="govuk-link" href="@Url.Action("AutoApproval", new AutoApproveRequest{EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey}, true)">
-                                        Approve or delay
+                                        Review or approve immediately
                                     </a>
                                 </span>
                                 <span class="das-task-list__task-tag">
