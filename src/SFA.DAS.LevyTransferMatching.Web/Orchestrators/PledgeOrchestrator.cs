@@ -11,6 +11,7 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Services;
+using static SFA.DAS.LevyTransferMatching.Web.Models.Pledges.PledgesViewModel;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 
@@ -86,6 +87,17 @@ public class PledgeOrchestrator : IPledgeOrchestrator
         var totalPages = (int)Math.Ceiling((double)pledgesResponse.TotalPledges / pledgesResponse.PageSize);
         var totalPageLinks = totalPages < 5 ? totalPages : 5;
 
+        //previous link
+        if (totalPages > 1 && pledgesResponse.Page > 1)
+        {
+            links.Add(new PageLink
+            {
+                Label = "Previous",
+                AriaLabel = "Previous page",
+                RouteData = BuildRouteData(pledgesResponse.Page - 1)
+            });
+        }
+
         //numbered links
         var pageNumberSeed = 1;
         if (totalPages > 5 && pledgesResponse.Page > 3)
@@ -106,6 +118,17 @@ public class PledgeOrchestrator : IPledgeOrchestrator
                 RouteData = BuildRouteData(pageNumberSeed + i)
             };
             links.Add(link);
+        }
+
+        //next link
+        if (totalPages > 1 && pledgesResponse.Page < totalPages)
+        {
+            links.Add(new PageLink
+            {
+                Label = "Next",
+                AriaLabel = "Next page",
+                RouteData = BuildRouteData(pledgesResponse.Page + 1)
+            });
         }
 
         return links;
