@@ -6,7 +6,6 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
     {
         public IEnumerable<Pledge> Pledges { get; set; }
         public PagingData Paging { get; set; }
-        public int PledgeCount => Pledges.Count();
         public bool RenderCreatePledgeButton { get; set; }
         
         public class Pledge
