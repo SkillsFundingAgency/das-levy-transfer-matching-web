@@ -13,6 +13,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-xl">Do you want to approve 100% matches immediately?</h1>
+            <p class="govuk-body-l govuk-hint">100% matches are funding applications that match all of the criteria you have set.</p>
             <form method="post">                
                 <div class="govuk-form-group" das-highlight-error-for="AutomaticApprovalOption" error-class="govuk-form-group--error">
                     <fieldset class="govuk-fieldset">
@@ -21,7 +22,7 @@
                             <div class="govuk-radios__item">
                                 <input class="govuk-radios__input" id="AutomaticApprovalOption" asp-for="AutomaticApprovalOption" type="radio" value="@AutomaticApprovalOption.ImmediateAutoApproval" das-highlight-error-for="AutomaticApprovalOption" error-class="govuk-textarea--error" />
                                 <label class="govuk-label govuk-radios__label" for="AutomaticApprovalOption">
-                                    ‘Yes, automatically approve 100% matches immediately
+                                    Yes, automatically approve 100% matches immediately
                                 </label>
                             </div>
                             <div class="govuk-radios__item">
