@@ -1,4 +1,5 @@
-﻿using System.Dynamic;
+﻿using System.Drawing.Printing;
+using System.Dynamic;
 using Humanizer;
 using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Domain.Types;
@@ -45,11 +46,12 @@ public class PledgeOrchestrator : IPledgeOrchestrator
 
     public async Task<PledgesViewModel> GetPledgesViewModel(PledgesRequest request)
     {
-        var pledgesResponse = await _pledgeService.GetPledges(request.AccountId);
+        var pledgesResponse = await _pledgeService.GetPledges(request.AccountId, request.Page, PledgesRequest.DefaultPageSize);
         var renderCreatePledgesButton = _userService.IsUserChangeAuthorized(request.EncodedAccountId);
 
         return new PledgesViewModel
         {
+            Paging = GetPagingData(pledgesResponse),
             EncodedAccountId = request.EncodedAccountId,
             RenderCreatePledgeButton = renderCreatePledgesButton,
             Pledges = pledgesResponse.Pledges.Select(x => new PledgesViewModel.Pledge
@@ -61,6 +63,57 @@ public class PledgeOrchestrator : IPledgeOrchestrator
                 Status = x.Status
             })
         };
+    }
+
+    private PledgesViewModel.PagingData GetPagingData(GetPledgesResponse pledgesResponse)
+    {
+        return new PledgesViewModel.PagingData()
+        {
+            Page = pledgesResponse.Page,
+            PageSize = pledgesResponse.PageSize,
+            TotalPages = pledgesResponse.TotalPages,
+            TotalPledges = pledgesResponse.TotalPledges,
+            ShowPageLinks = pledgesResponse.Page != 1 || pledgesResponse.TotalPledges > pledgesResponse.PageSize,
+            PageLinks = BuildPageLinks(pledgesResponse),
+            PageStartRow = (pledgesResponse.Page-1) * pledgesResponse.PageSize + 1,
+            PageEndRow = pledgesResponse.Page * pledgesResponse.PageSize > pledgesResponse.TotalPledges ? pledgesResponse.TotalPledges : pledgesResponse.Page * pledgesResponse.PageSize,
+        };
+    }
+
+    public IEnumerable<PledgesViewModel.PageLink> BuildPageLinks(GetPledgesResponse pledgesResponse) 
+    {
+        var links = new List<PledgesViewModel.PageLink>();
+        var totalPages = (int)Math.Ceiling((double)pledgesResponse.TotalPledges / pledgesResponse.PageSize);
+        var totalPageLinks = totalPages < 5 ? totalPages : 5;
+
+        //numbered links
+        var pageNumberSeed = 1;
+        if (totalPages > 5 && pledgesResponse.Page > 3)
+        {
+            pageNumberSeed = pledgesResponse.Page - 2;
+
+            if (pledgesResponse.Page > totalPages - 2)
+                pageNumberSeed = totalPages - 4;
+        }
+
+        for (var i = 0; i < totalPageLinks; i++)
+        {
+            var link = new PledgesViewModel.PageLink
+            {
+                Label = (pageNumberSeed + i).ToString(),
+                AriaLabel = $"Page {pageNumberSeed + i}",
+                IsCurrent = pageNumberSeed + i == pledgesResponse.Page ? true : (bool?)null,
+                RouteData = BuildRouteData(pageNumberSeed + i)
+            };
+            links.Add(link);
+        }
+
+        return links;
+    }
+
+    private Dictionary<string, string> BuildRouteData(int pageNumber)
+    {
+        return new Dictionary<string, string> { {"page", pageNumber.ToString() } };
     }
 
     public DetailViewModel GetDetailViewModel(DetailRequest request)

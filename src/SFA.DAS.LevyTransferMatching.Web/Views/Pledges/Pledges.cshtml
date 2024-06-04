@@ -42,29 +42,103 @@
                 </div>
                 <table class="govuk-table govuk-!-margin-bottom-9" aria-label="Transfer pledges table">
                     <thead class="govuk-table__head">
-                        <tr class="govuk-table__row">
-                            <th scope="col" class="govuk-table__header app-custom-class">Transfer pledge</th>
-                            <th scope="col" class="govuk-table__header govuk-table__header--numeric">Total</th>
-                            <th scope="col" class="govuk-table__header govuk-table__header--numeric">Remaining funds</th>
-                            <th scope="col" class="govuk-table__header govuk-table__header--numeric">Applications</th>
-                            <th scope="col" class="govuk-table__header">Status</th>
-                        </tr>
+                    <tr class="govuk-table__row">
+                        <th scope="col" class="govuk-table__header app-custom-class">Transfer pledge</th>
+                        <th scope="col" class="govuk-table__header govuk-table__header--numeric">Total</th>
+                        <th scope="col" class="govuk-table__header govuk-table__header--numeric">Remaining funds</th>
+                        <th scope="col" class="govuk-table__header govuk-table__header--numeric">Applications</th>
+                        <th scope="col" class="govuk-table__header">Status</th>
+                    </tr>
                     </thead>
                     <tbody class="govuk-table__body">
-                        @foreach (var pledge in Model.Pledges)
-                        {
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__cell">
-                                    <a href="pledges/@pledge.ReferenceNumber/applications" class=govuk-link--no-visited-state>@pledge.ReferenceNumber</a>
-                                </td>
-                                <td class="govuk-table__cell govuk-table__cell--numeric">£@pledge.Amount.ToString("N0")</td>
-                                <td class="govuk-table__cell govuk-table__cell--numeric">£@pledge.RemainingAmount.ToString("N0")</td>
-                                <td class="govuk-table__cell govuk-table__cell--numeric">@pledge.ApplicationCount</td>
-                                <td class="govuk-table__cell"><strong class="@pledge.Status.GetCssClass()">@pledge.Status.GetLabel()</strong></td>
-                            </tr>
-                        }
+                    @foreach (var pledge in Model.Pledges)
+                    {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">
+                                <a href="pledges/@pledge.ReferenceNumber/applications" class=govuk-link--no-visited-state>@pledge.ReferenceNumber</a>
+                            </td>
+                            <td class="govuk-table__cell govuk-table__cell--numeric">£@pledge.Amount.ToString("N0")</td>
+                            <td class="govuk-table__cell govuk-table__cell--numeric">£@pledge.RemainingAmount.ToString("N0")</td>
+                            <td class="govuk-table__cell govuk-table__cell--numeric">@pledge.ApplicationCount</td>
+                            <td class="govuk-table__cell"><strong class="@pledge.Status.GetCssClass()">@pledge.Status.GetLabel()</strong></td>
+                        </tr>
+                    }
                     </tbody>
                 </table>
+                
+                @if (Model.Paging.ShowPageLinks)
+                {
+                    <nav role="navigation" aria-label="Pagination">
+                        <div class="das-pagination__summary">Showing @Model.Paging.PageStartRow to @Model.Paging.PageEndRow of @Model.Paging.TotalPledges pledges</div>
+                        <ul class="das-pagination">
+                            @foreach (var pageLink in Model.Paging.PageLinks)
+                            {
+                                <li class="das-pagination__item">
+                                    <a class="das-pagination__link @(pageLink.IsCurrent.HasValue && pageLink.IsCurrent.Value ? "current":"")"
+                                       asp-route="test"
+                                       asp-all-route-data="@pageLink.RouteData"
+                                       aria-current="@pageLink.IsCurrent"
+                                       aria-label="@pageLink.AriaLabel">
+                                        @pageLink.Label
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </nav>
+                    <p></p>
+                    <p></p>
+                    <p></p>
+
+                    <nav class="govuk-pagination" aria-label="Pagination">
+
+                        @if (Model.Paging.Page > 1)
+                        {
+                            <div class="govuk-pagination__prev">
+                                <a class="govuk-link govuk-pagination__link" href="#" rel="prev">
+                                    <svg class="govuk-pagination__icon govuk-pagination__icon--prev" xmlns="http://www.w3.org/2000/svg" height="13" width="15" aria-hidden="true" focusable="false" viewBox="0 0 15 13">
+                                        <path d="m6.5938-0.0078125-6.7266 6.7266 6.7441 6.4062 1.377-1.449-4.1856-3.9768h12.896v-2h-12.984l4.2931-4.293-1.414-1.414z"></path>
+                                    </svg>
+                                    <span class="govuk-pagination__link-title">
+                                        Previous<span class="govuk-visually-hidden"> page</span>
+                                    </span>
+                                </a>
+                            </div>
+                        }
+                        <ul class="govuk-pagination__list">
+
+                            @foreach (var pageLink in Model.Paging.PageLinks)
+                            {
+                                <li class="govuk-pagination__item @(pageLink.IsCurrent.HasValue && pageLink.IsCurrent.Value ? "govuk-pagination__item--current":"")">
+                                    <a class="govuk-link govuk-pagination__link"
+                                       asp-route="test"
+                                       asp-all-route-data="@pageLink.RouteData"
+                                       aria-current="@pageLink.IsCurrent"
+                                       aria-label="@pageLink.AriaLabel">
+                                        @pageLink.Label
+                                    </a>
+                                </li>
+                            }
+                            
+                            
+                        </ul>
+                        @if (Model.Paging.Page < Model.Paging.TotalPages)
+                        {
+                            <div class="govuk-pagination__next">
+                                <a class="govuk-link govuk-pagination__link" href="#" rel="next">
+                                    <span class="govuk-pagination__link-title">
+                                        Next<span class="govuk-visually-hidden"> page</span>
+                                    </span>
+                                    <svg class="govuk-pagination__icon govuk-pagination__icon--next" xmlns="http://www.w3.org/2000/svg" height="13" width="15" aria-hidden="true" focusable="false" viewBox="0 0 15 13">
+                                        <path d="m8.107-0.0078125-1.4136 1.414 4.2926 4.293h-12.986v2h12.896l-4.1855 3.9766 1.377 1.4492 6.7441-6.4062-6.7246-6.7266z"></path>
+                                    </svg>
+                                </a>
+                            </div>
+                        }
+                        <div class="govuk-pagination__summary">Showing @Model.Paging.PageStartRow to @Model.Paging.PageEndRow of @Model.Paging.TotalPledges transfer records</div>
+                    </nav>
+                }
+
+
                 @if (Model.RenderCreatePledgeButton)
                 {
                     <div class="govuk-button-group">
