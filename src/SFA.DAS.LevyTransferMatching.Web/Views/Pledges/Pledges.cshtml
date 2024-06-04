@@ -1,5 +1,4 @@
 ﻿@using SFA.DAS.LevyTransferMatching.Domain.Extensions
-@using SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 @model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.PledgesViewModel
 
 @{
@@ -75,7 +74,7 @@
                             {
                                 <li class="das-pagination__item">
                                     <a class="das-pagination__link @(pageLink.IsCurrent.HasValue && pageLink.IsCurrent.Value ? "current" : "")"
-                                       asp-route="test"
+                                       asp-route="pledges"
                                        asp-all-route-data="@pageLink.RouteData"
                                        aria-current="@pageLink.IsCurrent"
                                        aria-label="@pageLink.AriaLabel">

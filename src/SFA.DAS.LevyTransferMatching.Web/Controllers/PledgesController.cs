@@ -6,8 +6,7 @@ using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers;
 
-//[Authorize(Policy = PolicyNames.ViewAccount)]
-[AllowAnonymous]
+[Authorize(Policy = PolicyNames.ViewAccount)]
 [Route("accounts/{encodedAccountId}/pledges")]
 public class PledgesController : Controller
 {
@@ -18,14 +17,12 @@ public class PledgesController : Controller
         _orchestrator = orchestrator;
     }
 
-    [Route("", Name = "test")]
+    [Route("", Name = "pledges")]
     public async Task<IActionResult> Pledges(PledgesRequest request)
     {
-        request.AccountId = 1;
         var viewModel = await _orchestrator.GetPledgesViewModel(request);
         return View(viewModel);
     }
-
 
     [HttpGet]
     [Authorize(Policy = PolicyNames.ManageAccount)]
