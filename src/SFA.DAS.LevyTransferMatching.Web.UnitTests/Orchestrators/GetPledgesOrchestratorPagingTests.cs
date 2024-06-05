@@ -1,5 +1,4 @@
 ﻿using SFA.DAS.Encoding;
-using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types;
@@ -43,10 +42,10 @@ public class GetPledgesOrchestratorPagingTests
     {
         var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest
             { EncodedAccountId = _encodedAccountId, AccountId = _accountId, Page = _page });
-        Assert.That(result.Paging.Page, Is.EqualTo(_pledgesResponse.Page));
-        Assert.That(result.Paging.PageSize, Is.EqualTo(_pledgesResponse.PageSize));
-        Assert.That(result.Paging.TotalPages, Is.EqualTo(_pledgesResponse.TotalPages));
-        Assert.That(result.Paging.TotalPledges, Is.EqualTo(_pledgesResponse.TotalPledges));
+        result.Paging.Page.Should().Be(_pledgesResponse.Page);        
+        result.Paging.PageSize.Should().Be(_pledgesResponse.PageSize);
+        result.Paging.TotalPages.Should().Be(_pledgesResponse.TotalPages);
+        result.Paging.TotalPledges.Should().Be(_pledgesResponse.TotalPledges);
     }
 
     [TestCase(3, 3, false)]
@@ -61,9 +60,9 @@ public class GetPledgesOrchestratorPagingTests
 
         var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest
             { EncodedAccountId = _encodedAccountId, AccountId = _accountId, Page = _page });
-        Assert.That(result.Paging.ShowPageLinks, Is.EqualTo(expectedShowPageLinksStatus));
-        Assert.That(result.Paging.PageStartRow, Is.EqualTo(1));
-        Assert.That(result.Paging.PageEndRow, Is.EqualTo(endRow));
+        result.Paging.ShowPageLinks.Should().Be(expectedShowPageLinksStatus);
+        result.Paging.PageStartRow.Should().Be(1);
+        result.Paging.PageEndRow.Should().Be(endRow);
     }
 
     [TestCase(2,150, 51, 100)]
@@ -77,9 +76,9 @@ public class GetPledgesOrchestratorPagingTests
 
         var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest
             { EncodedAccountId = _encodedAccountId, AccountId = _accountId, Page = page });
-        Assert.That(result.Paging.ShowPageLinks, Is.True);
-        Assert.That(result.Paging.PageStartRow, Is.EqualTo(startRow));
-        Assert.That(result.Paging.PageEndRow, Is.EqualTo(endRow));
+        result.Paging.ShowPageLinks.Should().BeTrue();
+        result.Paging.PageStartRow.Should().Be(startRow);
+        result.Paging.PageEndRow.Should().Be(endRow);
     }
 
     [TestCase(1, 10, false, false)]
@@ -93,8 +92,8 @@ public class GetPledgesOrchestratorPagingTests
 
         var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest
             { EncodedAccountId = _encodedAccountId, AccountId = _accountId, Page = page });
-        Assert.That(result.Paging.PageLinks.First().Label == "Previous", Is.EqualTo(hasPreviousLink));
-        Assert.That(result.Paging.PageLinks.Last().Label == "Next", Is.EqualTo(hasNextLink));
+        (result.Paging.PageLinks.First().Label == "Previous").Should().Be(hasPreviousLink);
+        (result.Paging.PageLinks.Last().Label == "Next").Should().Be(hasNextLink);
     }
 
     [Test]
@@ -106,13 +105,13 @@ public class GetPledgesOrchestratorPagingTests
 
         var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest
             { EncodedAccountId = _encodedAccountId, AccountId = _accountId, Page = _page });
-        Assert.That(result.Paging.PageLinks.FirstOrDefault(x=>x.Label == "7"), Is.Null);
-        Assert.That(result.Paging.PageLinks.FirstOrDefault(x=>x.Label == "8"), Is.Not.Null);
-        Assert.That(result.Paging.PageLinks.FirstOrDefault(x=>x.Label == "9"), Is.Not.Null);
-        Assert.That(result.Paging.PageLinks.FirstOrDefault(x=>x.Label == "10").IsCurrent, Is.True);
-        Assert.That(result.Paging.PageLinks.FirstOrDefault(x => x.Label == "11"), Is.Not.Null);
-        Assert.That(result.Paging.PageLinks.FirstOrDefault(x => x.Label == "12"), Is.Not.Null);
-        Assert.That(result.Paging.PageLinks.FirstOrDefault(x => x.Label == "13"), Is.Null);
+        result.Paging.PageLinks.FirstOrDefault(x=>x.Label == "7").Should().BeNull();
+        result.Paging.PageLinks.FirstOrDefault(x=>x.Label == "8").Should().NotBeNull();
+        result.Paging.PageLinks.FirstOrDefault(x=>x.Label == "9").Should().NotBeNull();
+        result.Paging.PageLinks.FirstOrDefault(x=>x.Label == "10").IsCurrent.Should().BeTrue();
+        result.Paging.PageLinks.FirstOrDefault(x => x.Label == "11").Should().NotBeNull();
+        result.Paging.PageLinks.FirstOrDefault(x => x.Label == "12").Should().NotBeNull();
+        result.Paging.PageLinks.FirstOrDefault(x => x.Label == "13").Should().BeNull();
     }
 
     [Test]
@@ -124,12 +123,23 @@ public class GetPledgesOrchestratorPagingTests
 
         var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest
             { EncodedAccountId = _encodedAccountId, AccountId = _accountId, Page = _page });
-        Assert.That(result.Paging.PageLinks.First().RouteData["page"], Is.EqualTo("9"));
-        Assert.That(result.Paging.PageLinks.First(x => x.Label == "8").RouteData["page"], Is.EqualTo("8"));
-        Assert.That(result.Paging.PageLinks.First(x => x.Label == "9").RouteData["page"], Is.EqualTo("9"));
-        Assert.That(result.Paging.PageLinks.First(x => x.Label == "10").RouteData["page"], Is.EqualTo("10"));
-        Assert.That(result.Paging.PageLinks.First(x => x.Label == "11").RouteData["page"], Is.EqualTo("11"));
-        Assert.That(result.Paging.PageLinks.First(x => x.Label == "12").RouteData["page"], Is.EqualTo("12"));
-        Assert.That(result.Paging.PageLinks.Last().RouteData["page"], Is.EqualTo("11"));
+        result.Paging.PageLinks.First(x => x.Label == "8").RouteData["page"].Should().Be("8");
+        result.Paging.PageLinks.First(x => x.Label == "9").RouteData["page"].Should().Be("9");
+        result.Paging.PageLinks.First(x => x.Label == "10").RouteData["page"].Should().Be("10");
+        result.Paging.PageLinks.First(x => x.Label == "11").RouteData["page"].Should().Be("11");
+        result.Paging.PageLinks.First(x => x.Label == "12").RouteData["page"].Should().Be("12");
+    }
+
+    [Test]
+    public async Task GetPledgesViewModel_Previous_Next_Labels_Return_correct_page_numbers_for_query_string()
+    {
+        _pledgesResponse.Page = 10;
+        _pledgesResponse.PageSize = 50;
+        _pledgesResponse.TotalPledges = 10000;
+
+        var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest
+            { EncodedAccountId = _encodedAccountId, AccountId = _accountId, Page = _page });
+        result.Paging.PageLinks.First().RouteData["page"].Should().Be("9");
+        result.Paging.PageLinks.Last().RouteData["page"].Should().Be("11");
     }
 }
