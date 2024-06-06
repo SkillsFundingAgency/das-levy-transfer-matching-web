@@ -1,6 +1,4 @@
 ﻿using SFA.DAS.LevyTransferMatching.Domain.Types;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 {
@@ -9,7 +7,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public IEnumerable<Pledge> Pledges { get; set; }
         public int PledgeCount => Pledges.Count();
         public bool RenderCreatePledgeButton { get; set; }
-        
+
         public class Pledge
         {
             public string ReferenceNumber { get; set; }

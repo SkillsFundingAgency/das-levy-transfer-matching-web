@@ -52,6 +52,7 @@ public class PledgeOrchestrator : IPledgeOrchestrator
         {
             EncodedAccountId = request.EncodedAccountId,
             RenderCreatePledgeButton = renderCreatePledgesButton,
+            HasMinimumTransferFunds = request.HasMinimumTransferFunds,
             Pledges = pledgesResponse.Pledges.Select(x => new PledgesViewModel.Pledge
             {
                 ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),

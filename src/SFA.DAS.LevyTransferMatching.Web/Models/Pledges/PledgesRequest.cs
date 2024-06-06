@@ -2,5 +2,6 @@
 {
     public class PledgesRequest : BasePledgesRequest
     {
+        public bool HasMinimumTransferFunds { get; set; } = true;
     }
 }
