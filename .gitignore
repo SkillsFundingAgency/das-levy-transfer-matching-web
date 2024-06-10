@@ -353,3 +353,4 @@ MigrationBackup/
 appsettings.Development.json
 
 src/.idea/.idea.SFA.DAS.LevyTransferMatching.Web/.idea/
+*.ncrunchsolution
