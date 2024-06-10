@@ -484,12 +484,3 @@ if (sectorAdditionalLocationCheckBox) {
         }
     });
 }
-
-let createTransfersPledgeButton = document.getElementById("CreateTransfersPledgeButton");
-if (createTransfersPledgeButton) {
-    createTransfersPledgeButton.addEventListener("click", function (event) {
-        if (createTransfersPledgeButton.classList.contains("govuk-button--disabled")) {
-            event.preventDefault();
-        }
-    });
-}

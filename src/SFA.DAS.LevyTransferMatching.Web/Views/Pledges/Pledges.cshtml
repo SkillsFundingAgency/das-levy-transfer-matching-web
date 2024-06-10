@@ -68,7 +68,11 @@
                 @if (Model.RenderCreatePledgeButton)
                 {
                     <div class="govuk-button-group">
-                        <a id="CreateTransfersPledgeButton" class="govuk-button @(!Model.HasMinimumTransferFunds  ? "govuk-button--disabled" : "")" data-module="govuk-button" href="@Url.Action("Inform", "CreatePledge", new { EncodedAccountId = Model.EncodedAccountId })" @(!Model.HasMinimumTransferFunds ? "disabled" : "")>Create new transfer pledge</a>
+                        <form action="@Url.Action("Inform", "CreatePledge", new { encodedAccountId = Model.EncodedAccountId })" method="get">
+                            <button class="govuk-button" type="submit" data-module="govuk-button" @(!Model.HasMinimumTransferFunds ? "disabled" : "")>
+                                Create new transfer pledge
+                            </button>
+                        </form>
                     </div>
                 }
             </div>

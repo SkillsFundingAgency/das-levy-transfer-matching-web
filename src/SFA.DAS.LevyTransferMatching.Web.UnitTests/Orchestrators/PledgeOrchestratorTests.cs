@@ -1,6 +1,7 @@
 ﻿using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types;
@@ -10,6 +11,7 @@ using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using SFA.DAS.LevyTransferMatching.Web.Services;
 using ApplicationRequest = SFA.DAS.LevyTransferMatching.Web.Models.Pledges.ApplicationRequest;
+using GetApplicationsByStatusResponse = SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService.Types.GetApplicationsByStatusResponse;
 using GetApplicationsResponse =
     SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types.GetApplicationsResponse;
 
@@ -25,6 +27,7 @@ public class PledgeOrchestratorTests
     private Mock<IUserService> _userService;
     private Mock<IDateTimeService> _dateTimeService;
     private Mock<ICsvHelperService> _csvService;
+    private Mock<IApplicationsService> _applicationsService;
     private Infrastructure.Configuration.FeatureToggles _featureToggles;
     private List<ReferenceDataItem> _sectors;
     private List<ReferenceDataItem> _levels;
@@ -43,6 +46,7 @@ public class PledgeOrchestratorTests
     private readonly int _applicationId = 1;
     private string _userId;
     private string _userDisplayName;
+    private decimal _remainingTransferAllowance = 20000;
 
     [SetUp]
     public void Setup()
@@ -55,6 +59,7 @@ public class PledgeOrchestratorTests
         _dateTimeService = new Mock<IDateTimeService>();
         _csvService = new Mock<ICsvHelperService>();
         _dateTimeService.Setup(x => x.UtcNow).Returns(DateTime.UtcNow);
+        _applicationsService = new Mock<IApplicationsService>();
 
         _featureToggles = new Infrastructure.Configuration.FeatureToggles();
 
@@ -67,6 +72,8 @@ public class PledgeOrchestratorTests
         _levelResponse = new GetLevelResponse { Levels = _levels };
         _jobRoleResponse = new GetJobRoleResponse { JobRoles = _jobRoles, Sectors = _sectors };
         _pledgesResponse = _fixture.Create<GetPledgesResponse>();
+        _pledgesResponse.RemainingTransferAllowance = _remainingTransferAllowance;
+
         _applicationApprovedResponse = _fixture.Create<GetApplicationApprovedResponse>();
 
         _encodedPledgeId = _fixture.Create<string>();
@@ -96,7 +103,7 @@ public class PledgeOrchestratorTests
 
         _orchestrator = new PledgeOrchestrator(_pledgeService.Object, _encodingService.Object, _userService.Object,
             _featureToggles,
-            _dateTimeService.Object, _csvService.Object);
+            _dateTimeService.Object, _csvService.Object, _applicationsService.Object);
     }
 
     [Test]
@@ -116,19 +123,75 @@ public class PledgeOrchestratorTests
     }
 
     [Test]
-    public async Task GetPledgesViewModel_HasMinimumTransferFunds_Is_False_When_Request_Is_False()
-    {
-        var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest
-        { EncodedAccountId = _encodedAccountId, AccountId = _accountId, HasMinimumTransferFunds = false });
-        Assert.That(result.HasMinimumTransferFunds, Is.False);
-    }
-
-    [Test]
     public async Task GetPledgesViewModel_Pledges_Is_Populated()
     {
         var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest
         { EncodedAccountId = _encodedAccountId, AccountId = _accountId });
         Assert.That(result.Pledges, Is.Not.Null);
+    }
+
+    [Test]
+    public async Task GetPledgesViewModel_Should_Set_HasMinimumTransferFunds_To_True_When_Conditions_Met()
+    {
+        // Arrange
+        var acceptedApplications = _fixture.Build<GetApplicationsByStatusResponse>()
+           .With(x => x.Applications,
+           [
+                new GetApplicationsByStatusResponse.Application { Amount = 4000 }
+           ])
+           .Create();
+
+        var approvedApplications = _fixture.Build<GetApplicationsByStatusResponse>()
+           .With(x => x.Applications,
+           [
+                new GetApplicationsByStatusResponse.Application { Amount = 4000 }
+           ])
+           .Create();
+
+        _applicationsService.Setup(x => x.GetApplicationsByStatus(_accountId, ApplicationStatus.Accepted, default))
+            .ReturnsAsync(acceptedApplications);
+
+        _applicationsService.Setup(x => x.GetApplicationsByStatus(_accountId, ApplicationStatus.Approved, default))
+            .ReturnsAsync(approvedApplications);
+
+        // Act
+        var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest
+        { EncodedAccountId = _encodedAccountId, AccountId = _accountId });
+
+        // Assert
+        result.HasMinimumTransferFunds.Should().BeTrue();
+    }
+
+    [Test]
+    public async Task GetPledgesViewModel_Should_Set_HasMinimumTransferFunds_To_False_When_Conditions_Not_Met()
+    {
+        // Arrange
+        var acceptedApplications = _fixture.Build<GetApplicationsByStatusResponse>()
+           .With(x => x.Applications,
+           [
+                new GetApplicationsByStatusResponse.Application { Amount = 14000 }
+           ])
+           .Create();
+
+        var approvedApplications = _fixture.Build<GetApplicationsByStatusResponse>()
+           .With(x => x.Applications,
+           [
+                new GetApplicationsByStatusResponse.Application { Amount = 14000 }
+           ])
+           .Create();
+
+        _applicationsService.Setup(x => x.GetApplicationsByStatus(_accountId, ApplicationStatus.Accepted, default))
+            .ReturnsAsync(acceptedApplications);
+
+        _applicationsService.Setup(x => x.GetApplicationsByStatus(_accountId, ApplicationStatus.Approved, default))
+            .ReturnsAsync(approvedApplications);
+
+        // Act
+        var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest
+        { EncodedAccountId = _encodedAccountId, AccountId = _accountId });
+
+        // Assert
+        result.HasMinimumTransferFunds.Should().BeFalse();
     }
 
     [Test]
