@@ -38,6 +38,7 @@ public class PledgeOrchestratorTests
     private GetLevelResponse _levelResponse;
     private GetPledgesResponse _pledgesResponse;
     private GetApplicationApprovedResponse _applicationApprovedResponse;
+    private GetApplicationsByStatusResponse _getApplicationsByStatusResponse;
     private string _encodedAccountId;
     private readonly long _accountId = 1;
     private readonly int _pledgeId = 1;
@@ -74,6 +75,7 @@ public class PledgeOrchestratorTests
         _pledgesResponse = _fixture.Create<GetPledgesResponse>();
         _pledgesResponse.RemainingTransferAllowance = _remainingTransferAllowance;
 
+        _getApplicationsByStatusResponse = _fixture.Create<GetApplicationsByStatusResponse>();
         _applicationApprovedResponse = _fixture.Create<GetApplicationApprovedResponse>();
 
         _encodedPledgeId = _fixture.Create<string>();
@@ -93,6 +95,9 @@ public class PledgeOrchestratorTests
         _pledgeService.Setup(x => x.GetLevel(_accountId)).ReturnsAsync(_levelResponse);
         _pledgeService.Setup(x => x.GetApplicationApproved(_accountId, _pledgeId, _applicationId))
             .ReturnsAsync(_applicationApprovedResponse);
+
+        _applicationsService.Setup(x => x.GetApplicationsByStatus(_accountId, It.IsAny<ApplicationStatus>(), default))
+            .ReturnsAsync(_getApplicationsByStatusResponse);
 
         _userId = _fixture.Create<string>();
         _userDisplayName = _fixture.Create<string>();
