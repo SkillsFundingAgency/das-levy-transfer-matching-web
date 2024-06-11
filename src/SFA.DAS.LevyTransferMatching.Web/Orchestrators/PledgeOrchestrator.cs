@@ -2,7 +2,6 @@
 using Humanizer;
 using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Domain.Types;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService;
@@ -11,14 +10,12 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Services;
-using Application = SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService.Types.GetApprovedAndAcceptedApplicationsResponse.Application;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 
 public class PledgeOrchestrator : IPledgeOrchestrator
 {
     private readonly IPledgeService _pledgeService;
-    private readonly IApplicationsService _applicationsService;
     private readonly IEncodingService _encodingService;
     private readonly IUserService _userService;
     private readonly Infrastructure.Configuration.FeatureToggles _featureToggles;
@@ -28,10 +25,9 @@ public class PledgeOrchestrator : IPledgeOrchestrator
 
     public PledgeOrchestrator(IPledgeService pledgeService, IEncodingService encodingService, IUserService userService,
         Infrastructure.Configuration.FeatureToggles featureToggles, IDateTimeService dateTimeService,
-        ICsvHelperService csvService, IApplicationsService applicationsService)
+        ICsvHelperService csvService)
     {
         _pledgeService = pledgeService;
-        _applicationsService = applicationsService;
         _encodingService = encodingService;
         _userService = userService;
         _featureToggles = featureToggles;
@@ -53,7 +49,6 @@ public class PledgeOrchestrator : IPledgeOrchestrator
     public async Task<PledgesViewModel> GetPledgesViewModel(PledgesRequest request)
     {
         var pledgesResponse = await _pledgeService.GetPledges(request.AccountId);
-        var approvedAcceptedApplications = await _applicationsService.GetApprovedAndAcceptedApplications(request.AccountId);
 
         var renderCreatePledgesButton = _userService.IsUserChangeAuthorized(request.EncodedAccountId);
 
@@ -61,7 +56,7 @@ public class PledgeOrchestrator : IPledgeOrchestrator
         {
             EncodedAccountId = request.EncodedAccountId,
             RenderCreatePledgeButton = renderCreatePledgesButton,
-            HasMinimumTransferFunds = CheckForMinimumTransferFunds(pledgesResponse.RemainingTransferAllowance, approvedAcceptedApplications.Applications),
+            HasMinimumTransferFunds = CheckForMinimumTransferFunds(pledgesResponse.RemainingTransferAllowance, pledgesResponse.AcceptedAndApprovedApplications),
             Pledges = pledgesResponse.Pledges.Select(x => new PledgesViewModel.Pledge
             {
                 ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),
@@ -73,7 +68,7 @@ public class PledgeOrchestrator : IPledgeOrchestrator
         };
     }
 
-    private static bool CheckForMinimumTransferFunds(decimal remainingTransferAllowance, IEnumerable<Application> applications)
+    private static bool CheckForMinimumTransferFunds(decimal remainingTransferAllowance, IEnumerable<GetPledgesResponse.Application> applications)
     {
         var currentYearSpend = applications.Sum(x => x.Amount);
         return (remainingTransferAllowance - currentYearSpend) >= minimumTransferFunds;

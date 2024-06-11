@@ -1,7 +1,6 @@
 ﻿using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types;
@@ -11,7 +10,6 @@ using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using SFA.DAS.LevyTransferMatching.Web.Services;
 using ApplicationRequest = SFA.DAS.LevyTransferMatching.Web.Models.Pledges.ApplicationRequest;
-using GetApprovedAndAcceptedApplicationsResponse = SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService.Types.GetApprovedAndAcceptedApplicationsResponse;
 using GetApplicationsResponse =
     SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types.GetApplicationsResponse;
 
@@ -27,7 +25,6 @@ public class PledgeOrchestratorTests
     private Mock<IUserService> _userService;
     private Mock<IDateTimeService> _dateTimeService;
     private Mock<ICsvHelperService> _csvService;
-    private Mock<IApplicationsService> _applicationsService;
     private Infrastructure.Configuration.FeatureToggles _featureToggles;
     private List<ReferenceDataItem> _sectors;
     private List<ReferenceDataItem> _levels;
@@ -38,7 +35,6 @@ public class PledgeOrchestratorTests
     private GetLevelResponse _levelResponse;
     private GetPledgesResponse _pledgesResponse;
     private GetApplicationApprovedResponse _applicationApprovedResponse;
-    private GetApprovedAndAcceptedApplicationsResponse _approvedAcceptedApplicationsResponse;
     private string _encodedAccountId;
     private readonly long _accountId = 1;
     private readonly int _pledgeId = 1;
@@ -60,8 +56,6 @@ public class PledgeOrchestratorTests
         _dateTimeService = new Mock<IDateTimeService>();
         _csvService = new Mock<ICsvHelperService>();
         _dateTimeService.Setup(x => x.UtcNow).Returns(DateTime.UtcNow);
-        _applicationsService = new Mock<IApplicationsService>();
-
         _featureToggles = new Infrastructure.Configuration.FeatureToggles();
 
         _sectors = _fixture.Create<List<ReferenceDataItem>>();
@@ -75,7 +69,6 @@ public class PledgeOrchestratorTests
         _pledgesResponse = _fixture.Create<GetPledgesResponse>();
         _pledgesResponse.RemainingTransferAllowance = _remainingTransferAllowance;
 
-        _approvedAcceptedApplicationsResponse = _fixture.Create<GetApprovedAndAcceptedApplicationsResponse>();
         _applicationApprovedResponse = _fixture.Create<GetApplicationApprovedResponse>();
 
         _encodedPledgeId = _fixture.Create<string>();
@@ -96,9 +89,6 @@ public class PledgeOrchestratorTests
         _pledgeService.Setup(x => x.GetApplicationApproved(_accountId, _pledgeId, _applicationId))
             .ReturnsAsync(_applicationApprovedResponse);
 
-        _applicationsService.Setup(x => x.GetApprovedAndAcceptedApplications(_accountId, default))
-            .ReturnsAsync(_approvedAcceptedApplicationsResponse);
-
         _userId = _fixture.Create<string>();
         _userDisplayName = _fixture.Create<string>();
         _userService.Setup(x => x.IsUserChangeAuthorized(_encodedAccountId)).Returns(true);
@@ -108,7 +98,7 @@ public class PledgeOrchestratorTests
 
         _orchestrator = new PledgeOrchestrator(_pledgeService.Object, _encodingService.Object, _userService.Object,
             _featureToggles,
-            _dateTimeService.Object, _csvService.Object, _applicationsService.Object);
+            _dateTimeService.Object, _csvService.Object);
     }
 
     [Test]
@@ -139,15 +129,12 @@ public class PledgeOrchestratorTests
     public async Task GetPledgesViewModel_Should_Set_HasMinimumTransferFunds_To_True_When_Conditions_Met()
     {
         // Arrange     
-        var applications = _fixture.Build<GetApprovedAndAcceptedApplicationsResponse>()
-           .With(x => x.Applications,
+        var pledges = _fixture.Build<GetPledgesResponse>()
+           .With(x => x.AcceptedAndApprovedApplications,
            [
-                new GetApprovedAndAcceptedApplicationsResponse.Application { Amount = 4000 }
+                new GetPledgesResponse.Application { Amount = 4000 }
            ])
            .Create();
-
-        _applicationsService.Setup(x => x.GetApprovedAndAcceptedApplications(_accountId, default))
-            .ReturnsAsync(applications);
 
         // Act
         var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest
@@ -161,15 +148,16 @@ public class PledgeOrchestratorTests
     public async Task GetPledgesViewModel_Should_Set_HasMinimumTransferFunds_To_False_When_Conditions_Not_Met()
     {
         // Arrange       
-        var approvedApplications = _fixture.Build<GetApprovedAndAcceptedApplicationsResponse>()
-           .With(x => x.Applications,
+        var pledges = _fixture.Build<GetPledgesResponse>()
+           .With(x => x.AcceptedAndApprovedApplications,
            [
-                new GetApprovedAndAcceptedApplicationsResponse.Application { Amount = 44000 }
+                new GetPledgesResponse.Application { Amount = 44000 }
            ])
            .Create();
 
-        _applicationsService.Setup(x => x.GetApprovedAndAcceptedApplications(_accountId, default))
-            .ReturnsAsync(approvedApplications);
+
+        _pledgeService.Setup(x => x.GetPledges(_accountId))
+            .ReturnsAsync(pledges);
 
         // Act
         var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest
