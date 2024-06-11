@@ -31,7 +31,7 @@
                 </h1>
             </div>
             <div class="govuk-grid-column-two-thirds">
-                <p>You have <strong>@Model.PledgeCount</strong> transfers pledges.</p>
+                <p>You have <strong>@Model.PledgeCount.ToString("N0")</strong> transfers pledges.</p>
                 <div class="govuk-inset-text">
                     <p>
                         You may have applications waiting to be approved or rejected. Applicants need a response from you in order to manage their apprenticeships.
@@ -40,6 +40,12 @@
                         Select the transfer pledge you want to view details for.
                     </p>
                 </div>
+                @if (Model.RenderCreatePledgeButton)
+                {
+                    <div class="govuk-button-group">
+                        <a class="govuk-button" data-module="govuk-button" href="@Url.Action("Inform", "CreatePledge", new { EncodedAccountId = Model.EncodedAccountId })">Create new transfer pledge</a>
+                    </div>
+                }
                 <table class="govuk-table govuk-!-margin-bottom-9" aria-label="Transfer pledges table">
                     <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
@@ -64,13 +70,7 @@
                             </tr>
                         }
                     </tbody>
-                </table>
-                @if (Model.RenderCreatePledgeButton)
-                {
-                    <div class="govuk-button-group">
-                        <a class="govuk-button" data-module="govuk-button" href="@Url.Action("Inform", "CreatePledge", new { EncodedAccountId = Model.EncodedAccountId })">Create new transfer pledge</a>
-                    </div>
-                }
+                </table>              
             </div>
         </div>
     </div>
