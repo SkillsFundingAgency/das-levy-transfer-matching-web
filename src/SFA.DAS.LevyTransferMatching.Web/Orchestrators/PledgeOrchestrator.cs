@@ -11,7 +11,7 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Services;
-using Application = SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService.Types.GetApplicationsByStatusResponse.Application;
+using Application = SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService.Types.GetApprovedAndAcceptedApplicationsResponse.Application;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 
@@ -53,8 +53,7 @@ public class PledgeOrchestrator : IPledgeOrchestrator
     public async Task<PledgesViewModel> GetPledgesViewModel(PledgesRequest request)
     {
         var pledgesResponse = await _pledgeService.GetPledges(request.AccountId);
-        var acceptedApplications = await _applicationsService.GetApplicationsByStatus(request.AccountId, ApplicationStatus.Accepted);
-        var approvedApplications = await _applicationsService.GetApplicationsByStatus(request.AccountId, ApplicationStatus.Approved);
+        var approvedAcceptedApplications = await _applicationsService.GetApprovedAndAcceptedApplications(request.AccountId);
 
         var renderCreatePledgesButton = _userService.IsUserChangeAuthorized(request.EncodedAccountId);
 
@@ -62,7 +61,7 @@ public class PledgeOrchestrator : IPledgeOrchestrator
         {
             EncodedAccountId = request.EncodedAccountId,
             RenderCreatePledgeButton = renderCreatePledgesButton,
-            HasMinimumTransferFunds = CheckForMinimumTransferFunds(pledgesResponse.RemainingTransferAllowance, acceptedApplications.Applications.Concat(approvedApplications.Applications)),
+            HasMinimumTransferFunds = CheckForMinimumTransferFunds(pledgesResponse.RemainingTransferAllowance, approvedAcceptedApplications.Applications),
             Pledges = pledgesResponse.Pledges.Select(x => new PledgesViewModel.Pledge
             {
                 ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),

@@ -11,7 +11,7 @@ using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using SFA.DAS.LevyTransferMatching.Web.Services;
 using ApplicationRequest = SFA.DAS.LevyTransferMatching.Web.Models.Pledges.ApplicationRequest;
-using GetApplicationsByStatusResponse = SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService.Types.GetApplicationsByStatusResponse;
+using GetApprovedAndAcceptedApplicationsResponse = SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService.Types.GetApprovedAndAcceptedApplicationsResponse;
 using GetApplicationsResponse =
     SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types.GetApplicationsResponse;
 
@@ -38,7 +38,7 @@ public class PledgeOrchestratorTests
     private GetLevelResponse _levelResponse;
     private GetPledgesResponse _pledgesResponse;
     private GetApplicationApprovedResponse _applicationApprovedResponse;
-    private GetApplicationsByStatusResponse _getApplicationsByStatusResponse;
+    private GetApprovedAndAcceptedApplicationsResponse _approvedAcceptedApplicationsResponse;
     private string _encodedAccountId;
     private readonly long _accountId = 1;
     private readonly int _pledgeId = 1;
@@ -75,7 +75,7 @@ public class PledgeOrchestratorTests
         _pledgesResponse = _fixture.Create<GetPledgesResponse>();
         _pledgesResponse.RemainingTransferAllowance = _remainingTransferAllowance;
 
-        _getApplicationsByStatusResponse = _fixture.Create<GetApplicationsByStatusResponse>();
+        _approvedAcceptedApplicationsResponse = _fixture.Create<GetApprovedAndAcceptedApplicationsResponse>();
         _applicationApprovedResponse = _fixture.Create<GetApplicationApprovedResponse>();
 
         _encodedPledgeId = _fixture.Create<string>();
@@ -96,8 +96,8 @@ public class PledgeOrchestratorTests
         _pledgeService.Setup(x => x.GetApplicationApproved(_accountId, _pledgeId, _applicationId))
             .ReturnsAsync(_applicationApprovedResponse);
 
-        _applicationsService.Setup(x => x.GetApplicationsByStatus(_accountId, It.IsAny<ApplicationStatus>(), default))
-            .ReturnsAsync(_getApplicationsByStatusResponse);
+        _applicationsService.Setup(x => x.GetApprovedAndAcceptedApplications(_accountId, default))
+            .ReturnsAsync(_approvedAcceptedApplicationsResponse);
 
         _userId = _fixture.Create<string>();
         _userDisplayName = _fixture.Create<string>();
@@ -138,26 +138,16 @@ public class PledgeOrchestratorTests
     [Test]
     public async Task GetPledgesViewModel_Should_Set_HasMinimumTransferFunds_To_True_When_Conditions_Met()
     {
-        // Arrange
-        var acceptedApplications = _fixture.Build<GetApplicationsByStatusResponse>()
+        // Arrange     
+        var applications = _fixture.Build<GetApprovedAndAcceptedApplicationsResponse>()
            .With(x => x.Applications,
            [
-                new GetApplicationsByStatusResponse.Application { Amount = 4000 }
+                new GetApprovedAndAcceptedApplicationsResponse.Application { Amount = 4000 }
            ])
            .Create();
 
-        var approvedApplications = _fixture.Build<GetApplicationsByStatusResponse>()
-           .With(x => x.Applications,
-           [
-                new GetApplicationsByStatusResponse.Application { Amount = 4000 }
-           ])
-           .Create();
-
-        _applicationsService.Setup(x => x.GetApplicationsByStatus(_accountId, ApplicationStatus.Accepted, default))
-            .ReturnsAsync(acceptedApplications);
-
-        _applicationsService.Setup(x => x.GetApplicationsByStatus(_accountId, ApplicationStatus.Approved, default))
-            .ReturnsAsync(approvedApplications);
+        _applicationsService.Setup(x => x.GetApprovedAndAcceptedApplications(_accountId, default))
+            .ReturnsAsync(applications);
 
         // Act
         var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest
@@ -170,25 +160,15 @@ public class PledgeOrchestratorTests
     [Test]
     public async Task GetPledgesViewModel_Should_Set_HasMinimumTransferFunds_To_False_When_Conditions_Not_Met()
     {
-        // Arrange
-        var acceptedApplications = _fixture.Build<GetApplicationsByStatusResponse>()
+        // Arrange       
+        var approvedApplications = _fixture.Build<GetApprovedAndAcceptedApplicationsResponse>()
            .With(x => x.Applications,
            [
-                new GetApplicationsByStatusResponse.Application { Amount = 14000 }
+                new GetApprovedAndAcceptedApplicationsResponse.Application { Amount = 44000 }
            ])
            .Create();
 
-        var approvedApplications = _fixture.Build<GetApplicationsByStatusResponse>()
-           .With(x => x.Applications,
-           [
-                new GetApplicationsByStatusResponse.Application { Amount = 14000 }
-           ])
-           .Create();
-
-        _applicationsService.Setup(x => x.GetApplicationsByStatus(_accountId, ApplicationStatus.Accepted, default))
-            .ReturnsAsync(acceptedApplications);
-
-        _applicationsService.Setup(x => x.GetApplicationsByStatus(_accountId, ApplicationStatus.Approved, default))
+        _applicationsService.Setup(x => x.GetApprovedAndAcceptedApplications(_accountId, default))
             .ReturnsAsync(approvedApplications);
 
         // Act

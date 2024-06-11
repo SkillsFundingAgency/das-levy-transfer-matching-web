@@ -25,12 +25,12 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsServi
             return JsonConvert.DeserializeObject<GetApplicationsResponse>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<GetApplicationsByStatusResponse> GetApplicationsByStatus(long accountId, ApplicationStatus status, CancellationToken cancellationToken = default)
+        public async Task<GetApprovedAndAcceptedApplicationsResponse> GetApprovedAndAcceptedApplications(long accountId, CancellationToken cancellationToken = default)
         {
-            var response = await _httpClient.GetAsync($"accounts/{accountId}/applications/status/{status}", cancellationToken);
+            var response = await _httpClient.GetAsync($"accounts/{accountId}/applications/approved-accepted", cancellationToken);
             response.EnsureSuccessStatusCode();
 
-            return JsonConvert.DeserializeObject<GetApplicationsByStatusResponse>(await response.Content.ReadAsStringAsync());
+            return JsonConvert.DeserializeObject<GetApprovedAndAcceptedApplicationsResponse>(await response.Content.ReadAsStringAsync());
         }
 
         public async Task<GetApplicationResponse> GetApplication(long accountId, int applicationId, CancellationToken cancellationToken = default)

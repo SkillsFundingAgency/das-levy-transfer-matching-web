@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService.Types
 {
-    public class GetApplicationsByStatusResponse
+    public class GetApprovedAndAcceptedApplicationsResponse
     {
         public IEnumerable<Application> Applications { get; set; }
         public class Application
