@@ -1,6 +1,4 @@
 ﻿using SFA.DAS.LevyTransferMatching.Domain.Types;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 {
