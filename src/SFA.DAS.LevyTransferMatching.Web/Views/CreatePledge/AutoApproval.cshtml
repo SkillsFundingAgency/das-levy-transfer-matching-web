@@ -12,7 +12,8 @@
     <partial name="_ValidationSummary" />
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-xl">Approve or delay applications for 100% match</h1>
+            <h1 class="govuk-heading-xl">Do you want to approve 100% matches immediately?</h1>
+            <p class="govuk-body-l govuk-hint">100% matches are funding applications that match all of the criteria you have set.</p>
             <form method="post">                
                 <div class="govuk-form-group" das-highlight-error-for="AutomaticApprovalOption" error-class="govuk-form-group--error">
                     <fieldset class="govuk-fieldset">
@@ -21,13 +22,13 @@
                             <div class="govuk-radios__item">
                                 <input class="govuk-radios__input" id="AutomaticApprovalOption" asp-for="AutomaticApprovalOption" type="radio" value="@AutomaticApprovalOption.ImmediateAutoApproval" das-highlight-error-for="AutomaticApprovalOption" error-class="govuk-textarea--error" />
                                 <label class="govuk-label govuk-radios__label" for="AutomaticApprovalOption">
-                                    Approve immediately, no delay
+                                    Yes, automatically approve 100% matches immediately
                                 </label>
                             </div>
                             <div class="govuk-radios__item">
                                 <input class="govuk-radios__input" id="AutoApproveFullMatches-2" asp-for="AutomaticApprovalOption" type="radio" value="@AutomaticApprovalOption.DelayedAutoApproval" das-highlight-error-for="AutomaticApprovalOption" error-class="govuk-textarea--error" />
                                 <label class="govuk-label govuk-radios__label" for="AutoApproveFullMatches-2">
-                                    I want to do my own checks; I understand I have up to 6 weeks to complete them
+                                    No, I would like 6 weeks to approve or reject 100% matches. If I do not take any action in 6 weeks, they will be approved automatically
                                 </label>
                             </div>
                         </div>
