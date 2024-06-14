@@ -25,7 +25,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
         public class PagingData
         {
             public bool ShowPageLinks { get; set; }
-            public int TotalPledges { get; set; }
+            public int TotalOpportunities { get; set; }
             public int TotalPages { get; set; }
             public int PageSize { get; set; }
             public int Page { get; set; }
