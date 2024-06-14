@@ -25,9 +25,15 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
             return JsonConvert.DeserializeObject<GetApplyResponse>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<GetIndexResponse> GetIndex(IEnumerable<string> sectors)
+        public async Task<GetIndexResponse> GetIndex(IEnumerable<string> sectors, int page, int? pageSize)
         {
             var filters = sectors != null ? sectors.ToNameValueCollection("sectors") : new NameValueCollection();
+            filters.Add("page", page.ToString());
+            if (pageSize != null)
+            {
+                filters.Add("pageSize", pageSize.ToString());
+            }
+
             var response = await _client.GetAsync($"opportunities{filters.ToQueryString()}");
             response.EnsureSuccessStatusCode();
             return JsonConvert.DeserializeObject<GetIndexResponse>(await response.Content.ReadAsStringAsync());
