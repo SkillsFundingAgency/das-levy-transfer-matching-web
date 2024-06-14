@@ -7,7 +7,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Typ
     public class GetPledgesResponse
     {
         public IEnumerable<Pledge> Pledges { get; set; }
-        public decimal RemainingTransferAllowance { get; set; }
+        public decimal StartingTransferAllowance { get; set; }
         public IEnumerable<Application> AcceptedAndApprovedApplications{ get; set; }
         public class Pledge
         {

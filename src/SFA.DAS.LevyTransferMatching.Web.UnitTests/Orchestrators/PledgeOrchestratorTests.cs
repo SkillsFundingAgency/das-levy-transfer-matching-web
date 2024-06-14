@@ -43,7 +43,7 @@ public class PledgeOrchestratorTests
     private readonly int _applicationId = 1;
     private string _userId;
     private string _userDisplayName;
-    private decimal _remainingTransferAllowance = 20000;
+    private decimal _startingTransferAllowance = 20000;
 
     [SetUp]
     public void Setup()
@@ -67,7 +67,7 @@ public class PledgeOrchestratorTests
         _levelResponse = new GetLevelResponse { Levels = _levels };
         _jobRoleResponse = new GetJobRoleResponse { JobRoles = _jobRoles, Sectors = _sectors };
         _pledgesResponse = _fixture.Create<GetPledgesResponse>();
-        _pledgesResponse.RemainingTransferAllowance = _remainingTransferAllowance;
+        _pledgesResponse.StartingTransferAllowance = _startingTransferAllowance;
 
         _applicationApprovedResponse = _fixture.Create<GetApplicationApprovedResponse>();
 
