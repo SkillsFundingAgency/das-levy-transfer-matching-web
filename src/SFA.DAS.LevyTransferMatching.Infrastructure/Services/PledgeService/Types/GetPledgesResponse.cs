@@ -1,5 +1,4 @@
 ﻿using SFA.DAS.LevyTransferMatching.Domain.Types;
-using System;
 using System.Collections.Generic;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types
