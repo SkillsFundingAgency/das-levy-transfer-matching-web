@@ -17,13 +17,12 @@ public class PledgesController : Controller
         _orchestrator = orchestrator;
     }
 
-    [Route("")]
+    [Route("", Name = "pledges")]
     public async Task<IActionResult> Pledges(PledgesRequest request)
     {
         var viewModel = await _orchestrator.GetPledgesViewModel(request);
         return View(viewModel);
     }
-
 
     [HttpGet]
     [Authorize(Policy = PolicyNames.ManageAccount)]
