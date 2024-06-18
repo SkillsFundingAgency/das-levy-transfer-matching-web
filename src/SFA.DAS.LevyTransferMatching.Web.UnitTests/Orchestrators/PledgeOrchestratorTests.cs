@@ -132,11 +132,12 @@ public class PledgeOrchestratorTests
         // Arrange     
         var pledges = _fixture.Build<GetPledgesResponse>()
            .With(x => x.CurrentYearEstimatedCommittedSpend, 4000)
+           .With(x => x.StartingTransferAllowance, _startingTransferAllowance)
            .Create();
 
         // Act
         var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest
-        { EncodedAccountId = _encodedAccountId, AccountId = _accountId });
+        { EncodedAccountId = _encodedAccountId, AccountId = _accountId, Page = _page });
 
         // Assert
         result.HasMinimumTransferFunds.Should().BeTrue();
@@ -148,14 +149,15 @@ public class PledgeOrchestratorTests
         // Arrange       
         var pledges = _fixture.Build<GetPledgesResponse>()
             .With(x => x.CurrentYearEstimatedCommittedSpend, 44000)
+                       .With(x => x.StartingTransferAllowance, _startingTransferAllowance)
             .Create();
 
-        _pledgeService.Setup(x => x.GetPledges(_accountId))
+        _pledgeService.Setup(x => x.GetPledges(_accountId, _page, 50))
             .ReturnsAsync(pledges);
 
         // Act
         var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest
-        { EncodedAccountId = _encodedAccountId, AccountId = _accountId });
+        { EncodedAccountId = _encodedAccountId, AccountId = _accountId , Page = _page});
 
         // Assert
         result.HasMinimumTransferFunds.Should().BeFalse();
