@@ -1,5 +1,4 @@
 ﻿@using SFA.DAS.LevyTransferMatching.Domain.Extensions
-@using SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 @model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.PledgesViewModel
 
 @{
@@ -30,8 +29,8 @@
                     My transfer pledges
                 </h1>
             </div>
-            <div class="govuk-grid-column-two-thirds">
-                <p>You have <strong>@Model.PledgeCount.ToString("N0")</strong> transfers pledges.</p>
+            <div class="govuk-grid-column-full">
+                <p>You have <strong>@Model.Paging.TotalPledges.ToString("N0")</strong> transfers pledges.</p>
                 <div class="govuk-inset-text">
                     <p>
                         You may have applications waiting to be approved or rejected. Applicants need a response from you in order to manage their apprenticeships.
@@ -48,29 +47,56 @@
                 }
                 <table class="govuk-table govuk-!-margin-bottom-9" aria-label="Transfer pledges table">
                     <thead class="govuk-table__head">
-                        <tr class="govuk-table__row">
-                            <th scope="col" class="govuk-table__header app-custom-class">Transfer pledge</th>
-                            <th scope="col" class="govuk-table__header govuk-table__header--numeric">Total</th>
-                            <th scope="col" class="govuk-table__header govuk-table__header--numeric">Remaining funds</th>
-                            <th scope="col" class="govuk-table__header govuk-table__header--numeric">Applications</th>
-                            <th scope="col" class="govuk-table__header">Status</th>
-                        </tr>
+                    <tr class="govuk-table__row">
+                        <th scope="col" class="govuk-table__header app-custom-class">Transfer pledge</th>
+                        <th scope="col" class="govuk-table__header govuk-table__header--numeric">Total</th>
+                        <th scope="col" class="govuk-table__header govuk-table__header--numeric">Remaining funds</th>
+                        <th scope="col" class="govuk-table__header govuk-table__header--numeric">Applications</th>
+                        <th scope="col" class="govuk-table__header">Status</th>
+                    </tr>
                     </thead>
                     <tbody class="govuk-table__body">
-                        @foreach (var pledge in Model.Pledges)
-                        {
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__cell">
-                                    <a href="pledges/@pledge.ReferenceNumber/applications" class=govuk-link--no-visited-state>@pledge.ReferenceNumber</a>
-                                </td>
-                                <td class="govuk-table__cell govuk-table__cell--numeric">£@pledge.Amount.ToString("N0")</td>
-                                <td class="govuk-table__cell govuk-table__cell--numeric">£@pledge.RemainingAmount.ToString("N0")</td>
-                                <td class="govuk-table__cell govuk-table__cell--numeric">@pledge.ApplicationCount</td>
-                                <td class="govuk-table__cell"><strong class="@pledge.Status.GetCssClass()">@pledge.Status.GetLabel()</strong></td>
-                            </tr>
-                        }
+                    @foreach (var pledge in Model.Pledges)
+                    {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">
+                                <a href="pledges/@pledge.ReferenceNumber/applications" class=govuk-link--no-visited-state>@pledge.ReferenceNumber</a>
+                            </td>
+                            <td class="govuk-table__cell govuk-table__cell--numeric">£@pledge.Amount.ToString("N0")</td>
+                            <td class="govuk-table__cell govuk-table__cell--numeric">£@pledge.RemainingAmount.ToString("N0")</td>
+                            <td class="govuk-table__cell govuk-table__cell--numeric">@pledge.ApplicationCount</td>
+                            <td class="govuk-table__cell"><strong class="@pledge.Status.GetCssClass()">@pledge.Status.GetLabel()</strong></td>
+                        </tr>
+                    }
                     </tbody>
-                </table>              
+                </table>
+                
+                @if (Model.Paging.ShowPageLinks)
+                {
+                    <nav role="navigation" aria-label="Pagination">
+                        <div class="das-pagination__summary">Showing @Model.Paging.PageStartRow to @Model.Paging.PageEndRow of @Model.Paging.TotalPledges transfer records</div>
+                        <ul class="das-pagination">
+                            @foreach (var pageLink in Model.Paging.PageLinks)
+                            {
+                                <li class="das-pagination__item">
+                                    <a class="das-pagination__link @(pageLink.IsCurrent.HasValue && pageLink.IsCurrent.Value ? "current" : "")"
+                                       asp-route="pledges"
+                                       asp-all-route-data="@pageLink.RouteData"
+                                       aria-current="@pageLink.IsCurrent"
+                                       aria-label="@pageLink.AriaLabel">
+                                        @pageLink.Label
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </nav>
+                }
+                @if (Model.RenderCreatePledgeButton)
+                {
+                    <div class="govuk-button-group">
+                        <a class="govuk-button" data-module="govuk-button" href="@Url.Action("Inform", "CreatePledge", new { EncodedAccountId = Model.EncodedAccountId })">Create new transfer pledge</a>
+                    </div>
+                }
             </div>
         </div>
     </div>
