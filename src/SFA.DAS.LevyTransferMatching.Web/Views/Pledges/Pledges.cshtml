@@ -90,13 +90,7 @@
                             }
                         </ul>
                     </nav>
-                }
-                @if (Model.RenderCreatePledgeButton)
-                {
-                    <div class="govuk-button-group">
-                        <a class="govuk-button" data-module="govuk-button" href="@Url.Action("Inform", "CreatePledge", new { EncodedAccountId = Model.EncodedAccountId })">Create new transfer pledge</a>
-                    </div>
-                }
+                }             
             </div>
         </div>
     </div>
