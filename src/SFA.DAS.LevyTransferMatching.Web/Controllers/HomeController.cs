@@ -35,39 +35,35 @@ public class HomeController : Controller
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 
-    [Route("signout", Name= "signout")]
-    public async Task<IActionResult> SignOut()
+    [Route("signout", Name = RouteNames.SignOut)]
+    public async Task SignOut()
     {
         var idToken = await HttpContext.GetTokenAsync("id_token");
-
-        var authenticationProperties = new AuthenticationProperties
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        
+        _ = bool.TryParse(_config["StubAuth"], out var stubAuth);
+        
+        if (!stubAuth)
         {
-            RedirectUri = "",
-            AllowRefresh = true
-        };
-        authenticationProperties.Parameters.Clear();
-        authenticationProperties.Parameters.Add("id_token",idToken);
-            
-        return SignOut(
-            authenticationProperties,
-            CookieAuthenticationDefaults.AuthenticationScheme,
-            OpenIdConnectDefaults.AuthenticationScheme);
+            await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme, new AuthenticationProperties { RedirectUri = "/", Parameters = { {"id_token",idToken}}});    
+        }
     }
 
     [Route("signoutcleanup")]
     public void SignOutCleanup()
     {
-        Response.Cookies.Delete("SFA.DAS.LevyTransferMatching.Web.Auth");
+        Response.Cookies.Delete(CookieNames.Authentication);
     }
+    
 #if DEBUG
-    [AllowAnonymous()]
+    [AllowAnonymous]
     [HttpGet]
     [Route("SignIn-Stub")]
     public IActionResult SigninStub()
     {
-        return View("SigninStub", new List<string>{_config["StubId"],_config["StubEmail"]});
+        return View("SigninStub", new List<string> { _config["StubId"], _config["StubEmail"] });
     }
-        
+
     [AllowAnonymous()]
     [HttpPost]
     [Route("SignIn-Stub")]

@@ -44,6 +44,7 @@ public class PledgeOrchestratorTests
     private string _userId;
     private string _userDisplayName;
     private decimal _startingTransferAllowance = 20000;
+    private int _page = 1;
 
     [SetUp]
     public void Setup()
@@ -74,7 +75,7 @@ public class PledgeOrchestratorTests
         _encodedPledgeId = _fixture.Create<string>();
         _encodedApplicationId = _fixture.Create<string>();
 
-        _pledgeService.Setup(x => x.GetPledges(_accountId)).ReturnsAsync(_pledgesResponse);
+        _pledgeService.Setup(x => x.GetPledges(_accountId, _page, PledgesRequest.DefaultPageSize)).ReturnsAsync(_pledgesResponse);
         _pledgeService.Setup(x => x.GetCreate(_accountId)).ReturnsAsync(() => new GetCreateResponse
         {
             Sectors = _sectors,
@@ -105,7 +106,7 @@ public class PledgeOrchestratorTests
     public async Task GetPledgesViewModel_EncodedId_Is_Correct()
     {
         var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest
-        { EncodedAccountId = _encodedAccountId, AccountId = _accountId });
+            { EncodedAccountId = _encodedAccountId, AccountId = _accountId, Page = _page });
         Assert.That(result.EncodedAccountId, Is.EqualTo(_encodedAccountId));
     }
 
@@ -113,7 +114,7 @@ public class PledgeOrchestratorTests
     public async Task GetPledgesViewModel_RenderCreatePledgeButton_Is_True_When_Authorized()
     {
         var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest
-        { EncodedAccountId = _encodedAccountId, AccountId = _accountId });
+            { EncodedAccountId = _encodedAccountId, AccountId = _accountId, Page = _page });
         Assert.That(result.RenderCreatePledgeButton, Is.True);
     }
 
@@ -121,7 +122,7 @@ public class PledgeOrchestratorTests
     public async Task GetPledgesViewModel_Pledges_Is_Populated()
     {
         var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest
-        { EncodedAccountId = _encodedAccountId, AccountId = _accountId });
+            { EncodedAccountId = _encodedAccountId, AccountId = _accountId, Page = _page });
         Assert.That(result.Pledges, Is.Not.Null);
     }
 
