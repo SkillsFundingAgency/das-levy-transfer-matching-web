@@ -130,10 +130,7 @@ public class PledgeOrchestratorTests
     {
         // Arrange     
         var pledges = _fixture.Build<GetPledgesResponse>()
-           .With(x => x.AcceptedAndApprovedApplications,
-           [
-                new GetPledgesResponse.Application { Amount = 4000 }
-           ])
+           .With(x => x.CurrentYearEstimatedCommittedSpend, 4000)
            .Create();
 
         // Act
@@ -149,12 +146,8 @@ public class PledgeOrchestratorTests
     {
         // Arrange       
         var pledges = _fixture.Build<GetPledgesResponse>()
-           .With(x => x.AcceptedAndApprovedApplications,
-           [
-                new GetPledgesResponse.Application { Amount = 44000 }
-           ])
-           .Create();
-
+            .With(x => x.CurrentYearEstimatedCommittedSpend, 44000)
+            .Create();
 
         _pledgeService.Setup(x => x.GetPledges(_accountId))
             .ReturnsAsync(pledges);
