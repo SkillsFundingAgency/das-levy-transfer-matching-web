@@ -56,7 +56,7 @@ public class PledgeOrchestrator : IPledgeOrchestrator
         {
             EncodedAccountId = request.EncodedAccountId,
             RenderCreatePledgeButton = renderCreatePledgesButton,
-            HasMinimumTransferFunds = CheckForMinimumTransferFunds(pledgesResponse.StartingTransferAllowance, pledgesResponse.AcceptedAndApprovedApplications),
+            HasMinimumTransferFunds = CheckForMinimumTransferFunds(pledgesResponse.StartingTransferAllowance, pledgesResponse.CurrentYearEstimatedCommittedSpend),
             Pledges = pledgesResponse.Pledges.Select(x => new PledgesViewModel.Pledge
             {
                 ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),
@@ -68,9 +68,8 @@ public class PledgeOrchestrator : IPledgeOrchestrator
         };
     }
 
-    private static bool CheckForMinimumTransferFunds(decimal startingTransferAllowance, IEnumerable<GetPledgesResponse.Application> applications)
+    private static bool CheckForMinimumTransferFunds(decimal startingTransferAllowance, decimal currentYearSpend)
     {
-        var currentYearSpend = applications.Sum(x => x.Amount);
         return (startingTransferAllowance - currentYearSpend) >= minimumTransferFunds;
     }
 
