@@ -95,7 +95,7 @@
                 @if (Model.Paging.ShowPageLinks)
                 {
                     <nav role="navigation" aria-label="Pagination">
-                        <div class="das-pagination__summary">Showing @Model.Paging.PageStartRow to @Model.Paging.PageEndRow of @Model.Paging.TotalOpportunities opportunities</div>
+                        <div class="das-pagination__summary">Showing @Model.Paging.PageStartRow to @Model.Paging.PageEndRow <br/>of @Model.Paging.TotalOpportunities opportunities</div>
                         <ul class="das-pagination">
                             @foreach (var pageLink in Model.Paging.PageLinks)
                             {
