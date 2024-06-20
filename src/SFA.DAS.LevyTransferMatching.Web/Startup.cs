@@ -47,6 +47,8 @@ public class Startup
                 options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
                 options.Filters.Add(new HideAccountNavigationAttribute(false));
                 options.Filters.Add(new EnableGoogleAnalyticsAttribute(_configuration.GetSection<GoogleAnalytics>()));
+                options.Filters.Add(new SetZenDeskValuesAttribute(_configuration.GetSection<ZenDesk>()));
+
                 options.Filters.Add(new GoogleAnalyticsFilter());
                 options.Filters.Add(new AccountActiveFilter(_configuration));
 
