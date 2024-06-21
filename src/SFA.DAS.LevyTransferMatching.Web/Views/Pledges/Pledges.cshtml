@@ -41,8 +41,22 @@
                 </div>
                 @if (Model.RenderCreatePledgeButton)
                 {
+                    @if (!Model.HasMinimumTransferFunds)
+                    {
+                        <div class="govuk-warning-text">
+                            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                            <strong class="govuk-warning-text__text">
+                                <span class="govuk-warning-text__assistive">Warning</span>
+                                You need a minimum of £2000 left on your estimated remaining transfer balance to make another pledge.
+                            </strong>
+                        </div>
+                    }
                     <div class="govuk-button-group">
-                        <a class="govuk-button" data-module="govuk-button" href="@Url.Action("Inform", "CreatePledge", new { EncodedAccountId = Model.EncodedAccountId })">Create new transfer pledge</a>
+                        <form action="@Url.Action("Inform", "CreatePledge", new { encodedAccountId = Model.EncodedAccountId })" method="get">
+                            <button class="govuk-button" type="submit" data-module="govuk-button" @(!Model.HasMinimumTransferFunds ? "disabled" : "")>
+                                Create new transfer pledge
+                            </button>
+                        </form>
                     </div>
                 }
                 <table class="govuk-table govuk-!-margin-bottom-9" aria-label="Transfer pledges table">
