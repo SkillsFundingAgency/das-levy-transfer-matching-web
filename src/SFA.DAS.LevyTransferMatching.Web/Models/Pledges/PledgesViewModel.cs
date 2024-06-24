@@ -7,7 +7,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public IEnumerable<Pledge> Pledges { get; set; }
         public PagingData Paging { get; set; }
         public bool RenderCreatePledgeButton { get; set; }
-        
+        public bool HasMinimumTransferFunds { get; set; }
+
         public class Pledge
         {
             public string ReferenceNumber { get; set; }

@@ -22,8 +22,11 @@ public class PledgeOrchestrator : IPledgeOrchestrator
     private readonly Infrastructure.Configuration.FeatureToggles _featureToggles;
     private readonly IDateTimeService _dateTimeService;
     private readonly ICsvHelperService _csvService;
+    private const int minimumTransferFunds = 2000;
 
-    public PledgeOrchestrator(IPledgeService pledgeService, IEncodingService encodingService, IUserService userService, Infrastructure.Configuration.FeatureToggles featureToggles, IDateTimeService dateTimeService, ICsvHelperService csvService)
+    public PledgeOrchestrator(IPledgeService pledgeService, IEncodingService encodingService, IUserService userService,
+        Infrastructure.Configuration.FeatureToggles featureToggles, IDateTimeService dateTimeService,
+        ICsvHelperService csvService)
     {
         _pledgeService = pledgeService;
         _encodingService = encodingService;
@@ -54,6 +57,7 @@ public class PledgeOrchestrator : IPledgeOrchestrator
             Paging = GetPagingData(pledgesResponse),
             EncodedAccountId = request.EncodedAccountId,
             RenderCreatePledgeButton = renderCreatePledgesButton,
+            HasMinimumTransferFunds = CheckForMinimumTransferFunds(pledgesResponse.StartingTransferAllowance, pledgesResponse.CurrentYearEstimatedCommittedSpend),
             Pledges = pledgesResponse.Pledges.Select(x => new PledgesViewModel.Pledge
             {
                 ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),
@@ -63,6 +67,11 @@ public class PledgeOrchestrator : IPledgeOrchestrator
                 Status = x.Status
             })
         };
+    }
+
+    private static bool CheckForMinimumTransferFunds(decimal startingTransferAllowance, decimal currentYearSpend)
+    {
+        return (startingTransferAllowance - currentYearSpend) >= minimumTransferFunds;
     }
 
     private PledgesViewModel.PagingData GetPagingData(GetPledgesResponse pledgesResponse)
@@ -217,14 +226,14 @@ public class PledgeOrchestrator : IPledgeOrchestrator
 
         return fileContents;
     }
-               
+
     private static IEnumerable<dynamic> GetListOfLocations(IEnumerable<GetApplyResponse.PledgeLocation> pledgeLocations, IEnumerable<GetApplicationsResponse.ApplicationLocation> applicationLocations, string specificLocation, string additionalLocations)
     {
         var listOfMatchingLocations = (from location in applicationLocations
-            select pledgeLocations?.FirstOrDefault(o => o.Id == location.PledgeLocationId)
+                                       select pledgeLocations?.FirstOrDefault(o => o.Id == location.PledgeLocationId)
             into matchedLocation
-            where matchedLocation != null && !string.IsNullOrWhiteSpace(matchedLocation.Name)
-            select matchedLocation.Name).ToList();
+                                       where matchedLocation != null && !string.IsNullOrWhiteSpace(matchedLocation.Name)
+                                       select matchedLocation.Name).ToList();
 
         if (!string.IsNullOrWhiteSpace(specificLocation))
         {
@@ -255,31 +264,31 @@ public class PledgeOrchestrator : IPledgeOrchestrator
         var isOwnerOrTransactor = _userService.IsOwnerOrTransactor(request.EncodedAccountId);
 
         var viewModels = (from application in result.Applications
-            let pledgeApplication = result.Applications.First(x => x.PledgeId == application.PledgeId)
-            select new ApplicationsViewModel.Application
-            {
-                EncodedApplicationId = _encodingService.Encode(application.Id, EncodingType.PledgeApplicationId),
-                DasAccountName = application.DasAccountName,
-                Amount = application.Amount,
-                Duration = application.StandardDuration,
-                CreatedOn = application.CreatedOn,
-                Status = application.Status,
-                IsLocationMatch = application.IsLocationMatch,
-                IsSectorMatch = application.IsSectorMatch,
-                IsJobRoleMatch = application.IsJobRoleMatch,
-                IsLevelMatch = application.IsLevelMatch,
-                StartBy = application.StartDate,
-                BusinessWebsite = pledgeApplication.BusinessWebsite,
-                LastName = pledgeApplication.LastName,
-                FirstName = pledgeApplication.FirstName,
-                EmailAddresses = pledgeApplication.EmailAddresses,
-                JobRole = pledgeApplication.JobRole,
-                PledgeRemainingAmount = pledgeApplication.PledgeRemainingAmount,
-                MaxFunding = pledgeApplication.MaxFunding,
-                Details = pledgeApplication.Details,
-                RemainingDaysForDelayedApproval = application.GetRemainingDaysForDelayedApproval(result.AutomaticApprovalOption),
-                RemainingDaysForAutoRejection = application.GetRemainingDaysForAutoRejection()
-            }).ToList();
+                          let pledgeApplication = result.Applications.First(x => x.PledgeId == application.PledgeId)
+                          select new ApplicationsViewModel.Application
+                          {
+                              EncodedApplicationId = _encodingService.Encode(application.Id, EncodingType.PledgeApplicationId),
+                              DasAccountName = application.DasAccountName,
+                              Amount = application.Amount,
+                              Duration = application.StandardDuration,
+                              CreatedOn = application.CreatedOn,
+                              Status = application.Status,
+                              IsLocationMatch = application.IsLocationMatch,
+                              IsSectorMatch = application.IsSectorMatch,
+                              IsJobRoleMatch = application.IsJobRoleMatch,
+                              IsLevelMatch = application.IsLevelMatch,
+                              StartBy = application.StartDate,
+                              BusinessWebsite = pledgeApplication.BusinessWebsite,
+                              LastName = pledgeApplication.LastName,
+                              FirstName = pledgeApplication.FirstName,
+                              EmailAddresses = pledgeApplication.EmailAddresses,
+                              JobRole = pledgeApplication.JobRole,
+                              PledgeRemainingAmount = pledgeApplication.PledgeRemainingAmount,
+                              MaxFunding = pledgeApplication.MaxFunding,
+                              Details = pledgeApplication.Details,
+                              RemainingDaysForDelayedApproval = application.GetRemainingDaysForDelayedApproval(result.AutomaticApprovalOption),
+                              RemainingDaysForAutoRejection = application.GetRemainingDaysForAutoRejection()
+                          }).ToList();
 
         return new ApplicationsViewModel
         {
@@ -409,7 +418,7 @@ public class PledgeOrchestrator : IPledgeOrchestrator
             EstimatedCostOverDuration = totalCost,
             YearlyPayments = yearlyBreakdown,
             YearDescription = _dateTimeService.UtcNow.ToTaxYearDescription(),
-            RemainingFundsIfApproved = remainingAmount - (int) yearlyBreakdown.First().Amount
+            RemainingFundsIfApproved = remainingAmount - (int)yearlyBreakdown.First().Amount
         };
     }
 
@@ -417,7 +426,7 @@ public class PledgeOrchestrator : IPledgeOrchestrator
     {
         if (durationInMonths <= 12)
         {
-            return new List<YearlyPayments> { new(string.Empty, (int) totalAmount) };
+            return new List<YearlyPayments> { new(string.Empty, (int)totalAmount) };
         }
 
         var completionPayment = totalAmount / 5;
@@ -448,7 +457,7 @@ public class PledgeOrchestrator : IPledgeOrchestrator
         if (months > 0)
         {
             var finalYearAmount = (int)Math.Round(paymentPerMonth * months);
-            finalYearAmount += (int) completionPayment;
+            finalYearAmount += (int)completionPayment;
             yearlyPayments.Add(new YearlyPayments("final year", finalYearAmount));
         }
 
