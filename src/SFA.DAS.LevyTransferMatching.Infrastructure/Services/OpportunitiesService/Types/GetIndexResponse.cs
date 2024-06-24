@@ -1,5 +1,4 @@
-﻿using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
-using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
+﻿using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 using System.Collections.Generic;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types
@@ -7,6 +6,12 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
     public class GetIndexResponse
     {
         public List<Opportunity> Opportunities { get; set; }
+        
+        public int TotalOpportunities { get; set; }
+        public int TotalPages { get; set; }
+        public int PageSize { get; set; }
+        public int Page { get; set; }
+
         public List<ReferenceDataItem> Levels { get; set; }
         public List<ReferenceDataItem> Sectors { get; set; }
         public List<ReferenceDataItem> JobRoles { get; set; }
