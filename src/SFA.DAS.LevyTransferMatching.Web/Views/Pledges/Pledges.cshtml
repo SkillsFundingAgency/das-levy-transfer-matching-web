@@ -66,7 +66,8 @@
                         </form>
                     </div>
                 }
-                <table class="govuk-table govuk-!-margin-bottom-9" aria-label="Transfer pledges table">
+                <table class="govuk-table govuk-!-margin-bottom-9 das-table--responsive"
+                    aria-label="Transfer pledges table">
                     <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
                             <th scope="col" class="govuk-table__header app-custom-class">Transfer pledge</th>
@@ -81,15 +82,17 @@
                         @foreach (var pledge in Model.Pledges)
                         {
                             <tr class="govuk-table__row">
-                                <td class="govuk-table__cell">
+                                <td class="govuk-table__cell" data-label="Transfer pledge">
                                     <a href="pledges/@pledge.ReferenceNumber/applications"
                                         class=govuk-link--no-visited-state>@pledge.ReferenceNumber</a>
                                 </td>
-                                <td class="govuk-table__cell govuk-table__cell--numeric">£@pledge.Amount.ToString("N0")</td>
-                                <td class="govuk-table__cell govuk-table__cell--numeric">
+                                <td class="govuk-table__cell govuk-table__cell--numeric" data-label="Total">
+                                    £@pledge.Amount.ToString("N0")</td>
+                                <td class="govuk-table__cell govuk-table__cell--numeric" data-label="Remaining funds">
                                     £@pledge.RemainingAmount.ToString("N0")</td>
-                                <td class="govuk-table__cell govuk-table__cell--numeric">@pledge.ApplicationCount</td>
-                                <td class="govuk-table__cell"><strong
+                                <td class="govuk-table__cell govuk-table__cell--numeric" data-label="Applications">
+                                    @pledge.ApplicationCount</td>
+                                <td class="govuk-table__cell" data-label="Status"><strong
                                         class="@pledge.Status.GetCssClass()">@pledge.Status.GetLabel()</strong></td>
                             </tr>
                         }
