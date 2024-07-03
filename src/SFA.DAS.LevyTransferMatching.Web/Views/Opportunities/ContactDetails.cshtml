@@ -63,7 +63,7 @@
                                 <span class="govuk-error-message">@Html.ValidationMessageFor(x => x.EmailAddress)</span>
                                 <input class="govuk-input" id="EmailAddress" name="EmailAddress" type="email"
                                     spellcheck="false" asp-for="EmailAddress" das-highlight-error-for="EmailAddress"
-                                    error-class="govuk-input--error" maxlength="50">
+                                    error-class="govuk-input--error" maxlength="50" autocomplete="email">
                             </div>
 
                             <fieldset class="govuk-fieldset app-extra-fields__fieldset">

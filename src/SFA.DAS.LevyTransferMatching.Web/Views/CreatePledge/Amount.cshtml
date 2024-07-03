@@ -40,12 +40,14 @@
                     <label class="govuk-label" asp-for="Amount">
                         How much funding would you like to pledge?
                     </label>
-                    <p class=" govuk-hint">Minimum pledge amount is £2,000</p>
+                    <p class=" govuk-hint" id="pledge-hint">Minimum pledge amount is £2,000 <span
+                            class="govuk-visually-hidden"> - using numbers only</span></p>
                     <span class="govuk-error-message">@Html.ValidationMessageFor(x => x.Amount)</span>
                     <div class="govuk-input__wrapper">
                         <div class="govuk-input__prefix govuk-!-font-weight-bold" aria-hidden="true">&pound;</div>
                         <input class="govuk-input govuk-input--width-10" type="text" asp-for="Amount"
-                            das-highlight-error-for="Amount" error-class="govuk-input--error" />
+                            das-highlight-error-for="Amount" error-class="govuk-input--error"
+                            aria-describedby="pledge-hint" inputmode="numeric" />
                     </div>
                 </div>
 
