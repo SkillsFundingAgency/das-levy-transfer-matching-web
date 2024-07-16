@@ -7,7 +7,7 @@ public class ContactDetailsPostRequestValidator : AbstractValidator<ContactDetai
 {
     private const string FirstNameError = "Enter your first name";
     private const string LastNameError = "Enter your last name";
-    private const string EmailAddressError = "Enter your email address";
+    private const string EmailAddressError = "Enter your email address in the correct format, like name@example.com";
 
     public ContactDetailsPostRequestValidator()
     {
