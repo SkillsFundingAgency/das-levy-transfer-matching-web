@@ -4,13 +4,14 @@
     ViewData["Title"] = "Search funding opportunities";
     ViewBag.GaData.Vpv = "/opportunities";
 }
-<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing">
+<main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
     <h1 class="govuk-heading-xl">
         Search funding opportunities
     </h1>
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <p>Large businesses that want to fund the apprenticeships of other businesses can set funding criteria to show the training they want to support.</p>
+            <p>Large businesses that want to fund the apprenticeships of other businesses can set funding criteria to
+                show the training they want to support.</p>
             <details class="govuk-details" data-module="govuk-details">
                 <summary class="govuk-details__summary">
                     <span class="govuk-details__summary-text">Examples</span>
@@ -18,7 +19,8 @@
                 <div class="govuk-details__text">
                     <p>
                         <strong>Example 1</strong><br>
-                        A large business might choose to fund apprenticeships in construction companies based in Manchester, Liverpool and Leeds.
+                        A large business might choose to fund apprenticeships in construction companies based in
+                        Manchester, Liverpool and Leeds.
                     </p>
                     <p>
                         <strong>Example 2</strong><br>
@@ -39,16 +41,20 @@
                     <div class="govuk-details__text">
                         <div class="govuk-form-group">
                             <fieldset class="govuk-fieldset">
-                                <legend class="govuk-visually-hidden">Select one or more business sectors to filter by  </legend>
-                                <checkbox-list asp-for="Sectors" source="@Model.Sectors" css-class="govuk-checkboxes govuk-checkboxes--small"></checkbox-list>
+                                <legend class="govuk-visually-hidden">Select one or more business sectors to filter by
+                                </legend>
+                                <checkbox-list asp-for="Sectors" source="@Model.Sectors"
+                                    css-class="govuk-checkboxes govuk-checkboxes--small"></checkbox-list>
                             </fieldset>
                         </div>
                     </div>
                 </details>
-                <button class="govuk-button" data-module="govuk-button" id="opportunity-filter-sector">Update results</button>
+                <button class="govuk-button" data-module="govuk-button" id="opportunity-filter-sector">Update
+                    results</button>
             </div>
             <div class="govuk-grid-column-two-thirds">
-                <h2 class="govuk-heading-m">@Model.Paging.TotalOpportunities @(Model.Paging.TotalOpportunities == 1 ? "opportunity" : "opportunities")</h2>
+                <h2 class="govuk-heading-m">@Model.Paging.TotalOpportunities @(Model.Paging.TotalOpportunities == 1 ?
+                    "opportunity" : "opportunities")</h2>
 
                 @if (Model.Opportunities.Count == 0)
                 {
@@ -65,7 +71,9 @@
                             {
                                 <li class="das-search-results__list-item">
                                     <h2 class="govuk-heading-m das-search-results__heading govuk-!-margin-bottom-0">
-                                        <a href="@Url.Action("Detail", new { EncodedPledgeId = opportunity.ReferenceNumber })" class="das-search-results__link">@opportunity.EmployerName (@opportunity.ReferenceNumber)</a>
+                                        <a href="@Url.Action("Detail", new { EncodedPledgeId = opportunity.ReferenceNumber })"
+                                            class="das-search-results__link">@opportunity.EmployerName
+                                            (@opportunity.ReferenceNumber)</a>
                                     </h2>
                                     <p class="govuk-hint">up to @opportunity.DisplayAmount available</p>
                                     <ul class="govuk-list govuk-!-margin-bottom-0">
@@ -91,20 +99,19 @@
                         </ol>
                     </div>
                 }
-                
+
                 @if (Model.Paging.ShowPageLinks)
                 {
                     <nav role="navigation" aria-label="Pagination">
-                        <div class="das-pagination__summary">Showing @Model.Paging.PageStartRow to @Model.Paging.PageEndRow <br/>of @Model.Paging.TotalOpportunities opportunities</div>
+                        <div class="das-pagination__summary">Showing @Model.Paging.PageStartRow to @Model.Paging.PageEndRow
+                            <br />of @Model.Paging.TotalOpportunities opportunities</div>
                         <ul class="das-pagination">
                             @foreach (var pageLink in Model.Paging.PageLinks)
                             {
                                 <li class="das-pagination__item">
                                     <a class="das-pagination__link @(pageLink.IsCurrent.HasValue && pageLink.IsCurrent.Value ? "current" : "")"
-                                       asp-route="opportunities"
-                                       asp-all-route-data="@pageLink.RouteData"
-                                       aria-current="@pageLink.IsCurrent"
-                                       aria-label="@pageLink.AriaLabel">
+                                        asp-route="opportunities" asp-all-route-data="@pageLink.RouteData"
+                                        aria-current="@pageLink.IsCurrent" aria-label="@pageLink.AriaLabel">
                                         @pageLink.Label
                                     </a>
                                 </li>
