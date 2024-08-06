@@ -5,7 +5,8 @@
     ViewBag.GaData.Vpv = "/accounts/opportunities/apply/contact-details";
 }
 
-<a href="@Url.Action("Apply", "Opportunities", new { encodedAccountId = Model.EncodedAccountId, EncodedPledgeId = Model.EncodedPledgeId, cacheKey = Model.CacheKey })" class="govuk-back-link">Back</a>
+<a href="@Url.Action("Apply", "Opportunities", new { encodedAccountId = Model.EncodedAccountId, EncodedPledgeId = Model.EncodedPledgeId, cacheKey = Model.CacheKey })"
+    class="govuk-back-link">Back</a>
 
 <main class="govuk-main-wrapper" id="main-content" role="main">
     <partial name="_ValidationSummary" />
@@ -13,70 +14,101 @@
         <div class="govuk-grid-column-two-thirds">
 
             <span class="govuk-caption-m">Find a business to fund training for your apprentices</span>
-            <h1 class="govuk-heading-xl">Add contact details</h1>
+            <form method="post" data-extra-field-rows="true" data-add-button-text="Add additional contact" novalidate>
 
-            @if (Model.OpportunitySummaryViewModel.IsNamePublic)
-            {
-                <p>Add your contact details so they can be shared with <strong class="pledge-name-answer main-title">@Model.DasAccountName</strong>.</p>
-            }
-            else
-            {
-                <p>Add your contact details so they can be shared with the organisation offering this opportunity.</p>
-            }
+                <fieldset class="govuk-fieldset">
 
-            <p>They may contact you with follow-up questions about your application.</p>
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                        <h1 class="govuk-fieldset__heading">
+                            Add contact details
+                        </h1>
+                    </legend>
 
-            <div class="govuk-grid-row">
-                <div class="govuk-grid-column-two-thirds">
+                    @if (Model.OpportunitySummaryViewModel.IsNamePublic)
+                    {
+                        <p>Add your contact details so they can be shared with <strong
+                                class="pledge-name-answer main-title">@Model.DasAccountName</strong>.</p>
+                    }
+                    else
+                    {
+                        <p>Add your contact details so they can be shared with the organisation offering this opportunity.
+                        </p>
+                    }
 
-                    <form method="post" data-extra-field-rows="true" data-add-button-text="Add additional contact" novalidate>
+                    <p>They may contact you with follow-up questions about your application.</p>
 
-                        <div class="govuk-form-group" das-highlight-error-for="FirstName" error-class="govuk-form-group--error">
-                            <label class="govuk-label" for="FirstName">First name</label>
-                            <span class="govuk-error-message">@Html.ValidationMessageFor(x => x.FirstName)</span>
-                            <input class="govuk-input" id="FirstName" name="FirstName" type="text" asp-for="FirstName" das-highlight-error-for="FirstName" error-class="govuk-input--error" maxlength="25">
+                    <div class="govuk-grid-row">
+                        <div class="govuk-grid-column-two-thirds">
+
+                            <div class="govuk-form-group" das-highlight-error-for="FirstName"
+                                error-class="govuk-form-group--error">
+                                <label class="govuk-label" for="FirstName">First name</label>
+                                <span class="govuk-error-message">@Html.ValidationMessageFor(x => x.FirstName)</span>
+                                <input class="govuk-input" id="FirstName" name="FirstName" type="text"
+                                    asp-for="FirstName" das-highlight-error-for="FirstName"
+                                    error-class="govuk-input--error" maxlength="25">
+                            </div>
+
+                            <div class="govuk-form-group" das-highlight-error-for="LastName"
+                                error-class="govuk-form-group--error">
+                                <label class="govuk-label" for="LastName">Last name</label>
+                                <span class="govuk-error-message">@Html.ValidationMessageFor(x => x.LastName)</span>
+                                <input class="govuk-input" id="LastName" name="LastName" type="text" asp-for="LastName"
+                                    das-highlight-error-for="LastName" error-class="govuk-input--error" maxlength="25">
+                            </div>
+
+                            <div class="govuk-form-group govuk-!-margin-bottom-3" das-highlight-error-for="EmailAddress"
+                                error-class="govuk-form-group--error">
+                                <label class="govuk-label" for="EmailAddress">Email address</label>
+                                <span class="govuk-error-message">@Html.ValidationMessageFor(x => x.EmailAddress)</span>
+                                <input class="govuk-input" id="EmailAddress" name="EmailAddress" type="email"
+                                    spellcheck="false" asp-for="EmailAddress" das-highlight-error-for="EmailAddress"
+                                    error-class="govuk-input--error" maxlength="50" autocomplete="email">
+                            </div>
+
+                            <fieldset class="govuk-fieldset app-extra-fields__fieldset">
+                                <legend class="govuk-visually-hidden">Additional locations</legend>
+
+                                @for (int i = 0; i < Model.AdditionalEmailAddresses.Length; i++)
+                                {
+                                    <div class="govuk-form-group app-extra-fields__form-group"
+                                        das-highlight-error-for="AdditionalEmailAddresses[i]"
+                                        error-class="govuk-form-group--error">
+                                        <label class="govuk-label" for="@($"AdditionalEmailAddresses_{i}_")">Additional
+                                            email address</label>
+                                        <span class="govuk-error-message">@Html.ValidationMessageFor(x =>
+                                        x.AdditionalEmailAddresses[i])</span>
+                                        <input class="govuk-input" id="@($"AdditionalEmailAddresses_{i}_")"
+                                            name="@($"AdditionalEmailAddresses[{i}]")" type="email" spellcheck="false"
+                                            asp-for="AdditionalEmailAddresses[i]"
+                                            das-highlight-error-for="AdditionalEmailAddresses[i]"
+                                            error-class="govuk-input--error" maxlength="50">
+                                    </div>
+                                }
+                            </fieldset>
+
+
+                            <div class="govuk-form-group">
+                                <label class="govuk-label" for="BusinessWebsite">Business website (if you have
+                                    one)</label>
+                                <input class="govuk-input" id="BusinessWebsite" name="BusinessWebsite" type="text"
+                                    asp-for="BusinessWebsite" das-highlight-error-for="BusinessWebsite"
+                                    error-class="govuk-input--error" maxlength="75">
+                            </div>
+
+                            <div class="govuk-button-group">
+                                <button class="govuk-button" data-module="govuk-button"
+                                    id="application-contact-details">Continue</button>
+                                <a href="@Url.Action("Apply", "Opportunities", new { encodedAccountId = Model.EncodedAccountId, EncodedPledgeId = Model.EncodedPledgeId, cacheKey = Model.CacheKey })"
+                                    class="govuk-back-link">Back</a>
+                            </div>
+
+
                         </div>
+                    </div>
 
-                        <div class="govuk-form-group" das-highlight-error-for="LastName" error-class="govuk-form-group--error">
-                            <label class="govuk-label" for="LastName">Last name</label>
-                            <span class="govuk-error-message">@Html.ValidationMessageFor(x => x.LastName)</span>
-                            <input class="govuk-input" id="LastName" name="LastName" type="text" asp-for="LastName" das-highlight-error-for="LastName" error-class="govuk-input--error" maxlength="25">
-                        </div>
-
-
-                        <div class="govuk-form-group govuk-!-margin-bottom-3" das-highlight-error-for="EmailAddress" error-class="govuk-form-group--error">
-                            <label class="govuk-label" for="EmailAddress">Email address</label>
-                            <span class="govuk-error-message">@Html.ValidationMessageFor(x => x.EmailAddress)</span>
-                            <input class="govuk-input" id="EmailAddress" name="EmailAddress" type="email" spellcheck="false" asp-for="EmailAddress" das-highlight-error-for="EmailAddress" error-class="govuk-input--error" maxlength="50">
-                        </div>
-
-                        <fieldset class="govuk-fieldset app-extra-fields__fieldset">
-                            <legend class="govuk-visually-hidden">Additional locations</legend>
-
-                            @for (int i = 0; i < Model.AdditionalEmailAddresses.Length; i++)
-                            {
-                                <div class="govuk-form-group app-extra-fields__form-group" das-highlight-error-for="AdditionalEmailAddresses[i]" error-class="govuk-form-group--error">
-                                    <label class="govuk-label" for="@($"AdditionalEmailAddresses_{i}_")">Additional email address</label>
-                                    <span class="govuk-error-message">@Html.ValidationMessageFor(x => x.AdditionalEmailAddresses[i])</span>
-                                    <input class="govuk-input" id="@($"AdditionalEmailAddresses_{i}_")" name="@($"AdditionalEmailAddresses[{i}]")" type="email" spellcheck="false" asp-for="AdditionalEmailAddresses[i]" das-highlight-error-for="AdditionalEmailAddresses[i]" error-class="govuk-input--error" maxlength="50">
-                                </div>
-                            }
-                        </fieldset>
-
-
-                        <div class="govuk-form-group">
-                            <label class="govuk-label" for="BusinessWebsite">Business website (if you have one)</label>
-                            <input class="govuk-input" id="BusinessWebsite" name="BusinessWebsite" type="text" asp-for="BusinessWebsite" das-highlight-error-for="BusinessWebsite" error-class="govuk-input--error" maxlength="75">
-                        </div>
-
-                        <div class="govuk-button-group">
-                            <button class="govuk-button" data-module="govuk-button" id="application-contact-details">Continue</button>
-                            <a href="@Url.Action("Apply", "Opportunities", new { encodedAccountId = Model.EncodedAccountId, EncodedPledgeId = Model.EncodedPledgeId, cacheKey = Model.CacheKey })" class="govuk-back-link">Back</a>
-                        </div>
-
-                    </form>
-                </div>
-            </div>
+                </fieldset>
+            </form>
 
         </div>
 
