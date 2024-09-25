@@ -8,12 +8,13 @@
     ViewBag.GaData.Vpv = "/accounts/applications";
 
     var breadCrumbs = new List<Tuple<string, string>>
-{
-new Tuple<string, string>(LinkGenerator.AccountsLink($"accounts/{Model.EncodedAccountId}/teams"), "Home"),
-new Tuple<string, string>(LinkGenerator.FinanceLink($"accounts/{Model.EncodedAccountId}/transfers"), "Your transfers"),
-new Tuple<string, string>($"/accounts/{@Model.EncodedAccountId}/pledges", "My transfer pledges"),
-new Tuple<string, string>("", $"Transfer pledge {@Model.EncodedPledgeId}")
-};
+    {
+        new Tuple<string, string>(LinkGenerator.AccountsLink($"accounts/{Model.EncodedAccountId}/teams"), "Home"),
+        new Tuple<string, string>(LinkGenerator.FinanceLink($"accounts/{Model.EncodedAccountId}/transfers"), "Your transfers"),
+        new Tuple<string, string>($"/accounts/{@Model.EncodedAccountId}/pledges", "My transfer pledges"),
+        new Tuple<string, string>("", $"Transfer pledge {@Model.EncodedPledgeId}")
+    };
+
     string Pluralise(int count, string singular)
     {
         return count == 1 ? singular : singular + "s";
@@ -45,27 +46,36 @@ new Tuple<string, string>("", $"Transfer pledge {@Model.EncodedPledgeId}")
         }
 
         <partial name="_FlashMessagePartial" />
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                @if (Model.AutomaticApprovalOption == AutomaticApprovalOption.ImmediateAutoApproval)
+                {
+                    <span class="govuk-caption-l">Auto Approval</span>
+                }
+                else if (Model.AutomaticApprovalOption == AutomaticApprovalOption.DelayedAutoApproval)
+                {
+                    <span class="govuk-caption-l">Auto approval: 6 week review</span>
+                }             
+            </div>
+            <div class="govuk-grid-column-one-third">
+                @if (Model.Applications.Any())
+                {
+                    <p>
+                        <a href="/accounts/@Model.EncodedAccountId/pledges/@Model.EncodedPledgeId/applications/download"
+                           class="govuk-link">
+                            Download applications (CSV)
+                        </a>
+                    </p>
+                }
+            </div>
+        </div>
 
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-
-                <h1 class="govuk-heading-xl">
+                <h1 class="govuk-heading-l">
                     Transfer pledge @Model.EncodedPledgeId
                 </h1>
-
-            </div>
-
-            <div class="govuk-grid-column-one-third">
-
-                @if (Model.Applications.Any())
-                {
-                    <p><a href="/accounts/@Model.EncodedAccountId/pledges/@Model.EncodedPledgeId/applications/download"
-                            class="govuk-link app-download-link">Download applications - <span
-                                class="govuk-visually-hidden">in an</span> excel <span
-                                class="govuk-visually-hidden">spreadsheet</span></a></p>
-                }
-
-            </div>
+            </div>           
         </div>
 
         <div class="govuk-grid-row">
@@ -93,14 +103,48 @@ new Tuple<string, string>("", $"Transfer pledge {@Model.EncodedPledgeId}")
 
         @if (Model.Applications.Any())
         {
+            @if (Model.AutomaticApprovalOption == AutomaticApprovalOption.ImmediateAutoApproval)
+            {
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-two-thirds">
+                        <div class="govuk-inset-text">
+                            <p>
+                                <b>
+                                    You have chosen to automatically approve any applications to this pledge which match all of your criteria.
+                                </b>
+                            </p>
+                            <p>This means that you do not need to do anything to approve 100% matches.</p>
+                        </div>
+                    </div>
+                </div>             
+            }
+            else if (Model.AutomaticApprovalOption == AutomaticApprovalOption.DelayedAutoApproval)
+            {
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-two-thirds">
+                        <div class="govuk-inset-text">
+                            <p>
+                                <b>
+                                    You have chosen to review the applications to this pledge that match all of your criteria.
+                                </b>
+                            </p>
+                            <p>This means that:</p>
+                            <ul class="govuk-list govuk-list--bullet">
+                                <li>you have 6 weeks to accept or reject 100% matches</li>
+                                <li>if you do not take any action in the 6 weeks after application then 100% matches will be approved automatically</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>                
+            }
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds">
-                    <div class="govuk-inset-text">
-                        <p>You may have applications waiting to be approved or rejected. Applicants need a response from you
-                            in order to manage their apprenticeships.</p>
-                        <p>Select the name of the applicant to review. If you want to approve or reject more than 1
-                            application, tick the box then select awaiting your approval or reject.</p>
-                    </div>
+                    <p>
+                        You need to approve or reject applications which do not match all of your criteria. Applicants need your response to manage their apprenticeships.
+                    </p>
+                    <p>
+                        If you do not respond to applications which are less than 100% matches then they will be rejected automatically after 3 months.
+                    </p>
                 </div>
             </div>
         }
