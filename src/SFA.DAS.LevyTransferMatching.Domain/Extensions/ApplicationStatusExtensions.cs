@@ -71,14 +71,14 @@ namespace SFA.DAS.LevyTransferMatching.Domain.Extensions
         {
             switch (status)
             {
-                case ApplicationStatus.Pending: return "AWAITING APPROVAL";
-                case ApplicationStatus.Approved: return "APPROVED, AWAITING YOUR ACCEPTANCE";
-                case ApplicationStatus.Rejected: return "REJECTED";
-                case ApplicationStatus.Accepted: return "FUNDS AVAILABLE";
-                case ApplicationStatus.FundsUsed: return "FUNDS USED";
-                case ApplicationStatus.Declined: return "WITHDRAWN";
-                case ApplicationStatus.Withdrawn: return "WITHDRAWN";
-                case ApplicationStatus.WithdrawnAfterAcceptance: return "WITHDRAWN";
+                case ApplicationStatus.Pending: return "Awaiting approval";
+                case ApplicationStatus.Approved: return "Approved, awaiting your acceptance";
+                case ApplicationStatus.Rejected: return "Rejected";
+                case ApplicationStatus.Accepted: return "Funds available";
+                case ApplicationStatus.FundsUsed: return "Funds used";
+                case ApplicationStatus.Declined: return "Withdrawn";
+                case ApplicationStatus.Withdrawn: return "Withdrawn";
+                case ApplicationStatus.WithdrawnAfterAcceptance: return "Withdrawn";
                 default:
                     return string.Empty;
             }

@@ -14,13 +14,14 @@
 
             <h1 class="govuk-heading-xl">@Model.Title</h1>
 
-            <div class="govuk-warning-text application-status-one">
-                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                <strong class="govuk-warning-text__text">
-                    <span class="govuk-warning-text__assistive">Warning</span>
-                    Application status: <span class="@Model.Status.GetCssClassForReceiver()">@Model.Status.GetLabelForReceiver()</span>
-                </strong>
-            </div>
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    <div class="govuk-body">
+                        <b> Application status: </b>
+                        <strong class="@Model.Status.GetCssClassForReceiver()">@Model.Status.GetLabelForReceiver()</strong>
+                    </div>
+                </div>
+            </div>        
 
             @if (Model.DisplayCurrentFundsBalance)
             {
@@ -41,16 +42,51 @@
                 </div>
             }
 
-            <div class="accepted-text-hide">
-                <h2 class="govuk-heading-m">About your apprenticeship training</h2>
+            <div class="govuk-summary-card">
+                <div class="govuk-summary-card__title-wrapper">
+                    <h2 class="govuk-summary-card__title">
+                        About your application training:
+                    </h2>
+                </div>
+                <div class="govuk-summary-card__content">
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Apprenticeship training course:
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.JobRole
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Number of apprentices:
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.NumberOfApprentices
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Estimated total cost:
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.EstimatedTotalCost
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Apprenticeship training to start by:
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.StartBy.ToString("MM/yyyy")
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
             </div>
-
-            <section class="das-highlight">
-                <p><strong>Apprenticeship training course:</strong> @Model.JobRole</p>
-                <p><strong>Number of apprentices:</strong> @Model.NumberOfApprentices</p>
-                <p><strong>Estimated total cost:</strong> @Model.EstimatedTotalCost</p>
-                <p class="govuk-!-margin-bottom-0"><strong>Apprenticeship training to start by:</strong> @Model.StartBy.ToString("MM/yyyy")</p>
-            </section>
+           
+            <p class="govuk-body">After you have accepted the funding, you will have 3 months to add apprentice details before it expires.</p>
 
             <partial name="_ApplicationCanAcceptFundingPartial" model="Model" />
 
