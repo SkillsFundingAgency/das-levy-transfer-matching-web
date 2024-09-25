@@ -11,13 +11,16 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <div class="govuk-panel govuk-panel--confirmation">
-                    <h1 class="govuk-panel__title">Your application has been submitted</h1>
+                    <h1 class="govuk-panel__title">Application submitted</h1>
+                    <p>
+                        You have applied for transfer funds from <strong>@Model.AccountName (@Model.Reference)</strong>
+                    </p>
                 </div>
-                <h2 class="govuk-heading-m">What happens next</h2>
+                <h2 class="govuk-heading-m">What happens next?</h2>
 
                 @if (Model.IsNamePublic)
                 {
-                    <p><strong>@Model.AccountName (@Model.Reference)</strong> will review your application.</p>
+                    <p><strong>@Model.AccountName</strong> will review your application.</p>
                 }
                 else
                 {
@@ -26,20 +29,15 @@
 
                 <p>They may contact you to ask follow-up questions about your application.</p>
 
-                @if (Model.IsNamePublic)
-                {
-                    <p>When <strong>@Model.AccountName (@Model.Reference)</strong> have made a decision you will receive an email and a notification in your apprenticeship service account.</p>
-                }
-                else
-                {
-                    <p>When they have made a decision you will receive an email and a notification in your apprenticeship service account.</p>
-                }
-
-                <h2 class="govuk-heading-m">You can apply to another opportunity</h2>
                 <p>
-                    <a class="govuk-link govuk-link--no-visited-state" href="@Url.Action("Index")">View other opportunities</a>
-                    <span class="das-!-display-block">or</span>
-                    <a href="@LinkGenerator.AccountsLink($"accounts/{Model.EncodedAccountId}/teams")" class="govuk-link govuk-link--no-visited-state" )>Continue to my account</a>
+                    When they have made a decision you will receive an email and a notification in your apprenticeship service account. 
+                    You will have 6 weeks to accept the funds or they will expire.
+                </p>
+
+                <p>
+                    You can still apply for and 
+                    <a class="govuk-link govuk-link--no-visited-state" href="@Url.Action("Index")">view other funding opportunities</a>
+                    whilst you wait for a decision
                 </p>
             </div>
         </div>
