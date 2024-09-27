@@ -70,6 +70,7 @@ public class Startup
         services.AddDasDataProtection(config, _environment);
         services.AddDasHealthChecks(config);
         services.AddEncodingService();
+        services.AddHttpContextAccessor();
         services.AddServiceRegistrations();
         services.AddEmployerSharedUi(_configuration);
         services.AddEmployerUrlHelper();
