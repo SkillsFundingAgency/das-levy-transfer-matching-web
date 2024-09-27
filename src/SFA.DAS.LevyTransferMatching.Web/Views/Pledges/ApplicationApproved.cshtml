@@ -15,34 +15,30 @@
                     <div class="govuk-panel govuk-panel--confirmation pledge-approved">
                         <h1 class="govuk-panel__title">Application approved</h1>
                         <div class="govuk-panel__body">
-                            <strong>You approved the @Model.DasAccountName application</strong>
+                            <strong>You have approved @Model.DasAccountName (@Model.EncodedAccountId) application</strong>
                         </div>
                     </div>
 
-                    <h2 class="govuk-heading-m govuk-!-margin-top-2">What happens next</h2>
+                    <h2 class="govuk-heading-m govuk-!-margin-top-2">What happens next?</h2>
 
-                    @if (Model.AllowTransferRequestAutoApproval)
-                    {
-                        <p>We’ve let them know, so they can accept your funding pledge.</p>
+                    <p>We’ve let them know, so they can accept your funding pledge.</p>
 
-                        <p>You’ll receive a notification when <strong>@Model.DasAccountName</strong> accepts your pledge.</p>
-                    }
-                    else
-                    {
-                        <p>We've let them know, so they can accept your funding pledge.</p>
+                    <p>
+                        <strong>@Model.DasAccountName</strong> will have 6 weeks to accept the funds.
+                        Funds must be used within 3 months of acceptance or they will expire.
+                    </p>
 
-                        <p>You'll receive notifications when <strong>@Model.DasAccountName</strong>:</p>
+                    <p>You'll receive notifications when <strong>@Model.DasAccountName</strong>:</p>
 
-                        <ul class="govuk-list govuk-list--bullet">
-                            <li>accepts your pledge</li>
-                            <li>adds apprentices to their account</li>
-                        </ul>
+                    <ul class="govuk-list govuk-list--bullet">
+                        <li>accepts your pledge</li>
+                        <li>adds apprentices to their account</li>
+                    </ul>
 
-                        <div class="govuk-warning-text">
-                            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                            <p class="govuk-warning-text__text">You'll need to approve the transfer when @Model.DasAccountName adds apprentices details to their account.</p>
-                        </div>
-                    }
+                    <div class="govuk-warning-text">
+                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                        <p class="govuk-warning-text__text">You'll need to approve the transfer when @Model.DasAccountName adds apprentices details to their account.</p>
+                    </div>
 
                     <p><a href="@Url.Action("Applications", "Pledges", new { EncodedAccountId = Model.EncodedAccountId, EncodedPledgeId = Model.EncodedPledgeId })" class="govuk-link govuk-link--no-visited-state">View other applications</a></p>
                 </div>
