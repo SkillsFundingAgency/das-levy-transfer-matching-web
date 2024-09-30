@@ -17,6 +17,7 @@ public class OpportunitiesController : Controller
         _opportunitiesOrchestrator = opportunitiesOrchestrator;
     }
 
+    [Route("opportunities", Name = "opportunities")]
     public async Task<IActionResult> Index(IndexRequest request)
     {
         var viewModel = await _opportunitiesOrchestrator.GetIndexViewModel(request);

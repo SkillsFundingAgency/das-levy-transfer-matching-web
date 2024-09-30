@@ -34,7 +34,7 @@ public class ContactDetailsPostRequestValidatorTests
         // Assert
         result.ShouldHaveValidationErrorFor(x => x.FirstName).WithErrorMessage("Enter your first name");
         result.ShouldHaveValidationErrorFor(x => x.LastName).WithErrorMessage("Enter your last name");
-        result.ShouldHaveValidationErrorFor(x => x.EmailAddress).WithErrorMessage("Enter your email address");
+        result.ShouldHaveValidationErrorFor(x => x.EmailAddress).WithErrorMessage("Enter your email address in the correct format, like name@example.com");
     }
 
     [Test]
@@ -52,7 +52,7 @@ public class ContactDetailsPostRequestValidatorTests
         var result = _contactDetailsPostRequestValidator.TestValidate(contactDetailsPostRequest);
 
         // Assert
-        result.ShouldHaveValidationErrorFor(x => x.EmailAddress).WithErrorMessage("Enter your email address");
+        result.ShouldHaveValidationErrorFor(x => x.EmailAddress).WithErrorMessage("Enter your email address in the correct format, like name@example.com");
     }
 
     [Test]
@@ -78,7 +78,7 @@ public class ContactDetailsPostRequestValidatorTests
         var results = _contactDetailsPostRequestValidator.TestValidate(contactDetailsPostRequest);
 
         // Assert
-        results.ShouldHaveValidationErrorFor(x => x.AdditionalEmailAddresses).WithErrorMessage("Enter your email address");
+        results.ShouldHaveValidationErrorFor(x => x.AdditionalEmailAddresses).WithErrorMessage("Enter your email address in the correct format, like name@example.com");
     }
 
     [Test]
@@ -209,8 +209,8 @@ public class ContactDetailsPostRequestValidatorTests
         // Assert
         results.ShouldHaveValidationErrorFor(x => x.FirstName).WithErrorMessage("Enter your first name");
         results.ShouldHaveValidationErrorFor(x => x.LastName).WithErrorMessage("Enter your last name");
-        results.ShouldHaveValidationErrorFor(x => x.EmailAddress).WithErrorMessage("Enter your email address");
-        results.ShouldHaveValidationErrorFor(x => x.AdditionalEmailAddresses).WithErrorMessage("Enter your email address");
+        results.ShouldHaveValidationErrorFor(x => x.EmailAddress).WithErrorMessage("Enter your email address in the correct format, like name@example.com");
+        results.ShouldHaveValidationErrorFor(x => x.AdditionalEmailAddresses).WithErrorMessage("Enter your email address in the correct format, like name@example.com");
         results.ShouldHaveValidationErrorFor(x => x.BusinessWebsite);
     }
 }

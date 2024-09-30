@@ -2,50 +2,58 @@
 
 @model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.AmountViewModel
 @{
-    ViewData["Title"] = "Pledges";
+    ViewData["Title"] = "Pledge amount";
     ViewBag.GaData.Vpv = "/accounts/pledges/create/amount";
     var culture = new CultureInfo("en-GB");
     ViewBag.ZenDeskLabel = "LTM-S-pledge-amount";
 }
 
-<a href="@Url.Action("Create", "CreatePledge", new { Model.EncodedAccountId, Model.CacheKey })" class="govuk-back-link">Back</a>
+<a href="@Url.Action("Create", "CreatePledge", new { Model.EncodedAccountId, Model.CacheKey })"
+    class="govuk-back-link">Back</a>
 
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
-    
+
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-xl">Pledge amount</h1>
             <partial name="_ValidationSummary" />
             <form method="post">
                 <div class="govuk-grid-row">
-                     <div class="govuk-grid-column-one-half">
+                    <div class="govuk-grid-column-one-half">
                         <div class="app-data">
-                            <p class="govuk-heading-s app-data__title">Transfer allowance as at 6 April @Model.FinancialYearString</p>
-                            <p class="govuk-heading-l app-data__figure">@Model.StartingTransferAllowance.ToString("C0", culture)</p>
-                        </div>  
-                     </div>
-                     <div class="govuk-grid-column-one-half">
-                         <div class="app-data app-data--information">
+                            <p class="govuk-heading-s app-data__title">Transfer allowance as at 6 April
+                                @Model.FinancialYearString</p>
+                            <p class="govuk-heading-l app-data__figure">@Model.StartingTransferAllowance.ToString("C0",
+                                culture)</p>
+                        </div>
+                    </div>
+                    <div class="govuk-grid-column-one-half">
+                        <div class="app-data app-data--information">
                             <p class="govuk-heading-s app-data__title">Estimated remaining transfer balance</p>
-                            <p class="govuk-heading-l app-data__figure" id="remaining-transfer-balance">&pound;@Model.RemainingTransferAllowance</p>
+                            <p class="govuk-heading-l app-data__figure" id="remaining-transfer-balance">
+                                &pound;@Model.RemainingTransferAllowance</p>
                             @Html.HiddenFor(x => x.RemainingTransferAllowance)
-                          </div>
-                     </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="govuk-form-group" das-highlight-error-for="Amount" error-class="govuk-form-group--error">
-                    <label class="govuk-label" for="pledge-amount">
+                    <label class="govuk-label" asp-for="Amount">
                         How much funding would you like to pledge?
                     </label>
-                    <p class="govuk-hint">Minimum pledge amount is £2,000</p>
+                    <p class=" govuk-hint" id="pledge-hint">Minimum pledge amount is £2,000 <span
+                            class="govuk-visually-hidden"> - using numbers only</span></p>
                     <span class="govuk-error-message">@Html.ValidationMessageFor(x => x.Amount)</span>
                     <div class="govuk-input__wrapper">
                         <div class="govuk-input__prefix govuk-!-font-weight-bold" aria-hidden="true">&pound;</div>
-                        <input class="govuk-input govuk-input--width-10"  type="text"  asp-for="Amount" das-highlight-error-for="Amount" error-class="govuk-input--error" />
+                        <input class="govuk-input govuk-input--width-10" type="text" asp-for="Amount"
+                            das-highlight-error-for="Amount" error-class="govuk-input--error"
+                            aria-describedby="pledge-hint" inputmode="numeric" />
                     </div>
                 </div>
-                
+
                 <div class="govuk-button-group">
-                    <button class="govuk-button pledge-amount-continue" id="pledge-criteria-continue">Save and continue</button>
+                    <button class="govuk-button pledge-amount-continue" id="pledge-criteria-continue">Save and
+                        continue</button>
                 </div>
             </form>
         </div>

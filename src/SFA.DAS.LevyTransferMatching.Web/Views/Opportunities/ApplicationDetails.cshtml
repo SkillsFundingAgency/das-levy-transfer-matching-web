@@ -5,7 +5,8 @@
     ViewBag.GaData.Vpv = "/accounts/opportunities/apply/application-details";
     ViewBag.ZenDeskLabel = "LTM-R-apply-training";
 }
-<a href="@Url.Action("Apply", new {Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey})" class="govuk-back-link">Back</a>
+<a href="@Url.Action("Apply", new {Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey})"
+    class="govuk-back-link">Back</a>
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
     <form method="post" class="validate-auto-complete" novalidate>
         <span class="govuk-caption-m">Search and apply for pledges in England</span>
@@ -14,60 +15,77 @@
             <div class="govuk-grid-column-two-thirds">
                 <partial name="_ValidationSummary" />
 
-                @if (ViewData.ModelState.ContainsKey("ExceedsAvailableFunding") && ViewData.ModelState["ExceedsAvailableFunding"].Errors.Any())
+                @if (ViewData.ModelState.ContainsKey("ExceedsAvailableFunding") &&
+                ViewData.ModelState["ExceedsAvailableFunding"].Errors.Any())
                 {
                     <div class="govuk-inset-text" id="exceeding-what-to-do">
                         <label class="govuk-label govuk-label--s">What you can do</label>
                         <p>To reduce the cost of the training you can:</p>
                         <ul class="govuk-list govuk-list--bullet">
-                            <li>go back and <a href="@Url.Action("Index")"  class="govuk-link">search for a different funding opportunity</a></li>
+                            <li>go back and <a href="@Url.Action("Index")" class="govuk-link">search for a different funding
+                                    opportunity</a></li>
                             <li>change the job role</li>
                             <li>reduce the number of apprentices in this application</li>
                         </ul>
                     </div>
                 }
 
-                <partial name="StandardSearch" for="SelectStandardViewModel"/>
+                <partial name="StandardSearch" for="SelectStandardViewModel" />
 
-                <div class="govuk-form-group" das-highlight-error-for="NumberOfApprentices" error-class="govuk-form-group--error">
-                    <label id="NumberOfApprentices" class="govuk-label govuk-label--s" for="opportunity-application-apprentices">How many apprentices do you want to fund?</label>
+                <div class="govuk-form-group" das-highlight-error-for="NumberOfApprentices"
+                    error-class="govuk-form-group--error">
+                    <label id="NumberOfApprentices" class="govuk-label govuk-label--s"
+                        for="opportunity-application-apprentices">How many apprentices do you want to fund?</label>
+                    <span class="govuk-visually-hidden" id="NumberOfApprentices-hint">Use whole numbers only</span>
                     <span das-validation-for="NumberOfApprentices" class="govuk-error-message"></span>
-                    <input id="opportunity-application-apprentices" class="govuk-input govuk-input--width-5" asp-for="NumberOfApprentices" inputmode="numeric" spellcheck="false" type="text" aria-describedby="apprentices-error" maxlength="3"/>
+                    <input id="opportunity-application-apprentices" aria-describedby="NumberOfApprentices-hint"
+                        class="govuk-input govuk-input--width-5" asp-for="NumberOfApprentices" inputmode="numeric"
+                        spellcheck="false" type="text" maxlength="3" />
                 </div>
 
                 <div class="govuk-form-group" das-highlight-error-for="StartDate" error-class="govuk-form-group--error">
                     <fieldset class="govuk-fieldset" role="group" aria-describedby="opportunity-application-start-hint">
                         <legend class="govuk-fieldset__legend">
-                            <h1 class="govuk-fieldset__heading govuk-label--s">When would you like the apprenticeship training to start by?</h1>
+                            <h1 class="govuk-fieldset__heading govuk-label--s">When would you like the apprenticeship
+                                training to start by?</h1>
                         </legend>
                         <div id="opportunity-application-start-hint" class="govuk-hint">For example, 11 2007</div>
                         <span das-validation-for="StartDate" class="govuk-error-message"></span>
                         <div class="govuk-date-input" id="opportunity-application-start">
                             <div class="govuk-date-input__item">
                                 <div class="govuk-form-group">
-                                    <label id="StartDate" class="govuk-label govuk-date-input__label" for="opportunity-application-start-month">Month</label>
-                                    <input id="opportunity-application-start-month" class="govuk-input govuk-date-input__input govuk-input--width-2" asp-for="Month" type="number" min="1" max="12" />
+                                    <label id="StartDate" class="govuk-label govuk-date-input__label"
+                                        for="opportunity-application-start-month">Month</label>
+                                    <input id="opportunity-application-start-month"
+                                        class="govuk-input govuk-date-input__input govuk-input--width-2" asp-for="Month"
+                                        type="number" min="1" max="12" />
                                 </div>
                             </div>
                             <div class="govuk-date-input__item">
                                 <div class="govuk-form-group">
-                                    <label class="govuk-label govuk-date-input__label" for="opportunity-application-start-year">Year</label>
-                                    <input id="opportunity-application-start-year" class="govuk-input govuk-date-input__input govuk-input--width-4" asp-for="Year" type="number" min="@Model.MinYear" max="@Model.MaxYear" />
+                                    <label class="govuk-label govuk-date-input__label"
+                                        for="opportunity-application-start-year">Year</label>
+                                    <input id="opportunity-application-start-year"
+                                        class="govuk-input govuk-date-input__input govuk-input--width-4" asp-for="Year"
+                                        type="number" min="@Model.MinYear" max="@Model.MaxYear" />
                                 </div>
                             </div>
                         </div>
                     </fieldset>
                 </div>
 
-                <div class="govuk-form-group" das-highlight-error-for="ExceedsAvailableFunding" error-class="govuk-form-group--error">
+                <div class="govuk-form-group" das-highlight-error-for="ExceedsAvailableFunding"
+                    error-class="govuk-form-group--error">
                     <span das-validation-for="ExceedsAvailableFunding" class="govuk-error-message"></span>
                     <div class="app-estimate" id="panel-estimate">
-                        <p class="govuk-heading-s app-estimate__heading">Estimated yearly cost for apprenticeship training:</p>
+                        <p class="govuk-heading-s app-estimate__heading">Estimated yearly cost for apprenticeship
+                            training:</p>
                         <p class="govuk-heading-xl app-estimate__estimate">£<span id="field-estimate"></span></p>
                     </div>
                 </div>
 
-                <div class="govuk-form-group" das-highlight-error-for="HasTrainingProvider" error-class="govuk-form-group--error">
+                <div class="govuk-form-group" das-highlight-error-for="HasTrainingProvider"
+                    error-class="govuk-form-group--error">
                     <fieldset class="govuk-fieldset">
                         <legend class="govuk-fieldset__legend">
                             <strong>Have you found a training provider?</strong>
@@ -75,16 +93,27 @@
                         <span das-validation-for="HasTrainingProvider" class="govuk-error-message"></span>
                         <div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios">
                             <div class="govuk-radios__item">
-                                <input class="govuk-radios__input" id="HasTrainingProvider" asp-for="HasTrainingProvider" value="true" type="radio" das-highlight-error-for="HasTrainingProvider" error-class="govuk-textarea--error">
+                                <input class="govuk-radios__input" id="HasTrainingProvider"
+                                    asp-for="HasTrainingProvider" value="true" type="radio"
+                                    das-highlight-error-for="HasTrainingProvider" error-class="govuk-textarea--error">
                                 <label class="govuk-label govuk-radios__label" for="HasTrainingProvider">Yes</label>
                             </div>
                             <div class="govuk-radios__item">
-                                <input class="govuk-radios__input" id="opportunity-application-training-provider-no" asp-for="HasTrainingProvider" value="false" type="radio" das-highlight-error-for="HasTrainingProvider" error-class="govuk-textarea--error" data-aria-controls="conditional-opportunity-application-training-provider-no">
-                                <label class="govuk-label govuk-radios__label" for="opportunity-application-training-provider-no">No, show me apprenticeship training providers</label>
+                                <input class="govuk-radios__input" id="opportunity-application-training-provider-no"
+                                    asp-for="HasTrainingProvider" value="false" type="radio"
+                                    das-highlight-error-for="HasTrainingProvider" error-class="govuk-textarea--error"
+                                    data-aria-controls="conditional-opportunity-application-training-provider-no">
+                                <label class="govuk-label govuk-radios__label"
+                                    for="opportunity-application-training-provider-no">No, show me apprenticeship
+                                    training providers</label>
                             </div>
-                            <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-opportunity-application-training-provider-no">
+                            <div class="govuk-radios__conditional govuk-radios__conditional--hidden"
+                                id="conditional-opportunity-application-training-provider-no">
                                 <div class="govuk-form-group">
-                                    <p>Search for <a href="https://findapprenticeshiptraining.apprenticeships.education.gov.uk/" target="_blank" rel="noopener">apprenticeship training courses and training providers</a>.</p>
+                                    <p>Search for <a
+                                            href="https://findapprenticeshiptraining.apprenticeships.education.gov.uk/"
+                                            target="_blank" rel="noopener">apprenticeship training courses and training
+                                            providers</a>.</p>
                                 </div>
                             </div>
                         </div>
@@ -93,12 +122,12 @@
             </div>
             <div class="govuk-grid-column-one-third">
                 <section>
-                    <partial name="/Views/Shared/_OpportunitySummary.cshtml" for="OpportunitySummaryViewModel"/>
+                    <partial name="/Views/Shared/_OpportunitySummary.cshtml" for="OpportunitySummaryViewModel" />
                 </section>
             </div>
         </div>
         <div class="govuk-button-group">
-            <button id="opportunity-criteria-continue" class="govuk-button" data-module="govuk-button" >
+            <button id="opportunity-criteria-continue" class="govuk-button" data-module="govuk-button">
                 Continue
             </button>
         </div>

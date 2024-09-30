@@ -8,8 +8,8 @@ namespace SFA.DAS.LevyTransferMatching.Domain.Extensions
         {
             switch (status)
             {
-                case PledgeStatus.Active: return "ACTIVE";
-                case PledgeStatus.Closed: return "CLOSED";
+                case PledgeStatus.Active: return "Active";
+                case PledgeStatus.Closed: return "Closed";
                 default:
                     return string.Empty;
             }

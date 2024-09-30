@@ -22,13 +22,13 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsServi
             response.EnsureSuccessStatusCode();
 
             return JsonConvert.DeserializeObject<GetApplicationsResponse>(await response.Content.ReadAsStringAsync());
-        }
+        }      
 
         public async Task<GetApplicationResponse> GetApplication(long accountId, int applicationId, CancellationToken cancellationToken = default)
         {
             var response = await _httpClient.GetAsync($"accounts/{accountId}/applications/{applicationId}", cancellationToken);
 
-            Types.GetApplicationResponse getApplicationResponse = null; 
+            Types.GetApplicationResponse getApplicationResponse = null;
             if (response.IsSuccessStatusCode)
             {
                 getApplicationResponse = JsonConvert.DeserializeObject<GetApplicationResponse>(await response.Content.ReadAsStringAsync());

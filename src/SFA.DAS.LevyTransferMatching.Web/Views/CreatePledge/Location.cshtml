@@ -1,18 +1,21 @@
 ﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.LocationViewModel
 @{
-    ViewData["Title"] = "Pledges";
+    ViewData["Title"] = "Add the locations you'd like to fund";
     ViewBag.GaData.Vpv = "/accounts/pledges/create/location";
     ViewBag.ZenDeskLabel = "LTM-S-pledge-location";
 }
 
-<a href="@Url.Action("Create", "CreatePledge", new { Model.EncodedAccountId, Model.CacheKey })" class="govuk-back-link">Back</a>
+<a href="@Url.Action("Create", "CreatePledge", new { Model.EncodedAccountId, Model.CacheKey })"
+    class="govuk-back-link">Back</a>
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
     <partial name="_ValidationSummary" />
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-xl">Add the locations you'd like to fund</h1>
-            <form method="post" data-extra-field-rows="true" autocomplete="off" data-add-button-text="Add another location">
-                <div class="govuk-form-group govuk-!-margin-bottom-3" das-highlight-error-for="Locations[0]" error-class="govuk-form-group--error">
+            <form method="post" data-extra-field-rows="true" autocomplete="off"
+                data-add-button-text="Add another location">
+                <div class="govuk-form-group govuk-!-margin-bottom-3" das-highlight-error-for="Locations[0]"
+                    error-class="govuk-form-group--error">
                     <label class="govuk-label" asp-for="Locations[0]">
                         Start typing to find the city or town you'd like to pledge funding to.
                     </label>
@@ -20,18 +23,22 @@
                         For example, Manchester
                     </div>
                     <span class="govuk-error-message">@Html.ValidationMessageFor(x => x.Locations[0])</span>
-                    <input class="govuk-input app-location-autocomplete" type="text" asp-for="Locations[0]" das-highlight-error-for="Locations[0]" error-class="govuk-input--error" autocomplete="off" />
+                    <input class="govuk-input app-location-autocomplete" type="text" asp-for="Locations[0]"
+                        das-highlight-error-for="Locations[0]" error-class="govuk-input--error" autocomplete="off" />
                 </div>
                 <fieldset class="govuk-fieldset app-extra-fields__fieldset">
                     <legend class="govuk-visually-hidden">Additional locations</legend>
                     @for (int i = 1; i < 20; i++)
                     {
-                        <div class="govuk-form-group app-extra-fields__form-group" das-highlight-error-for="Locations[i]" error-class="govuk-form-group--error">
+                        <div class="govuk-form-group app-extra-fields__form-group" das-highlight-error-for="Locations[i]"
+                            error-class="govuk-form-group--error">
                             <label class="govuk-label" asp-for="Locations[i]">
                                 Additional city or town
                             </label>
                             <span class="govuk-error-message">@Html.ValidationMessageFor(x => x.Locations[i])</span>
-                            <input class="govuk-input app-location-autocomplete" type="text" asp-for="Locations[i]" das-highlight-error-for="Locations[i]" error-class="govuk-input--error" autocomplete="disabled" />
+                            <input class="govuk-input app-location-autocomplete" type="text" asp-for="Locations[i]"
+                                das-highlight-error-for="Locations[i]" error-class="govuk-input--error"
+                                autocomplete="disabled" />
                         </div>
                     }
                 </fieldset>
@@ -39,7 +46,8 @@
                     <div class="govuk-form-group">
                         <div class="govuk-checkboxes">
                             <div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input app-extra-fields__all-checkbox" type="checkbox" asp-for="AllLocationsSelected" />
+                                <input class="govuk-checkboxes__input app-extra-fields__all-checkbox" type="checkbox"
+                                    asp-for="AllLocationsSelected" />
                                 <label class="govuk-label govuk-checkboxes__label" asp-for="AllLocationsSelected">
                                     Or all of England
                                 </label>

@@ -68,10 +68,11 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
 
     public async Task<IndexViewModel> GetIndexViewModel(IndexRequest request)
     {
-        var response = await _opportunitiesService.GetIndex(request.Sectors);
+        var response = await _opportunitiesService.GetIndex(request.Sectors, request.Page ?? 1, IndexRequest.DefaultPageSize);
 
         return new IndexViewModel
         {
+            Paging = GetPagingData(response),
             Opportunities = response?.Opportunities
                 .Select(x => new IndexViewModel.Opportunity
                 {
@@ -88,6 +89,78 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
         };
     }
 
+    private IndexViewModel.PagingData GetPagingData(GetIndexResponse response)
+    {
+        return new IndexViewModel.PagingData()
+        {
+            Page = response.Page,
+            PageSize = response.PageSize,
+            TotalPages = response.TotalPages,
+            TotalOpportunities = response.TotalOpportunities,
+            ShowPageLinks = response.Page != 1 || response.TotalOpportunities > response.PageSize,
+            PageLinks = BuildPageLinks(response),
+            PageStartRow = (response.Page - 1) * response.PageSize + 1,
+            PageEndRow = response.Page * response.PageSize > response.TotalOpportunities ? response.TotalOpportunities : response.Page * response.PageSize,
+        };
+    }
+
+    public IEnumerable<IndexViewModel.PageLink> BuildPageLinks(GetIndexResponse response)
+    {
+        var links = new List<IndexViewModel.PageLink>();
+        var totalPages = (int)Math.Ceiling((double)response.TotalOpportunities / response.PageSize);
+        var totalPageLinks = totalPages < 5 ? totalPages : 5;
+
+        //previous link
+        if (totalPages > 1 && response.Page > 1)
+        {
+            links.Add(new IndexViewModel.PageLink
+            {
+                Label = "Previous",
+                AriaLabel = "Previous page",
+                RouteData = BuildRouteData(response.Page - 1)
+            });
+        }
+
+        //numbered links
+        var pageNumberSeed = 1;
+        if (totalPages > 5 && response.Page > 3)
+        {
+            pageNumberSeed = response.Page - 2;
+
+            if (response.Page > totalPages - 2)
+                pageNumberSeed = totalPages - 4;
+        }
+
+        for (var i = 0; i < totalPageLinks; i++)
+        {
+            var link = new IndexViewModel.PageLink
+            {
+                Label = (pageNumberSeed + i).ToString(),
+                AriaLabel = $"Page {pageNumberSeed + i}",
+                IsCurrent = pageNumberSeed + i == response.Page ? true : (bool?)null,
+                RouteData = BuildRouteData(pageNumberSeed + i)
+            };
+            links.Add(link);
+        }
+
+        //next link
+        if (totalPages > 1 && response.Page < totalPages)
+        {
+            links.Add(new IndexViewModel.PageLink
+            {
+                Label = "Next",
+                AriaLabel = "Next page",
+                RouteData = BuildRouteData(response.Page + 1)
+            });
+        }
+
+        return links;
+    }
+
+    private Dictionary<string, string> BuildRouteData(int pageNumber)
+    {
+        return new Dictionary<string, string> { { "page", pageNumber.ToString() } };
+    }
 
     public async Task<SelectAccountViewModel> GetSelectAccountViewModel(SelectAccountRequest request)
     {

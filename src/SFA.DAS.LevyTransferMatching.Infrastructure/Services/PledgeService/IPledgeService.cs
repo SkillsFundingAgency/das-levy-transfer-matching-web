@@ -7,7 +7,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
 {
     public interface IPledgeService
     {
-        Task<GetPledgesResponse> GetPledges(long accountId);
+        Task<GetPledgesResponse> GetPledges(long accountId, int? page = 1, int? pageSize = null);
         Task<long> PostPledge(CreatePledgeRequest request, long accountId);
         Task RejectApplications(SetRejectApplicationsRequest request, long accountId, int pledgeId);
         Task<GetCreateResponse> GetCreate(long accountId);

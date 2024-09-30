@@ -72,7 +72,7 @@ public class CreatePledgeOrchestratorTests
 
         _encodedPledgeId = _fixture.Create<string>();
 
-        _pledgeService.Setup(x => x.GetPledges(_accountId)).ReturnsAsync(_pledgesResponse);
+        _pledgeService.Setup(x => x.GetPledges(_accountId, 1, 50)).ReturnsAsync(_pledgesResponse);
         _pledgeService.Setup(x => x.GetCreate(_accountId)).ReturnsAsync(() => new GetCreateResponse
         {
             Sectors = _sectors,
