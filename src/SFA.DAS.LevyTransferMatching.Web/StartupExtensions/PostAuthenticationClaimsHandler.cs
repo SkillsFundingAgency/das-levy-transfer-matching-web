@@ -9,32 +9,21 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions;
 public class PostAuthenticationClaimsHandler : ICustomClaims
 {
     private readonly IAccountUserService _accountUserService;
-    private readonly Infrastructure.Configuration.FeatureToggles _configuration;
 
-    public PostAuthenticationClaimsHandler(IAccountUserService accountUserService, Infrastructure.Configuration.FeatureToggles configuration)
+    public PostAuthenticationClaimsHandler(IAccountUserService accountUserService)
     {
         _accountUserService = accountUserService;
-        _configuration = configuration;
     }
         
     public async Task<IEnumerable<Claim>> GetClaims(TokenValidatedContext tokenValidatedContext)
     {
         var userId = tokenValidatedContext.Principal.Claims
-            .FirstOrDefault(c => c.Type.Equals(ClaimIdentifierConfiguration.Id))?
+            .First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
             .Value;
-        
-        var email = string.Empty;
-
-        if (_configuration.UseGovSignIn)
-        {
-            userId = tokenValidatedContext.Principal.Claims
-                .First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
-                .Value;
-            email = tokenValidatedContext.Principal.Claims
-                .First(c => c.Type.Equals(ClaimTypes.Email))
-                .Value;
-        }
-
+        var email = tokenValidatedContext.Principal.Claims
+            .First(c => c.Type.Equals(ClaimTypes.Email))
+            .Value;
+    
         var accountInformation = await _accountUserService.GetUserAccounts(email, userId);
 
         var claims = new List<Claim>();

@@ -60,14 +60,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Authentication
 
             if (employerAccounts == null || !employerAccounts.ContainsKey(accountIdFromUrl))
             {
-                string requiredIdClaim = ClaimIdentifierConfiguration.Id;
-
-                if (_configuration[$"{nameof(Infrastructure.Configuration.FeatureToggles)}:UseGovSignIn"] != null
-                    && _configuration[$"{nameof(Infrastructure.Configuration.FeatureToggles)}:UseGovSignIn"]
-                        .Equals("true", StringComparison.CurrentCultureIgnoreCase))
-                {
-                    requiredIdClaim = ClaimTypes.NameIdentifier;
-                }
+                var requiredIdClaim = ClaimTypes.NameIdentifier;
                 
                 if (!context.User.HasClaim(c => c.Type.Equals(requiredIdClaim)))
                     return false;
