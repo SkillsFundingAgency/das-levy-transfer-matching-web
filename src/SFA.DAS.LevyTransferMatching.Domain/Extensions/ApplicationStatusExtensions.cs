@@ -65,24 +65,7 @@ namespace SFA.DAS.LevyTransferMatching.Domain.Extensions
                 default:
                     return string.Empty;
             }
-        }
-
-        public static string GetLabelForReceiverForApplications(this ApplicationStatus status)
-        {
-            return status switch
-            {
-                ApplicationStatus.Pending => "AWAITING APPROVAL",
-                ApplicationStatus.Approved => "APPROVED, AWAITING YOUR ACCEPTANCE",
-                ApplicationStatus.Rejected => "REJECTED",
-                ApplicationStatus.Accepted => "FUNDS AVAILABLE",
-                ApplicationStatus.FundsUsed => "FUNDS USED",
-                ApplicationStatus.Declined => "WITHDRAWN",
-                ApplicationStatus.Withdrawn => "WITHDRAWN",
-                ApplicationStatus.WithdrawnAfterAcceptance => "WITHDRAWN",
-                _ => string.Empty,
-            };
-        }
-
+        }       
         public static string GetLabelForReceiver(this ApplicationStatus status)
         {
             return status switch
