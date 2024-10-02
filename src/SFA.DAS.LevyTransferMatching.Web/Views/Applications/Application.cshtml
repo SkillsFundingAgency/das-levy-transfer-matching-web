@@ -1,4 +1,5 @@
 ﻿@using SFA.DAS.LevyTransferMatching.Domain.Extensions
+@using SFA.DAS.LevyTransferMatching.Domain.Types
 @model SFA.DAS.LevyTransferMatching.Web.Models.Applications.ApplicationViewModel
 
 @{
@@ -87,7 +88,7 @@
                 </div>
             </div>
            
-            @if (Model.Status == SFA.DAS.LevyTransferMatching.Domain.Types.ApplicationStatus.Approved)
+            @if (Model.Status == ApplicationStatus.Approved)
             {
                 <p class="govuk-body">After you have accepted the funding, you will have 3 months to add apprentice details before it expires.</p>
             }
