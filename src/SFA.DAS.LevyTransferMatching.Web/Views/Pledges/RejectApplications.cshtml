@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Reject Applications";
     ViewBag.GaData.Vpv = "/accounts/applications/reject-applications";
+    ViewBag.ZenDeskLabel = "LTM-S-application-reject";
 }
 
 <a href="@Url.Action("Applications","Pledges", new { EncodedAccountId = Model.EncodedAccountId, EncodedPledgeId = Model.EncodedPledgeId })" class="govuk-back-link">Back</a>

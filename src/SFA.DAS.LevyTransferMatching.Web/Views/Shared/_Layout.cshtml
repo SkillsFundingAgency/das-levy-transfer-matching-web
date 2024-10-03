@@ -33,9 +33,13 @@
 
 <body class="govuk-template__body">
     <partial name="_GoogleAnalytics" model="GoogleAnalyticsTag.Body" />
+    
     <script>
         document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');
     </script>
+
+    <partial name="_ZenDeskWidget" />
+    <partial name="_ZenDeskApiPush" />
 
     <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
 
