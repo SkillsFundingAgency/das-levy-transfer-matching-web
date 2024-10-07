@@ -56,7 +56,11 @@
                 else if (Model.AutomaticApprovalOption == AutomaticApprovalOption.DelayedAutoApproval)
                 {
                     <span class="govuk-caption-l">Auto approval: 6 week review</span>
-                }             
+                }
+                else
+                {
+                    <span>&nbsp;</span>
+                }
             </div>
             <div class="govuk-grid-column-one-third">
                 @if (Model.Applications.Any())
@@ -138,16 +142,36 @@
                     </div>
                 </div>                
             }
-            <div class="govuk-grid-row">
-                <div class="govuk-grid-column-two-thirds">
-                    <p>
-                        You need to approve or reject applications which do not match all of your criteria. Applicants need your response to manage their apprenticeships.
-                    </p>
-                    <p>
-                        If you do not respond to applications which are less than 100% matches then they will be rejected automatically after 3 months.
-                    </p>
+            @if (Model.AutomaticApprovalOption == AutomaticApprovalOption.NotApplicable)
+            {
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-two-thirds">
+                        <div class="govuk-inset-text">
+                            <p>
+                                You may have applications waiting to be approved or rejected. Applicants need a response from you
+                                in order to manage their apprenticeships.
+                            </p>
+                            <p>
+                                Select the name of the applicant to review. If you want to approve or reject more than 1
+                                application, tick the box then select awaiting your approval or reject.
+                            </p>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            }
+            else
+            {
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-two-thirds">
+                        <p>
+                            You need to approve or reject applications which do not match all of your criteria. Applicants need your response to manage their apprenticeships.
+                        </p>
+                        <p>
+                            If you do not respond to applications which are less than 100% matches then they will be rejected automatically after 3 months.
+                        </p>
+                    </div>
+                </div>
+            }            
         }
     </div>
 
