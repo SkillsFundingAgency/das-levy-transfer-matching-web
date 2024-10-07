@@ -2,7 +2,7 @@
 
 @model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.AutoApproveViewModel
 @{
-    ViewData["Title"] = "Do you want to approve 100% matches immediately?";
+    ViewData["Title"] = "Do you want to automatically approve 100% matches?";
     ViewBag.GaData.Vpv = "/accounts/pledges/create/auto-approval";
 }
 
@@ -13,14 +13,14 @@
     <partial name="_ValidationSummary" />
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-xl">Do you want to approve 100% matches immediately?</h1>
+            <h1 class="govuk-heading-l">Do you want to automatically approve 100% matches?</h1>
             <p class="govuk-body-l govuk-hint">100% matches are funding applications that match all of the criteria you
                 have set.</p>
             <form method="post">
                 <div class="govuk-form-group" das-highlight-error-for="AutomaticApprovalOption"
                     error-class="govuk-form-group--error">
                     <fieldset class="govuk-fieldset">
-                        <legend class="govuk-visually-hidden">Do you want to approve 100% matches immediately?</legend>
+                        <legend class="govuk-visually-hidden">Do you want to automatically approve 100% matches?</legend>
                         <span das-validation-for="AutomaticApprovalOption" class="govuk-error-message"></span>
                         <div class="govuk-radios">
                             <div class="govuk-radios__item">
@@ -30,7 +30,7 @@
                                     das-highlight-error-for="AutomaticApprovalOption"
                                     error-class="govuk-textarea--error" />
                                 <label class="govuk-label govuk-radios__label" for="AutomaticApprovalOption">
-                                    Yes, automatically approve 100% matches immediately
+                                    Yes, automatically approve
                                 </label>
                             </div>
                             <div class="govuk-radios__item">
@@ -40,16 +40,17 @@
                                     das-highlight-error-for="AutomaticApprovalOption"
                                     error-class="govuk-textarea--error" />
                                 <label class="govuk-label govuk-radios__label" for="AutoApproveFullMatches-2">
-                                    No, I would like 6 weeks to approve or reject 100% matches. If I do not take any
-                                    action in 6 weeks, they will be approved automatically
+                                    No, I would like 6 weeks to approve or reject 100% matches
                                 </label>
+                                <div id="delayed-hint" class="govuk-hint govuk-radios__hint">
+                                    If I do not take any action in 6 weeks, they will be approved automatically
+                                </div>
                             </div>
                         </div>
                     </fieldset>
                 </div>
                 <div class="govuk-button-group">
-                    <button class="govuk-button pledge-amount-continue" id="pledge-criteria-continue">Save and
-                        continue</button>
+                    <button class="govuk-button pledge-amount-continue" id="pledge-criteria-continue">Continue</button>
                 </div>
             </form>
         </div>
