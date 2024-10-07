@@ -16,7 +16,7 @@
                     <div class="govuk-panel govuk-panel--confirmation pledge-approved">
                         <h1 class="govuk-panel__title">Application approved</h1>
                         <div class="govuk-panel__body">
-                            <strong>You have approved @Model.DasAccountName (@Model.EncodedAccountId) application</strong>
+                            You have approved <strong>@Model.DasAccountName (@Model.EncodedAccountId)</strong> application
                         </div>
                     </div>
 
@@ -36,11 +36,14 @@
                         <li>adds apprentices to their account</li>
                     </ul>
 
-                    <div class="govuk-warning-text">
-                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                        <p class="govuk-warning-text__text">You'll need to approve the transfer when @Model.DasAccountName adds apprentices details to their account.</p>
-                    </div>
-
+                    @if (!Model.AllowTransferRequestAutoApproval)
+                    {
+                        <div class="govuk-warning-text">
+                            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                            <strong class="govuk-warning-text__text">You'll need to approve the transfer when @Model.DasAccountName adds apprentices details to their account.</strong>
+                        </div>
+                    }
+                 
                     <p><a href="@Url.Action("Applications", "Pledges", new { EncodedAccountId = Model.EncodedAccountId, EncodedPledgeId = Model.EncodedPledgeId })" class="govuk-link govuk-link--no-visited-state">View other applications</a></p>
                 </div>
             </div>
