@@ -40,7 +40,7 @@ public static class AddServiceRegistrationExtensions
         services.AddTransient<IApplicationsOrchestrator, ApplicationsOrchestrator>();
         services.AddTransient<ICreatePledgeOrchestrator, CreatePledgeOrchestrator>();
         services.AddTransient<ICsvHelperService, CsvHelperService>();
-        services.AddTransient<IUserService>((s) => new UserService(s.GetService<IHttpContextAccessor>()));
+        services.AddTransient<IUserService, UserService>();
         services.AddSingleton<IDateTimeService, DateTimeService>();
         services.AddTransient<ICustomClaims, PostAuthenticationClaimsHandler>();
             
