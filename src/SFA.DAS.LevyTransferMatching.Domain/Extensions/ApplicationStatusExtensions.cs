@@ -1,11 +1,11 @@
-﻿using SFA.DAS.LevyTransferMatching.Domain.Types;
-using System;
+﻿using System;
+using SFA.DAS.LevyTransferMatching.Domain.Types;
 
 namespace SFA.DAS.LevyTransferMatching.Domain.Extensions
 {
     public static class ApplicationStatusExtensions
     {
-        public static string GetLabelForSender(this ApplicationStatus status,  int? RemainingDaysForDelayedApproval, int? RemainingDaysForAutoRejection)
+        public static string GetLabelForSender(this ApplicationStatus status, int? RemainingDaysForDelayedApproval, int? RemainingDaysForAutoRejection)
         {
             if (RemainingDaysForDelayedApproval.HasValue)
             {
@@ -69,19 +69,18 @@ namespace SFA.DAS.LevyTransferMatching.Domain.Extensions
 
         public static string GetLabelForReceiver(this ApplicationStatus status)
         {
-            switch (status)
+            return status switch
             {
-                case ApplicationStatus.Pending: return "AWAITING APPROVAL";
-                case ApplicationStatus.Approved: return "APPROVED, AWAITING YOUR ACCEPTANCE";
-                case ApplicationStatus.Rejected: return "REJECTED";
-                case ApplicationStatus.Accepted: return "FUNDS AVAILABLE";
-                case ApplicationStatus.FundsUsed: return "FUNDS USED";
-                case ApplicationStatus.Declined: return "WITHDRAWN";
-                case ApplicationStatus.Withdrawn: return "WITHDRAWN";
-                case ApplicationStatus.WithdrawnAfterAcceptance: return "WITHDRAWN";
-                default:
-                    return string.Empty;
-            }
+                ApplicationStatus.Pending => "Awaiting approval",
+                ApplicationStatus.Approved => "Approved, awaiting your acceptance",
+                ApplicationStatus.Rejected => "Rejected",
+                ApplicationStatus.Accepted => "Funds available",
+                ApplicationStatus.FundsUsed => "Funds used",
+                ApplicationStatus.Declined => "Withdrawn",
+                ApplicationStatus.Withdrawn => "Withdrawn",
+                ApplicationStatus.WithdrawnAfterAcceptance => "Withdrawn",
+                _ => string.Empty,
+            };
         }
 
         public static string GetCssClassForReceiver(this ApplicationStatus status)
