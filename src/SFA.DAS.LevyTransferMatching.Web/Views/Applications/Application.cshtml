@@ -1,14 +1,11 @@
 ﻿@using SFA.DAS.LevyTransferMatching.Domain.Extensions
+@using SFA.DAS.LevyTransferMatching.Domain.Types
 @model SFA.DAS.LevyTransferMatching.Web.Models.Applications.ApplicationViewModel
 
 @{
     ViewData["Title"] = Model.Title;
     ViewBag.GaData.Vpv = "/accounts/applications/application";
-    ViewBag.ZenDeskLabel = "LTM-R-application-det";
-
-    var accept = SFA.DAS.LevyTransferMatching.Web.Models.Applications.ApplicationPostRequest.ApprovalAction.Accept;
-    var decline = SFA.DAS.LevyTransferMatching.Web.Models.Applications.ApplicationPostRequest.ApprovalAction.Decline;
-
+    ViewBag.ZenDeskLabel = "LTM-R-application-det";    
 }
 
 <a href="@Url.Action("Applications", new { EncodedAccountId = Model.EncodedAccountId })" class="govuk-back-link">Back</a>
@@ -18,7 +15,6 @@
         <div class="govuk-grid-column-two-thirds">
 
             <h1 class="govuk-heading-l">@Model.Title</h1>
-
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds">
                     <div class="govuk-body">
@@ -118,6 +114,11 @@
                     </dl>
                 </div>
             </div>
+           
+            @if (Model.Status == ApplicationStatus.Approved)
+            {
+                <p class="govuk-body">After you have accepted the funding, you will have 3 months to add apprentice details before it expires.</p>
+            }
 
             <partial name="_ApplicationCanAcceptFundingPartial" model="Model" />
 

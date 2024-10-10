@@ -1,11 +1,11 @@
-﻿using SFA.DAS.LevyTransferMatching.Domain.Types;
-using System;
+﻿using System;
+using SFA.DAS.LevyTransferMatching.Domain.Types;
 
 namespace SFA.DAS.LevyTransferMatching.Domain.Extensions
 {
     public static class ApplicationStatusExtensions
     {
-        public static string GetLabelForSender(this ApplicationStatus status,  int? RemainingDaysForDelayedApproval, int? RemainingDaysForAutoRejection)
+        public static string GetLabelForSender(this ApplicationStatus status, int? RemainingDaysForDelayedApproval, int? RemainingDaysForAutoRejection)
         {
             if (RemainingDaysForDelayedApproval.HasValue)
             {
