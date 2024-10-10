@@ -65,8 +65,7 @@ namespace SFA.DAS.LevyTransferMatching.Domain.Extensions
                 default:
                     return string.Empty;
             }
-        }
-
+        }       
         public static string GetLabelForReceiver(this ApplicationStatus status)
         {
             return status switch
@@ -74,7 +73,7 @@ namespace SFA.DAS.LevyTransferMatching.Domain.Extensions
                 ApplicationStatus.Pending => "Awaiting approval",
                 ApplicationStatus.Approved => "Approved, awaiting your acceptance",
                 ApplicationStatus.Rejected => "Rejected",
-                ApplicationStatus.Accepted => "Funds available",
+                ApplicationStatus.Accepted => "Funds available to add apprentice",
                 ApplicationStatus.FundsUsed => "Funds used",
                 ApplicationStatus.Declined => "Withdrawn",
                 ApplicationStatus.Withdrawn => "Withdrawn",
@@ -90,7 +89,7 @@ namespace SFA.DAS.LevyTransferMatching.Domain.Extensions
                 case ApplicationStatus.Pending: return "govuk-tag govuk-tag--grey";
                 case ApplicationStatus.Approved: return "govuk-tag govuk-tag--blue";
                 case ApplicationStatus.Rejected: return "govuk-tag govuk-tag--red";
-                case ApplicationStatus.Accepted: return "govuk-tag govuk-tag--blue";
+                case ApplicationStatus.Accepted: return "govuk-tag govuk-tag--turquoise";
                 case ApplicationStatus.FundsUsed: return "govuk-tag govuk-tag--pink";
                 case ApplicationStatus.Declined: return "govuk-tag govuk-tag--yellow";
                 case ApplicationStatus.Withdrawn: return "govuk-tag govuk-tag--yellow";
