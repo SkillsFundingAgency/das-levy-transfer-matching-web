@@ -69,7 +69,7 @@ AppSettings.json file
       "ConfigNames": "SFA.DAS.LevyTransferMatching.Web,SFA.DAS.EmployerUrlHelper:EmployerUrlHelper,SFA.DAS.Employer.Shared.UI,SFA.DAS.Encoding:EncodingService",
       "Environment": "LOCAL",
       "Version": "1.0",
-      "APPINSIGHTS_INSTRUMENTATIONKEY": "",
+      "APPLICATIONINSIGHTS_CONNECTION_STRING": "",
       "cdn": {
         "url": "https://das-at-frnt-end.azureedge.net"
       }
@@ -127,7 +127,6 @@ Data:
 * .Net6
 * CosmosDB
 * REDIS
-* NLog
 * Azure Table Storage
 * NUnit
 * Moq
