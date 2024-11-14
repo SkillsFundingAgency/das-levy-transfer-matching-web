@@ -16,7 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-	<PackageReference Include="Azure.Monitor.OpenTelemetry.AspNetCore" Version="1.2.0" />
     <PackageReference Include="AspNetCore.HealthChecks.Redis" Version="8.0.1" />
     <PackageReference Include="Azure.Core" Version="1.43.0" />
     <PackageReference Include="Azure.Identity" Version="1.12.1" />
