@@ -127,7 +127,6 @@ Data:
 * .Net6
 * CosmosDB
 * REDIS
-* NLog
 * Azure Table Storage
 * NUnit
 * Moq

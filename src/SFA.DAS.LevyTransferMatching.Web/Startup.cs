@@ -31,11 +31,11 @@ public class Startup
             builder.AddFilter<ApplicationInsightsLoggerProvider>(string.Empty, LogLevel.Information);
             builder.AddFilter<ApplicationInsightsLoggerProvider>("Microsoft", LogLevel.Information);
         });
-        
+
         services.AddConfigurationOptions(_configuration);
-        
+
         var config = _configuration.GetSection<LevyTransferMatchingWeb>();
-        
+
         services.AddSingleton(config);
         services.AddSingleton(_configuration.GetSection<LevyTransferMatchingApi>());
 
