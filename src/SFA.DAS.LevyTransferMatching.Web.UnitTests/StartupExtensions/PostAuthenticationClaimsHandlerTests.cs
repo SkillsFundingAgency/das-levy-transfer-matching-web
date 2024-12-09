@@ -36,10 +36,7 @@ public class PostAuthenticationClaimsHandlerTests
         _emailNotMatching = fixture.Create<string>();
         _emailSuspended = fixture.Create<string>();
 
-        _configuration = new Infrastructure.Configuration.FeatureToggles
-        {
-            UseGovSignIn = true
-        };
+        
         _accountUserService = new Mock<IAccountUserService>();
         _accountUserService.Setup(x => x.GetUserAccounts(_email, _userId)).ReturnsAsync(_response);
         _accountUserService.Setup(x => x.GetUserAccounts(_emailSuspended, _userId)).ReturnsAsync(_responseSuspended);
@@ -51,7 +48,7 @@ public class PostAuthenticationClaimsHandlerTests
             LastName = fixture.Create<string>()
         });
             
-        _handler = new PostAuthenticationClaimsHandler(_accountUserService.Object, _configuration);
+        _handler = new PostAuthenticationClaimsHandler(_accountUserService.Object);
 
     }
     [Test]
