@@ -28,8 +28,6 @@ public static class AddServiceRegistrationExtensions
 
         services.AddSingleton<IAuthorizationHandler, ManageAccountAuthorizationHandler>();
         services.AddSingleton<IAuthorizationHandler, ViewAccountAuthorizationHandler>();
-            
-        services.AddSingleton<IAuthorizationHandler, AccountActiveAuthorizationHandler>();//TODO remove after gov login go live
         services.AddTransient<IEmployerAccountAuthorizationHandler, EmployerAccountAuthorizationHandler>();
             
         services.AddTransient<ILocationValidatorService, LocationValidatorService>();
@@ -50,9 +48,7 @@ public static class AddServiceRegistrationExtensions
         services.AddClient<IAccountUserService>((c, s) => new AccountUserService(c));
     }
 
-    private static IServiceCollection AddClient<T>(
-        this IServiceCollection serviceCollection,
-        Func<HttpClient, IServiceProvider, T> instance) where T : class
+    private static IServiceCollection AddClient<T>(this IServiceCollection serviceCollection, Func<HttpClient, IServiceProvider, T> instance) where T : class
     {
         serviceCollection.AddTransient(s =>
         {
@@ -65,10 +61,9 @@ public static class AddServiceRegistrationExtensions
 
             var httpClient = clientBuilder.Build();
 
-            if (!settings.ApiBaseUrl.EndsWith("/"))
-                httpClient.BaseAddress = new Uri(settings.ApiBaseUrl + "/");
-            else
-                httpClient.BaseAddress = new Uri(settings.ApiBaseUrl);
+            httpClient.BaseAddress = !settings.ApiBaseUrl.EndsWith('/') 
+                ? new Uri(settings.ApiBaseUrl + "/") 
+                : new Uri(settings.ApiBaseUrl);
 
             return instance.Invoke(httpClient, s);
         });

@@ -50,7 +50,6 @@ public class Startup
                 options.Filters.Add(new SetZenDeskValuesAttribute(_configuration.GetSection<ZenDesk>()));
 
                 options.Filters.Add(new GoogleAnalyticsFilter());
-                options.Filters.Add(new AccountActiveFilter(_configuration));
 
                 if (!config.IsLive)
                 {

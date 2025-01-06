@@ -36,7 +36,7 @@ public interface ICreatePledgeOrchestrator
 
 public class CreatePledgeOrchestrator(
     ICacheStorageService cacheStorageService,
-    PledgeService pledgeService,
+    IPledgeService pledgeService,
     IEncodingService encodingService,
     ILocationValidatorService validatorService,
     IUserService userService,

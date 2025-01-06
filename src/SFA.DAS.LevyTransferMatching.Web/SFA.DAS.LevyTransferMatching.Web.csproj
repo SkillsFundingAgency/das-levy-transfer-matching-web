@@ -56,8 +56,4 @@
     </Content>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Services\SortingService\" />
-  </ItemGroup>
-
 </Project>

@@ -7,25 +7,29 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions;
 
 public static class AddConfigurationOptionsExtension
 {
+    private static readonly Dictionary<Type, string> ConfigSections = new()
+    {
+        { typeof(LevyTransferMatchingWeb), nameof(LevyTransferMatchingWeb) },
+        { typeof(LevyTransferMatchingApi), nameof(LevyTransferMatchingApi) },
+        { typeof(Infrastructure.Configuration.Authentication), "Authentication" },
+        { typeof(EncodingConfig), "EncodingService" },
+        { typeof(CosmosDbConfiguration), "CosmosDb" },
+        { typeof(Infrastructure.Configuration.FeatureToggles), "FeatureToggles" },
+    };
+
     public static void AddConfigurationOptions(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddOptions();
-        services.Configure<LevyTransferMatchingWeb>(configuration.GetSection("LevyTransferMatchingWeb"));
-        services.AddSingleton(cfg => cfg.GetService<IOptions<LevyTransferMatchingWeb>>().Value);
+        
+        foreach (var configSection in ConfigSections)
+        {
+            services.AddOptionsFor(configuration, configSection.Key,  configSection.Value);
+        }
+    }
 
-        services.Configure<LevyTransferMatchingApi>(configuration.GetSection("LevyTransferMatchingApi"));
-        services.AddSingleton(cfg => cfg.GetService<IOptions<LevyTransferMatchingApi>>().Value);
-            
-        services.Configure<Infrastructure.Configuration.Authentication>(configuration.GetSection("Authentication"));
-        services.AddSingleton(cfg => cfg.GetService<IOptions<Infrastructure.Configuration.Authentication>>().Value);
-            
-        services.Configure<EncodingConfig>(configuration.GetSection("EncodingService"));
-        services.AddSingleton(cfg => cfg.GetService<IOptions<EncodingConfig>>().Value);
-            
-        services.Configure<CosmosDbConfiguration>(configuration.GetSection("CosmosDb"));
-        services.AddSingleton(cfg => cfg.GetService<IOptions<CosmosDbConfiguration>>().Value);
-
-        services.Configure<Infrastructure.Configuration.FeatureToggles>(configuration.GetSection("FeatureToggles"));
-        services.AddSingleton(cfg => cfg.GetService<IOptions<Infrastructure.Configuration.FeatureToggles>>().Value);
+    private static void AddOptionsFor<T>(this IServiceCollection services, IConfiguration configuration, T type, string sectionName) where T : class
+    {
+        services.Configure<T>(configuration.GetSection(sectionName));
+        services.AddSingleton(cfg => cfg.GetService<IOptions<T>>().Value);
     }
 }

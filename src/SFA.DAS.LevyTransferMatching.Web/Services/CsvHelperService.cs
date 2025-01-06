@@ -27,7 +27,7 @@ public class CsvHelperService : ICsvHelperService
         return memoryStream.ToArray();
     }
 
-    private static IEnumerable<dynamic> SetUpColumnsOnCsv(PledgeApplicationsDownloadModel model)
+    private static List<dynamic> SetUpColumnsOnCsv(PledgeApplicationsDownloadModel model)
     {
         var listOfRecords = new List<dynamic>();
         var totalLocationColumnsRequired = 0;
