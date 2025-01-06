@@ -97,7 +97,7 @@ public class OpportunitiesOrchestrator(
         };
     }
 
-    private IEnumerable<IndexViewModel.PageLink> BuildPageLinks(GetIndexResponse response)
+    private static List<IndexViewModel.PageLink> BuildPageLinks(GetIndexResponse response)
     {
         var links = new List<IndexViewModel.PageLink>();
         var totalPages = (int)Math.Ceiling((double)response.TotalOpportunities / response.PageSize);
@@ -152,7 +152,7 @@ public class OpportunitiesOrchestrator(
         return links;
     }
 
-    private Dictionary<string, string> BuildRouteData(int pageNumber)
+    private static Dictionary<string, string> BuildRouteData(int pageNumber)
     {
         return new Dictionary<string, string> { { "page", pageNumber.ToString() } };
     }

@@ -1,6 +1,4 @@
 ﻿using System.Net.Http;
-using SFA.DAS.GovUK.Auth.Authentication;
-using SFA.DAS.GovUK.Auth.Services;
 using SFA.DAS.Http;
 using SFA.DAS.LevyTransferMatching.Domain.Interfaces;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Api;

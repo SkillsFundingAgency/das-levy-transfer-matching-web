@@ -78,7 +78,7 @@ public class PledgeOrchestrator(
         };
     }
 
-    private IEnumerable<PageLink> BuildPageLinks(GetPledgesResponse pledgesResponse)
+    private static List<PageLink> BuildPageLinks(GetPledgesResponse pledgesResponse)
     {
         var links = new List<PageLink>();
         var totalPages = (int)Math.Ceiling((double)pledgesResponse.TotalPledges / pledgesResponse.PageSize);
