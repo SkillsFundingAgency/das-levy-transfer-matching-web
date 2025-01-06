@@ -70,19 +70,19 @@
                             <fieldset class="govuk-fieldset app-extra-fields__fieldset">
                                 <legend class="govuk-visually-hidden">Additional locations</legend>
 
-                                @for (var index = 0; index < Model.AdditionalEmailAddresses.Length; index++)
+                                @for (var i = 0; i < Model.AdditionalEmailAddresses.Length; i++)
                                 {
                                     <div class="govuk-form-group app-extra-fields__form-group"
-                                        das-highlight-error-for="AdditionalEmailAddresses[index]"
+                                        das-highlight-error-for="AdditionalEmailAddresses[i]"
                                         error-class="govuk-form-group--error">
-                                        <label class="govuk-label" for="@($"AdditionalEmailAddresses_{index}_")">Additional
+                                        <label class="govuk-label" for="@($"AdditionalEmailAddresses_{i}_")">Additional
                                             email address</label>
                                         <span class="govuk-error-message">@Html.ValidationMessageFor(x =>
-                                        x.AdditionalEmailAddresses[index])</span>
-                                        <input class="govuk-input" id="@($"AdditionalEmailAddresses_{index}_")"
-                                            name="@($"AdditionalEmailAddresses[{index}]")" type="email" spellcheck="false"
+                                        x.AdditionalEmailAddresses[i])</span>
+                                        <input class="govuk-input" id="@($"AdditionalEmailAddresses_{i}_")"
+                                            name="@($"AdditionalEmailAddresses[{i}]")" type="email" spellcheck="false"
                                             asp-for="AdditionalEmailAddresses[i]"
-                                            das-highlight-error-for="AdditionalEmailAddresses[index]"
+                                            das-highlight-error-for="AdditionalEmailAddresses[i]"
                                             error-class="govuk-input--error" maxlength="50">
                                     </div>
                                 }

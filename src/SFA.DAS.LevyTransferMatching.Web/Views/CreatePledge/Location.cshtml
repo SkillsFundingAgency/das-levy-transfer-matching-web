@@ -28,17 +28,17 @@
                 </div>
                 <fieldset class="govuk-fieldset app-extra-fields__fieldset">
                     <legend class="govuk-visually-hidden">Additional locations</legend>
-                    @for (var index = 1; index < 20; index++)
+                    @for (var i = 1; i < 20; i++)
                     {
                         <div class="govuk-form-group app-extra-fields__form-group"
-                             das-highlight-error-for="Locations[index]"
+                             das-highlight-error-for="Locations[i]"
                              error-class="govuk-form-group--error">
                             <label class="govuk-label" asp-for="Locations[i]">
                                 Additional city or town
                             </label>
-                            <span class="govuk-error-message">@Html.ValidationMessageFor(x => x.Locations[index])</span>
+                            <span class="govuk-error-message">@Html.ValidationMessageFor(x => x.Locations[i])</span>
                             <input class="govuk-input app-location-autocomplete" type="text" asp-for="Locations[i]"
-                                   das-highlight-error-for="Locations[index]" error-class="govuk-input--error"
+                                   das-highlight-error-for="Locations[i]" error-class="govuk-input--error"
                                    autocomplete="disabled"/>
                         </div>
                     }
