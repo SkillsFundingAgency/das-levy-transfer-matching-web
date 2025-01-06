@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
+﻿namespace SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
 
 public class LevyTransferMatchingWeb
 {

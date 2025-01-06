@@ -63,7 +63,7 @@ public class PledgeOrchestrator(
         return startingTransferAllowance - currentYearSpend >= MinimumTransferFunds;
     }
 
-    private PagingData GetPagingData(GetPledgesResponse pledgesResponse)
+    private static PagingData GetPagingData(GetPledgesResponse pledgesResponse)
     {
         return new PagingData
         {
@@ -411,7 +411,7 @@ public class PledgeOrchestrator(
             EstimatedCostOverDuration = totalCost,
             YearlyPayments = yearlyBreakdown,
             YearDescription = dateTimeService.UtcNow.ToTaxYearDescription(),
-            RemainingFundsIfApproved = remainingAmount - (int)yearlyBreakdown.First().Amount
+            RemainingFundsIfApproved = remainingAmount - yearlyBreakdown.First().Amount
         };
     }
 

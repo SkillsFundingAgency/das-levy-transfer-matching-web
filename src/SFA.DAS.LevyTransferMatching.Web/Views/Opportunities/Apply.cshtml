@@ -211,7 +211,7 @@
                                 </a>
                             </span>
                             <span class="das-task-list__task-tag">
-                                @if (Model.EmailAddresses.Count() > 0)
+                                @if (Model.EmailAddresses.Any())
                                 {
                                     <ul class="govuk-list das-!-text-align-right--from-tablet govuk-!-margin-bottom-0">
                                         @foreach (var emailAddress in Model.EmailAddresses)

@@ -82,7 +82,7 @@ public class OpportunitiesOrchestrator(
         };
     }
 
-    private IndexViewModel.PagingData GetPagingData(GetIndexResponse response)
+    private static IndexViewModel.PagingData GetPagingData(GetIndexResponse response)
     {
         return new IndexViewModel.PagingData()
         {
@@ -341,23 +341,7 @@ public class OpportunitiesOrchestrator(
 
         return viewModel;
     }
-
-    public async Task UpdateCacheItem(ContactDetailsPostRequest contactDetailsPostRequest)
-    {
-        var cacheItem = await RetrieveCacheItem(contactDetailsPostRequest.CacheKey);
-
-        cacheItem.FirstName = contactDetailsPostRequest.FirstName;
-        cacheItem.LastName = contactDetailsPostRequest.LastName;
-
-        cacheItem.EmailAddresses.Clear();
-        cacheItem.EmailAddresses.Add(contactDetailsPostRequest.EmailAddress);
-        cacheItem.EmailAddresses.AddRange(contactDetailsPostRequest.AdditionalEmailAddresses.Where(x => !string.IsNullOrWhiteSpace(x)));
-
-        cacheItem.BusinessWebsite = contactDetailsPostRequest.BusinessWebsite;
-
-        await cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
-    }
-
+    
     public async Task<MoreDetailsViewModel> GetMoreDetailsViewModel(MoreDetailsRequest request)
     {
         var applicationTask = RetrieveCacheItem(request.CacheKey);
@@ -425,6 +409,22 @@ public class OpportunitiesOrchestrator(
             AdditionalLocationText = cacheItem.AdditionLocationText,
             SpecificLocation = cacheItem.SpecificLocation
         };
+    }
+    
+    public async Task UpdateCacheItem(ContactDetailsPostRequest contactDetailsPostRequest)
+    {
+        var cacheItem = await RetrieveCacheItem(contactDetailsPostRequest.CacheKey);
+
+        cacheItem.FirstName = contactDetailsPostRequest.FirstName;
+        cacheItem.LastName = contactDetailsPostRequest.LastName;
+
+        cacheItem.EmailAddresses.Clear();
+        cacheItem.EmailAddresses.Add(contactDetailsPostRequest.EmailAddress);
+        cacheItem.EmailAddresses.AddRange(contactDetailsPostRequest.AdditionalEmailAddresses.Where(x => !string.IsNullOrWhiteSpace(x)));
+
+        cacheItem.BusinessWebsite = contactDetailsPostRequest.BusinessWebsite;
+
+        await cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
     }
 
     public async Task UpdateCacheItem(MoreDetailsPostRequest request)

@@ -113,7 +113,7 @@ public class PledgeService(HttpClient client) : IPledgeService
 
         if (response.IsSuccessStatusCode)
         {
-            applicationResponse = JsonConvert.DeserializeObject<GetApplicationResponse>(await response.Content.ReadAsStringAsync());
+            applicationResponse = JsonConvert.DeserializeObject<GetApplicationResponse>(await response.Content.ReadAsStringAsync(cancellationToken));
         }
         else if (response.StatusCode != HttpStatusCode.NotFound)
         {
@@ -148,7 +148,7 @@ public class PledgeService(HttpClient client) : IPledgeService
     {
         var response = await client.GetAsync($"accounts/{accountId}/pledges/{pledgeId}/applications/{applicationId}/approval-options", cancellationToken);
         response.EnsureSuccessStatusCode();
-        return JsonConvert.DeserializeObject<GetApplicationApprovalOptionsResponse>(await response.Content.ReadAsStringAsync());
+        return JsonConvert.DeserializeObject<GetApplicationApprovalOptionsResponse>(await response.Content.ReadAsStringAsync(cancellationToken));
     }
 
     public async Task SetApplicationApprovalOptions(long accountId, int applicationId, int pledgeId, SetApplicationApprovalOptionsRequest request)

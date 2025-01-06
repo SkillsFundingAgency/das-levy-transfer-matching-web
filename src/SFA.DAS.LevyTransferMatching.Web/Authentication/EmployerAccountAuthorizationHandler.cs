@@ -19,19 +19,19 @@ public class EmployerAccountAuthorizationHandler(
     ILogger<EmployerAccountAuthorizationHandler> logger)
     : IEmployerAccountAuthorizationHandler
 {
-    public async Task<bool> IsEmployerAuthorized(AuthorizationHandlerContext context, UserRole minimumAllowedRole)
+    public Task<bool> IsEmployerAuthorized(AuthorizationHandlerContext context, UserRole minimumAllowedRole)
     {
-        if (!httpContextAccessor.HttpContext.Request.RouteValues.ContainsKey(RouteValueKeys.EncodedAccountId))
+        if (!httpContextAccessor.HttpContext.Request.RouteValues.TryGetValue(RouteValueKeys.EncodedAccountId, out var routeValue))
         {
-            return false;
+            return Task.FromResult(false);
         }
 
-        var accountIdFromUrl = httpContextAccessor.HttpContext.Request.RouteValues[RouteValueKeys.EncodedAccountId].ToString().ToUpper();
+        var accountIdFromUrl = routeValue.ToString().ToUpper();
         var employerAccountClaim = context.User.FindFirst(c => c.Type.Equals(ClaimIdentifierConfiguration.Account));
 
         if (employerAccountClaim?.Value == null)
         {
-            return false;
+            return Task.FromResult(false);
         }
 
         Dictionary<string, EmployerUserAccountItem> employerAccounts;
@@ -43,21 +43,20 @@ public class EmployerAccountAuthorizationHandler(
         catch (JsonSerializationException e)
         {
             logger.LogError(e, "Could not deserialize employer account claim for user");
-            return false;
+            return Task.FromResult(false);
         }
 
         EmployerUserAccountItem employerIdentifier = null;
 
         if (employerAccounts != null)
         {
-            employerIdentifier = employerAccounts.ContainsKey(accountIdFromUrl)
-                ? employerAccounts[accountIdFromUrl]
-                : null;
+            employerIdentifier = employerAccounts.TryGetValue(accountIdFromUrl, out var value)
+                ? value : null;
         }
 
         if (employerAccounts == null || !employerAccounts.ContainsKey(accountIdFromUrl))
         {
-            string requiredIdClaim = ClaimIdentifierConfiguration.Id;
+            var requiredIdClaim = ClaimIdentifierConfiguration.Id;
 
             if (configuration[$"{nameof(Infrastructure.Configuration.FeatureToggles)}:UseGovSignIn"] != null
                 && configuration[$"{nameof(Infrastructure.Configuration.FeatureToggles)}:UseGovSignIn"]
@@ -68,7 +67,7 @@ public class EmployerAccountAuthorizationHandler(
 
             if (!context.User.HasClaim(c => c.Type.Equals(requiredIdClaim)))
             {
-                return false;
+                return Task.FromResult(false);
             }
 
             var userClaim = context.User.Claims
@@ -87,15 +86,17 @@ public class EmployerAccountAuthorizationHandler(
 
             userClaim.Subject.AddClaim(associatedAccountsClaim);
 
-            if (!updatedEmployerAccounts.ContainsKey(accountIdFromUrl))
+            if (!updatedEmployerAccounts.TryGetValue(accountIdFromUrl, out var accountItem))
             {
-                return false;
+                return Task.FromResult(false);
             }
 
-            employerIdentifier = updatedEmployerAccounts[accountIdFromUrl];
+            employerIdentifier = accountItem;
         }
 
-        return CheckUserRoleForAccess(employerIdentifier, minimumAllowedRole);
+        var hasAccess = CheckUserRoleForAccess(employerIdentifier, minimumAllowedRole);
+        
+        return Task.FromResult(hasAccess);
     }
 
     private static bool CheckUserRoleForAccess(EmployerUserAccountItem employerIdentifier, UserRole minimumAllowedRole)

@@ -38,9 +38,8 @@ public class GenericCheckboxListTagHelper : TagHelper
 
         List<int> attemptedValue = null;
 
-        if (ViewContext.ModelState.ContainsKey(Property.Name))
+        if (ViewContext.ModelState.TryGetValue(Property.Name, out var modelStateEntry))
         {
-            var modelStateEntry = ViewContext.ModelState[Property.Name];
             if (!string.IsNullOrWhiteSpace(modelStateEntry.AttemptedValue))
             {
                 attemptedValue = modelStateEntry.AttemptedValue.Split(",").ToList().ConvertAll(int.Parse);

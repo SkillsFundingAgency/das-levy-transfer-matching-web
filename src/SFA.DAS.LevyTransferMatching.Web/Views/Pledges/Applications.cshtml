@@ -1,5 +1,4 @@
 ﻿@using SFA.DAS.LevyTransferMatching.Domain.Extensions
-@using SFA.DAS.LevyTransferMatching.Web.Extensions
 @using SFA.DAS.LevyTransferMatching.Domain.Types
 @model SFA.DAS.LevyTransferMatching.Web.Models.Pledges.ApplicationsViewModel
 @inject SFA.DAS.EmployerUrlHelper.ILinkGenerator LinkGenerator
@@ -19,7 +18,7 @@
     string Pluralise(int count, string singular)
     {
         return count == 1 ? singular : singular + "s";
-    };
+    }
 }
 
 <bread-crumb source="@breadCrumbs"></bread-crumb>
