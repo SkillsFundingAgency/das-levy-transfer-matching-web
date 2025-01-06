@@ -10,10 +10,10 @@
 
     var breadCrumbs = new List<Tuple<string, string>>
     {
-        new Tuple<string, string>(LinkGenerator.AccountsLink($"accounts/{Model.EncodedAccountId}/teams"), "Home"),
-        new Tuple<string, string>(LinkGenerator.FinanceLink($"accounts/{Model.EncodedAccountId}/transfers"), "Your transfers"),
-        new Tuple<string, string>($"/accounts/{@Model.EncodedAccountId}/pledges", "My transfer pledges"),
-        new Tuple<string, string>("", $"Transfer pledge {@Model.EncodedPledgeId}")
+        new(LinkGenerator.AccountsLink($"accounts/{Model.EncodedAccountId}/teams"), "Home"),
+        new(LinkGenerator.FinanceLink($"accounts/{Model.EncodedAccountId}/transfers"), "Your transfers"),
+        new($"/accounts/{Model.EncodedAccountId}/pledges", "My transfer pledges"),
+        new("", $"Transfer pledge {Model.EncodedPledgeId}")
     };
 
     string Pluralise(int count, string singular)

@@ -1,5 +1,4 @@
 ﻿@using SFA.DAS.LevyTransferMatching.Web.Models.Pledges
-@inject SFA.DAS.EmployerUrlHelper.ILinkGenerator LinkGenerator
 @model ApplicationApprovedViewModel
 @{
     ViewData["Title"] = "Application Approved";
@@ -7,7 +6,7 @@
     ViewBag.ZenDeskLabel = "LTM-S-application-approved";
 }
 
-<a href="@Url.Action("Applications", "Pledges", new { EncodedAccountId = Model.EncodedAccountId, EncodedPledgeId = Model.EncodedPledgeId })" class="govuk-back-link">Back</a>
+<a href="@Url.Action("Applications", "Pledges", new { Model.EncodedAccountId, Model.EncodedPledgeId })" class="govuk-back-link">Back</a>
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
     <div class="govuk-grid-row">
         <div class="govuk-width-container form-entry">
@@ -45,7 +44,7 @@
                         </div>
                     }
 
-                    <p><a href="@Url.Action("Applications", "Pledges", new { EncodedAccountId = Model.EncodedAccountId, EncodedPledgeId = Model.EncodedPledgeId })" class="govuk-link govuk-link--no-visited-state">View other applications</a></p>
+                    <p><a href="@Url.Action("Applications", "Pledges", new { Model.EncodedAccountId, Model.EncodedPledgeId })" class="govuk-link govuk-link--no-visited-state">View other applications</a></p>
                 </div>
             </div>
         </div>

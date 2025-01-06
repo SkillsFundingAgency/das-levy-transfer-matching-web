@@ -15,7 +15,8 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-xl">Create a transfer pledge</h1>
-            <p>Create a transfer funding pledge that will be shown online so that businesses can apply to you for funding.</p>
+            <p>Create a transfer funding pledge that will be shown online so that businesses can apply to you for
+                funding.</p>
             <p>The amount you choose and the criteria you set will be displayed publicly.</p>
             <p>You can choose whether or not to show your organisation's name publicly.</p>
             <div class="govuk-warning-text">
@@ -40,14 +41,16 @@
                             }
                             else
                             {
-                                <strong class="govuk-tag govuk-tag--grey app-task-list__group-header-tag">Not started</strong>
+                                <strong class="govuk-tag govuk-tag--grey app-task-list__group-header-tag">Not
+                                    started</strong>
                             }
                         </div>
                     </div>
                     <ul class="das-task-list__items">
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="@Url.Action("Amount", new AmountRequest{EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey}, true)">
+                                <a class="govuk-link"
+                                   href="@Url.Action("Amount", new AmountRequest { EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey }, true)">
                                     Amount you want to pledge
                                 </a>
                             </span>
@@ -61,7 +64,7 @@
                                     <text>-</text>
                                 }
                             </span>
-                        </li>                        
+                        </li>
                     </ul>
                 </li>
                 <li>
@@ -80,15 +83,17 @@
                             }
                             else
                             {
-                                <strong class="govuk-tag govuk-tag--grey app-task-list__group-header-tag">Not started</strong>
+                                <strong class="govuk-tag govuk-tag--grey app-task-list__group-header-tag">Not
+                                    started</strong>
                             }
                         </div>
                     </div>
                     <ul class="das-task-list__items">
-                      
+
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="@Url.Action("Organisation", new AmountRequest{EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey}, true)">
+                                <a class="govuk-link"
+                                   href="@Url.Action("Organisation", new AmountRequest { EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey }, true)">
                                     Show or hide your organisation's name
                                 </a>
                             </span>
@@ -102,7 +107,7 @@
                     <div class="govuk-grid-row app-task-list__group-header">
                         <div class="govuk-grid-column-three-quarters">
                             <h2 class="das-task-list__section">
-                                <span class="das-task-list__section-number">3. </span> Select criteria <br />
+                                <span class="das-task-list__section-number">3. </span> Select criteria <br/>
                                 <span class="govuk-hint app-task-list__group-header-hint">The following criteria are all optional. If you do not change any criteria then it is assumed that any transfer request will automatically be a 100% match. </span>
                             </h2>
                         </div>
@@ -113,7 +118,8 @@
                     <ul class="das-task-list__items">
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="@Url.Action("Location", new LocationRequest{EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey})">
+                                <a class="govuk-link"
+                                   href="@Url.Action("Location", new LocationRequest { EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey })">
                                     Location
                                 </a>
                             </span>
@@ -135,7 +141,8 @@
                         </li>
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="@Url.Action("Sector", new SectorRequest{EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey}, true)">
+                                <a class="govuk-link"
+                                   href="@Url.Action("Sector", new SectorRequest { EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey }, true)">
                                     Sector
                                 </a>
                             </span>
@@ -147,14 +154,16 @@
                                 }
                                 else
                                 {
-                                    <unordered-list asp-for="Sectors" source="@Model.SectorOptions" class="govuk-list das-!-text-align-right"></unordered-list>
+                                    <unordered-list asp-for="Sectors" source="@Model.SectorOptions"
+                                                    class="govuk-list das-!-text-align-right"></unordered-list>
                                 }
 
                             </span>
                         </li>
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="@Url.Action("JobRole", new JobRoleRequest{EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey}, true)">
+                                <a class="govuk-link"
+                                   href="@Url.Action("JobRole", new JobRoleRequest { EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey }, true)">
                                     Type of job role
                                 </a>
                             </span>
@@ -166,14 +175,16 @@
                                 }
                                 else
                                 {
-                                    <unordered-list asp-for="JobRoles" source="@Model.JobRoleOptions" class="govuk-list das-!-text-align-right"></unordered-list>
+                                    <unordered-list asp-for="JobRoles" source="@Model.JobRoleOptions"
+                                                    class="govuk-list das-!-text-align-right"></unordered-list>
                                 }
 
                             </span>
                         </li>
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="@Url.Action("Level", new LevelRequest { EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey }, true)">
+                                <a class="govuk-link"
+                                   href="@Url.Action("Level", new LevelRequest { EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey }, true)">
                                     Level
                                 </a>
                             </span>
@@ -185,7 +196,8 @@
                                 }
                                 else
                                 {
-                                    <unordered-list asp-for="Levels" source="@Model.LevelOptions" class="govuk-list das-!-text-align-right"></unordered-list>
+                                    <unordered-list asp-for="Levels" source="@Model.LevelOptions"
+                                                    class="govuk-list das-!-text-align-right"></unordered-list>
                                 }
 
                             </span>
@@ -198,7 +210,7 @@
                         <div class="govuk-grid-row app-task-list__group-header">
                             <div class="govuk-grid-column-three-quarters">
                                 <h2 class="das-task-list__section">
-                                    <span class="das-task-list__section-number">4. </span> 100% matches <br />
+                                    <span class="das-task-list__section-number">4. </span> 100% matches <br/>
                                     <span class="govuk-hint app-task-list__group-header-hint">
                                         100% matches are applications that match all your criteria. You can choose to automatically approve 100% match applications immediately, 
                                         or take 6 weeks to review, approve, or reject them before they are automatically approved.
@@ -212,7 +224,8 @@
                                 }
                                 else
                                 {
-                                    <strong class="govuk-tag govuk-tag--grey app-task-list__group-header-tag">Not started</strong>
+                                    <strong class="govuk-tag govuk-tag--grey app-task-list__group-header-tag">Not
+                                        started</strong>
                                 }
                             </div>
                         </div>
@@ -220,7 +233,8 @@
 
                             <li class="das-task-list__item">
                                 <span class="das-task-list__task-name">
-                                    <a class="govuk-link" href="@Url.Action("AutoApproval", new AutoApproveRequest{EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey}, true)">
+                                    <a class="govuk-link"
+                                       href="@Url.Action("AutoApproval", new AutoApproveRequest { EncodedAccountId = Model.EncodedAccountId, CacheKey = Model.CacheKey }, true)">
                                         Review or approve immediately
                                     </a>
                                 </span>
@@ -239,30 +253,37 @@
                     </li>
                 }
             </ol>
-        <div class="govuk-grid-column-full">
-            @if (Model.MandatorySectionsAreComplete)
-            {
-                <form method="post">
-                    <div class="govuk-grid-row">
-                        <h2 class="govuk-heading-m">Submit your transfer pledge</h2>
-                        <p>I confirm that I want to make the above pledge so I can fund another business's apprenticeship training and assessment with my levy funds.</p>
-                        <div class="govuk-inset-text">
-                            <p>
-                                <strong>Disclaimer:</strong> The information provided by applicants to your pledge will not be checked and verified by the apprenticeship service.
-                            </p>
-                            <p>
-                                You may wish to undertake your own in-house governance process before committing to fund a transfer. The receiving employer will provide you with their contact details as part of their application in order to do this.
-                            </p>
-                        </div>
+            <div class="govuk-grid-column-full">
+                @if (Model.MandatorySectionsAreComplete)
+                {
+                    <form method="post">
+                        <div class="govuk-grid-row">
+                            <h2 class="govuk-heading-m">Submit your transfer pledge</h2>
+                            <p>I confirm that I want to make the above pledge so I can fund another business's
+                                apprenticeship training and assessment with my levy funds.</p>
+                            <div class="govuk-inset-text">
+                                <p>
+                                    <strong>Disclaimer:</strong> The information provided by applicants to your pledge
+                                    will not be checked and verified by the apprenticeship service.
+                                </p>
+                                <p>
+                                    You may wish to undertake your own in-house governance process before committing to
+                                    fund a transfer. The receiving employer will provide you with their contact details
+                                    as part of their application in order to do this.
+                                </p>
+                            </div>
                             <div class="govuk-button-group govuk-!-margin-top-5">
-                                <button class="govuk-button pledge-level-continue" data-module="govuk-button" id="pledge-create-submit">Submit my pledge</button>
+                                <button class="govuk-button pledge-level-continue" data-module="govuk-button"
+                                        id="pledge-create-submit">Submit my pledge
+                                </button>
                             </div>
                         </div>
-                </form>
-            }
-        </div>
+                    </form>
+                }
+            </div>
 
-        <a class="govuk-link" href="@Url.Action("Inform", "CreatePledge", new { Model.EncodedAccountId })">Cancel pledge</a>
+            <a class="govuk-link" href="@Url.Action("Inform", "CreatePledge", new { Model.EncodedAccountId })">Cancel
+                pledge</a>
 
         </div>
     </div>

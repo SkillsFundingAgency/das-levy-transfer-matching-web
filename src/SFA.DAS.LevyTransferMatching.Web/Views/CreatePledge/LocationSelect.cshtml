@@ -12,29 +12,29 @@
             <h1 class="govuk-heading-xl">There are multiple locations based on your selected locations</h1>
             <form method="post" id="select-location-form">
 
-                @for (int i = 0; i < Model.SelectValidLocationGroups.Length; i++)
+                @for (var index = 0; index < Model.SelectValidLocationGroups.Length; index++)
                 {
                     <input type="hidden" asp-for="SelectValidLocationGroups[i].Index" />
 
-                    <div class="govuk-form-group" error-class="govuk-form-group--error" das-highlight-error-for="SelectValidLocationGroups[i]">
-                        <fieldset class="govuk-fieldset" id="@($"SelectValidLocationGroups_{i}_")">
+                    <div class="govuk-form-group" error-class="govuk-form-group--error" das-highlight-error-for="SelectValidLocationGroups[index]">
+                        <fieldset class="govuk-fieldset" id="@($"SelectValidLocationGroups_{index}_")">
                             <legend class="govuk-fieldset__legend">Please select the correct location</legend>
-                            <span class="govuk-error-message">@Html.ValidationMessageFor(x => Model.SelectValidLocationGroups[i])</span>
+                            <span class="govuk-error-message">@Html.ValidationMessageFor(x => Model.SelectValidLocationGroups[index])</span>
                             <div class="govuk-radios">
 
-                                @for (int j = 0; j < Model.SelectValidLocationGroups[i].ValidLocationItems.Length; j++) 
+                                @for (var itemIndex = 0; itemIndex < Model.SelectValidLocationGroups[index].ValidLocationItems.Length; itemIndex++) 
                                 {
                                     <div class="govuk-radios__item">
                                         <input
                                             class="govuk-radios__input"
-                                            id="@($"SelectValidLocationGroups_{i}__ValidLocationItems_{j}_")"
+                                            id="@($"SelectValidLocationGroups_{index}__ValidLocationItems_{itemIndex}_")"
                                             asp-for="SelectValidLocationGroups[i].SelectedValue" 
                                             type="radio"
-                                            value="@Model.SelectValidLocationGroups[i].ValidLocationItems[j].Value"
-                                            das-highlight-error-for="SelectValidLocationGroups[i].ValidLocationItems[j]"
+                                            value="@Model.SelectValidLocationGroups[index].ValidLocationItems[itemIndex].Value"
+                                            das-highlight-error-for="SelectValidLocationGroups[index].ValidLocationItems[itemIndex]"
                                             error-class="govuk-textarea--error"
-                                            checked="@Model.SelectValidLocationGroups[i].ValidLocationItems[j].Selected">
-                                        <label class="govuk-label govuk-radios__label" asp-for="SelectValidLocationGroups[i].ValidLocationItems[j]">@Model.SelectValidLocationGroups[i].ValidLocationItems[j].Value</label>
+                                            checked="@Model.SelectValidLocationGroups[index].ValidLocationItems[itemIndex].Selected">
+                                        <label class="govuk-label govuk-radios__label" asp-for="SelectValidLocationGroups[i].ValidLocationItems[j]">@Model.SelectValidLocationGroups[index].ValidLocationItems[itemIndex].Value</label>
                                     </div>
                                 }
 
