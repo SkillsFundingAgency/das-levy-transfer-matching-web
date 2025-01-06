@@ -34,26 +34,16 @@ public interface ICreatePledgeOrchestrator
     Task<string> CreatePledge(CreatePostRequest request);
 }
 
-public class CreatePledgeOrchestrator: ICreatePledgeOrchestrator
+public class CreatePledgeOrchestrator(
+    ICacheStorageService cacheStorageService,
+    PledgeService pledgeService,
+    IEncodingService encodingService,
+    ILocationValidatorService validatorService,
+    IUserService userService,
+    Infrastructure.Configuration.FeatureToggles featureToggles)
+    : ICreatePledgeOrchestrator
 {
     private const string LocationSelectionCacheItemPrefix = "LocationSelectionCacheItem";
-
-    private readonly ICacheStorageService _cacheStorageService;
-    private readonly IPledgeService _pledgeService;
-    private readonly IEncodingService _encodingService;
-    private readonly ILocationValidatorService _validatorService;
-    private readonly IUserService _userService;
-    private readonly Infrastructure.Configuration.FeatureToggles _featureToggles;
-
-    public CreatePledgeOrchestrator(ICacheStorageService cacheStorageService, IPledgeService pledgeService, IEncodingService encodingService, ILocationValidatorService validatorService, IUserService userService, Infrastructure.Configuration.FeatureToggles featureToggles)
-    {
-        _cacheStorageService = cacheStorageService;
-        _pledgeService = pledgeService;
-        _encodingService = encodingService;
-        _validatorService = validatorService;
-        _userService = userService;
-        _featureToggles = featureToggles;
-    }
 
     public InformViewModel GetInformViewModel(string encodedAccountId)
     {
@@ -67,7 +57,7 @@ public class CreatePledgeOrchestrator: ICreatePledgeOrchestrator
     public async Task<CreateViewModel> GetCreateViewModel(CreateRequest request)
     {
         var cacheItemTask = RetrievePledgeCacheItem(request.CacheKey);
-        var dataTask = _pledgeService.GetCreate(request.AccountId);
+        var dataTask = pledgeService.GetCreate(request.AccountId);
         await Task.WhenAll(cacheItemTask, dataTask);
 
         var cacheItem = cacheItemTask.Result;
@@ -86,14 +76,14 @@ public class CreatePledgeOrchestrator: ICreatePledgeOrchestrator
             SectorOptions = dataTask.Result.Sectors.ToList(),
             JobRoleOptions = dataTask.Result.JobRoles.ToList(),
             Locations = cacheItem.Locations?.OrderBy(x => x).ToList(),
-            AutoApprovalIsEnabled = _featureToggles.FeatureToggleApplicationAutoApprove
+            AutoApprovalIsEnabled = featureToggles.FeatureToggleApplicationAutoApprove
         };
     }
 
     public async Task<AmountViewModel> GetAmountViewModel(AmountRequest request)
     {
         var cacheItemTask = RetrievePledgeCacheItem(request.CacheKey);
-        var accountDataTask = _pledgeService.GetAmount(request.EncodedAccountId);
+        var accountDataTask = pledgeService.GetAmount(request.EncodedAccountId);
 
         await Task.WhenAll(cacheItemTask, accountDataTask);
         var cacheItem = cacheItemTask.Result;
@@ -113,7 +103,7 @@ public class CreatePledgeOrchestrator: ICreatePledgeOrchestrator
     public async Task<OrganisationNameViewModel> GetOrganisationNameViewModel(OrganisationNameRequest request)
     {
         var cacheItemTask = RetrievePledgeCacheItem(request.CacheKey);
-        var accountDataTask = _pledgeService.GetOrganisationName(request.EncodedAccountId);
+        var accountDataTask = pledgeService.GetOrganisationName(request.EncodedAccountId);
 
         await Task.WhenAll(cacheItemTask, accountDataTask);
         var cacheItem = cacheItemTask.Result;
@@ -143,7 +133,7 @@ public class CreatePledgeOrchestrator: ICreatePledgeOrchestrator
     public async Task<SectorViewModel> GetSectorViewModel(SectorRequest request)
     {
         var cacheItemTask = RetrievePledgeCacheItem(request.CacheKey);
-        var sectorsTask = _pledgeService.GetSector(request.AccountId);
+        var sectorsTask = pledgeService.GetSector(request.AccountId);
 
         await Task.WhenAll(cacheItemTask, sectorsTask);
 
@@ -159,7 +149,7 @@ public class CreatePledgeOrchestrator: ICreatePledgeOrchestrator
     public async Task<JobRoleViewModel> GetJobRoleViewModel(JobRoleRequest request)
     {
         var cacheItemTask = RetrievePledgeCacheItem(request.CacheKey);
-        var jobRolesTask = _pledgeService.GetJobRole(request.AccountId);
+        var jobRolesTask = pledgeService.GetJobRole(request.AccountId);
 
         await Task.WhenAll(cacheItemTask, jobRolesTask);
 
@@ -176,7 +166,7 @@ public class CreatePledgeOrchestrator: ICreatePledgeOrchestrator
 
     public async Task<string> CreatePledge(CreatePostRequest request)
     {
-        var cacheItem = await _cacheStorageService.RetrieveFromCache<CreatePledgeCacheItem>(request.CacheKey.ToString());
+        var cacheItem = await cacheStorageService.RetrieveFromCache<CreatePledgeCacheItem>(request.CacheKey.ToString());
 
         ValidateCreatePledgeCacheItem(cacheItem);
 
@@ -185,19 +175,19 @@ public class CreatePledgeOrchestrator: ICreatePledgeOrchestrator
             Amount = cacheItem.Amount.Value,
             IsNamePublic = cacheItem.IsNamePublic.Value,
             DasAccountName = cacheItem.DasAccountName,
-            Sectors = cacheItem.Sectors ?? new List<string>(),
-            JobRoles = cacheItem.JobRoles ?? new List<string>(),
-            Levels = cacheItem.Levels ?? new List<string>(),
-            Locations = cacheItem.Locations?.Where(x => x != null).ToList() ?? new List<string>(),
-            UserId = _userService.GetUserId(),
-            UserDisplayName = _userService.GetUserDisplayName(),
+            Sectors = cacheItem.Sectors ?? [],
+            JobRoles = cacheItem.JobRoles ?? [],
+            Levels = cacheItem.Levels ?? [],
+            Locations = cacheItem.Locations?.Where(x => x != null).ToList() ?? [],
+            UserId = userService.GetUserId(),
+            UserDisplayName = userService.GetUserDisplayName(),
             AutomaticApprovalOption = cacheItem.AutomaticApprovalOption,
         };
 
-        var pledgeId = await _pledgeService.PostPledge(createPledgeRequest, request.AccountId);
-        await _cacheStorageService.DeleteFromCache(request.CacheKey.ToString());
+        var pledgeId = await pledgeService.PostPledge(createPledgeRequest, request.AccountId);
+        await cacheStorageService.DeleteFromCache(request.CacheKey.ToString());
 
-        return _encodingService.Encode(pledgeId, EncodingType.PledgeId);
+        return encodingService.Encode(pledgeId, EncodingType.PledgeId);
     }
 
     public async Task<LocationViewModel> GetLocationViewModel(LocationRequest request)
@@ -246,7 +236,7 @@ public class CreatePledgeOrchestrator: ICreatePledgeOrchestrator
 
     public async Task<Dictionary<int, string>> ValidateLocations(LocationPostRequest request, IDictionary<int, IEnumerable<string>> multipleValidLocations)
     {
-        var errors = await _validatorService.ValidateLocations(request, multipleValidLocations);
+        var errors = await validatorService.ValidateLocations(request, multipleValidLocations);
 
         await UpdateCacheItem(request.CacheKey, multipleValidLocations);
 
@@ -259,7 +249,7 @@ public class CreatePledgeOrchestrator: ICreatePledgeOrchestrator
 
         cacheItem.Amount = int.Parse(request.Amount, NumberStyles.AllowThousands, CultureInfo.InvariantCulture);
 
-        await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
+        await cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
     }
 
     public async Task UpdateCacheItem(OrganisationNamePostRequest request)
@@ -269,7 +259,7 @@ public class CreatePledgeOrchestrator: ICreatePledgeOrchestrator
         cacheItem.DasAccountName = request.DasAccountName;
         cacheItem.IsNamePublic = request.IsNamePublic;
 
-        await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
+        await cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
     }
 
     public async Task UpdateCacheItem(AutoApprovePostRequest request)
@@ -278,7 +268,7 @@ public class CreatePledgeOrchestrator: ICreatePledgeOrchestrator
 
         cacheItem.AutomaticApprovalOption = request.AutomaticApprovalOption;
 
-        await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
+        await cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
     }
 
     public async Task UpdateCacheItem(SectorPostRequest request)
@@ -287,7 +277,7 @@ public class CreatePledgeOrchestrator: ICreatePledgeOrchestrator
 
         cacheItem.Sectors = request.Sectors;
 
-        await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
+        await cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
     }
 
     public async Task UpdateCacheItem(JobRolePostRequest request)
@@ -296,7 +286,7 @@ public class CreatePledgeOrchestrator: ICreatePledgeOrchestrator
 
         cacheItem.JobRoles = request.JobRoles;
 
-        await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
+        await cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
     }
 
     public async Task UpdateCacheItem(LevelPostRequest request)
@@ -305,7 +295,7 @@ public class CreatePledgeOrchestrator: ICreatePledgeOrchestrator
 
         cacheItem.Levels = request.Levels;
 
-        await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
+        await cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
     }
 
     public async Task UpdateCacheItem(LocationPostRequest request)
@@ -314,7 +304,7 @@ public class CreatePledgeOrchestrator: ICreatePledgeOrchestrator
 
         cacheItem.Locations = request.AllLocationsSelected ? null : request.Locations;
 
-        await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
+        await cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
     }
 
     private async Task UpdateCacheItem(Guid cacheKey, IDictionary<int, IEnumerable<string>> multipleValidLocations)
@@ -323,7 +313,7 @@ public class CreatePledgeOrchestrator: ICreatePledgeOrchestrator
 
         cacheItem.MultipleValidLocations = multipleValidLocations;
 
-        await _cacheStorageService.SaveToCache($"{LocationSelectionCacheItemPrefix}_{cacheItem.Key}", cacheItem, 1);
+        await cacheStorageService.SaveToCache($"{LocationSelectionCacheItemPrefix}_{cacheItem.Key}", cacheItem, 1);
     }
 
     public async Task UpdateCacheItem(LocationSelectPostRequest request)
@@ -335,13 +325,13 @@ public class CreatePledgeOrchestrator: ICreatePledgeOrchestrator
             cacheItem.Locations[locationSelectionGroup.Index] = locationSelectionGroup.SelectedValue;
         }
 
-        await _cacheStorageService.SaveToCache(request.CacheKey.ToString(), cacheItem, 1);
+        await cacheStorageService.SaveToCache(request.CacheKey.ToString(), cacheItem, 1);
     }
 
     public async Task<LevelViewModel> GetLevelViewModel(LevelRequest request)
     {
         var cacheItemTask = RetrievePledgeCacheItem(request.CacheKey);
-        var levelsTask = _pledgeService.GetLevel(request.AccountId);
+        var levelsTask = pledgeService.GetLevel(request.AccountId);
 
         await Task.WhenAll(cacheItemTask, levelsTask);
 
@@ -356,12 +346,12 @@ public class CreatePledgeOrchestrator: ICreatePledgeOrchestrator
 
     private async Task<CreatePledgeCacheItem> RetrievePledgeCacheItem(Guid key)
     {
-        var result = await _cacheStorageService.RetrieveFromCache<CreatePledgeCacheItem>(key.ToString());
+        var result = await cacheStorageService.RetrieveFromCache<CreatePledgeCacheItem>(key.ToString());
 
         if (result == null)
         {
             result = new CreatePledgeCacheItem(key);
-            await _cacheStorageService.SaveToCache(key.ToString(), result, 1);
+            await cacheStorageService.SaveToCache(key.ToString(), result, 1);
         }
 
         return result;
@@ -369,12 +359,12 @@ public class CreatePledgeOrchestrator: ICreatePledgeOrchestrator
 
     private async Task<LocationSelectionCacheItem> RetrieveLocationSelectionCacheItem(Guid key)
     {
-        var result = await _cacheStorageService.RetrieveFromCache<LocationSelectionCacheItem>($"{LocationSelectionCacheItemPrefix}_{key}");
+        var result = await cacheStorageService.RetrieveFromCache<LocationSelectionCacheItem>($"{LocationSelectionCacheItemPrefix}_{key}");
 
         if (result == null)
         {
             result = new LocationSelectionCacheItem(key);
-            await _cacheStorageService.SaveToCache($"{LocationSelectionCacheItemPrefix}_{key}", result, 1);
+            await cacheStorageService.SaveToCache($"{LocationSelectionCacheItemPrefix}_{key}", result, 1);
         }
 
         return result;
@@ -386,10 +376,12 @@ public class CreatePledgeOrchestrator: ICreatePledgeOrchestrator
         {
             throw new InvalidOperationException("Unable to submit pledge due to cache expiry");
         }
+
         if (!cacheItem.Amount.HasValue)
         {
             throw new InvalidOperationException("Unable to submit pledge due to null cache value for pledge Amount");
         }
+
         if (!cacheItem.IsNamePublic.HasValue)
         {
             throw new InvalidOperationException("Unable to submit pledge due to null cache value for pledge IsNamePublic");

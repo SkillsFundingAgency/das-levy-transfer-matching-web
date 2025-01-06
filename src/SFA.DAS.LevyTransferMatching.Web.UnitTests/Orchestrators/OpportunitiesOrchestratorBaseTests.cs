@@ -63,7 +63,7 @@ public class OpportunitiesOrchestratorBaseTests
         };
 
         // Act
-        var result = _orchestrator.GetOpportunitySummaryViewModel(opportunitySummaryViewModelOptions);
+        var result = GetOpportunitySummaryViewModel(opportunitySummaryViewModelOptions);
 
         // Assert
         Assert.Multiple(() =>
@@ -118,7 +118,7 @@ public class OpportunitiesOrchestratorBaseTests
         };
 
         // Act
-        var result = _orchestrator.GetOpportunitySummaryViewModel(opportunitySummaryViewModelOptions);
+        var result = GetOpportunitySummaryViewModel(opportunitySummaryViewModelOptions);
 
         // Assert
         Assert.Multiple(() =>
@@ -166,7 +166,7 @@ public class OpportunitiesOrchestratorBaseTests
         };
 
         // Act
-        var result = _orchestrator.GetOpportunitySummaryViewModel(opportunitySummaryViewModelOptions);
+        var result = GetOpportunitySummaryViewModel(opportunitySummaryViewModelOptions);
 
         // Assert
         Assert.Multiple(() =>

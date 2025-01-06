@@ -51,14 +51,14 @@ public class GenericCheckboxListTagHelper : TagHelper
             attemptedValue = Property.Model as List<int>;
         }
 
-        var i = 0;
+        var index = 0;
         foreach (var tag in Source)
         {
-            i++;
+            index++;
             var isChecked = attemptedValue != null && attemptedValue.Contains(tag.Id);
             var checkedValue = isChecked ? " checked " : "";
 
-            var id = i == 1 ? Property.Name : $"{Property.Name}-{i}";
+            var id = index == 1 ? Property.Name : $"{Property.Name}-{index}";
 
             content.Append($"<div class=\"{ItemClass}\">");
 
