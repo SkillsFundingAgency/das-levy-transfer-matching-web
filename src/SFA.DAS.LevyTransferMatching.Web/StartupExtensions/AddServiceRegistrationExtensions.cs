@@ -42,7 +42,6 @@ public static class AddServiceRegistrationExtensions
         services.AddTransient<ICsvHelperService, CsvHelperService>();
         services.AddTransient<IUserService, UserService>();
         services.AddSingleton<IDateTimeService, DateTimeService>();
-        services.AddTransient<ICustomClaims, PostAuthenticationClaimsHandler>();
             
         services.AddClient<IPledgeService>((c, s) => new PledgeService(c));
         services.AddClient<IOpportunitiesService>((c, s) => new OpportunitiesService(c));
