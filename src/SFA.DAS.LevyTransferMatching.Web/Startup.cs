@@ -55,6 +55,7 @@ public class Startup
                 {
                     options.Filters.Add<DisabledActionFilter>();
                 }
+
                 options.ModelBinderProviders.Insert(0, new AutoDecodeModelBinderProvider());
             })
             .AddControllersAsServices()
