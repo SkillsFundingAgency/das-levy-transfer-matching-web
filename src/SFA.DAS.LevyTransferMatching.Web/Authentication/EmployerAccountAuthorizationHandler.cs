@@ -30,7 +30,9 @@ public class EmployerAccountAuthorizationHandler(
         var employerAccountClaim = context.User.FindFirst(c => c.Type.Equals(ClaimIdentifierConfiguration.Account));
 
         if (employerAccountClaim?.Value == null)
+        {
             return false;
+        }
 
         Dictionary<string, EmployerUserAccountItem> employerAccounts;
 
@@ -65,7 +67,9 @@ public class EmployerAccountAuthorizationHandler(
             }
 
             if (!context.User.HasClaim(c => c.Type.Equals(requiredIdClaim)))
+            {
                 return false;
+            }
 
             var userClaim = context.User.Claims
                 .First(c => c.Type.Equals(requiredIdClaim));
@@ -96,7 +100,7 @@ public class EmployerAccountAuthorizationHandler(
 
     private static bool CheckUserRoleForAccess(EmployerUserAccountItem employerIdentifier, UserRole minimumAllowedRole)
     {
-        bool tryParse = Enum.TryParse<UserRole>(employerIdentifier.Role, true, out var userRole);
+        var tryParse = Enum.TryParse<UserRole>(employerIdentifier.Role, true, out var userRole);
 
         if (!tryParse)
         {
