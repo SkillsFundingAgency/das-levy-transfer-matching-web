@@ -136,7 +136,6 @@ public class ApplicationsOrchestrator : OpportunitiesOrchestratorBase, IApplicat
             EncodedApplicationId = request.EncodedApplicationId,
             EmployerName = result.EmployerAccountName,
             PledgeReference = encodedPledgeId
-
         };
     }
 
