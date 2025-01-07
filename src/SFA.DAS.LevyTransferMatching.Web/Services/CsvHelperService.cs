@@ -83,7 +83,9 @@ public class CsvHelperService : ICsvHelperService
             return;
         }
 
-        if (application?.DynamicLocations?.Count() == 0 && totalLocationColumnsRequired > 0)
+        var dynamicLocationsCount = application?.DynamicLocations?.Count();
+        
+        if (dynamicLocationsCount == 0 && totalLocationColumnsRequired > 0)
         {
             for (var index = 0; index < totalLocationColumnsRequired; index++)
             {
@@ -93,16 +95,16 @@ public class CsvHelperService : ICsvHelperService
             return;
         }
 
-        for (var index = 0; index < application?.DynamicLocations?.Count(); index++)
+        for (var index = 0; index < dynamicLocationsCount; index++)
         {
             var fieldName = $"Location{index + 1}";
 
             AddProperty(record, fieldName, application.DynamicLocations.ElementAt(index).Name);
         }
 
-        var columnsNeeded = totalLocationColumnsRequired - application?.DynamicLocations?.Count();
+        var columnsNeeded = totalLocationColumnsRequired - dynamicLocationsCount;
 
-        for (var index = application?.DynamicLocations?.Count() ?? 0; index <= columnsNeeded; index++)
+        for (var index = dynamicLocationsCount ?? 0; index <= columnsNeeded; index++)
         {
             var fieldName = $"Location{index + 1}";
             AddProperty(record, fieldName, string.Empty);
@@ -112,10 +114,14 @@ public class CsvHelperService : ICsvHelperService
     private static void AddProperty(ExpandoObject expando, string propertyName, object propertyValue)
     {
         // ExpandoObject supports IDictionary so we can extend it like this
-        var expandoDict = expando as IDictionary<string, object>;
+        IDictionary<string, object> expandoDict = expando;
         if (expandoDict.ContainsKey(propertyName))
+        {
             expandoDict[propertyName] = propertyValue;
+        }
         else
+        {
             expandoDict.Add(propertyName, propertyValue);
+        }
     }
 }
