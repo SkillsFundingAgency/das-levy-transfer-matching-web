@@ -22,7 +22,7 @@ public class BreadCrumbTagHelperTests
 
         _tagHelperOutput = new TagHelperOutput("div",
             [],
-            (result, encoder) =>
+            (_, _) =>
             {
                 var tagHelperContent = new DefaultTagHelperContent();
                 tagHelperContent.SetHtmlContent(string.Empty);
