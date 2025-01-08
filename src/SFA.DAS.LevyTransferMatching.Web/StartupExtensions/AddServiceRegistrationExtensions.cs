@@ -59,9 +59,14 @@ public static class AddServiceRegistrationExtensions
 
             var httpClient = clientBuilder.Build();
 
-            httpClient.BaseAddress = !settings.ApiBaseUrl.EndsWith('/') 
-                ? new Uri(settings.ApiBaseUrl + "/") 
-                : new Uri(settings.ApiBaseUrl);
+            if (!settings.ApiBaseUrl.EndsWith("/"))
+            {
+                httpClient.BaseAddress = new Uri(settings.ApiBaseUrl + "/");
+            }
+            else
+            {
+                httpClient.BaseAddress = new Uri(settings.ApiBaseUrl);
+            }
 
             return instance.Invoke(httpClient, s);
         });
