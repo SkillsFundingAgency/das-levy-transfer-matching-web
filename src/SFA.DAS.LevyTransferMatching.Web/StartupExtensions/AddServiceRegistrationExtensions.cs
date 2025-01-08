@@ -1,4 +1,5 @@
 ﻿using System.Net.Http;
+using SFA.DAS.GovUK.Auth.Employer;
 using SFA.DAS.Http;
 using SFA.DAS.LevyTransferMatching.Domain.Interfaces;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Api;
@@ -44,6 +45,7 @@ public static class AddServiceRegistrationExtensions
         services.AddClient<ILocationService>((c, s) => new LocationService(c));
         services.AddClient<IApplicationsService>((c, s) => new ApplicationsService(c));
         services.AddClient<IAccountUserService>((c, s) => new AccountUserService(c));
+        services.AddClient<IGovAuthEmployerAccountService>((c, s) => new AccountUserService(c));
     }
 
     private static IServiceCollection AddClient<T>(this IServiceCollection serviceCollection, Func<HttpClient, IServiceProvider, T> instance) where T : class
