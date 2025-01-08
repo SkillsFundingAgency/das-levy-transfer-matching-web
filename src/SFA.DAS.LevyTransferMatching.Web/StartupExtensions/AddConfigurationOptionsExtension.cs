@@ -7,27 +7,19 @@ namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions;
 
 public static class AddConfigurationOptionsExtension
 {
-    private static readonly Dictionary<Type, string> ConfigSections = new()
-    {
-        { typeof(LevyTransferMatchingWeb), nameof(LevyTransferMatchingWeb) },
-        { typeof(LevyTransferMatchingApi), nameof(LevyTransferMatchingApi) },
-        { typeof(Infrastructure.Configuration.Authentication), "Authentication" },
-        { typeof(EncodingConfig), "EncodingService" },
-        { typeof(CosmosDbConfiguration), "CosmosDb" },
-        { typeof(Infrastructure.Configuration.FeatureToggles), "FeatureToggles" },
-    };
-
     public static void AddConfigurationOptions(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddOptions();
         
-        foreach (var configSection in ConfigSections)
-        {
-            services.AddOptionsFor(configuration, configSection.Key,  configSection.Value);
-        }
-    }
+        services.AddOptionsFor<LevyTransferMatchingWeb>(configuration, nameof(LevyTransferMatchingWeb));
+        services.AddOptionsFor<LevyTransferMatchingApi>(configuration, nameof(LevyTransferMatchingApi));
+        services.AddOptionsFor<Infrastructure.Configuration.Authentication>(configuration, "Authentication");
+        services.AddOptionsFor<EncodingConfig>(configuration, "EncodingService");
+        services.AddOptionsFor<CosmosDbConfiguration>(configuration, "CosmosDb");
+        services.AddOptionsFor<Infrastructure.Configuration.FeatureToggles>(configuration, "FeatureToggles");
+ }
 
-    private static void AddOptionsFor<T>(this IServiceCollection services, IConfiguration configuration, T type, string sectionName) where T : class
+    private static void AddOptionsFor<T>(this IServiceCollection services, IConfiguration configuration, string sectionName) where T : class
     {
         services.Configure<T>(configuration.GetSection(sectionName));
         services.AddSingleton(cfg => cfg.GetService<IOptions<T>>().Value);
