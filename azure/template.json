@@ -50,9 +50,6 @@
         "frontEndAccessRestrictions": {
             "type": "array"
         },
-        "configNames": {
-            "type": "string"
-        },
         "sharedApimResourceGroup": {
             "type": "string"
         },
@@ -202,7 +199,7 @@
                                 },
                                 {
                                     "name": "ConfigNames",
-                                    "value": "[parameters('configNames')]"
+                                    "value": "[variables('configNames')]"
                                 },
                                 {
                                     "name": "Version",
