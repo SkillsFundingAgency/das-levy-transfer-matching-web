@@ -202,7 +202,7 @@
                                 },
                                 {
                                     "name": "ConfigNames",
-                                    "value": "[parameters('configNames')]"
+                                    "value": "[variables('configNames')]"
                                 },
                                 {
                                     "name": "Version",
