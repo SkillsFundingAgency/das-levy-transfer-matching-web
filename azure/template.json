@@ -50,9 +50,6 @@
         "frontEndAccessRestrictions": {
             "type": "array"
         },
-        "configNames": {
-            "type": "string"
-        },
         "sharedApimResourceGroup": {
             "type": "string"
         },
