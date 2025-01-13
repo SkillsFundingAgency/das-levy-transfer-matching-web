@@ -5,121 +5,113 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService.Types;
 
-namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService
+namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService;
+
+public class ApplicationsService(HttpClient httpClient) : IApplicationsService
 {
-    public class ApplicationsService : IApplicationsService
+    public async Task<GetApplicationsResponse> GetApplications(long accountId, CancellationToken cancellationToken = default)
     {
-        private readonly HttpClient _httpClient;
+        var response = await httpClient.GetAsync($"accounts/{accountId}/applications", cancellationToken);
+        response.EnsureSuccessStatusCode();
 
-        public ApplicationsService(HttpClient httpClient)
+        return JsonConvert.DeserializeObject<GetApplicationsResponse>(await response.Content.ReadAsStringAsync(cancellationToken));
+    }      
+
+    public async Task<GetApplicationResponse> GetApplication(long accountId, int applicationId, CancellationToken cancellationToken = default)
+    {
+        var response = await httpClient.GetAsync($"accounts/{accountId}/applications/{applicationId}", cancellationToken);
+
+        Types.GetApplicationResponse getApplicationResponse = null;
+        if (response.IsSuccessStatusCode)
         {
-            _httpClient = httpClient;
+            getApplicationResponse = JsonConvert.DeserializeObject<GetApplicationResponse>(await response.Content.ReadAsStringAsync(cancellationToken));
         }
-
-        public async Task<GetApplicationsResponse> GetApplications(long accountId, CancellationToken cancellationToken = default)
+        else
         {
-            var response = await _httpClient.GetAsync($"accounts/{accountId}/applications", cancellationToken);
-            response.EnsureSuccessStatusCode();
-
-            return JsonConvert.DeserializeObject<GetApplicationsResponse>(await response.Content.ReadAsStringAsync());
-        }      
-
-        public async Task<GetApplicationResponse> GetApplication(long accountId, int applicationId, CancellationToken cancellationToken = default)
-        {
-            var response = await _httpClient.GetAsync($"accounts/{accountId}/applications/{applicationId}", cancellationToken);
-
-            Types.GetApplicationResponse getApplicationResponse = null;
-            if (response.IsSuccessStatusCode)
-            {
-                getApplicationResponse = JsonConvert.DeserializeObject<GetApplicationResponse>(await response.Content.ReadAsStringAsync());
-            }
-            else
-            {
-                if (response.StatusCode != HttpStatusCode.NotFound)
-                {
-                    response.EnsureSuccessStatusCode();
-                }
-            }
-
-            return getApplicationResponse;
-        }
-
-        public async Task SetApplicationAcceptance(SetApplicationAcceptanceRequest request, CancellationToken cancellationToken = default)
-        {
-            var json = JsonConvert.SerializeObject(request);
-            var response = await _httpClient.PostAsync($"accounts/{request.AccountId}/applications/{request.ApplicationId}",
-                new StringContent(json, System.Text.Encoding.UTF8, "application/json"), cancellationToken);
-
-            response.EnsureSuccessStatusCode();
-        }
-
-        public async Task<GetAcceptedResponse> GetAccepted(long accountId, int applicationId)
-        {
-            var response = await _httpClient.GetAsync($"accounts/{accountId}/applications/{applicationId}/accepted");
-
-            GetAcceptedResponse getAcceptedResponse = null;
-            if (response.IsSuccessStatusCode)
-            {
-                getAcceptedResponse = JsonConvert.DeserializeObject<GetAcceptedResponse>(await response.Content.ReadAsStringAsync());
-            }
-            else
-            {
-                if (response.StatusCode != HttpStatusCode.NotFound)
-                {
-                    response.EnsureSuccessStatusCode();
-                }
-            }
-
-            return getAcceptedResponse;
-        }
-
-        public async Task<GetDeclinedResponse> GetDeclined(long accountId, int applicationId)
-        {
-            var response = await _httpClient.GetAsync($"accounts/{accountId}/applications/{applicationId}/declined");
-
-            GetDeclinedResponse getDeclinedResponse = null;
-            if (response.IsSuccessStatusCode)
-            {
-                getDeclinedResponse = JsonConvert.DeserializeObject<GetDeclinedResponse>(await response.Content.ReadAsStringAsync());
-            }
-            else if (response.StatusCode != HttpStatusCode.NotFound)
+            if (response.StatusCode != HttpStatusCode.NotFound)
             {
                 response.EnsureSuccessStatusCode();
             }
-
-            return getDeclinedResponse;
         }
 
-        public async Task<GetWithdrawnResponse> GetWithdrawn(long accountId, int applicationId)
-        {
-            var response = await _httpClient.GetAsync($"accounts/{accountId}/applications/{applicationId}/withdrawn");
+        return getApplicationResponse;
+    }
 
-            GetWithdrawnResponse getWithdrawnResponse = null;
-            if (response.IsSuccessStatusCode)
-            {
-                getWithdrawnResponse = JsonConvert.DeserializeObject<GetWithdrawnResponse>(await response.Content.ReadAsStringAsync());
-            }
-            else if (response.StatusCode != HttpStatusCode.NotFound)
+    public async Task SetApplicationAcceptance(SetApplicationAcceptanceRequest request, CancellationToken cancellationToken = default)
+    {
+        var json = JsonConvert.SerializeObject(request);
+        var response = await httpClient.PostAsync($"accounts/{request.AccountId}/applications/{request.ApplicationId}",
+            new StringContent(json, System.Text.Encoding.UTF8, "application/json"), cancellationToken);
+
+        response.EnsureSuccessStatusCode();
+    }
+
+    public async Task<GetAcceptedResponse> GetAccepted(long accountId, int applicationId)
+    {
+        var response = await httpClient.GetAsync($"accounts/{accountId}/applications/{applicationId}/accepted");
+
+        GetAcceptedResponse getAcceptedResponse = null;
+        if (response.IsSuccessStatusCode)
+        {
+            getAcceptedResponse = JsonConvert.DeserializeObject<GetAcceptedResponse>(await response.Content.ReadAsStringAsync());
+        }
+        else
+        {
+            if (response.StatusCode != HttpStatusCode.NotFound)
             {
                 response.EnsureSuccessStatusCode();
             }
-
-            return getWithdrawnResponse;
         }
 
-        public async Task<GetWithdrawalConfirmationResponse> GetWithdrawalConfirmation(long accountId, int applicationId)
+        return getAcceptedResponse;
+    }
+
+    public async Task<GetDeclinedResponse> GetDeclined(long accountId, int applicationId)
+    {
+        var response = await httpClient.GetAsync($"accounts/{accountId}/applications/{applicationId}/declined");
+
+        GetDeclinedResponse getDeclinedResponse = null;
+        if (response.IsSuccessStatusCode)
         {
-            var response = await _httpClient.GetAsync($"accounts/{accountId}/applications/{applicationId}/withdrawal-confirmation");
-            response.EnsureSuccessStatusCode();
-
-            return JsonConvert.DeserializeObject<GetWithdrawalConfirmationResponse>(await response.Content.ReadAsStringAsync());
+            getDeclinedResponse = JsonConvert.DeserializeObject<GetDeclinedResponse>(await response.Content.ReadAsStringAsync());
         }
-
-        public async Task WithdrawApplicationAfterAcceptance(WithdrawApplicationAfterAcceptanceRequest request, long accountId, int applicationId)
+        else if (response.StatusCode != HttpStatusCode.NotFound)
         {
-            var json = JsonConvert.SerializeObject(request);
-            var response = await _httpClient.PostAsync($"accounts/{accountId}/applications/{applicationId}/withdrawal-confirmation", new StringContent(json, System.Text.Encoding.UTF8, "application/json"));
             response.EnsureSuccessStatusCode();
         }
+
+        return getDeclinedResponse;
+    }
+
+    public async Task<GetWithdrawnResponse> GetWithdrawn(long accountId, int applicationId)
+    {
+        var response = await httpClient.GetAsync($"accounts/{accountId}/applications/{applicationId}/withdrawn");
+
+        GetWithdrawnResponse getWithdrawnResponse = null;
+        if (response.IsSuccessStatusCode)
+        {
+            getWithdrawnResponse = JsonConvert.DeserializeObject<GetWithdrawnResponse>(await response.Content.ReadAsStringAsync());
+        }
+        else if (response.StatusCode != HttpStatusCode.NotFound)
+        {
+            response.EnsureSuccessStatusCode();
+        }
+
+        return getWithdrawnResponse;
+    }
+
+    public async Task<GetWithdrawalConfirmationResponse> GetWithdrawalConfirmation(long accountId, int applicationId)
+    {
+        var response = await httpClient.GetAsync($"accounts/{accountId}/applications/{applicationId}/withdrawal-confirmation");
+        response.EnsureSuccessStatusCode();
+
+        return JsonConvert.DeserializeObject<GetWithdrawalConfirmationResponse>(await response.Content.ReadAsStringAsync());
+    }
+
+    public async Task WithdrawApplicationAfterAcceptance(WithdrawApplicationAfterAcceptanceRequest request, long accountId, int applicationId)
+    {
+        var json = JsonConvert.SerializeObject(request);
+        var response = await httpClient.PostAsync($"accounts/{accountId}/applications/{applicationId}/withdrawal-confirmation", new StringContent(json, System.Text.Encoding.UTF8, "application/json"));
+        response.EnsureSuccessStatusCode();
     }
 }

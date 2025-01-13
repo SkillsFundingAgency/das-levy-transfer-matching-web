@@ -12,7 +12,7 @@
             <h1 class="govuk-heading-xl">There are multiple locations based on your selected locations</h1>
             <form method="post" id="select-location-form">
 
-                @for (int i = 0; i < Model.SelectValidLocationGroups.Length; i++)
+                @for (var i = 0; i < Model.SelectValidLocationGroups.Length; i++)
                 {
                     <input type="hidden" asp-for="SelectValidLocationGroups[i].Index" />
 
@@ -22,7 +22,7 @@
                             <span class="govuk-error-message">@Html.ValidationMessageFor(x => Model.SelectValidLocationGroups[i])</span>
                             <div class="govuk-radios">
 
-                                @for (int j = 0; j < Model.SelectValidLocationGroups[i].ValidLocationItems.Length; j++) 
+                                @for (var j = 0; j < Model.SelectValidLocationGroups[i].ValidLocationItems.Length; j++) 
                                 {
                                     <div class="govuk-radios__item">
                                         <input

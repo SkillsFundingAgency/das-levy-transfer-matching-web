@@ -8,20 +8,13 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers;
 
 [Authorize(Policy = PolicyNames.ViewAccount)]
 [Route("accounts/{encodedAccountId}/pledges/create")]
-public class CreatePledgeController : Controller
+public class CreatePledgeController(ICreatePledgeOrchestrator orchestrator) : Controller
 {
-    private readonly ICreatePledgeOrchestrator _orchestrator;
-
-    public CreatePledgeController(ICreatePledgeOrchestrator orchestrator)
-    {
-        _orchestrator = orchestrator;
-    }
-
     [Authorize(Policy = PolicyNames.ManageAccount)]
     [Route("inform")]
     public IActionResult Inform(string encodedAccountId)
     {
-        var viewModel = _orchestrator.GetInformViewModel(encodedAccountId);
+        var viewModel = orchestrator.GetInformViewModel(encodedAccountId);
         return View(viewModel);
     }
 
@@ -29,7 +22,7 @@ public class CreatePledgeController : Controller
     [Route("")]
     public async Task<IActionResult> Create(CreateRequest request)
     {
-        var viewModel = await _orchestrator.GetCreateViewModel(request);
+        var viewModel = await orchestrator.GetCreateViewModel(request);
         return View(viewModel);
     }
 
@@ -38,7 +31,7 @@ public class CreatePledgeController : Controller
     [Route("")]
     public async Task<IActionResult> Create(CreatePostRequest request)
     {
-        var pledge = await _orchestrator.CreatePledge(request);
+        var pledge = await orchestrator.CreatePledge(request);
         return RedirectToAction("Confirmation", new ConfirmationRequest { EncodedAccountId = request.EncodedAccountId, EncodedPledgeId = pledge });
     }
 
@@ -46,7 +39,7 @@ public class CreatePledgeController : Controller
     [Route("amount")]
     public async Task<IActionResult> Amount(AmountRequest request)
     {
-        var viewModel = await _orchestrator.GetAmountViewModel(request);
+        var viewModel = await orchestrator.GetAmountViewModel(request);
         return View(viewModel);
     }
 
@@ -55,7 +48,7 @@ public class CreatePledgeController : Controller
     [Route("amount")]
     public async Task<IActionResult> Amount(AmountPostRequest request)
     {
-        await _orchestrator.UpdateCacheItem(request);
+        await orchestrator.UpdateCacheItem(request);
         return RedirectToAction("Create", new { request.EncodedAccountId, request.CacheKey });
     }
 
@@ -63,7 +56,7 @@ public class CreatePledgeController : Controller
     [Route("organisation")]
     public async Task<IActionResult> Organisation(OrganisationNameRequest request)
     {
-        var viewModel = await _orchestrator.GetOrganisationNameViewModel(request);
+        var viewModel = await orchestrator.GetOrganisationNameViewModel(request);
         return View(viewModel);
     }
 
@@ -72,7 +65,7 @@ public class CreatePledgeController : Controller
     [Route("organisation")]
     public async Task<IActionResult> Organisation(OrganisationNamePostRequest request)
     {
-        await _orchestrator.UpdateCacheItem(request);
+        await orchestrator.UpdateCacheItem(request);
         return RedirectToAction("Create", new { request.EncodedAccountId, request.CacheKey });
     }
 
@@ -80,7 +73,7 @@ public class CreatePledgeController : Controller
     [Route("sector")]
     public async Task<IActionResult> Sector(SectorRequest request)
     {
-        var viewModel = await _orchestrator.GetSectorViewModel(request);
+        var viewModel = await orchestrator.GetSectorViewModel(request);
         return View(viewModel);
     }
 
@@ -89,7 +82,7 @@ public class CreatePledgeController : Controller
     [Route("sector")]
     public async Task<IActionResult> Sector(SectorPostRequest request)
     {
-        await _orchestrator.UpdateCacheItem(request);
+        await orchestrator.UpdateCacheItem(request);
         return RedirectToAction("Create", new { request.EncodedAccountId, request.CacheKey });
     }
 
@@ -97,7 +90,7 @@ public class CreatePledgeController : Controller
     [Route("job-role")]
     public async Task<IActionResult> JobRole(JobRoleRequest request)
     {
-        var viewModel = await _orchestrator.GetJobRoleViewModel(request);
+        var viewModel = await orchestrator.GetJobRoleViewModel(request);
         return View(viewModel);
     }
 
@@ -106,7 +99,7 @@ public class CreatePledgeController : Controller
     [Route("job-role")]
     public async Task<IActionResult> JobRole(JobRolePostRequest request)
     {
-        await _orchestrator.UpdateCacheItem(request);
+        await orchestrator.UpdateCacheItem(request);
         return RedirectToAction("Create", new { request.EncodedAccountId, request.CacheKey });
     }
 
@@ -114,7 +107,7 @@ public class CreatePledgeController : Controller
     [Route("level")]
     public async Task<IActionResult> Level(LevelRequest request)
     {
-        var viewModel = await _orchestrator.GetLevelViewModel(request);
+        var viewModel = await orchestrator.GetLevelViewModel(request);
         return View(viewModel);
     }
 
@@ -123,15 +116,15 @@ public class CreatePledgeController : Controller
     [Route("level")]
     public async Task<IActionResult> Level(LevelPostRequest request)
     {
-        await _orchestrator.UpdateCacheItem(request);
-        return RedirectToAction("Create", new CreateRequest() { EncodedAccountId = request.EncodedAccountId, CacheKey = request.CacheKey });
+        await orchestrator.UpdateCacheItem(request);
+        return RedirectToAction("Create", new CreateRequest { EncodedAccountId = request.EncodedAccountId, CacheKey = request.CacheKey });
     }
 
     [Authorize(Policy = PolicyNames.ManageAccount)]
     [Route("location")]
     public async Task<IActionResult> Location(LocationRequest request)
     {
-        var viewModel = await _orchestrator.GetLocationViewModel(request);
+        var viewModel = await orchestrator.GetLocationViewModel(request);
 
         return View(viewModel);
     }
@@ -143,32 +136,32 @@ public class CreatePledgeController : Controller
     {
         var multipleValidLocations = new Dictionary<int, IEnumerable<string>>();
 
-        var errors = await _orchestrator.ValidateLocations(request, multipleValidLocations);
+        var errors = await orchestrator.ValidateLocations(request, multipleValidLocations);
 
-        if (errors.Any())
+        if (errors.Count != 0)
         {
             AddLocationErrorsToModelState(errors);
 
             return RedirectToAction(nameof(Location), new { request.EncodedAccountId, request.AccountId, request.CacheKey });
         }
 
-        await _orchestrator.UpdateCacheItem(request);
+        await orchestrator.UpdateCacheItem(request);
 
-        if (multipleValidLocations.Any() && !request.AllLocationsSelected)
+        if (multipleValidLocations.Count != 0 && !request.AllLocationsSelected)
         {
             // Then surface a view to allow them to select the correct
             // location, from a set of multiple valid locations
             return RedirectToAction(nameof(LocationSelect), new { request.EncodedAccountId, request.CacheKey });
         }
 
-        return RedirectToAction("Create", new CreateRequest() { EncodedAccountId = request.EncodedAccountId, CacheKey = request.CacheKey });
+        return RedirectToAction("Create", new CreateRequest { EncodedAccountId = request.EncodedAccountId, CacheKey = request.CacheKey });
     }
 
     [Authorize(Policy=PolicyNames.IsAuthenticated)]
     [Route("location/select")]
     public async Task<IActionResult> LocationSelect(LocationSelectRequest request)
     {
-        var viewModel = await _orchestrator.GetLocationSelectViewModel(request);
+        var viewModel = await orchestrator.GetLocationSelectViewModel(request);
 
         return View(viewModel);
     }
@@ -178,9 +171,9 @@ public class CreatePledgeController : Controller
     [HttpPost]
     public async Task<IActionResult> LocationSelect([CustomizeValidator(Interceptor = typeof(LocationSelectPostRequestValidatorInterceptor))] LocationSelectPostRequest request)
     {
-        await _orchestrator.UpdateCacheItem(request);
+        await orchestrator.UpdateCacheItem(request);
 
-        return RedirectToAction("Create", new CreateRequest() { EncodedAccountId = request.EncodedAccountId, CacheKey = request.CacheKey });
+        return RedirectToAction("Create", new CreateRequest { EncodedAccountId = request.EncodedAccountId, CacheKey = request.CacheKey });
     }
 
     [Authorize(Policy = PolicyNames.ManageAccount)]
@@ -203,7 +196,7 @@ public class CreatePledgeController : Controller
     [Route("auto-approval")]
     public async Task<IActionResult> AutoApproval(AutoApproveRequest request)
     {
-        var viewModel = await _orchestrator.GetAutoApproveViewModel(request);
+        var viewModel = await orchestrator.GetAutoApproveViewModel(request);
         return View(viewModel);
     }
 
@@ -212,7 +205,7 @@ public class CreatePledgeController : Controller
     [Route("auto-approval")]
     public async Task<IActionResult> AutoApproval(AutoApprovePostRequest request)
     {
-        await _orchestrator.UpdateCacheItem(request);
+        await orchestrator.UpdateCacheItem(request);
         return RedirectToAction("Create", new { request.EncodedAccountId, request.CacheKey });
     }
 }

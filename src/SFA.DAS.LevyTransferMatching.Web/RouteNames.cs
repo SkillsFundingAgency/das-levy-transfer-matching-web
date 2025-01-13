@@ -1,6 +1,6 @@
 ﻿namespace SFA.DAS.LevyTransferMatching.Web;
 
-public class RouteNames
+public static class RouteNames
 {
     public const string SignOut = nameof(SignOut);
 }

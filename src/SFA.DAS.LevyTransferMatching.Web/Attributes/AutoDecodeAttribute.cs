@@ -3,14 +3,8 @@
 namespace SFA.DAS.LevyTransferMatching.Web.Attributes;
 
 [AttributeUsage(AttributeTargets.Property)]
-public class AutoDecodeAttribute : Attribute
+public class AutoDecodeAttribute(string source, EncodingType encodingType) : Attribute
 {
-    public string Source { get; }
-    public EncodingType EncodingType { get; }
-
-    public AutoDecodeAttribute(string source, EncodingType encodingType)
-    {
-        Source = source;
-        EncodingType = encodingType;
-    }
+    public string Source { get; } = source;
+    public EncodingType EncodingType { get; } = encodingType;
 }

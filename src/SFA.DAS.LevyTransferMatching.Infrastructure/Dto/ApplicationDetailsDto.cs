@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 
-namespace SFA.DAS.LevyTransferMatching.Infrastructure.Dto
+namespace SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
+
+public class ApplicationDetailsDto
 {
-    public class ApplicationDetailsDto
-    {
-        public IEnumerable<StandardsListItemDto> Standards { get; set; }
-        public OpportunityDto Opportunity { get; set; }
-    }
+    public IEnumerable<StandardsListItemDto> Standards { get; set; }
+    public OpportunityDto Opportunity { get; set; }
 }

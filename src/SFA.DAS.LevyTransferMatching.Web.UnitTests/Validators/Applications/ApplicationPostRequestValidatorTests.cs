@@ -27,7 +27,7 @@ public class ApplicationPostRequestValidatorTests
 
         var actual = _validator.Validate(request);
 
-        Assert.That(actual.IsValid, Is.False);
+        actual.IsValid.Should().BeFalse();
     }
 
     [Test]
@@ -41,7 +41,7 @@ public class ApplicationPostRequestValidatorTests
 
         var actual = _validator.Validate(request);
 
-        Assert.That(actual.IsValid, Is.False);
+        actual.IsValid.Should().BeFalse();
     }
 
     [Test]
@@ -55,7 +55,7 @@ public class ApplicationPostRequestValidatorTests
 
         var actual = _validator.Validate(request);
 
-        Assert.That(actual.IsValid, Is.False);
+        actual.IsValid.Should().BeFalse();
     }
 
     [Test]
@@ -69,7 +69,7 @@ public class ApplicationPostRequestValidatorTests
             .Create();
 
         var actual = _validator.Validate(request);
-        Assert.That(actual.IsValid, Is.True);
+        actual.IsValid.Should().BeTrue();
     }
 
     [Test]
@@ -83,7 +83,7 @@ public class ApplicationPostRequestValidatorTests
 
         var actual = _validator.Validate(request);
 
-        Assert.That(actual.IsValid, Is.False);
+        actual.IsValid.Should().BeFalse();
     }
 
     [Test]
@@ -97,25 +97,30 @@ public class ApplicationPostRequestValidatorTests
 
         var actual = _validator.Validate(request);
 
-        Assert.That(actual.IsValid, Is.True);
+        actual.IsValid.Should().BeTrue();
     }
 
     [Test]
     public void ValidatorReturnsFalseWhenWithdrawalNotConfirmed()
     {
         var actual = _validator.Validate(CreateApplicationStatusPostRequest(approvalAction: ApprovalAction.Withdraw));
-        Assert.That(actual.IsValid, Is.False);
+        actual.IsValid.Should().BeFalse();
     }
 
     [Test]
     public void ValidatorReturnsFalseWhenNoWithdrawalActionSelected()
     {
         var actual = _validator.Validate(CreateApplicationStatusPostRequest(approvalAction: null, canWithdraw: true));
-        Assert.That(actual.IsValid, Is.False);
+        actual.IsValid.Should().BeFalse();
     }
 
-    private static ApplicationPostRequest CreateApplicationStatusPostRequest(bool truthfulInformation = false, bool complyWithRules = false, ApprovalAction? approvalAction = ApprovalAction.Decline, bool canAcceptFunding = false, bool canWithdraw = false, bool isWithdrawalConfirmed = false) =>
-        new()
+    private static ApplicationPostRequest CreateApplicationStatusPostRequest(
+        bool truthfulInformation = false,
+        bool complyWithRules = false,
+        ApprovalAction? approvalAction = ApprovalAction.Decline,
+        bool canAcceptFunding = false,
+        bool canWithdraw = false,
+        bool isWithdrawalConfirmed = false) => new()
         {
             EncodedAccountId = "HGVVMY",
             AccountId = 1,

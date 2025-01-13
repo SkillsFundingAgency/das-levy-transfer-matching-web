@@ -39,7 +39,7 @@ public class WhenGettingAccountUsers
                 ),
                 ItExpr.IsAny<CancellationToken>()
             )
-            .ReturnsAsync((HttpRequestMessage request, CancellationToken token) => response);
+            .ReturnsAsync((HttpRequestMessage _, CancellationToken _) => response);
         httpMessageHandler.Protected()
             .Setup<Task<HttpResponseMessage>>(
                 "SendAsync",
@@ -49,7 +49,7 @@ public class WhenGettingAccountUsers
                 ),
                 ItExpr.IsAny<CancellationToken>()
             )
-            .ReturnsAsync((HttpRequestMessage request, CancellationToken token) => notFoundResponse);
+            .ReturnsAsync((HttpRequestMessage _, CancellationToken _) => notFoundResponse);
             
         var client = new HttpClient(httpMessageHandler.Object);
         client.BaseAddress = new Uri("https://tempuri.org");
@@ -60,7 +60,7 @@ public class WhenGettingAccountUsers
     [Test]
     public async Task Then_The_Api_Is_Called_And_Response_Returned_For_User()
     {
-        var actual = await _service.GetUserAccounts(_email, _userId);
+        var actual = await _service.GetUserAccounts(_userId, _email);
 
         actual.Should().BeEquivalentTo((EmployerUserAccounts)_response);
     }
@@ -68,8 +68,8 @@ public class WhenGettingAccountUsers
     [Test]
     public async Task Then_The_Api_Is_Called_And_Empty_Returned_For_Non_Matching_User()
     {
-        var actual = await _service.GetUserAccounts(_emailNotMatch, _userId);
+        var actual = await _service.GetUserAccounts(_userId, _emailNotMatch);
 
-        actual.Should().BeEquivalentTo((EmployerUserAccounts)(GetUserAccountsResponse)null);
+        actual.Should().BeEquivalentTo(new EmployerUserAccounts());
     }
 }

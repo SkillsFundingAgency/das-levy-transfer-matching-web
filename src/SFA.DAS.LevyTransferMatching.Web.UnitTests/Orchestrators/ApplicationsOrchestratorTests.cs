@@ -54,11 +54,8 @@ public class ApplicationsOrchestratorTests
         // Act
         var viewModel = await _applicationsOrchestrator.GetApplication(request);
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(viewModel, Is.Not.Null);
-            Assert.That(viewModel.EncodedOpportunityId, Is.EqualTo(encodedPledgeId));
-        });
+        viewModel.Should().NotBeNull();
+        viewModel.EncodedOpportunityId.Should().Be(encodedPledgeId);
     }
 
 
@@ -88,11 +85,8 @@ public class ApplicationsOrchestratorTests
         var viewModel = await _applicationsOrchestrator.GetApplication(request);
 
         // Assert
-        Assert.Multiple(() =>
-        {
-            Assert.That(viewModel, Is.Not.Null);
-            Assert.That(viewModel.CanWithdraw, Is.EqualTo(expectCanWithdraw));
-        });
+        viewModel.Should().NotBeNull();
+        viewModel.CanWithdraw.Should().Be(expectCanWithdraw);
     }
 
     [Test]
@@ -110,7 +104,7 @@ public class ApplicationsOrchestratorTests
         var viewModel = await _applicationsOrchestrator.GetApplication(request);
 
         // Assert
-        Assert.That(viewModel, Is.Null);
+        viewModel.Should().BeNull();
     }
 
     [Test]
@@ -146,13 +140,10 @@ public class ApplicationsOrchestratorTests
         await _applicationsOrchestrator.SetApplicationAcceptance(request);
 
         // Assert
-        Assert.Multiple(() =>
-        {
-            Assert.That(actualRequest, Is.Not.Null);
-            Assert.That(actualRequest.UserId, Is.EqualTo(expectedUserId));
-            Assert.That(actualRequest.UserDisplayName, Is.EqualTo(expectedUserDisplayName));
-            Assert.That(actualRequest.Acceptance, Is.EqualTo(expectedAcceptance));
-        });
+        actualRequest.Should().NotBeNull();
+        actualRequest.UserId.Should().Be(expectedUserId);
+        actualRequest.UserDisplayName.Should().Be(expectedUserDisplayName);
+        actualRequest.Acceptance.Should().Be(expectedAcceptance);
     }
 
     [Test]
@@ -177,12 +168,8 @@ public class ApplicationsOrchestratorTests
         var viewModel = await _applicationsOrchestrator.GetAcceptedViewModel(request);
 
         // Assert
-        Assert.Multiple(() =>
-        {
-            Assert.That(viewModel, Is.Not.Null);
-            Assert.That(viewModel.EmployerNameAndReference,
-                Is.EqualTo($"{response.EmployerAccountName} ({encodedPledgeId})"));
-        });
+        viewModel.Should().NotBeNull();
+        viewModel.EmployerNameAndReference.Should().Be($"{response.EmployerAccountName} ({encodedPledgeId})");
     }
 
     [Test]
@@ -200,7 +187,7 @@ public class ApplicationsOrchestratorTests
         var viewModel = await _applicationsOrchestrator.GetAcceptedViewModel(request);
 
         // Assert
-        Assert.That(viewModel, Is.Null);
+        viewModel.Should().BeNull();
     }
 
     [Test]
@@ -225,12 +212,8 @@ public class ApplicationsOrchestratorTests
         var viewModel = await _applicationsOrchestrator.GetDeclinedViewModel(request);
 
         // Assert
-        Assert.Multiple(() =>
-        {
-            Assert.That(viewModel, Is.Not.Null);
-            Assert.That(viewModel.EmployerNameAndReference,
-                Is.EqualTo($"{response.EmployerAccountName} ({encodedPledgeId})"));
-        });
+        viewModel.Should().NotBeNull();
+        viewModel.EmployerNameAndReference.Should().Be($"{response.EmployerAccountName} ({encodedPledgeId})");
     }
 
     [Test]
@@ -248,7 +231,7 @@ public class ApplicationsOrchestratorTests
         var viewModel = await _applicationsOrchestrator.GetDeclinedViewModel(request);
 
         // Assert
-        Assert.That(viewModel, Is.Null);
+        viewModel.Should().BeNull();
     }
 
     [Test]
@@ -277,11 +260,8 @@ public class ApplicationsOrchestratorTests
         var viewModel = await _applicationsOrchestrator.GetApplication(request);
 
         // Assert
-        Assert.Multiple(() =>
-        {
-            Assert.That(viewModel, Is.Not.Null);
-            Assert.That(viewModel.CanAcceptFunding, Is.EqualTo(true));
-        });
+        viewModel.Should().NotBeNull();
+        viewModel.CanAcceptFunding.Should().Be(true);
     }
 
     [Test]
@@ -310,11 +290,8 @@ public class ApplicationsOrchestratorTests
         var viewModel = await _applicationsOrchestrator.GetApplication(request);
 
         // Assert
-        Assert.Multiple(() =>
-        {
-            Assert.That(viewModel, Is.Not.Null);
-            Assert.That(viewModel.CanUseTransferFunds, Is.EqualTo(true));
-        });
+        viewModel.Should().NotBeNull();
+        viewModel.CanUseTransferFunds.Should().Be(true);
     }
 
     [Test]
@@ -344,11 +321,8 @@ public class ApplicationsOrchestratorTests
         var viewModel = await _applicationsOrchestrator.GetApplication(request);
 
         // Assert
-        Assert.Multiple(() =>
-        {
-            Assert.That(viewModel, Is.Not.Null);
-            Assert.That(viewModel.RenderWithdrawAfterAcceptanceButton, Is.EqualTo(true));
-        });
+        viewModel.Should().NotBeNull();
+        viewModel.RenderWithdrawAfterAcceptanceButton.Should().Be(true);
     }
 
     [Test]
@@ -385,14 +359,11 @@ public class ApplicationsOrchestratorTests
         var viewModel = await _applicationsOrchestrator.GetWithdrawalConfirmationViewModel(request);
 
         // Assert
-        Assert.Multiple(() =>
-        {
-            Assert.That(viewModel, Is.Not.Null);
-            Assert.That(viewModel.PledgeEmployerName, Is.EqualTo(response.PledgeEmployerName));
-            Assert.That(viewModel.EncodedPledgeId, Is.EqualTo(encodedPledgeId));
-            Assert.That(viewModel.EncodedAccountId, Is.EqualTo(encodedAccountId));
-            Assert.That(viewModel.EncodedApplicationId, Is.EqualTo(encodedApplicationId));
-        });
+        viewModel.Should().NotBeNull();
+        viewModel.PledgeEmployerName.Should().Be(response.PledgeEmployerName);
+        viewModel.EncodedPledgeId.Should().Be(encodedPledgeId);
+        viewModel.EncodedAccountId.Should().Be(encodedAccountId);
+        viewModel.EncodedApplicationId.Should().Be(encodedApplicationId);
     }
 
     [Test]

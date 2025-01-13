@@ -19,7 +19,7 @@ public class StringExtensionsTests
         var result = selectedReferenceDataItemIds.ToReferenceDataDescriptionList(referenceDataItems);
 
         // Assert
-        Assert.That(result, Is.EqualTo("All"));
+        result.Should().Be("All");
     }
 
     [Test]
@@ -38,7 +38,7 @@ public class StringExtensionsTests
             .Select(x => x.Description)
             .ToArray());
 
-        Assert.That(expectedList, Is.EqualTo(result));
+        expectedList.Should().Be(result);
     }
 
     [Test]
@@ -54,7 +54,7 @@ public class StringExtensionsTests
         // Assert
         var expectedTagDesc = referenceDataItems.Where(x => referenceDataItemIds.Contains(x.Id)).Select(x => x.Description).Single();
 
-        Assert.That(expectedTagDesc, Is.EqualTo(result));
+        expectedTagDesc.Should().Be(result);
     }
         
     [Test]
@@ -68,13 +68,13 @@ public class StringExtensionsTests
         var result = referenceDataItemIds.ToReferenceDataDescriptionList(referenceDataItems);
 
         // Assert
-        Assert.That(result, Is.EqualTo("All"));
+        result.Should().Be("All");
     }
 
     [Test]
     public void IsComplete_Returns_False_When_Text_Is_NotCompletedString()
     {
-        Assert.That("-".IsComplete(), Is.False);
+        "-".IsComplete().Should().BeFalse();
     }
 
     [Test]
@@ -82,13 +82,13 @@ public class StringExtensionsTests
     {
         string str = null;
 
-        Assert.That(str.IsComplete(), Is.False);
+        str.IsComplete().Should().BeFalse();
     }
 
     [Test]
     public void IsComplete_Returns_False_When_Text_Is_Empty()
     {
-        Assert.That(string.Empty.IsComplete(), Is.False);
+        string.Empty.IsComplete().Should().BeFalse();
     }
 
     [TestCase("AdditionalLocation", "Manchester, Coventry, AdditionalLocation")]
@@ -103,7 +103,7 @@ public class StringExtensionsTests
 
         var locationsString = locations.ToApplicationLocationsString(", ", additionalLocation);
 
-        Assert.That(locationsString, Is.EqualTo(expected));
+        locationsString.Should().Be(expected);
     }
 
     [Test]
@@ -114,6 +114,6 @@ public class StringExtensionsTests
 
         var locationsString = locations.ToApplicationLocationsString(", ", additionalLocation);
 
-        Assert.That(locationsString, Is.EqualTo(additionalLocation));
+        locationsString.Should().Be(additionalLocation);
     }
 }

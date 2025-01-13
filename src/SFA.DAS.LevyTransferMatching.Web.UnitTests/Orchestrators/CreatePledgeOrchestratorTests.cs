@@ -102,14 +102,14 @@ public class CreatePledgeOrchestratorTests
     public void GetIndexViewModel_EncodedId_Is_Correct()
     {
         var result = _orchestrator.GetInformViewModel(_encodedAccountId);
-        Assert.That(result.EncodedAccountId, Is.EqualTo(_encodedAccountId));
+        result.EncodedAccountId.Should().Be(_encodedAccountId);
     }
 
     [Test]
     public void GetIndexViewModel_CacheKey_Has_Value()
     {
         var result = _orchestrator.GetInformViewModel(_encodedAccountId);
-        Assert.That(result.CacheKey, Is.Not.EqualTo(Guid.Empty));
+        result.CacheKey.Should().NotBe(Guid.Empty);
     }
 
 
@@ -117,14 +117,14 @@ public class CreatePledgeOrchestratorTests
     public async Task GetCreateViewModel_EncodedId_Is_Correct()
     {
         var result = await _orchestrator.GetCreateViewModel(new CreateRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
-        Assert.That(result.EncodedAccountId, Is.EqualTo(_encodedAccountId));
+        result.EncodedAccountId.Should().Be(_encodedAccountId);
     }
 
     [Test]
     public async Task GetCreateViewModel_CacheKey_Is_Correct()
     {
         var result = await _orchestrator.GetCreateViewModel(new CreateRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
-        Assert.That(result.CacheKey, Is.EqualTo(_cacheKey));
+        result.CacheKey.Should().Be(_cacheKey);
     }
 
     [Test]
@@ -134,28 +134,28 @@ public class CreatePledgeOrchestratorTests
         _cache.Setup(x => x.RetrieveFromCache<CreatePledgeCacheItem>(_cacheKey.ToString())).ReturnsAsync(cacheItem);
 
         var result = await _orchestrator.GetCreateViewModel(new CreateRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
-        Assert.That(result.Amount, Is.EqualTo(cacheItem.Amount));
+        result.Amount.Should().Be(cacheItem.Amount);
     }
 
     [Test]
     public async Task GetCreateViewModel_SectorOptions_Are_Populated()
     {
         var result = await _orchestrator.GetCreateViewModel(new CreateRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
-        Assert.That(result.SectorOptions, Is.EqualTo(_sectors));
+        result.SectorOptions.Should().BeEquivalentTo(_sectors);
     }
 
     [Test]
     public async Task GetCreateViewModel_JobRoleOptions_Are_Populated()
     {
         var result = await _orchestrator.GetCreateViewModel(new CreateRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
-        Assert.That(result.JobRoleOptions, Is.EqualTo(_jobRoles));
+        result.JobRoleOptions.Should().BeEquivalentTo(_jobRoles);
     }
 
     [Test]
     public async Task GetCreateViewModel_LevelOptions_Are_Populated()
     {
         var result = await _orchestrator.GetCreateViewModel(new CreateRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
-        Assert.That(result.LevelOptions, Is.EqualTo(_levels));
+        result.LevelOptions.Should().BeEquivalentTo(_levels);
     }
 
     [Test]
@@ -165,33 +165,33 @@ public class CreatePledgeOrchestratorTests
         _cache.Setup(x => x.RetrieveFromCache<CreatePledgeCacheItem>(_cacheKey.ToString())).ReturnsAsync(cacheItem);
 
         var result = await _orchestrator.GetCreateViewModel(new CreateRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
-        Assert.That(result.IsNamePublic, Is.EqualTo(cacheItem.IsNamePublic));
+        result.IsNamePublic.Should().Be(cacheItem.IsNamePublic);
     }
 
     [Test]
     public async Task GetCreateViewModel_Sectors_Is_Retrieved_From_Cache()
     {
         var cacheItem = _fixture.Build<CreatePledgeCacheItem>()
-            .With(x => x.Sectors, new List<string> { "Business" })
+            .With(x => x.Sectors, ["Business"])
             .Create();
 
         _cache.Setup(x => x.RetrieveFromCache<CreatePledgeCacheItem>(_cacheKey.ToString())).ReturnsAsync(cacheItem);
 
         var result = await _orchestrator.GetCreateViewModel(new CreateRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
-        Assert.That(result.Sectors, Is.EqualTo(cacheItem.Sectors));
+        result.Sectors.Should().BeEquivalentTo(cacheItem.Sectors);
     }
 
     [Test]
     public async Task GetCreateViewModel_JobRoles_Is_Retrieved_From_Cache()
     {
         var cacheItem = _fixture.Build<CreatePledgeCacheItem>()
-            .With(x => x.JobRoles, new List<string> { "Business" })
+            .With(x => x.JobRoles, ["Business"])
             .Create();
 
         _cache.Setup(x => x.RetrieveFromCache<CreatePledgeCacheItem>(_cacheKey.ToString())).ReturnsAsync(cacheItem);
 
         var result = await _orchestrator.GetCreateViewModel(new CreateRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
-        Assert.That(result.JobRoles, Is.EqualTo(cacheItem.JobRoles));
+        result.JobRoles.Should().BeEquivalentTo(cacheItem.JobRoles);
     }
 
     [TestCase(true)]
@@ -200,21 +200,21 @@ public class CreatePledgeOrchestratorTests
     {
         _featureToggles.FeatureToggleApplicationAutoApprove = toggleValue;
         var result = await _orchestrator.GetCreateViewModel(new CreateRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
-        Assert.That(result.AutoApprovalIsEnabled, Is.EqualTo(toggleValue));
+        result.AutoApprovalIsEnabled.Should().Be(toggleValue);
     }
 
     [Test]
     public async Task GetAmountViewModel_EncodedId_Is_Correct()
     {
         var result = await _orchestrator.GetAmountViewModel(new AmountRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
-        Assert.That(result.EncodedAccountId, Is.EqualTo(_encodedAccountId));
+        result.EncodedAccountId.Should().Be(_encodedAccountId);
     }
 
     [Test]
     public async Task GetAmountViewModel_CacheKey_Is_Correct()
     {
         var result = await _orchestrator.GetAmountViewModel(new AmountRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
-        Assert.That(result.CacheKey, Is.EqualTo(_cacheKey));
+        result.CacheKey.Should().Be(_cacheKey);
     }
 
     [Test]
@@ -224,23 +224,21 @@ public class CreatePledgeOrchestratorTests
         _cache.Setup(x => x.RetrieveFromCache<CreatePledgeCacheItem>(_cacheKey.ToString())).ReturnsAsync(cacheItem);
 
         var result = await _orchestrator.GetAmountViewModel(new AmountRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
-        Assert.That(result.Amount, Is.EqualTo(cacheItem.Amount.ToString()));
+        result.Amount.Should().Be(cacheItem.Amount.ToString());
     }
-
-
 
     [Test]
     public async Task GetOrganisationNameViewModel_EncodedId_Is_Correct()
     {
         var result = await _orchestrator.GetOrganisationNameViewModel(new OrganisationNameRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
-        Assert.That(result.EncodedAccountId, Is.EqualTo(_encodedAccountId));
+        result.EncodedAccountId.Should().Be(_encodedAccountId);
     }
 
     [Test]
     public async Task GetOrganisationNameViewModel_CacheKey_Is_Correct()
     {
         var result = await _orchestrator.GetOrganisationNameViewModel(new OrganisationNameRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
-        Assert.That(result.CacheKey, Is.EqualTo(_cacheKey));
+        result.CacheKey.Should().Be(_cacheKey);
     }
 
     [Test]
@@ -250,7 +248,7 @@ public class CreatePledgeOrchestratorTests
         _cache.Setup(x => x.RetrieveFromCache<CreatePledgeCacheItem>(_cacheKey.ToString())).ReturnsAsync(cacheItem);
 
         var result = await _orchestrator.GetOrganisationNameViewModel(new OrganisationNameRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
-        Assert.That(result.IsNamePublic, Is.EqualTo(cacheItem.IsNamePublic));
+        result.IsNamePublic.Should().Be(cacheItem.IsNamePublic);
     }
 
 
@@ -258,151 +256,150 @@ public class CreatePledgeOrchestratorTests
     public async Task GetSectorViewModel_EncodedId_Is_Correct()
     {
         var result = await _orchestrator.GetSectorViewModel(new SectorRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
-        Assert.That(result.EncodedAccountId, Is.EqualTo(_encodedAccountId));
+        result.EncodedAccountId.Should().Be(_encodedAccountId);
     }
 
     [Test]
     public async Task GetSectorViewModel_CacheKey_Is_Correct()
     {
         var result = await _orchestrator.GetSectorViewModel(new SectorRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
-        Assert.That(result.CacheKey, Is.EqualTo(_cacheKey));
+        result.CacheKey.Should().Be(_cacheKey);
     }
 
     [Test]
     public async Task GetSectorViewModel_SectorOptions_Are_Populated()
     {
         var result = await _orchestrator.GetSectorViewModel(new SectorRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
-        Assert.That(result.SectorOptions, Is.EqualTo(_sectors));
+        result.SectorOptions.Should().BeEquivalentTo(_sectors);
     }
 
     [Test]
     public async Task GetSectorViewModel_Sectors_Is_Correct()
     {
         var cacheItem = _fixture.Build<CreatePledgeCacheItem>()
-            .With(x => x.Sectors, new List<string> { "Agriculture" })
+            .With(x => x.Sectors, ["Agriculture"])
             .Create();
 
         _cache.Setup(x => x.RetrieveFromCache<CreatePledgeCacheItem>(_cacheKey.ToString())).ReturnsAsync(cacheItem);
 
         var result = await _orchestrator.GetSectorViewModel(new SectorRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
-        Assert.That(result.Sectors, Is.EqualTo(cacheItem.Sectors));
+        result.Sectors.Should().BeEquivalentTo(cacheItem.Sectors);
     }
 
     [Test]
     public async Task GetJobRoleViewModel_EncodedId_Is_Correct()
     {
         var result = await _orchestrator.GetJobRoleViewModel(new JobRoleRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
-        Assert.That(result.EncodedAccountId, Is.EqualTo(_encodedAccountId));
+        result.EncodedAccountId.Should().Be(_encodedAccountId);
     }
 
     [Test]
     public async Task GetJobRoleViewModel_CacheKey_Is_Correct()
     {
         var result = await _orchestrator.GetJobRoleViewModel(new JobRoleRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
-        Assert.That(result.CacheKey, Is.EqualTo(_cacheKey));
+        result.CacheKey.Should().Be(_cacheKey);
     }
 
     [Test]
     public async Task GetJobRoleViewModel_JobRoleOptions_Are_Populated()
     {
         var result = await _orchestrator.GetJobRoleViewModel(new JobRoleRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
-        Assert.That(result.JobRoleOptions, Is.EqualTo(_jobRoles));
+        result.JobRoleOptions.Should().BeEquivalentTo(_jobRoles);
     }
 
     [Test]
     public async Task GetJobRoleViewModel_JobRoles_Is_Correct()
     {
         var cacheItem = _fixture.Build<CreatePledgeCacheItem>()
-            .With(x => x.JobRoles, new List<string> { "Business" })
+            .With(x => x.JobRoles, ["Business"])
             .Create();
 
         _cache.Setup(x => x.RetrieveFromCache<CreatePledgeCacheItem>(_cacheKey.ToString())).ReturnsAsync(cacheItem);
 
         var result = await _orchestrator.GetJobRoleViewModel(new JobRoleRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
-        Assert.That(result.JobRoles, Is.EqualTo(cacheItem.JobRoles));
+        result.JobRoles.Should().BeEquivalentTo(cacheItem.JobRoles);
     }
 
     [Test]
     public async Task GetJobRoleViewModel_SectorOptions_Are_Populated()
     {
         var result = await _orchestrator.GetJobRoleViewModel(new JobRoleRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
-        Assert.That(result.SectorOptions, Is.EqualTo(_sectors));
+        result.SectorOptions.Should().BeEquivalentTo(_sectors);
     }
 
     [Test]
     public async Task GetJobRoleViewModel_Sectors_Is_Correct()
     {
         var cacheItem = _fixture.Build<CreatePledgeCacheItem>()
-            .With(x => x.Sectors, new List<string> { "Business" })
+            .With(x => x.Sectors, ["Business"])
             .Create();
 
         _cache.Setup(x => x.RetrieveFromCache<CreatePledgeCacheItem>(_cacheKey.ToString())).ReturnsAsync(cacheItem);
 
         var result = await _orchestrator.GetJobRoleViewModel(new JobRoleRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
-        Assert.That(result.Sectors, Is.EqualTo(cacheItem.Sectors));
+        result.Sectors.Should().BeEquivalentTo(cacheItem.Sectors);
     }
 
     [Test]
     public async Task GetLevelViewModel_EncodedId_Is_Correct()
     {
         var result = await _orchestrator.GetLevelViewModel(new LevelRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
-        Assert.That(result.EncodedAccountId, Is.EqualTo(_encodedAccountId));
+        result.EncodedAccountId.Should().Be(_encodedAccountId);
     }
 
     [Test]
     public async Task GetLevelViewModel_CacheKey_Is_Correct()
     {
         var result = await _orchestrator.GetLevelViewModel(new LevelRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
-        Assert.That(result.CacheKey, Is.EqualTo(_cacheKey));
+        result.CacheKey.Should().Be(_cacheKey);
     }
 
     [Test]
     public async Task GetLevelViewModel_LevelOptions_Are_Populated()
     {
         var result = await _orchestrator.GetLevelViewModel(new LevelRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
-        Assert.That(result.LevelOptions, Is.EqualTo(_levels));
+        result.LevelOptions.Should().BeEquivalentTo(_levels);
     }
 
     [Test]
     public async Task GetLevelViewModel_Sectors_Is_Correct()
     {
         var cacheItem = _fixture.Build<CreatePledgeCacheItem>()
-            .With(x => x.Levels, new List<string> { "Level2" })
+            .With(x => x.Levels, ["Level2"])
             .Create();
 
         _cache.Setup(x => x.RetrieveFromCache<CreatePledgeCacheItem>(_cacheKey.ToString())).ReturnsAsync(cacheItem);
 
         var result = await _orchestrator.GetLevelViewModel(new LevelRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
-        Assert.That(result.Levels, Is.EqualTo(cacheItem.Levels));
+        result.Levels.Should().BeEquivalentTo(cacheItem.Levels);
     }
 
     [Test]
     public async Task GetLocationViewModel_Locations_Is_Correct()
     {
         var cacheItem = _fixture.Build<CreatePledgeCacheItem>()
-            .With(x => x.Locations, new List<string> { "Manchester" })
+            .With(x => x.Locations, ["Manchester"])
             .Create();
 
         _cache.Setup(x => x.RetrieveFromCache<CreatePledgeCacheItem>(_cacheKey.ToString())).ReturnsAsync(cacheItem);
 
         var result = await _orchestrator.GetLocationViewModel(new LocationRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
-        Assert.That(result.Locations, Is.EqualTo(cacheItem.Locations));
+        result.Locations.Should().BeEquivalentTo(cacheItem.Locations);
     }
-
 
 
     [Test]
     public async Task GetAutoApproveViewModel_EncodedId_Is_Correct()
     {
         var result = await _orchestrator.GetAutoApproveViewModel(new AutoApproveRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
-        Assert.That(result.EncodedAccountId, Is.EqualTo(_encodedAccountId));
+        result.EncodedAccountId.Should().Be(_encodedAccountId);
     }
 
     [Test]
     public async Task GetAutoApproveViewModel_CacheKey_Is_Correct()
     {
         var result = await _orchestrator.GetAutoApproveViewModel(new AutoApproveRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey, AccountId = _accountId });
-        Assert.That(result.CacheKey, Is.EqualTo(_cacheKey));
+        result.CacheKey.Should().Be(_cacheKey);
     }
 
     [Test]
@@ -414,10 +411,8 @@ public class CreatePledgeOrchestratorTests
         _cache.Setup(x => x.RetrieveFromCache<CreatePledgeCacheItem>(_cacheKey.ToString())).ReturnsAsync(cacheItem);
 
         var result = await _orchestrator.GetAutoApproveViewModel(new AutoApproveRequest { EncodedAccountId = _encodedAccountId, CacheKey = _cacheKey });
-        Assert.That(result.AutomaticApprovalOption, Is.EqualTo(cacheItem.AutomaticApprovalOption));
+        result.AutomaticApprovalOption.Should().Be(cacheItem.AutomaticApprovalOption);
     }
-
-
 
     [Test]
     public async Task SubmitPledge_Is_Correct()
@@ -437,9 +432,8 @@ public class CreatePledgeOrchestratorTests
         _pledgeService.Verify(x => x.PostPledge(It.IsAny<CreatePledgeRequest>(), _accountId), Times.Once);
         _encodingService.Verify(x => x.Encode(_pledgeId, EncodingType.PledgeId), Times.Once);
 
-        Assert.That(result, Is.EqualTo(_encodedPledgeId));
+        result.Should().Be(_encodedPledgeId);
     }
-
 
     [Test]
     public async Task ValidateLocations_Returns_No_Errors_But_Caches_MultipleValidLocations()
@@ -459,6 +453,7 @@ public class CreatePledgeOrchestratorTests
                     y.Add(location);
                 }
             };
+        
         _validatorService
             .Setup(x => x.ValidateLocations(It.Is<LocationPostRequest>(y => y == request), It.Is<IDictionary<int, IEnumerable<string>>>(y => y == multipleValidLocations)))
             .Callback(validateLocationsCallback)
@@ -474,19 +469,16 @@ public class CreatePledgeOrchestratorTests
             .ReturnsAsync(cacheItem);
 
         Action<string, LocationSelectionCacheItem, int> saveToCacheCallback =
-            (x, y, z) =>
-            {
-                cachedMultipleValidLocations = y.MultipleValidLocations;
-            };
+            (x, y, z) => { cachedMultipleValidLocations = y.MultipleValidLocations; };
         _cache
             .Setup(x => x.SaveToCache(It.Is<string>(y => y == $"LocationSelectionCacheItem_{cacheItem.Key}"), It.Is<LocationSelectionCacheItem>(y => y == cacheItem), It.Is<int>(y => y == 1)))
             .Callback(saveToCacheCallback);
 
         // Act
-        var result = await _orchestrator.ValidateLocations(request, multipleValidLocations);
+        await _orchestrator.ValidateLocations(request, multipleValidLocations);
 
         // Assert
-        Assert.That(cachedMultipleValidLocations, Is.EqualTo(multipleValidLocations));
+        cachedMultipleValidLocations.Should().BeEquivalentTo(multipleValidLocations);
     }
 
     [Test]
@@ -505,7 +497,7 @@ public class CreatePledgeOrchestratorTests
         var result = await _orchestrator.ValidateLocations(request, multipleValidLocations);
 
         // Assert
-        Assert.That(result, Is.EqualTo(errors));
+        result.Should().BeEquivalentTo(errors);
     }
 
     [Test]
@@ -526,11 +518,11 @@ public class CreatePledgeOrchestratorTests
         // Assert
         foreach (var selectValidLocationGroup in result.SelectValidLocationGroups)
         {
-            Assert.That(cacheItem.MultipleValidLocations.Keys, Has.Member(selectValidLocationGroup.Index));
+            cacheItem.MultipleValidLocations.Keys.Should().Contain(selectValidLocationGroup.Index);
 
             var locationNames = selectValidLocationGroup.ValidLocationItems.Select(x => x.Value);
 
-            Assert.That(locationNames, Is.EqualTo(cacheItem.MultipleValidLocations[selectValidLocationGroup.Index]).AsCollection);
+            locationNames.Should().BeEquivalentTo(cacheItem.MultipleValidLocations[selectValidLocationGroup.Index]);
         }
     }
 }

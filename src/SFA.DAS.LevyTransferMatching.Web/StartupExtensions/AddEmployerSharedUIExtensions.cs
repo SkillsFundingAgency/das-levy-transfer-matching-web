@@ -9,26 +9,16 @@ public static class AddEmployerSharedUiExtensions
 {
     public static void AddEmployerSharedUi(this IServiceCollection services, IConfiguration configuration)
     {
-        if (configuration[$"{nameof(Infrastructure.Configuration.FeatureToggles)}:UseGovSignIn"] != null
-            && configuration[$"{nameof(Infrastructure.Configuration.FeatureToggles)}:UseGovSignIn"]
-                .Equals("true", StringComparison.CurrentCultureIgnoreCase))
-        {
-            services.AddMaMenuConfiguration("signout", configuration["APPSETTING_ResourceEnvironmentName"]);
-        }
-        else
-        {
-            var authenticationConfig = configuration.GetSection<Infrastructure.Configuration.Authentication>();
-            services.AddMaMenuConfiguration("signout", authenticationConfig.ClientId, configuration["APPSETTING_ResourceEnvironmentName"]);    
-        }
+        services.AddMaMenuConfiguration("signout", configuration["APPSETTING_ResourceEnvironmentName"]);
 
         services.AddSingleton<ICookieBannerViewModel>(provider =>
         {
             var maLinkGenerator = provider.GetService<ILinkGenerator>();
+
             return new CookieBannerViewModel
             {
                 CookieDetailsUrl = maLinkGenerator.AccountsLink("cookieConsent/details"),
                 CookieConsentUrl = maLinkGenerator.AccountsLink("cookieConsent"),
-
             };
         });
     }

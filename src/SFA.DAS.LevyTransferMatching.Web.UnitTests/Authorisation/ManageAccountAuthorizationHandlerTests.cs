@@ -15,7 +15,7 @@ public class WhenHandleRequirementAsync
     [SetUp]
     public void SetUp()
     {
-        _context = new AuthorizationHandlerContext(new[] {new ManageAccountRequirement()}, new ClaimsPrincipal(), "");
+        _context = new AuthorizationHandlerContext(new[] { new ManageAccountRequirement() }, new ClaimsPrincipal(), "");
         _employerAccountAuthorizationHandler = new Mock<IEmployerAccountAuthorizationHandler>();
         _handler = new ManageAccountAuthorizationHandler(_employerAccountAuthorizationHandler.Object);
     }
@@ -25,9 +25,9 @@ public class WhenHandleRequirementAsync
     {
         _employerAccountAuthorizationHandler.Setup(x => x.IsEmployerAuthorized(_context, UserRole.Transactor))
             .ReturnsAsync(false);
-            
+
         await _handler.HandleAsync(_context);
-        Assert.That(_context.HasSucceeded, Is.False);
+        _context.HasSucceeded.Should().BeFalse();
     }
 
     [Test]
@@ -35,8 +35,8 @@ public class WhenHandleRequirementAsync
     {
         _employerAccountAuthorizationHandler.Setup(x => x.IsEmployerAuthorized(_context, UserRole.Transactor))
             .ReturnsAsync(true);
-            
+
         await _handler.HandleAsync(_context);
-        Assert.That(_context.HasSucceeded, Is.True);
+        _context.HasSucceeded.Should().BeTrue();
     }
 }

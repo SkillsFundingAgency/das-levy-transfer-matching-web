@@ -1,6 +1,6 @@
 ﻿namespace SFA.DAS.LevyTransferMatching.Web.Authorization;
 
-public class RouteValueKeys
+public static class RouteValueKeys
 {
     public const string EncodedAccountId = nameof(EncodedAccountId);
 }

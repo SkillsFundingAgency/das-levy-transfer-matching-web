@@ -1,4 +1,5 @@
-﻿using SFA.DAS.LevyTransferMatching.Web.Controllers;
+﻿using FluentAssertions.Execution;
+using SFA.DAS.LevyTransferMatching.Web.Controllers;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 
@@ -33,12 +34,12 @@ public class CreatePledgeControllerTests
         var viewResult = _pledgesController.Inform(encodedAccountId) as ViewResult;
         var indexViewModel = viewResult?.Model as InformViewModel;
 
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
             // Assert
-            Assert.That(viewResult, Is.Not.Null);
-            Assert.That(indexViewModel, Is.Not.Null);
-        });
+            viewResult.Should().NotBeNull();
+            indexViewModel.Should().NotBeNull();
+        }
     }
 
     [Test]
@@ -52,12 +53,12 @@ public class CreatePledgeControllerTests
         var viewResult = await _pledgesController.Create(request) as ViewResult;
         var createViewModel = viewResult?.Model as CreateViewModel;
 
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
             // Assert
-            Assert.That(viewResult, Is.Not.Null);
-            Assert.That(createViewModel, Is.Not.Null);
-        });
+            viewResult.Should().NotBeNull();
+            createViewModel.Should().NotBeNull();
+        }
     }
 
     [Test]
@@ -71,12 +72,12 @@ public class CreatePledgeControllerTests
         var viewResult = await _pledgesController.Amount(request) as ViewResult;
         var amountViewModel = viewResult?.Model as AmountViewModel;
 
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
             // Assert
-            Assert.That(viewResult, Is.Not.Null);
-            Assert.That(amountViewModel, Is.Not.Null);
-        });
+            viewResult.Should().NotBeNull();
+            amountViewModel.Should().NotBeNull();
+        }
     }
 
     [Test]
@@ -89,12 +90,12 @@ public class CreatePledgeControllerTests
         var actionResult = await _pledgesController.Amount(request) as RedirectToActionResult;
 
         // Assert
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
-            Assert.That(actionResult, Is.Not.Null);
-            Assert.That(actionResult.ActionName, Is.EqualTo("Create"));
-            Assert.That(actionResult.RouteValues["encodedAccountId"], Is.EqualTo(request.EncodedAccountId));
-        });
+            actionResult.Should().NotBeNull();
+            actionResult.ActionName.Should().Be("Create");
+            actionResult.RouteValues["encodedAccountId"].Should().Be(request.EncodedAccountId);
+        }
     }
 
     [Test]
@@ -109,12 +110,12 @@ public class CreatePledgeControllerTests
         var viewResult = await _pledgesController.Organisation(request) as ViewResult;
         var organisationNameViewModel = viewResult?.Model as OrganisationNameViewModel;
 
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
             // Assert
-            Assert.That(viewResult, Is.Not.Null);
-            Assert.That(organisationNameViewModel, Is.Not.Null);
-        });
+            viewResult.Should().NotBeNull();
+            organisationNameViewModel.Should().NotBeNull();
+        }
     }
 
     [Test]
@@ -127,12 +128,12 @@ public class CreatePledgeControllerTests
         var actionResult = await _pledgesController.Organisation(request) as RedirectToActionResult;
 
         // Assert
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
-            Assert.That(actionResult, Is.Not.Null);
-            Assert.That(actionResult.ActionName, Is.EqualTo("Create"));
-            Assert.That(actionResult.RouteValues["encodedAccountId"], Is.EqualTo(request.EncodedAccountId));
-        });
+            actionResult.Should().NotBeNull();
+            actionResult.ActionName.Should().Be("Create");
+            actionResult.RouteValues["encodedAccountId"].Should().Be(request.EncodedAccountId);
+        }
     }
 
     [Test]
@@ -146,12 +147,12 @@ public class CreatePledgeControllerTests
         var viewResult = await _pledgesController.AutoApproval(request) as ViewResult;
         var organisationNameViewModel = viewResult?.Model as AutoApproveViewModel;
 
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
             // Assert
-            Assert.That(viewResult, Is.Not.Null);
-            Assert.That(organisationNameViewModel, Is.Not.Null);
-        });
+            viewResult.Should().NotBeNull();
+            organisationNameViewModel.Should().NotBeNull();
+        }
     }
 
     [Test]
@@ -164,12 +165,12 @@ public class CreatePledgeControllerTests
         var actionResult = await _pledgesController.AutoApproval(request) as RedirectToActionResult;
 
         // Assert
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
-            Assert.That(actionResult, Is.Not.Null);
-            Assert.That(actionResult.ActionName, Is.EqualTo("Create"));
-            Assert.That(actionResult.RouteValues["encodedAccountId"], Is.EqualTo(request.EncodedAccountId));
-        });
+            actionResult.Should().NotBeNull();
+            actionResult.ActionName.Should().Be("Create");
+            actionResult.RouteValues["encodedAccountId"].Should().Be(request.EncodedAccountId);
+        }
     }
 
     [Test]
@@ -183,12 +184,12 @@ public class CreatePledgeControllerTests
         var viewResult = await _pledgesController.Sector(request) as ViewResult;
         var amountViewModel = viewResult?.Model as SectorViewModel;
 
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
             // Assert
-            Assert.That(viewResult, Is.Not.Null);
-            Assert.That(amountViewModel, Is.Not.Null);
-        });
+            viewResult.Should().NotBeNull();
+            amountViewModel.Should().NotBeNull();
+        }
     }
 
     [Test]
@@ -201,12 +202,12 @@ public class CreatePledgeControllerTests
         var actionResult = await _pledgesController.Sector(request) as RedirectToActionResult;
 
         // Assert
-       Assert.Multiple(() =>
+        using (new AssertionScope())
         {
-            Assert.That(actionResult, Is.Not.Null);
-            Assert.That(actionResult.ActionName, Is.EqualTo("Create"));
-            Assert.That(actionResult.RouteValues["encodedAccountId"], Is.EqualTo(request.EncodedAccountId));
-        });
+            actionResult.Should().NotBeNull();
+            actionResult.ActionName.Should().Be("Create");
+            actionResult.RouteValues["encodedAccountId"].Should().Be(request.EncodedAccountId);
+        }
     }
 
     [Test]
@@ -220,12 +221,12 @@ public class CreatePledgeControllerTests
         var viewResult = await _pledgesController.Level(request) as ViewResult;
         var amountViewModel = viewResult?.Model as LevelViewModel;
 
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
             // Assert
-            Assert.That(viewResult, Is.Not.Null);
-            Assert.That(amountViewModel, Is.Not.Null);
-        });
+            viewResult.Should().NotBeNull();
+            amountViewModel.Should().NotBeNull();
+        }
     }
 
     [Test]
@@ -238,12 +239,12 @@ public class CreatePledgeControllerTests
         var actionResult = await _pledgesController.Level(request) as RedirectToActionResult;
 
         // Assert
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
-            Assert.That(actionResult, Is.Not.Null);
-            Assert.That(actionResult.ActionName, Is.EqualTo("Create"));
-            Assert.That(actionResult.RouteValues["encodedAccountId"], Is.EqualTo(request.EncodedAccountId));
-        });
+            actionResult.Should().NotBeNull();
+            actionResult.ActionName.Should().Be("Create");
+            actionResult.RouteValues["encodedAccountId"].Should().Be(request.EncodedAccountId);
+        }
     }
 
     [Test]
@@ -257,12 +258,12 @@ public class CreatePledgeControllerTests
         var viewResult = await _pledgesController.JobRole(request) as ViewResult;
         var jobRoleViewModel = viewResult?.Model as JobRoleViewModel;
 
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
             // Assert
-            Assert.That(viewResult, Is.Not.Null);
-            Assert.That(jobRoleViewModel, Is.Not.Null);
-        });
+            viewResult.Should().NotBeNull();
+            jobRoleViewModel.Should().NotBeNull();
+        }
     }
 
     [Test]
@@ -275,12 +276,12 @@ public class CreatePledgeControllerTests
         var actionResult = await _pledgesController.JobRole(request) as RedirectToActionResult;
 
         // Assert
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
-            Assert.That(actionResult, Is.Not.Null);
-            Assert.That(actionResult.ActionName, Is.EqualTo("Create"));
-            Assert.That(actionResult.RouteValues["encodedAccountId"], Is.EqualTo(request.EncodedAccountId));
-        });
+            actionResult.Should().NotBeNull();
+            actionResult.ActionName.Should().Be("Create");
+            actionResult.RouteValues["encodedAccountId"].Should().Be(request.EncodedAccountId);
+        }
     }
 
     [Test]
@@ -294,12 +295,12 @@ public class CreatePledgeControllerTests
         var viewResult = await _pledgesController.Location(request) as ViewResult;
         var locationViewModel = viewResult?.Model as LocationViewModel;
 
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
             // Assert
-            Assert.That(viewResult, Is.Not.Null);
-            Assert.That(locationViewModel, Is.Not.Null);
-        });
+            viewResult.Should().NotBeNull();
+            locationViewModel.Should().NotBeNull();
+        }
     }
 
     [Test]
@@ -316,13 +317,13 @@ public class CreatePledgeControllerTests
         var actionResult = await _pledgesController.Location(request) as RedirectToActionResult;
 
         // Assert
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
-            Assert.That(actionResult, Is.Not.Null);
-            Assert.That(actionResult.ActionName, Is.EqualTo("Create"));
-            Assert.That(actionResult.RouteValues["encodedAccountId"], Is.EqualTo(request.EncodedAccountId));
-            Assert.That(actionResult.RouteValues["cacheKey"], Is.EqualTo(request.CacheKey));
-        });
+            actionResult.Should().NotBeNull();
+            actionResult.ActionName.Should().Be("Create");
+            actionResult.RouteValues["encodedAccountId"].Should().Be(request.EncodedAccountId);
+            actionResult.RouteValues["cacheKey"].Should().Be(request.CacheKey);
+        }
     }
 
     [Test]
@@ -333,19 +334,19 @@ public class CreatePledgeControllerTests
         _orchestrator
             .Setup(x => x.ValidateLocations(It.IsAny<LocationPostRequest>(),
                 It.IsAny<IDictionary<int, IEnumerable<string>>>()))
-            .ReturnsAsync(new Dictionary<int, string>() { { 1, "Error Message" } });
+            .ReturnsAsync(new Dictionary<int, string> { { 1, "Error Message" } });
 
         // Act
         var actionResult = await _pledgesController.Location(request) as RedirectToActionResult;
 
         // Assert
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
-            Assert.That(actionResult, Is.Not.Null);
-            Assert.That(actionResult.ActionName, Is.EqualTo("Location"));
-            Assert.That(actionResult.RouteValues["encodedAccountId"], Is.EqualTo(request.EncodedAccountId));
-            Assert.That(actionResult.RouteValues["cacheKey"], Is.EqualTo(request.CacheKey));
-        });
+            actionResult.Should().NotBeNull();
+            actionResult.ActionName.Should().Be("Location");
+            actionResult.RouteValues["encodedAccountId"].Should().Be(request.EncodedAccountId);
+            actionResult.RouteValues["cacheKey"].Should().Be(request.CacheKey);
+        }
     }
 
     [Test]
@@ -370,13 +371,13 @@ public class CreatePledgeControllerTests
         var actionResult = await _pledgesController.Location(request) as RedirectToActionResult;
 
         // Assert
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
-            Assert.That(actionResult, Is.Not.Null);
-            Assert.That(actionResult.ActionName, Is.EqualTo("LocationSelect"));
-            Assert.That(actionResult.RouteValues["encodedAccountId"], Is.EqualTo(request.EncodedAccountId));
-            Assert.That(actionResult.RouteValues["cacheKey"], Is.EqualTo(request.CacheKey));
-        });
+            actionResult.Should().NotBeNull();
+            actionResult.ActionName.Should().Be("LocationSelect");
+            actionResult.RouteValues["encodedAccountId"].Should().Be(request.EncodedAccountId);
+            actionResult.RouteValues["cacheKey"].Should().Be(request.CacheKey);
+        }
     }
 
     [Test]
@@ -397,13 +398,13 @@ public class CreatePledgeControllerTests
         var actionResult = await _pledgesController.Location(request) as RedirectToActionResult;
 
         // Assert
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
-            Assert.That(actionResult, Is.Not.Null);
-            Assert.That(actionResult.ActionName, Is.EqualTo("Create"));
-            Assert.That(actionResult.RouteValues["encodedAccountId"], Is.EqualTo(request.EncodedAccountId));
-            Assert.That(actionResult.RouteValues["cacheKey"], Is.EqualTo(request.CacheKey));
-        });
+            actionResult.Should().NotBeNull();
+            actionResult.ActionName.Should().Be("Create");
+            actionResult.RouteValues["encodedAccountId"].Should().Be(request.EncodedAccountId);
+            actionResult.RouteValues["cacheKey"].Should().Be(request.CacheKey);
+        }
     }
 
     [Test]
@@ -423,15 +424,15 @@ public class CreatePledgeControllerTests
         var model = viewResult.Model;
         var actualViewModel = model as LocationSelectViewModel;
 
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
             // Assert
-            Assert.That(actionResult, Is.Not.Null);
-            Assert.That(viewResult, Is.Not.Null);
-            Assert.That(model, Is.Not.Null);
-            Assert.That(actualViewModel, Is.Not.Null);
-            Assert.That(actualViewModel, Is.EqualTo(expectedViewModel));
-        });
+            actionResult.Should().NotBeNull();
+            viewResult.Should().NotBeNull();
+            model.Should().NotBeNull();
+            actualViewModel.Should().NotBeNull();
+            actualViewModel.Should().Be(expectedViewModel);
+        }
     }
 
     [Test]
@@ -444,13 +445,13 @@ public class CreatePledgeControllerTests
         var actionResult = await _pledgesController.LocationSelect(request);
         var redirectToAction = actionResult as RedirectToActionResult;
 
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
             // Assert
-            Assert.That(actionResult, Is.Not.Null);
-            Assert.That(redirectToAction, Is.Not.Null);
-            Assert.That(redirectToAction.ActionName, Is.EqualTo(nameof(CreatePledgeController.Create)));
-        });
+            actionResult.Should().NotBeNull();
+            redirectToAction.Should().NotBeNull();
+            redirectToAction.ActionName.Should().Be(nameof(CreatePledgeController.Create));
+        }
     }
 
     [Test]
@@ -463,12 +464,12 @@ public class CreatePledgeControllerTests
         var actionResult = await _pledgesController.Create(request) as RedirectToActionResult;
 
         // Assert
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
-            Assert.That(actionResult, Is.Not.Null);
-            Assert.That(actionResult.ActionName, Is.EqualTo("Confirmation"));
-            Assert.That(actionResult.RouteValues["encodedAccountId"], Is.EqualTo(request.EncodedAccountId));
-        });
+            actionResult.Should().NotBeNull();
+            actionResult.ActionName.Should().Be("Confirmation");
+            actionResult.RouteValues["encodedAccountId"].Should().Be(request.EncodedAccountId);
+        }
     }
 
     [Test]
@@ -479,10 +480,10 @@ public class CreatePledgeControllerTests
         var viewResult = _pledgesController.Confirmation(request) as ViewResult;
         var viewmodel = viewResult?.Model as ConfirmationViewModel;
 
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
-            Assert.That(viewResult, Is.Not.Null);
-            Assert.That(viewmodel, Is.Not.Null);
-        });
+            viewResult.Should().NotBeNull();
+            viewmodel.Should().NotBeNull();
+        }
     }
 }

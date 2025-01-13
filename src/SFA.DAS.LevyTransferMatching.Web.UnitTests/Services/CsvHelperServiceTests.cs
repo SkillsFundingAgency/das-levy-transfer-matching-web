@@ -26,7 +26,7 @@ public class CsvHelperServiceTests
         }
         var actual = _csvService.GenerateCsvFileFromModel(model);
 
-        Assert.That(actual, Is.Not.Empty);
+        actual.Should().NotBeEmpty();
     }
 
     [TestCase(0, false)]
@@ -46,6 +46,6 @@ public class CsvHelperServiceTests
         CsvHelperService.AddLocationColumns(model, returnModel, totalLocationColumnsRequired);
 
         var expandoDict = returnModel as IDictionary<string, object>;
-        Assert.That(expandoDict.ContainsKey($"Location{totalLocationColumnsRequired}"), Is.EqualTo(expectedOutcome));
+        expandoDict.ContainsKey($"Location{totalLocationColumnsRequired}").Should().Be(expectedOutcome);
     }
 }

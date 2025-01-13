@@ -50,12 +50,12 @@ public class Startup
                 options.Filters.Add(new SetZenDeskValuesAttribute(_configuration.GetSection<ZenDesk>()));
 
                 options.Filters.Add(new GoogleAnalyticsFilter());
-                options.Filters.Add(new AccountActiveFilter(_configuration));
 
                 if (!config.IsLive)
                 {
                     options.Filters.Add<DisabledActionFilter>();
                 }
+
                 options.ModelBinderProviders.Insert(0, new AutoDecodeModelBinderProvider());
             })
             .AddControllersAsServices()
@@ -94,7 +94,6 @@ public class Startup
         else
         {
             app.UseExceptionHandler("/Home/Error");
-            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
         }
 
@@ -106,11 +105,6 @@ public class Startup
         app.UseAuthorization();
         app.UseMiddleware<SecurityHeadersMiddleware>();
 
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
-        });
+        app.UseEndpoints(endpoints => endpoints.MapDefaultControllerRoute());
     }
 }

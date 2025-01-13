@@ -18,7 +18,7 @@ public class UserServiceTests
     {
         _fixture = new Fixture();
 
-        Mock<IHttpContextAccessor> mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
+        var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
 
         _mockClaimsIdentity = new Mock<ClaimsIdentity>();
 
@@ -59,7 +59,7 @@ public class UserServiceTests
         var actualAccountIds = _userService.GetUserOwnerTransactorAccountIds();
 
         // Assert
-        Assert.That(actualAccountIds, Is.EqualTo(expectedAccountIds).AsCollection);
+        actualAccountIds.Should().BeEquivalentTo(expectedAccountIds);
     }
 
     [Test]
@@ -74,7 +74,7 @@ public class UserServiceTests
         var actualAccountIds = _userService.GetUserOwnerTransactorAccountIds();
 
         // Assert
-        Assert.That(actualAccountIds, Is.Null);
+        actualAccountIds.Should().BeNull();
     }
 
     [Test]
@@ -89,6 +89,6 @@ public class UserServiceTests
         var actualAccountIds = _userService.GetUserOwnerTransactorAccountIds();
 
         // Assert
-        Assert.That(actualAccountIds, Is.Null);
+        actualAccountIds.Should().BeNull();
     }
 }

@@ -1,4 +1,5 @@
-﻿using SFA.DAS.LevyTransferMatching.Web.Controllers;
+﻿using FluentAssertions.Execution;
+using SFA.DAS.LevyTransferMatching.Web.Controllers;
 using SFA.DAS.LevyTransferMatching.Web.Models.Applications;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 
@@ -34,7 +35,7 @@ public class ApplicationsControllerTests
         var result = await _controller.Applications(new GetApplicationsRequest()) as ViewResult;
 
         var actual = result.Model as GetApplicationsViewModel;
-        Assert.That(actual.EncodedAccountId, Is.EqualTo("ID"));
+        actual.EncodedAccountId.Should().Be("ID");
     }
 
     [Test]
@@ -52,14 +53,14 @@ public class ApplicationsControllerTests
         var model = viewResult.Model;
         var applicationViewModel = model as ApplicationViewModel;
 
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
             // Assert
-            Assert.That(actionResult, Is.Not.Null);
-            Assert.That(viewResult, Is.Not.Null);
-            Assert.That(model, Is.Not.Null);
-            Assert.That(applicationViewModel, Is.Not.Null);
-        });
+            actionResult.Should().NotBeNull();
+            viewResult.Should().NotBeNull();
+            model.Should().NotBeNull();
+            applicationViewModel.Should().NotBeNull();
+        }
     }
 
     [Test]
@@ -75,12 +76,12 @@ public class ApplicationsControllerTests
         var actionResult = await _controller.Application(request);
         var notFoundResult = actionResult as NotFoundResult;
 
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
             // Assert
-            Assert.That(actionResult, Is.Not.Null);
-            Assert.That(notFoundResult, Is.Not.Null);
-        });
+            actionResult.Should().NotBeNull();
+            notFoundResult.Should().NotBeNull();
+        }
     }
 
     [Test]
@@ -98,14 +99,14 @@ public class ApplicationsControllerTests
         var model = viewResult.Model;
         var acceptedViewModel = model as AcceptedViewModel;
 
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
             // Assert
-            Assert.That(actionResult, Is.Not.Null);
-            Assert.That(viewResult, Is.Not.Null);
-            Assert.That(model, Is.Not.Null);
-            Assert.That(acceptedViewModel, Is.Not.Null);
-        });
+            actionResult.Should().NotBeNull();
+            viewResult.Should().NotBeNull();
+            model.Should().NotBeNull();
+            acceptedViewModel.Should().NotBeNull();
+        }
     }
 
     [Test]
@@ -121,12 +122,12 @@ public class ApplicationsControllerTests
         var actionResult = await _controller.Accepted(request);
         var notFoundResult = actionResult as NotFoundResult;
 
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
             // Assert
-            Assert.That(actionResult, Is.Not.Null);
-            Assert.That(notFoundResult, Is.Not.Null);
-        });
+            actionResult.Should().NotBeNull();
+            notFoundResult.Should().NotBeNull();
+        }
     }
 
     [Test]
@@ -142,15 +143,14 @@ public class ApplicationsControllerTests
         var actionResult = await _controller.Application(request);
         var redirectResult = actionResult as RedirectResult;
 
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
             // Assert
-            Assert.That(actionResult, Is.Not.Null);
-            Assert.That(redirectResult, Is.Not.Null);
-            Assert.That(
-                redirectResult.Url,
-                Is.EqualTo($"/accounts/{request.EncodedAccountId}/applications/{request.EncodedApplicationId}/accepted"));
-        });
+            actionResult.Should().NotBeNull();
+            redirectResult.Should().NotBeNull();
+
+            redirectResult.Url.Should().Be($"/accounts/{request.EncodedAccountId}/applications/{request.EncodedApplicationId}/accepted");
+        }
     }
 
     [Test]
@@ -167,14 +167,12 @@ public class ApplicationsControllerTests
         var redirectResult = actionResult as RedirectResult;
 
         // Assert
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
-            Assert.That(actionResult, Is.Not.Null);
-            Assert.That(redirectResult, Is.Not.Null);
-            Assert.That(redirectResult.Url,
-                Is.EqualTo(
-                    $"/accounts/{request.EncodedAccountId}/applications/{request.EncodedApplicationId}/declined"));
-        });
+            actionResult.Should().NotBeNull();
+            redirectResult.Should().NotBeNull();
+            redirectResult.Url.Should().Be($"/accounts/{request.EncodedAccountId}/applications/{request.EncodedApplicationId}/declined");
+        }
     }
 
     [Test]
@@ -193,13 +191,13 @@ public class ApplicationsControllerTests
         var declinedViewModel = model as DeclinedViewModel;
 
         // Assert
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
-            Assert.That(actionResult, Is.Not.Null);
-            Assert.That(viewResult, Is.Not.Null);
-            Assert.That(model, Is.Not.Null);
-            Assert.That(declinedViewModel, Is.Not.Null);
-        });
+            actionResult.Should().NotBeNull();
+            viewResult.Should().NotBeNull();
+            model.Should().NotBeNull();
+            declinedViewModel.Should().NotBeNull();
+        }
     }
 
     [Test]
@@ -216,11 +214,11 @@ public class ApplicationsControllerTests
         var notFoundResult = actionResult as NotFoundResult;
 
         // Assert
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
-            Assert.That(actionResult, Is.Not.Null);
-            Assert.That(notFoundResult, Is.Not.Null);
-        });
+            actionResult.Should().NotBeNull();
+            notFoundResult.Should().NotBeNull();
+        }
     }
 
     [Test]
@@ -239,13 +237,13 @@ public class ApplicationsControllerTests
         var withdrawnViewModel = model as WithdrawnViewModel;
 
         // Assert
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
-            Assert.That(actionResult, Is.Not.Null);
-            Assert.That(viewResult, Is.Not.Null);
-            Assert.That(model, Is.Not.Null);
-            Assert.That(withdrawnViewModel, Is.Not.Null);
-        });
+            actionResult.Should().NotBeNull();
+            viewResult.Should().NotBeNull();
+            model.Should().NotBeNull();
+            withdrawnViewModel.Should().NotBeNull();
+        }
     }
 
     [Test]
@@ -261,12 +259,12 @@ public class ApplicationsControllerTests
         var actionResult = await _controller.Withdrawn(request);
         var notFoundResult = actionResult as NotFoundResult;
 
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
             // Assert
-            Assert.That(actionResult, Is.Not.Null);
-            Assert.That(notFoundResult, Is.Not.Null);
-        });
+            actionResult.Should().NotBeNull();
+            notFoundResult.Should().NotBeNull();
+        }
     }
 
     [Test]
@@ -284,14 +282,14 @@ public class ApplicationsControllerTests
         var model = viewResult.Model;
         var declinedViewModel = model as WithdrawalConfirmationViewModel;
 
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
             // Assert
-            Assert.That(actionResult, Is.Not.Null);
-            Assert.That(viewResult, Is.Not.Null);
-            Assert.That(model, Is.Not.Null);
-            Assert.That(declinedViewModel, Is.Not.Null);
-        });
+            actionResult.Should().NotBeNull();
+            viewResult.Should().NotBeNull();
+            model.Should().NotBeNull();
+            declinedViewModel.Should().NotBeNull();
+        }
     }
 
     [Test]
@@ -306,13 +304,13 @@ public class ApplicationsControllerTests
         var actionResult = await _controller.ConfirmWithdrawal(request) as RedirectToActionResult;
 
         // Assert
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
-            Assert.That(actionResult, Is.Not.Null);
-            Assert.That(actionResult.ActionName, Is.EqualTo("Withdrawn"));
-            Assert.That(actionResult.RouteValues["encodedAccountId"], Is.EqualTo(request.EncodedAccountId));
-            Assert.That(actionResult.RouteValues["encodedApplicationId"], Is.EqualTo(request.EncodedApplicationId));
-        });
+            actionResult.Should().NotBeNull();
+            actionResult.ActionName.Should().Be("Withdrawn");
+            actionResult.RouteValues["encodedAccountId"].Should().Be(request.EncodedAccountId);
+            actionResult.RouteValues["encodedApplicationId"].Should().Be(request.EncodedApplicationId);
+        }
     }
 
     [Test]
@@ -327,11 +325,11 @@ public class ApplicationsControllerTests
         var actionResult = await _controller.ConfirmWithdrawal(request) as RedirectToActionResult;
 
         // Assert
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
-            Assert.That(actionResult, Is.Not.Null);
-            Assert.That(actionResult.ActionName, Is.EqualTo("Applications"));
-            Assert.That(actionResult.RouteValues["encodedAccountId"], Is.EqualTo(request.EncodedAccountId));
-        });
+            actionResult.Should().NotBeNull();
+            actionResult.ActionName.Should().Be("Applications");
+            actionResult.RouteValues["encodedAccountId"].Should().Be(request.EncodedAccountId);
+        }
     }
 }

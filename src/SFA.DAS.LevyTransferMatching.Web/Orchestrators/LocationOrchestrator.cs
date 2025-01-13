@@ -3,18 +3,11 @@ using SFA.DAS.LevyTransferMatching.Web.Models.Location;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 
-public class LocationOrchestrator : ILocationOrchestrator
+public class LocationOrchestrator(ILocationService locationService) : ILocationOrchestrator
 {
-    private readonly ILocationService _locationService;
-
-    public LocationOrchestrator(ILocationService locationService)
-    {
-        _locationService = locationService;
-    }
-
     public async Task<LocationsTypeAheadViewModel> GetLocationsTypeAheadViewModel(string searchTerm)
     {
-        var locationsDto = await _locationService.GetLocations(searchTerm);
+        var locationsDto = await locationService.GetLocations(searchTerm);
 
         return new LocationsTypeAheadViewModel
         {

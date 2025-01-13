@@ -12,7 +12,8 @@ public class CriteriaListTagHelper : TagHelper
     {
         var content = new StringBuilder();
         var matchesList = new StringBuilder();
-        int matches = 0;
+        var matches = 0;
+        
         if (Application.IsLocationMatch)
         {
             matches++;
@@ -36,15 +37,15 @@ public class CriteriaListTagHelper : TagHelper
             matchesList.Append("<li>Level</li>");
         }
 
-        var matchPercentageText = "";
-        switch (matches)
+        var matchPercentageText = matches switch
         {
-            case 0: matchPercentageText = "0% match"; break;
-            case 1: matchPercentageText = "25% match"; break;
-            case 2: matchPercentageText = "50% match"; break;
-            case 3: matchPercentageText = "75% match"; break;
-            case 4: matchPercentageText = "100% match"; break;
-        }
+            0 => "0% match",
+            1 => "25% match",
+            2 => "50% match",
+            3 => "75% match",
+            4 => "100% match",
+            _ => ""
+        };
 
         content.Append("<p class=\"govuk-!-margin-bottom-1\">" + matchPercentageText + "</p>");
 

@@ -49,7 +49,7 @@ public class LocationValidatorServiceTests
         _locationService
             .Setup(x => x.GetLocations(It.Is<string>(y => y == "Middleton")))
             .ReturnsAsync(middletonSuggestions);
-            
+
         _locationService
             .Setup(x => x.GetLocations(It.Is<string>(y => y == "Leicester")))
             .ReturnsAsync(leicesterSuggestions);
@@ -65,17 +65,14 @@ public class LocationValidatorServiceTests
             .ReturnsAsync(londonSuggestions);
 
         // Act
-        var result = await _locationValidatorService.ValidateLocations(request, multipleValidResults);
+        await _locationValidatorService.ValidateLocations(request, multipleValidResults);
 
-        Assert.Multiple(() =>
-        {
-            // Assert
-            Assert.That(multipleValidResults.Keys, Has.Member(0));
-            Assert.That(middletonSuggestions.Names, Is.EqualTo(multipleValidResults[0]).AsCollection);
-            Assert.That(leicesterInformation.Name, Is.EqualTo(request.Locations[1]));
-            Assert.That(multipleValidResults.Keys, Has.Member(2));
-            Assert.That(londonSuggestions.Names, Is.EqualTo(multipleValidResults[2]).AsCollection);
-        });
+        // Assert
+        multipleValidResults.Keys.Should().Contain(0);
+        middletonSuggestions.Names.Should().BeEquivalentTo(multipleValidResults[0]);
+        leicesterInformation.Name.Should().Be(request.Locations[1]);
+        multipleValidResults.Keys.Should().Contain(2);
+        londonSuggestions.Names.Should().BeEquivalentTo(multipleValidResults[2]);
     }
 
     [Test]
@@ -108,7 +105,7 @@ public class LocationValidatorServiceTests
         _locationService
             .Setup(x => x.GetLocations(It.Is<string>(y => y == "Macester")))
             .ReturnsAsync(macesterSuggestions);
-            
+
         _locationService
             .Setup(x => x.GetLocations(It.Is<string>(y => y == "Leicester")))
             .ReturnsAsync(leicesterSuggestions);
@@ -122,17 +119,14 @@ public class LocationValidatorServiceTests
         // Act
         var result = await _locationValidatorService.ValidateLocations(request, multipleValidResults);
 
-        Assert.Multiple(() =>
-        {
-            // Assert
-            Assert.That(result.Keys, Has.Member(0));
-            Assert.That(result[0], Is.EqualTo("Check the spelling of your location"));
-            
-            Assert.That(result.Keys, Has.Member(1));
-            Assert.That(result[1], Is.EqualTo("Duplicates of the same location are not allowed"));
+        // Assert
+        result.Keys.Should().Contain(0);
+        result[0].Should().Be("Check the spelling of your location");
 
-            Assert.That(result.Keys, Has.Member(2));
-            Assert.That(result[2], Is.EqualTo("Duplicates of the same location are not allowed"));
-        });
+        result.Keys.Should().Contain(1);
+        result[1].Should().Be("Duplicates of the same location are not allowed");
+
+        result.Keys.Should().Contain(2);
+        result[2].Should().Be("Duplicates of the same location are not allowed");
     }
 }

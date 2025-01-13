@@ -1,5 +1,4 @@
-﻿@using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
-@model SFA.DAS.LevyTransferMatching.Web.Models.Opportunities.MoreDetailsViewModel
+﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Opportunities.MoreDetailsViewModel
 
 @{
     ViewData["Title"] = "Provide more detail about your apprenticeship";
@@ -32,7 +31,7 @@
                             Do not include personal or financial information like your bank account details.
                         </div>
                         <span das-validation-for="Details" class="govuk-error-message"></span>
-                        @Html.TextAreaFor(m => m.Details, new { @class = "govuk-textarea govuk-js-character-count", @id = "more-detail", @name = "more-detail", @rows = "5", @aria_describedby = "more-detail-hint more-detail-info" })
+                        @Html.TextAreaFor(m => m.Details, new { @class = "govuk-textarea govuk-js-character-count", id = "more-detail", name = "more-detail", rows = "5", aria_describedby = "more-detail-hint more-detail-info" })
                     </div>
                     <div id="more-detail-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
                         You have 200 words remaining

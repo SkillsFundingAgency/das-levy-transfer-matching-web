@@ -36,7 +36,7 @@ public class GetApplicationsResponseExtensionsTests
         var result = app.GetRemainingDaysForDelayedApproval(automaticApprovalOption);
 
         // Assert
-        Assert.That(result, Is.Null, "Result should be null");            
+        result.Should().BeNull("Result should be null");
     }
 
     [Test]
@@ -60,9 +60,9 @@ public class GetApplicationsResponseExtensionsTests
         var result = app.GetRemainingDaysForDelayedApproval(automaticApprovalOption);
 
         // Assert
-        Assert.That(result, Is.Not.Null, "Result should not be null");
-        Assert.That(result, Is.GreaterThan(0), "Result should be a positive number");
-        Assert.That(result, Is.LessThan(7), "Result should be less than 7");
+        result.Should().NotBeNull("Result should not be null");
+        result.Should().BeGreaterThan(0, "Result should be a positive number");
+        result.Should().BeLessThan(7, "Result should be less than 7");
     }
 
     [Test]
@@ -86,9 +86,8 @@ public class GetApplicationsResponseExtensionsTests
         var result = app.GetRemainingDaysForDelayedApproval(automaticApprovalOption);
 
         // Assert
-        Assert.That(result, Is.Null, "Result should be null");        
+        result.Should().BeNull("Result should be null");
     }
-
 
     [Test]
     public void GetRemainingDaysForAutoRejection_Returns_Null_If_Not_Pending()
@@ -110,7 +109,7 @@ public class GetApplicationsResponseExtensionsTests
         var result = app.GetRemainingDaysForAutoRejection();
 
         // Assert
-        Assert.That(result, Is.Null, "Result should be null");
+        result.Should().BeNull("Result should be null");
     }
 
     [Test]
@@ -133,7 +132,7 @@ public class GetApplicationsResponseExtensionsTests
         var result = app.GetRemainingDaysForAutoRejection();
 
         // Assert
-        Assert.That(result, Is.Null, "Result should be null");
+        result.Should().BeNull("Result should be null");
     }
 
     [Test]
@@ -156,9 +155,9 @@ public class GetApplicationsResponseExtensionsTests
         var result = app.GetRemainingDaysForAutoRejection();
 
         // Assert
-        Assert.That(result, Is.Not.Null, "Result should not be null");
-        Assert.That(result, Is.GreaterThan(0), "Result should be a positive number");
-        Assert.That(result, Is.LessThan(7), "Result should be less than 7");
+        result.Should().NotBeNull("Result should not be null");
+        result.Should().BeGreaterThan(0, "Result should be a positive number");
+        result.Should().BeLessThan(7, "Result should be less than 7");
     }
 
     [Test]
@@ -182,9 +181,8 @@ public class GetApplicationsResponseExtensionsTests
         var result = app.GetDateDependentStatus(automaticApprovalOption);
 
         // Assert
-        Assert.That(result, Does.Contain("AUTO APPROVAL ON"));
+        result.Should().Contain("AUTO APPROVAL ON");
     }
-
 
     [Test]
     public void GetDateDependentStatus_Returns_AutoRejection_String()
@@ -207,7 +205,7 @@ public class GetApplicationsResponseExtensionsTests
         var result = app.GetDateDependentStatus(automaticApprovalOption);
 
         // Assert
-        Assert.That(result, Does.Contain("APPLICATION EXPIRES ON"));
+        result.Should().Contain("APPLICATION EXPIRES ON");
     }
 
     [Test]
@@ -231,6 +229,6 @@ public class GetApplicationsResponseExtensionsTests
         var result = app.GetDateDependentStatus(automaticApprovalOption);
 
         // Assert
-        Assert.That(result, Does.Contain("AWAITING YOUR APPROVAL"));
+        result.Should().Contain("AWAITING YOUR APPROVAL");
     }
 }

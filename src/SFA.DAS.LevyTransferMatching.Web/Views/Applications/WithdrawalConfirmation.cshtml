@@ -44,7 +44,7 @@
                 <div class="govuk-button-group">
                      <button class="govuk-button" data-module="govuk-button" id="withdraw-application-continue" type="submit">Continue</button>
 
-                    <a class="govuk-link" href="@Url.Action("Application", new { EncodedAccountId = Model.EncodedAccountId, EncodedApplicationId = Model.EncodedApplicationId })">Cancel</a>
+                    <a class="govuk-link" href="@Url.Action("Application", new { Model.EncodedAccountId, Model.EncodedApplicationId })">Cancel</a>
                 </div>
             </form>
         </div>

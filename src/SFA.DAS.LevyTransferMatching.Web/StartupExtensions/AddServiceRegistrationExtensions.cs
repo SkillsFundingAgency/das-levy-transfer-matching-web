@@ -1,6 +1,5 @@
 ﻿using System.Net.Http;
-using SFA.DAS.GovUK.Auth.Authentication;
-using SFA.DAS.GovUK.Auth.Services;
+using SFA.DAS.GovUK.Auth.Employer;
 using SFA.DAS.Http;
 using SFA.DAS.LevyTransferMatching.Domain.Interfaces;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Api;
@@ -28,8 +27,6 @@ public static class AddServiceRegistrationExtensions
 
         services.AddSingleton<IAuthorizationHandler, ManageAccountAuthorizationHandler>();
         services.AddSingleton<IAuthorizationHandler, ViewAccountAuthorizationHandler>();
-            
-        services.AddSingleton<IAuthorizationHandler, AccountActiveAuthorizationHandler>();//TODO remove after gov login go live
         services.AddTransient<IEmployerAccountAuthorizationHandler, EmployerAccountAuthorizationHandler>();
             
         services.AddTransient<ILocationValidatorService, LocationValidatorService>();
@@ -42,18 +39,16 @@ public static class AddServiceRegistrationExtensions
         services.AddTransient<ICsvHelperService, CsvHelperService>();
         services.AddTransient<IUserService, UserService>();
         services.AddSingleton<IDateTimeService, DateTimeService>();
-        services.AddTransient<ICustomClaims, PostAuthenticationClaimsHandler>();
             
         services.AddClient<IPledgeService>((c, s) => new PledgeService(c));
         services.AddClient<IOpportunitiesService>((c, s) => new OpportunitiesService(c));
         services.AddClient<ILocationService>((c, s) => new LocationService(c));
         services.AddClient<IApplicationsService>((c, s) => new ApplicationsService(c));
         services.AddClient<IAccountUserService>((c, s) => new AccountUserService(c));
+        services.AddClient<IGovAuthEmployerAccountService>((c, s) => new AccountUserService(c));
     }
 
-    private static IServiceCollection AddClient<T>(
-        this IServiceCollection serviceCollection,
-        Func<HttpClient, IServiceProvider, T> instance) where T : class
+    private static IServiceCollection AddClient<T>(this IServiceCollection serviceCollection, Func<HttpClient, IServiceProvider, T> instance) where T : class
     {
         serviceCollection.AddTransient(s =>
         {
@@ -67,9 +62,13 @@ public static class AddServiceRegistrationExtensions
             var httpClient = clientBuilder.Build();
 
             if (!settings.ApiBaseUrl.EndsWith("/"))
+            {
                 httpClient.BaseAddress = new Uri(settings.ApiBaseUrl + "/");
+            }
             else
+            {
                 httpClient.BaseAddress = new Uri(settings.ApiBaseUrl);
+            }
 
             return instance.Invoke(httpClient, s);
         });

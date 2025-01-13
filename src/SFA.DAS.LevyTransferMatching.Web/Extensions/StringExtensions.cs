@@ -66,7 +66,7 @@ public static class StringExtensions
         // Preventing possible multiple enumerations
         var listAsArray = list as string[] ?? list.ToArray();
         
-        if (list != null && listAsArray.Any())
+        if (list != null && listAsArray.Length != 0)
         {
             list = listAsArray.Select(x => x.Contains(',') ? x.Split(',')[0] : x);
             applicationLocationsString = string.Join(separator, list);

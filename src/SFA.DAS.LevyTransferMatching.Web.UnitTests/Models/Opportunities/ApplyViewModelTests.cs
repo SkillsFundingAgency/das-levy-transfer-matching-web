@@ -12,7 +12,7 @@ public class ApplyViewModelTests
     {
         var model = _fixture.Create<ApplyViewModel>();
 
-        Assert.That(model.IsApprenticeshipTrainingSectionComplete, Is.True);
+        model.IsApprenticeshipTrainingSectionComplete.Should().BeTrue();
     }
 
     [Test]
@@ -21,7 +21,7 @@ public class ApplyViewModelTests
         var model = _fixture.Create<ApplyViewModel>();
         model.HaveTrainingProvider = IncompleteString;
 
-        Assert.That(model.IsApprenticeshipTrainingSectionComplete, Is.False);
+        model.IsApprenticeshipTrainingSectionComplete.Should().BeFalse();
     }
 
     [Test]
@@ -29,7 +29,7 @@ public class ApplyViewModelTests
     {
         var model = _fixture.Create<ApplyViewModel>();
 
-        Assert.That(model.IsBusinessDetailsSectionComplete, Is.True);
+        model.IsBusinessDetailsSectionComplete.Should().BeTrue();
     }
 
     [Test]
@@ -38,7 +38,7 @@ public class ApplyViewModelTests
         var model = _fixture.Create<ApplyViewModel>();
         model.Sectors = null;
 
-        Assert.That(model.IsBusinessDetailsSectionComplete, Is.False);
+        model.IsBusinessDetailsSectionComplete.Should().BeFalse();
     }
 
     [Test]
@@ -46,7 +46,7 @@ public class ApplyViewModelTests
     {
         var model = _fixture.Create<ApplyViewModel>();
 
-        Assert.That(model.IsContactDetailsSectionComplete, Is.True);
+        model.IsContactDetailsSectionComplete.Should().BeTrue();
     }
 
     [Test]
@@ -55,7 +55,7 @@ public class ApplyViewModelTests
         var model = _fixture.Create<ApplyViewModel>();
         model.ContactName = IncompleteString;
 
-        Assert.That(model.IsContactDetailsSectionComplete, Is.False);
+        model.IsContactDetailsSectionComplete.Should().BeFalse();
     }
 
     [Test]
@@ -63,7 +63,7 @@ public class ApplyViewModelTests
     {
         var model = _fixture.Create<ApplyViewModel>();
 
-        Assert.That(model.IsComplete, Is.True);
+        model.IsComplete.Should().BeTrue();
     }
 
     [Test]
@@ -72,7 +72,7 @@ public class ApplyViewModelTests
         var model = _fixture.Create<ApplyViewModel>();
         model.JobRole = IncompleteString;
 
-        Assert.That(model.IsComplete, Is.False);
+        model.IsComplete.Should().BeFalse();
     }
 
     [Test]
@@ -81,7 +81,7 @@ public class ApplyViewModelTests
         var model = _fixture.Create<ApplyViewModel>();
         model.Sectors = null;
 
-        Assert.That(model.IsComplete, Is.False);
+        model.IsComplete.Should().BeFalse();
     }
 
     [Test]
@@ -90,6 +90,6 @@ public class ApplyViewModelTests
         var model = _fixture.Create<ApplyViewModel>();
         model.ContactName = IncompleteString;
 
-        Assert.That(model.IsComplete, Is.False);
+        model.IsComplete.Should().BeFalse();
     }
 }

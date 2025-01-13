@@ -7,10 +7,10 @@
 }
 
 <a href="@Url.Action("Create", "CreatePledge", new { Model.EncodedAccountId, Model.CacheKey })"
-    class="govuk-back-link">Back</a>
+   class="govuk-back-link">Back</a>
 
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
-    <partial name="_ValidationSummary" />
+    <partial name="_ValidationSummary"/>
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-l">Do you want to automatically approve 100% matches?</h1>
@@ -18,27 +18,28 @@
                 have set.</p>
             <form method="post">
                 <div class="govuk-form-group" das-highlight-error-for="AutomaticApprovalOption"
-                    error-class="govuk-form-group--error">
+                     error-class="govuk-form-group--error">
                     <fieldset class="govuk-fieldset">
-                        <legend class="govuk-visually-hidden">Do you want to automatically approve 100% matches?</legend>
+                        <legend class="govuk-visually-hidden">Do you want to automatically approve 100% matches?
+                        </legend>
                         <span das-validation-for="AutomaticApprovalOption" class="govuk-error-message"></span>
                         <div class="govuk-radios">
                             <div class="govuk-radios__item">
                                 <input class="govuk-radios__input" id="AutomaticApprovalOption"
-                                    asp-for="AutomaticApprovalOption" type="radio"
-                                    value="@AutomaticApprovalOption.ImmediateAutoApproval"
-                                    das-highlight-error-for="AutomaticApprovalOption"
-                                    error-class="govuk-textarea--error" />
+                                       asp-for="AutomaticApprovalOption" type="radio"
+                                       value="@AutomaticApprovalOption.ImmediateAutoApproval"
+                                       das-highlight-error-for="AutomaticApprovalOption"
+                                       error-class="govuk-textarea--error"/>
                                 <label class="govuk-label govuk-radios__label" for="AutomaticApprovalOption">
                                     Yes, automatically approve
                                 </label>
                             </div>
                             <div class="govuk-radios__item">
                                 <input class="govuk-radios__input" id="AutoApproveFullMatches-2"
-                                    asp-for="AutomaticApprovalOption" type="radio"
-                                    value="@AutomaticApprovalOption.DelayedAutoApproval"
-                                    das-highlight-error-for="AutomaticApprovalOption"
-                                    error-class="govuk-textarea--error" />
+                                       asp-for="AutomaticApprovalOption" type="radio"
+                                       value="@AutomaticApprovalOption.DelayedAutoApproval"
+                                       das-highlight-error-for="AutomaticApprovalOption"
+                                       error-class="govuk-textarea--error"/>
                                 <label class="govuk-label govuk-radios__label" for="AutoApproveFullMatches-2">
                                     No, I would like 6 weeks to approve or reject 100% matches
                                 </label>

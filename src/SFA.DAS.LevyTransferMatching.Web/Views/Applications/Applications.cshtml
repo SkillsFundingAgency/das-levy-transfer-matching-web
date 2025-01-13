@@ -1,6 +1,6 @@
 ﻿@using SFA.DAS.EmployerUrlHelper
 @using SFA.DAS.LevyTransferMatching.Domain.Extensions
-@inject SFA.DAS.EmployerUrlHelper.ILinkGenerator LinkGenerator
+@inject ILinkGenerator LinkGenerator
 @model SFA.DAS.LevyTransferMatching.Web.Models.Applications.GetApplicationsViewModel
 
 @{
@@ -9,12 +9,11 @@
     ViewBag.ZenDeskLabel = "LTM-R-applications";
 
     var breadCrumbs = new List<Tuple<string, string>>
-{
-        new Tuple<string, string>(LinkGenerator.AccountsLink($"accounts/{Model.EncodedAccountId}/teams"), "Home"),
-        new Tuple<string, string>(LinkGenerator.FinanceLink($"accounts/{Model.EncodedAccountId}/transfers"), "Manage Transfers"),
-        new Tuple<string, string>("", $"My applications")
+    {
+        new(LinkGenerator.AccountsLink($"accounts/{Model.EncodedAccountId}/teams"), "Home"),
+        new(LinkGenerator.FinanceLink($"accounts/{Model.EncodedAccountId}/transfers"), "Manage Transfers"),
+        new("", "My applications")
     };
-
 }
 
 <bread-crumb source="@breadCrumbs"></bread-crumb>
@@ -30,48 +29,55 @@
                 <p>You have <strong>@Model.Applications.Count()</strong> @Model.ApplicationCountPostFix.</p>
                 <table class="govuk-table govuk-!-margin-bottom-9" aria-label="Transfer applications table">
                     <thead class="govuk-table__head">
-                        <tr class="govuk-table__row">
-                            <th scope="col" class="govuk-table__header app-custom-class">Opportunity</th>
-                            <th scope="col" class="govuk-table__header">Estimated total<br />cost</th>
-                            <th scope="col" class="govuk-table__header">Approval status</th>
-                        </tr>
+                    <tr class="govuk-table__row">
+                        <th scope="col" class="govuk-table__header app-custom-class">Opportunity</th>
+                        <th scope="col" class="govuk-table__header">Estimated total<br/>cost</th>
+                        <th scope="col" class="govuk-table__header">Approval status</th>
+                    </tr>
                     </thead>
                     @if (Model.Applications.Any())
                     {
                         <tbody class="govuk-table__body">
-                            @foreach (var application in Model.Applications)
-                            {
-                                <tr class="govuk-table__row">
-                                    <td class="govuk-table__cell">
-                                        @if (Model.RenderViewApplicationDetailsHyperlink)
-                                        {
-                                            <a href="@Url.Action("Application", "Applications" ,new{ encodedApplicationId = application.EncodedApplicationId,  encodedAccountId = Model.EncodedAccountId})" class="govuk-link govuk-link--no-visited-state">@application.DasAccountName (@application.PledgeReference)</a><br />
-                                        }
-                                        else
-                                        {
-                                            @application.DasAccountName <text> (@application.PledgeReference)</text>
-                                        }
+                        @foreach (var application in Model.Applications)
+                        {
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell">
+                                    @if (Model.RenderViewApplicationDetailsHyperlink)
+                                    {
+                                        <a href="@Url.Action("Application", "Applications", new { encodedApplicationId = application.EncodedApplicationId, encodedAccountId = Model.EncodedAccountId })"
+                                           class="govuk-link govuk-link--no-visited-state">@application.DasAccountName (@application.PledgeReference)</a>
+                                        <br/>
+                                    }
+                                    else
+                                    {
+                                        @application.DasAccountName
+                                        <text> (@application.PledgeReference)</text>
+                                    }
 
-                                        <span class="govuk-caption-m">Date: @application.CreatedOn.ToString("dd/MM/yyyy")</span>
-                                    </td>
-                                    <td class="govuk-table__cell">@application.EstimatedTotalCost</td>
-                                    <td class="govuk-table__cell"><span class=" @application.Status.GetCssClassForReceiver()">@application.Status.GetLabelForReceiver()</span></td>
-                                </tr>
-                            }
+                                    <span
+                                        class="govuk-caption-m">Date: @application.CreatedOn.ToString("dd/MM/yyyy")</span>
+                                </td>
+                                <td class="govuk-table__cell">@application.EstimatedTotalCost</td>
+                                <td class="govuk-table__cell"><span
+                                        class=" @application.Status.GetCssClassForReceiver()">@application.Status.GetLabelForReceiver()</span>
+                                </td>
+                            </tr>
+                        }
                         </tbody>
                     }
                     else
                     {
                         <tbody class="govuk-table__body">
-                            <tr class="govuk-table__row" data-table-row="one">
-                                <td colspan="3" class="govuk-table__cell">No applications submitted yet</td>
-                            </tr>
+                        <tr class="govuk-table__row" data-table-row="one">
+                            <td colspan="3" class="govuk-table__cell">No applications submitted yet</td>
+                        </tr>
                         </tbody>
                     }
 
                 </table>
 
-                <a href="@LinkGenerator.FinanceLink($"accounts/{Model.EncodedAccountId}/transfers")" class="govuk-link govuk-back-link" )>Back to transfers</a>
+                <a href="@LinkGenerator.FinanceLink($"accounts/{Model.EncodedAccountId}/transfers")"
+                   class="govuk-link govuk-back-link" )>Back to transfers</a>
 
             </div>
         </div>

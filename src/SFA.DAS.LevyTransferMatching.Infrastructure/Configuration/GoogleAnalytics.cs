@@ -1,7 +1,6 @@
-﻿namespace SFA.DAS.LevyTransferMatching.Infrastructure.Configuration
+﻿namespace SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
+
+public class GoogleAnalytics
 {
-    public class GoogleAnalytics
-    {
-        public string GoogleTagManagerId { get; set; }
-    }
+    public string GoogleTagManagerId { get; set; }
 }

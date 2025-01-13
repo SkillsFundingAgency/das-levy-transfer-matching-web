@@ -6,21 +6,14 @@ using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers;
 
 [Authorize(Policy = PolicyNames.ViewAccount)]
-public class ApplicationsController : Controller
+public class ApplicationsController(IApplicationsOrchestrator applicationsOrchestrator) : Controller
 {
-    private readonly IApplicationsOrchestrator _applicationsOrchestrator;
-
-    public ApplicationsController(IApplicationsOrchestrator applicationsOrchestrator)
-    {
-        _applicationsOrchestrator = applicationsOrchestrator;
-    }
-
     [HttpGet]
     [HideAccountNavigation(false)]
     [Route("/accounts/{encodedAccountId}/applications")]
     public async Task<IActionResult> Applications(GetApplicationsRequest request)
     {
-        var viewModel = await _applicationsOrchestrator.GetApplications(request);
+        var viewModel = await applicationsOrchestrator.GetApplications(request);
             
         return View(viewModel);
     }
@@ -29,7 +22,7 @@ public class ApplicationsController : Controller
     [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}")]
     public async Task<IActionResult> Application(ApplicationRequest request)
     {
-        var viewModel = await _applicationsOrchestrator.GetApplication(request);
+        var viewModel = await applicationsOrchestrator.GetApplication(request);
 
         if (viewModel != null)
         {
@@ -46,10 +39,10 @@ public class ApplicationsController : Controller
     {
         if (request.SelectedAction == ApplicationViewModel.ApprovalAction.None)
         {
-            return RedirectToAction("Applications", new { EncodedAccountId = request.EncodedAccountId });
+            return RedirectToAction("Applications", new { request.EncodedAccountId });
         }
 
-        await _applicationsOrchestrator.SetApplicationAcceptance(request);
+        await applicationsOrchestrator.SetApplicationAcceptance(request);
 
         if (request.SelectedAction == ApplicationViewModel.ApprovalAction.Accept)
         {
@@ -68,7 +61,7 @@ public class ApplicationsController : Controller
     [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}/accepted")]
     public async Task<IActionResult> Accepted(AcceptedRequest request)
     {
-        var viewModel = await _applicationsOrchestrator.GetAcceptedViewModel(request);
+        var viewModel = await applicationsOrchestrator.GetAcceptedViewModel(request);
 
         if (viewModel != null)
         {
@@ -82,7 +75,7 @@ public class ApplicationsController : Controller
     [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}/declined")]
     public async Task<IActionResult> Declined(DeclinedRequest request)
     {
-        var viewModel = await _applicationsOrchestrator.GetDeclinedViewModel(request);
+        var viewModel = await applicationsOrchestrator.GetDeclinedViewModel(request);
 
         if (viewModel != null)
         {
@@ -96,7 +89,7 @@ public class ApplicationsController : Controller
     [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}/withdrawn")]
     public async Task<IActionResult> Withdrawn(WithdrawnRequest request)
     {
-        var viewModel = await _applicationsOrchestrator.GetWithdrawnViewModel(request);
+        var viewModel = await applicationsOrchestrator.GetWithdrawnViewModel(request);
 
         if (viewModel != null)
         {
@@ -110,7 +103,7 @@ public class ApplicationsController : Controller
     [Route("/accounts/{encodedAccountId}/applications/{encodedApplicationId}/withdrawal-confirmation")]
     public async Task<IActionResult> WithdrawalConfirmation(WithdrawalConfirmationRequest request)
     {
-        var viewModel = await _applicationsOrchestrator.GetWithdrawalConfirmationViewModel(request);
+        var viewModel = await applicationsOrchestrator.GetWithdrawalConfirmationViewModel(request);
 
         return View(viewModel);
     }
@@ -121,7 +114,7 @@ public class ApplicationsController : Controller
     {
         if (request.HasConfirmed.Value)
         {
-            await _applicationsOrchestrator.WithdrawApplicationAfterAcceptance(request);
+            await applicationsOrchestrator.WithdrawApplicationAfterAcceptance(request);
 
             return RedirectToAction("Withdrawn", new { request.EncodedAccountId, request.EncodedApplicationId });
         }

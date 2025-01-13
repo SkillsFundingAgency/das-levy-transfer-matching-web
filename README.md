@@ -35,7 +35,7 @@ The Azure Functions component is not necessary for the website to function but c
 * A clone of this repository
 * A clone of [Levy Transfer Matching Api](https://github.com/SkillsFundingAgency/das-levy-transfer-matching-api)
 * A clone of [Apim endpoints](https://github.com/SkillsFundingAgency/das-apim-endpoints)
-* A code editor that supports .Net6
+* A code editor that supports .Net8
 * A CosmosDB instance or emulator
 * The [EmployerAccount](https://github.com/SkillsFundingAgency/das-employerapprenticeshipsservice) Api running locally or available in a test environment
 * A Redis instance
@@ -124,7 +124,7 @@ Data:
 
 ## Technologies
 
-* .Net6
+* .Net8
 * CosmosDB
 * REDIS
 * Azure Table Storage
