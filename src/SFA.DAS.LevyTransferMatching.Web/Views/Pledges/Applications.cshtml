@@ -124,7 +124,7 @@
                 </div>             
             }
             else if (Model.AutomaticApprovalOption == AutomaticApprovalOption.DelayedAutoApproval)
-            {
+            {   
                 <div class="govuk-grid-row">
                     <div class="govuk-grid-column-two-thirds">
                         <div class="govuk-inset-text">
@@ -164,11 +164,8 @@
                 <div class="govuk-grid-row">
                     <div class="govuk-grid-column-two-thirds">
                         <p>
-                            You need to approve or reject applications which do not match all of your criteria. Applicants need your response to manage their apprenticeships.
-                        </p>
-                        <p>
                             If you do not respond to applications which are less than 100% matches then they will be rejected automatically after 3 months.
-                        </p>
+                        </p>                        
                     </div>
                 </div>
             }            
@@ -190,6 +187,8 @@
 
         @if (Model.RenderApplicationsList)
         {
+            <p><b>@Model.Applications @Pluralise(Model.ApplicationsPendingApproval, "application")</b></p>
+            <br/>
             <form method="post" id="applications_actions_form">
                 <div class="govuk-form-group" das-highlight-error-for="ApplicationsToReject"
                     error-class="govuk-form-group--error" id="ApplicationsToReject">
@@ -256,8 +255,12 @@
                                                 <criteria-list application="@app"></criteria-list>
                                             </td>
                                             <td class="govuk-table__cell"><strong
-                                                    class="@app.Status.GetCssClassForSender(app.RemainingDaysForDelayedApproval, app.RemainingDaysForAutoRejection)">@app.Status.GetLabelForSender(app.RemainingDaysForDelayedApproval,
-                                        app.RemainingDaysForAutoRejection)</strong></td>
+                                                    class="@app.Status.GetCssClassForSender(app.RemainingDaysForDelayedApproval, app.RemainingDaysForAutoRejection)">
+                                                    @app.Status.GetLabelForSender(
+                                                    Model.AutomaticApprovalOption == AutomaticApprovalOption.DelayedAutoApproval,
+                                                    app.RemainingDaysForDelayedApproval,
+                                                    app.RemainingDaysForAutoRejection)
+                                        </strong></td>
                                         </tr>
                                     }
                                 }

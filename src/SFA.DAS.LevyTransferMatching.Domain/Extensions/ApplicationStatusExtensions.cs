@@ -5,33 +5,42 @@ namespace SFA.DAS.LevyTransferMatching.Domain.Extensions
 {
     public static class ApplicationStatusExtensions
     {
-        public static string GetLabelForSender(this ApplicationStatus status, int? RemainingDaysForDelayedApproval, int? RemainingDaysForAutoRejection)
+        public static string GetLabelForSender(this ApplicationStatus status, 
+            bool isDelayedAutoApprovalPledge, 
+            int? RemainingDaysForDelayedApproval, 
+            int? RemainingDaysForAutoRejection)
         {
             if (RemainingDaysForDelayedApproval.HasValue)
             {
                 string autoApprovalDate = GetAutoApprovalDate(RemainingDaysForDelayedApproval.Value);
-                return $"AUTO APPROVAL ON {autoApprovalDate}";
+                return $"Auto approval on {autoApprovalDate}";
             }
 
             if (RemainingDaysForAutoRejection.HasValue)
             {
                 string autoApprovalDate = GetAutoApprovalDate(RemainingDaysForAutoRejection.Value);
-                return $"APPLICATION EXPIRES ON {autoApprovalDate}";
+                return $"Application expires on {autoApprovalDate}";
             }
 
-            switch (status)
+            if (status == ApplicationStatus.Approved)
             {
-                case ApplicationStatus.Pending: return "AWAITING YOUR APPROVAL";
-                case ApplicationStatus.Approved: return "AWAITING ACCEPTANCE BY APPLICANT";
-                case ApplicationStatus.Accepted: return "OFFER OF FUNDING ACCEPTED";
-                case ApplicationStatus.FundsUsed: return "FUNDS USED";
-                case ApplicationStatus.Rejected: return "REJECTED";
-                case ApplicationStatus.Declined: return "WITHDRAWN BY APPLICANT";
-                case ApplicationStatus.Withdrawn: return "WITHDRAWN BY APPLICANT";
-                case ApplicationStatus.WithdrawnAfterAcceptance: return "WITHDRAWN BY APPLICANT";
-                default:
-                    return string.Empty;
+                string baseMessage = " approval: Awaiting acceptance by applicant";
+                string prefix = isDelayedAutoApprovalPledge ? "Delayed" : "Auto";
+                return prefix + baseMessage;
             }
+
+            return status switch
+            {
+                ApplicationStatus.Pending => "Awaiting your approval",
+                ApplicationStatus.Accepted => "Offer of funding accepted",
+                ApplicationStatus.FundsUsed => "Funds used",
+                ApplicationStatus.Rejected => "Rejected",
+                ApplicationStatus.Declined => "Declined by applicant",
+                ApplicationStatus.Withdrawn => "Withdrawn by applicant",
+                ApplicationStatus.WithdrawnAfterAcceptance => "Withdrawn by applicant",
+                ApplicationStatus.FundsExpired => "Funds no longer available",
+                _ => string.Empty,
+            };
         }
 
         private static string GetAutoApprovalDate(int remainingDays)
@@ -52,19 +61,20 @@ namespace SFA.DAS.LevyTransferMatching.Domain.Extensions
             {
                 return "govuk-tag govuk-tag--orange";
             }
-            switch (status)
+
+            return status switch
             {
-                case ApplicationStatus.Pending: return "govuk-tag govuk-tag--blue";
-                case ApplicationStatus.Approved: return "govuk-tag govuk-tag--yellow";
-                case ApplicationStatus.Accepted: return "govuk-tag govuk-tag--turquoise";
-                case ApplicationStatus.FundsUsed: return "govuk-tag govuk-tag--pink";
-                case ApplicationStatus.Rejected: return "govuk-tag govuk-tag--red";
-                case ApplicationStatus.Declined: return "govuk-tag govuk-tag--yellow";
-                case ApplicationStatus.Withdrawn: return "govuk-tag govuk-tag--yellow";
-                case ApplicationStatus.WithdrawnAfterAcceptance: return "govuk-tag govuk-tag--yellow";
-                default:
-                    return string.Empty;
-            }
+                ApplicationStatus.Pending => "govuk-tag govuk-tag--blue",
+                ApplicationStatus.Approved => "govuk-tag govuk-tag--yellow",
+                ApplicationStatus.Accepted => "govuk-tag govuk-tag--green",
+                ApplicationStatus.FundsUsed => "govuk-tag govuk-tag--pink",
+                ApplicationStatus.Rejected => "govuk-tag govuk-tag--grey",
+                ApplicationStatus.Declined => "govuk-tag govuk-tag--grey",
+                ApplicationStatus.Withdrawn => "govuk-tag govuk-tag--grey",
+                ApplicationStatus.WithdrawnAfterAcceptance => "govuk-tag govuk-tag--grey",
+                ApplicationStatus.FundsExpired => "govuk-tag govuk-tag--grey",
+                _ => string.Empty,
+            };
         }       
         public static string GetLabelForReceiver(this ApplicationStatus status)
         {
