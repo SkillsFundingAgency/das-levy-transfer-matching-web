@@ -72,6 +72,7 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
 
         return new IndexViewModel
         {
+            SortBy = request.SortBy,
             Paging = GetPagingData(response),
             Opportunities = response?.Opportunities
                 .Select(x => new IndexViewModel.Opportunity
@@ -108,7 +109,7 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
     {
         var links = new List<IndexViewModel.PageLink>();
         var totalPages = (int)Math.Ceiling((double)response.TotalOpportunities / response.PageSize);
-        var totalPageLinks = totalPages < 5 ? totalPages : 5;
+        var totalPageLinks = totalPages < 7 ? totalPages : 7;
 
         //previous link
         if (totalPages > 1 && response.Page > 1)
@@ -123,7 +124,7 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
 
         //numbered links
         var pageNumberSeed = 1;
-        if (totalPages > 5 && response.Page > 3)
+        if (totalPages > 7 && response.Page > 3)
         {
             pageNumberSeed = response.Page - 2;
 
