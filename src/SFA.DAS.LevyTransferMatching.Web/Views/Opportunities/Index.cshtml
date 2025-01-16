@@ -1,4 +1,5 @@
 ﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Opportunities.IndexViewModel
+
 @{
     ViewData["Title"] = "Search funding opportunities";
     ViewBag.GaData.Vpv = "/opportunities";
@@ -14,7 +15,7 @@
                 show the training they want to support.</p>
             <details class="govuk-details" data-module="govuk-details">
                 <summary class="govuk-details__summary">
-                    <span class="govuk-details__summary-text">Opportunity examples</span>
+                    <span class="govuk-details__summary-text">Examples</span>
                 </summary>
                 <div class="govuk-details__text">
                     <p>
@@ -31,7 +32,7 @@
         </div>
     </div>
     <div class="govuk-grid-row">
-        <form method="get" id="filterForm">
+        <form method="get">
             <div class="govuk-grid-column-one-third">
                 <h2 class="govuk-heading-m">Apply filter</h2>
                 <details class="govuk-details" data-module="govuk-details" @(Model.isSectorFilterApplied ? "open" : "")>
@@ -53,27 +54,8 @@
                     results</button>
             </div>
             <div class="govuk-grid-column-two-thirds">
-                <h2 class="govuk-heading-m das-search-results__list-item">
-                    Showing @Model.Paging.PageStartRow to @Model.Paging.PageEndRow of @Model.Paging.TotalOpportunities opportunities
-                </h2>
-
-                <div class="govuk-grid-row das-search-results__list-item">
-                    <div class="govuk-grid-column-one-third">&nbsp</div>
-                    <div class="govuk-grid-column-two-thirds">
-                        <div class="govuk-grid-row">
-                            
-                            <label class="govuk-label govuk-grid-column-one-half" for="Sort-By">Sort opportunities</label>
-                            <select class="govuk-select govuk-grid-column-one-half" id="SortBy" name="SortBy">
-                                <option value="ValueLowToHigh" selected="@(Model.SortBy == "ValueLowToHigh")">Value (low to high)</option>
-                                <option value="ValueHighToLow" selected="@(Model.SortBy == "ValueHighToLow")">Value (high to low)</option>
-                                <option value="MostRecent" selected="@(Model.SortBy == "MostRecent")">Most Recent</option>
-                                <option value="AtoZ" selected="@(Model.SortBy == "AtoZ")">A to Z</option>
-                                <option value="ZtoA" selected="@(Model.SortBy == "ZtoA")">Z to A</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
+                <h2 class="govuk-heading-m">@Model.Paging.TotalOpportunities @(Model.Paging.TotalOpportunities == 1 ?
+                    "opportunity" : "opportunities")</h2>
 
                 @if (Model.Opportunities.Count == 0)
                 {
@@ -122,7 +104,8 @@
                 @if (Model.Paging.ShowPageLinks)
                 {
                     <nav role="navigation" aria-label="Pagination">
-                        
+                        <div class="das-pagination__summary">Showing @Model.Paging.PageStartRow to @Model.Paging.PageEndRow
+                            <br />of @Model.Paging.TotalOpportunities opportunities</div>
                         <ul class="das-pagination">
                             @foreach (var pageLink in Model.Paging.PageLinks)
                             {
@@ -142,13 +125,3 @@
         </form>
     </div>
 </main>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const sortBySelect = document.getElementById('SortBy');
-        const filterForm = document.getElementById('filterForm');
-
-        sortBySelect.addEventListener('change', function () {
-            filterForm.submit();
-        });
-    });
-</script>
