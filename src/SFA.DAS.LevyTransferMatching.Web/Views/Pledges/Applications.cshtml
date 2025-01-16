@@ -257,7 +257,7 @@
                                             <td class="govuk-table__cell"><strong
                                                     class="@app.Status.GetCssClassForSender(app.RemainingDaysForDelayedApproval, app.RemainingDaysForAutoRejection)">
                                                     @app.Status.GetLabelForSender(
-                                                    Model.AutomaticApprovalOption == AutomaticApprovalOption.DelayedAutoApproval,
+                                                    Model.AutomaticApprovalOption,
                                                     app.RemainingDaysForDelayedApproval,
                                                     app.RemainingDaysForAutoRejection)
                                         </strong></td>

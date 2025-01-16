@@ -182,7 +182,7 @@ public class GetApplicationsResponseExtensionsTests
         var result = app.GetDateDependentStatus(automaticApprovalOption);
 
         // Assert
-        Assert.That(result, Does.Contain("AUTO APPROVAL ON"));
+        Assert.That(result, Does.Contain("Auto approval on"));
     }
 
 
@@ -207,7 +207,7 @@ public class GetApplicationsResponseExtensionsTests
         var result = app.GetDateDependentStatus(automaticApprovalOption);
 
         // Assert
-        Assert.That(result, Does.Contain("APPLICATION EXPIRES ON"));
+        Assert.That(result, Does.Contain("Application expires on"));
     }
 
     [Test]
@@ -231,6 +231,6 @@ public class GetApplicationsResponseExtensionsTests
         var result = app.GetDateDependentStatus(automaticApprovalOption);
 
         // Assert
-        Assert.That(result, Does.Contain("AWAITING YOUR APPROVAL"));
+        Assert.That(result, Does.Contain("Awaiting your approval"));
     }
 }

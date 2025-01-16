@@ -5,8 +5,8 @@ namespace SFA.DAS.LevyTransferMatching.Domain.Extensions
 {
     public static class ApplicationStatusExtensions
     {
-        public static string GetLabelForSender(this ApplicationStatus status, 
-            bool isDelayedAutoApprovalPledge, 
+        public static string GetLabelForSender(this ApplicationStatus status,
+            AutomaticApprovalOption automaticApprovalOption, 
             int? RemainingDaysForDelayedApproval, 
             int? RemainingDaysForAutoRejection)
         {
@@ -24,9 +24,13 @@ namespace SFA.DAS.LevyTransferMatching.Domain.Extensions
 
             if (status == ApplicationStatus.Approved)
             {
-                string baseMessage = " approval: Awaiting acceptance by applicant";
-                string prefix = isDelayedAutoApprovalPledge ? "Delayed" : "Auto";
-                return prefix + baseMessage;
+                if (automaticApprovalOption == AutomaticApprovalOption.NotApplicable)
+                {
+                    return "Awaiting acceptance by applicant";
+                }
+
+                string prefix = automaticApprovalOption == AutomaticApprovalOption.DelayedAutoApproval ? "Delayed" : "Auto";
+                return $"{prefix} approval: Awaiting acceptance by applicant";
             }
 
             return status switch
