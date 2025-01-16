@@ -68,7 +68,7 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
 
     public async Task<IndexViewModel> GetIndexViewModel(IndexRequest request)
     {
-        var response = await _opportunitiesService.GetIndex(request.Sectors, request.Page ?? 1, IndexRequest.DefaultPageSize);
+        var response = await _opportunitiesService.GetIndex(request.Sectors, request.SortBy, request.Page ?? 1, IndexRequest.DefaultPageSize);
 
         return new IndexViewModel
         {

@@ -46,7 +46,7 @@ public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
 
         _getIndexResponse = _fixture.Create<GetIndexResponse>();
         _indexRequest = _fixture.Build<IndexRequest>().With(p => p.Page, _page).Create();
-        _opportunitiesService.Setup(x => x.GetIndex(_indexRequest.Sectors, _page, IndexRequest.DefaultPageSize)).ReturnsAsync(_getIndexResponse);
+        _opportunitiesService.Setup(x => x.GetIndex(_indexRequest.Sectors, _indexRequest.SortBy, _page, IndexRequest.DefaultPageSize)).ReturnsAsync(_getIndexResponse);
         _encodingService.Setup(x => x.Encode(It.IsAny<long>(), EncodingType.PledgeId)).Returns("test");
 
         _orchestrator = new OpportunitiesOrchestrator(DateTimeService.Object, _opportunitiesService.Object, _userService.Object, _encodingService.Object, _cacheStorageService.Object);
