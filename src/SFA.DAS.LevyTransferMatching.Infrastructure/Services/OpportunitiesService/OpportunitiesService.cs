@@ -27,9 +27,12 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
 
         public async Task<GetIndexResponse> GetIndex(IEnumerable<string> sectors, string sortBy, int page, int? pageSize)
         {
-            var filters = sectors != null ? sectors.ToNameValueCollection("sectors") : new NameValueCollection();
-            filters.Add("sortBy", sortBy.ToString());
+            var filters = sectors != null ? sectors.ToNameValueCollection("sectors") : new NameValueCollection();            
             filters.Add("page", page.ToString());
+            if (sortBy != null)
+            {
+                filters.Add("sortBy", sortBy.ToString());
+            }
             if (pageSize != null)
             {
                 filters.Add("pageSize", pageSize.ToString());

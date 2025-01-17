@@ -1,4 +1,5 @@
-﻿@using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
+﻿@using SFA.DAS.LevyTransferMatching.Domain.Types
+@using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
 @model SFA.DAS.LevyTransferMatching.Web.Models.Opportunities.IndexViewModel
 @{
     ViewData["Title"] = "Search funding opportunities";
@@ -70,11 +71,11 @@
 
                             <label class="govuk-label govuk-grid-column-one-half" for="Sort-By">Sort opportunities</label>
                             <select class="govuk-select govuk-grid-column-one-half" id="SortBy" name="SortBy">
-                                <option value="ValueLowToHigh" selected="@(Model.SortBy == "ValueLowToHigh")">Value (low to high)</option>
-                                <option value="ValueHighToLow" selected="@(Model.SortBy == "ValueHighToLow")">Value (high to low)</option>
-                                <option value="MostRecent" selected="@(Model.SortBy == "MostRecent")">Most Recent</option>
-                                <option value="AtoZ" selected="@(Model.SortBy == "AtoZ")">A to Z</option>
-                                <option value="ZtoA" selected="@(Model.SortBy == "ZtoA")">Z to A</option>
+                                <option value="@OpportunitiesSortBy.ValueHighToLow" selected="@(Model.SortBy == OpportunitiesSortBy.ValueHighToLow)">Value (high to low)</option>
+                                <option value="@OpportunitiesSortBy.ValueLowToHigh" selected="@(Model.SortBy == OpportunitiesSortBy.ValueLowToHigh)">Value (low to high)</option>
+                                <option value="@OpportunitiesSortBy.MostRecent" selected="@(Model.SortBy == OpportunitiesSortBy.MostRecent)">Most Recent</option>
+                                <option value="@OpportunitiesSortBy.AtoZ" selected="@(Model.SortBy == OpportunitiesSortBy.AtoZ)">A to Z</option>
+                                <option value="@OpportunitiesSortBy.ZtoA" selected="@(Model.SortBy == OpportunitiesSortBy.ZtoA)">Z to A</option>
                             </select>
                         </div>
                     </div>

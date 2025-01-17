@@ -1,4 +1,5 @@
 ﻿using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using SFA.DAS.LevyTransferMatching.Web.Attributes;
 using SFA.DAS.LevyTransferMatching.Web.Authentication;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
@@ -20,6 +21,12 @@ public class OpportunitiesController : Controller
     [Route("opportunities", Name = "opportunities")]
     public async Task<IActionResult> Index(IndexRequest request)
     {
+        request.Sectors = request.GetSectorsList();
+        if (ModelState.ContainsKey(nameof(request.CommaSeparatedSectors)))
+        {
+            ModelState.SetModelValue(nameof(request.Sectors), new ValueProviderResult(request.CommaSeparatedSectors));
+        }
+
         var viewModel = await _opportunitiesOrchestrator.GetIndexViewModel(request);
         return View(viewModel);
     }
