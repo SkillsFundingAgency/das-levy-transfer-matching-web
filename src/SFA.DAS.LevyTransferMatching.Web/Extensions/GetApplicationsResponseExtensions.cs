@@ -56,23 +56,34 @@ public static class GetApplicationsResponseExtensions
         var daysTilAutoRejection = GetRemainingDaysForAutoRejection(app);
         if (daysTilAutoApproval.HasValue)
         {               
-            return $"AUTO APPROVAL ON {GetAutoApprovalDate(daysTilAutoApproval.Value)}";
+            return $"Auto approval on {GetAutoApprovalDate(daysTilAutoApproval.Value)}";
         }
         if (daysTilAutoRejection.HasValue)
         {                
-            return $"APPLICATION EXPIRES ON {GetAutoApprovalDate(daysTilAutoRejection.Value)}";
+            return $"Application expires on {GetAutoApprovalDate(daysTilAutoRejection.Value)}";
+        }
+
+        if (app.Status == ApplicationStatus.Approved)
+        {
+            if (automaticApprovalOption == AutomaticApprovalOption.NotApplicable)
+            {
+                return "Awaiting acceptance by applicant";
+            }
+
+            string prefix = automaticApprovalOption == AutomaticApprovalOption.DelayedAutoApproval ? "Delayed" : "Auto";
+            return $"{prefix} approval: Awaiting acceptance by applicant";
         }
 
         return app.Status switch
         {
-            ApplicationStatus.Pending => "AWAITING YOUR APPROVAL",
-            ApplicationStatus.Approved => "AWAITING ACCEPTANCE BY APPLICANT",
-            ApplicationStatus.Accepted => "OFFER OF FUNDING ACCEPTED",
-            ApplicationStatus.FundsUsed => "FUNDS USED",
-            ApplicationStatus.Rejected => "REJECTED",
-            ApplicationStatus.Declined => "WITHDRAWN BY APPLICANT",
-            ApplicationStatus.Withdrawn => "WITHDRAWN BY APPLICANT",
-            ApplicationStatus.WithdrawnAfterAcceptance => "WITHDRAWN BY APPLICANT",
+            ApplicationStatus.Pending => "Awaiting your approval",
+            ApplicationStatus.Accepted => "Offer of funding accepted",
+            ApplicationStatus.FundsUsed => "Funds used",
+            ApplicationStatus.Rejected => "Rejected",
+            ApplicationStatus.Declined => "Declined by applicant",
+            ApplicationStatus.Withdrawn => "Withdrawn by applicant",
+            ApplicationStatus.WithdrawnAfterAcceptance => "Withdrawn by applicant",
+            ApplicationStatus.FundsExpired => "Funds no longer available",
             _ => app.Status.ToString()
         };
     }
