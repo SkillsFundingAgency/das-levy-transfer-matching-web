@@ -163,24 +163,14 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
         var routeData = new Dictionary<string, string> { { "page", pageNumber.ToString() } };
 
         if (request.Sectors != null && request.Sectors.Any())
-        {
-            //var allSectors = request.Sectors.First();
-
-            //for (int i = 1; i < request.Sectors.Count(); i++)
-            //{
-            //    var sector = $"&Sectors={Uri.EscapeDataString(request.Sectors.ElementAt(i))}";
-            //    allSectors += sector;
-            //}
-
-            //routeData.Add("Sectors", allSectors);
-
+        {           
             var allSectors = string.Join(",", request.Sectors.Select(Uri.EscapeDataString));
             routeData.Add("CommaSeparatedSectors", allSectors);
         }
 
         if (!string.IsNullOrWhiteSpace(request.SortBy))
         {
-            routeData.Add("sortBy", request.SortBy);
+            routeData.Add("SortBy", request.SortBy);
         }
 
         return routeData;

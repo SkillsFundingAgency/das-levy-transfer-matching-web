@@ -1,4 +1,7 @@
-﻿using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
+﻿using Azure.Core;
+using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.LevyTransferMatching.Domain.Types;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
 using SFA.DAS.LevyTransferMatching.Web.Controllers;
@@ -44,6 +47,22 @@ public class OpportunitiesControllerTests
             Assert.That(viewResult, Is.Not.Null);
             Assert.That(indexViewModel, Is.Not.Null);
         });
+    }
+
+    
+    [Test]
+    public async Task GET_Index_With_CommaSeparatedSectors_Populates_Sectors_in_IndexRequest()
+    {
+        // Arrange
+        var commaSeparatedSectors = "Business,Charity,Finance";
+        var expectedSectors = new List<string> { "Business", "Charity", "Finance"};
+
+        _indexRequest.CommaSeparatedSectors = commaSeparatedSectors;
+        _indexRequest.Sectors = null;
+
+        // Act
+        await _opportunitiesController.Index(_indexRequest);
+        _indexRequest.Sectors.Should().BeEquivalentTo(expectedSectors);
     }
 
     [Test]

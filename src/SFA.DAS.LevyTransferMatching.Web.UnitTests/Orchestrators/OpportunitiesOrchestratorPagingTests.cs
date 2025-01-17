@@ -112,7 +112,7 @@ public class OpportunitiesOrchestratorPagingTests : OpportunitiesOrchestratorBas
 
 
     [Test]
-    public async Task GetIndexViewModel_PagingData_Returns_Max_5_Numbered_PageLinks_With_Current_Page_Set_As_Current()
+    public async Task GetIndexViewModel_PagingData_Returns_Max_7_Numbered_PageLinks_With_Current_Page_Set_As_Current()
     {
         _getIndexResponse.Page = 10;
         _getIndexResponse.PageSize = 50;
@@ -126,7 +126,9 @@ public class OpportunitiesOrchestratorPagingTests : OpportunitiesOrchestratorBas
         result.Paging.PageLinks.FirstOrDefault(x => x.Label == "10").IsCurrent.Should().BeTrue();
         result.Paging.PageLinks.FirstOrDefault(x => x.Label == "11").Should().NotBeNull();
         result.Paging.PageLinks.FirstOrDefault(x => x.Label == "12").Should().NotBeNull();
-        result.Paging.PageLinks.FirstOrDefault(x => x.Label == "13").Should().BeNull();
+        result.Paging.PageLinks.FirstOrDefault(x => x.Label == "13").Should().NotBeNull();
+        result.Paging.PageLinks.FirstOrDefault(x => x.Label == "14").Should().NotBeNull();
+        result.Paging.PageLinks.FirstOrDefault(x => x.Label == "15").Should().BeNull();
     }
 
     [Test]
@@ -156,5 +158,38 @@ public class OpportunitiesOrchestratorPagingTests : OpportunitiesOrchestratorBas
 
         result.Paging.PageLinks.First().RouteData["page"].Should().Be("9");
         result.Paging.PageLinks.Last().RouteData["page"].Should().Be("11");
+    }
+    
+    [Test]
+    public async Task GetIndexViewModel_PageLinks_Contain_CommaSeparatedSectors_When_Passed_From_Request()
+    {
+        _getIndexResponse.Page = 10;
+        _getIndexResponse.PageSize = 50;
+        _getIndexResponse.TotalOpportunities = 10000;
+
+        _indexRequest.CommaSeparatedSectors = "Agriculture,Business,Charity";
+        _indexRequest.Sectors = _indexRequest.GetSectorsList();
+
+        _opportunitiesService.Setup(x => x.GetIndex(_indexRequest.Sectors, _indexRequest.SortBy, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(_getIndexResponse);
+
+
+        var result = await _orchestrator.GetIndexViewModel(_indexRequest);
+
+        result.Paging.PageLinks.First().RouteData["CommaSeparatedSectors"].Should().BeEquivalentTo(_indexRequest.CommaSeparatedSectors);
+    }
+    
+    [Test]
+    public async Task GetIndexViewModel_PageLinks_Contain_SortBy_When_Passed_From_Request()
+    {
+        _getIndexResponse.Page = 10;
+        _getIndexResponse.PageSize = 50;
+        _getIndexResponse.TotalOpportunities = 10000;
+
+        _opportunitiesService.Setup(x => x.GetIndex(_indexRequest.Sectors, _indexRequest.SortBy, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(_getIndexResponse);
+
+
+        var result = await _orchestrator.GetIndexViewModel(_indexRequest);
+
+        result.Paging.PageLinks.First().RouteData["SortBy"].Should().BeEquivalentTo(_indexRequest.SortBy);
     }
 }
