@@ -1,9 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using SFA.DAS.LevyTransferMatching.Domain.Types;
-using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
-using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
+﻿using SFA.DAS.LevyTransferMatching.Domain.Types;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications;
 
@@ -16,11 +11,10 @@ public class GetApplicationsViewModel
     public string ApplicationCountPostFix =>
         Applications.Count() switch
         {
-            0 => "transfer applications",
             1 => "transfer application",
-            _ => "transfers applications"
+            _ => "transfer applications"
         };
-        
+
     public class ApplicationViewModel
     {
         public string DasAccountName { get; set; }
