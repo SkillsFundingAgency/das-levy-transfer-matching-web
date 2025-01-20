@@ -53,7 +53,7 @@ public class OpportunitiesOrchestratorPagingTests : OpportunitiesOrchestratorBas
         _indexRequest.Page = 1;
 
         var result = await _orchestrator.GetIndexViewModel(_indexRequest);
-        
+
         result.Paging.Page.Should().Be(_getIndexResponse.Page);
         result.Paging.PageSize.Should().Be(_getIndexResponse.PageSize);
         result.Paging.TotalPages.Should().Be(_getIndexResponse.TotalPages);
@@ -87,7 +87,7 @@ public class OpportunitiesOrchestratorPagingTests : OpportunitiesOrchestratorBas
         _indexRequest.Page = page;
 
         var result = await _orchestrator.GetIndexViewModel(_indexRequest);
-        
+
         result.Paging.ShowPageLinks.Should().BeTrue();
         result.Paging.PageStartRow.Should().Be(startRow);
         result.Paging.PageEndRow.Should().Be(endRow);
@@ -159,7 +159,7 @@ public class OpportunitiesOrchestratorPagingTests : OpportunitiesOrchestratorBas
         result.Paging.PageLinks.First().RouteData["page"].Should().Be("9");
         result.Paging.PageLinks.Last().RouteData["page"].Should().Be("11");
     }
-    
+
     [Test]
     public async Task GetIndexViewModel_PageLinks_Contain_CommaSeparatedSectors_When_Passed_From_Request()
     {
@@ -172,12 +172,11 @@ public class OpportunitiesOrchestratorPagingTests : OpportunitiesOrchestratorBas
 
         _opportunitiesService.Setup(x => x.GetIndex(_indexRequest.Sectors, _indexRequest.SortBy, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(_getIndexResponse);
 
-
         var result = await _orchestrator.GetIndexViewModel(_indexRequest);
 
         result.Paging.PageLinks.First().RouteData["CommaSeparatedSectors"].Should().BeEquivalentTo(_indexRequest.CommaSeparatedSectors);
     }
-    
+
     [Test]
     public async Task GetIndexViewModel_PageLinks_Contain_SortBy_When_Passed_From_Request()
     {
@@ -186,7 +185,6 @@ public class OpportunitiesOrchestratorPagingTests : OpportunitiesOrchestratorBas
         _getIndexResponse.TotalOpportunities = 10000;
 
         _opportunitiesService.Setup(x => x.GetIndex(_indexRequest.Sectors, _indexRequest.SortBy, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(_getIndexResponse);
-
 
         var result = await _orchestrator.GetIndexViewModel(_indexRequest);
 
