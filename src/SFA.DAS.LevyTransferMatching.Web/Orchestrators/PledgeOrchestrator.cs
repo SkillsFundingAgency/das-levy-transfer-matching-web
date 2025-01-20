@@ -9,6 +9,7 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
+using SFA.DAS.LevyTransferMatching.Web.Models.Shared;
 using SFA.DAS.LevyTransferMatching.Web.Services;
 using static SFA.DAS.LevyTransferMatching.Web.Models.Pledges.PledgesViewModel;
 
@@ -58,7 +59,7 @@ public class PledgeOrchestrator : IPledgeOrchestrator
             EncodedAccountId = request.EncodedAccountId,
             RenderCreatePledgeButton = renderCreatePledgesButton,
             HasMinimumTransferFunds = CheckForMinimumTransferFunds(pledgesResponse.StartingTransferAllowance, pledgesResponse.CurrentYearEstimatedCommittedSpend),
-            Pledges = pledgesResponse.Pledges.Select(x => new PledgesViewModel.Pledge
+            Pledges = pledgesResponse.Pledges.Select(x => new Pledge
             {
                 ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),
                 Amount = x.Amount,
@@ -74,24 +75,24 @@ public class PledgeOrchestrator : IPledgeOrchestrator
         return (startingTransferAllowance - currentYearSpend) >= minimumTransferFunds;
     }
 
-    private PledgesViewModel.PagingData GetPagingData(GetPledgesResponse pledgesResponse)
+    private PagingData GetPagingData(GetPledgesResponse pledgesResponse)
     {
-        return new PledgesViewModel.PagingData()
+        return new PagingData()
         {
             Page = pledgesResponse.Page,
             PageSize = pledgesResponse.PageSize,
             TotalPages = pledgesResponse.TotalPages,
-            TotalPledges = pledgesResponse.TotalPledges,
+            TotalResults = pledgesResponse.TotalPledges,
             ShowPageLinks = pledgesResponse.Page != 1 || pledgesResponse.TotalPledges > pledgesResponse.PageSize,
             PageLinks = BuildPageLinks(pledgesResponse),
-            PageStartRow = (pledgesResponse.Page-1) * pledgesResponse.PageSize + 1,
+            PageStartRow = (pledgesResponse.Page - 1) * pledgesResponse.PageSize + 1,
             PageEndRow = pledgesResponse.Page * pledgesResponse.PageSize > pledgesResponse.TotalPledges ? pledgesResponse.TotalPledges : pledgesResponse.Page * pledgesResponse.PageSize,
         };
     }
 
-    public IEnumerable<PledgesViewModel.PageLink> BuildPageLinks(GetPledgesResponse pledgesResponse) 
+    public IEnumerable<PageLink> BuildPageLinks(GetPledgesResponse pledgesResponse)
     {
-        var links = new List<PledgesViewModel.PageLink>();
+        var links = new List<PageLink>();
         var totalPages = (int)Math.Ceiling((double)pledgesResponse.TotalPledges / pledgesResponse.PageSize);
         var totalPageLinks = totalPages < 5 ? totalPages : 5;
 
@@ -118,7 +119,7 @@ public class PledgeOrchestrator : IPledgeOrchestrator
 
         for (var i = 0; i < totalPageLinks; i++)
         {
-            var link = new PledgesViewModel.PageLink
+            var link = new PageLink
             {
                 Label = (pageNumberSeed + i).ToString(),
                 AriaLabel = $"Page {pageNumberSeed + i}",
@@ -144,7 +145,7 @@ public class PledgeOrchestrator : IPledgeOrchestrator
 
     private Dictionary<string, string> BuildRouteData(int pageNumber)
     {
-        return new Dictionary<string, string> { {"page", pageNumber.ToString() } };
+        return new Dictionary<string, string> { { "page", pageNumber.ToString() } };
     }
 
     public DetailViewModel GetDetailViewModel(DetailRequest request)

@@ -54,7 +54,7 @@
                     results</button>
             </div>
             <div class="govuk-grid-column-two-thirds">
-                <h2 class="govuk-heading-m">@Model.Paging.TotalOpportunities @(Model.Paging.TotalOpportunities == 1 ?
+                <h2 class="govuk-heading-m">@Model.Paging.TotalResults @(Model.Paging.TotalResults == 1 ?
                     "opportunity" : "opportunities")</h2>
 
                 @if (Model.Opportunities.Count == 0)
@@ -105,7 +105,7 @@
                 {
                     <nav role="navigation" aria-label="Pagination">
                         <div class="das-pagination__summary">Showing @Model.Paging.PageStartRow to @Model.Paging.PageEndRow
-                            <br />of @Model.Paging.TotalOpportunities opportunities</div>
+                            <br />of @Model.Paging.TotalResults opportunities</div>
                         <ul class="das-pagination">
                             @foreach (var pageLink in Model.Paging.PageLinks)
                             {

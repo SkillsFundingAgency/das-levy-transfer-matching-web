@@ -57,7 +57,7 @@ public class OpportunitiesOrchestratorPagingTests : OpportunitiesOrchestratorBas
         result.Paging.Page.Should().Be(_getIndexResponse.Page);
         result.Paging.PageSize.Should().Be(_getIndexResponse.PageSize);
         result.Paging.TotalPages.Should().Be(_getIndexResponse.TotalPages);
-        result.Paging.TotalOpportunities.Should().Be(_getIndexResponse.TotalOpportunities);
+        result.Paging.TotalResults.Should().Be(_getIndexResponse.TotalOpportunities);
     }
 
     [TestCase(3, 3, false)]

@@ -33,7 +33,7 @@
                 </h1>
             </div>
             <div class="govuk-grid-column-full">
-                <p>You have <strong>@Model.Paging.TotalPledges.ToString("N0")</strong> transfers pledges.</p>
+                <p>You have <strong>@Model.Paging.TotalResults.ToString("N0")</strong> transfers pledges.</p>
                 <div class="govuk-inset-text">
                     <p>
                         You may have applications waiting to be approved or rejected. Applicants need a response from
@@ -104,7 +104,8 @@
                 {
                     <nav role="navigation" aria-label="Pagination">
                         <div class="das-pagination__summary">Showing @Model.Paging.PageStartRow to @Model.Paging.PageEndRow
-                            of @Model.Paging.TotalPledges transfer records</div>
+                            of @Model.Paging.TotalResults transfer records
+                        </div>
                         <ul class="das-pagination">
                             @foreach (var pageLink in Model.Paging.PageLinks)
                             {
