@@ -179,7 +179,7 @@ public class PledgeOrchestratorTests
             }
         };
 
-        _pledgeService.Setup(x => x.GetApplications(0, 0, null, null)).ReturnsAsync(response);
+        _pledgeService.Setup(x => x.GetApplications(0, 0, null, null, null, ApplicationsRequest.DefaultPageSize)).ReturnsAsync(response);
         _encodingService.Setup(x => x.Encode(0, EncodingType.PledgeApplicationId)).Returns("123");
 
         var result = await _orchestrator.GetApplications(new ApplicationsRequest
@@ -213,7 +213,7 @@ public class PledgeOrchestratorTests
                     .Create()).ToList()
         };
 
-        _pledgeService.Setup(x => x.GetApplications(0, 0, null, null)).ReturnsAsync(response);
+        _pledgeService.Setup(x => x.GetApplications(0, 0, null, null, null, ApplicationsRequest.DefaultPageSize)).ReturnsAsync(response);
         _encodingService.Setup(x => x.Encode(0, EncodingType.PledgeApplicationId)).Returns("123");
 
         var result = await _orchestrator.GetApplications(new ApplicationsRequest
@@ -237,7 +237,7 @@ public class PledgeOrchestratorTests
                     .Create()).ToList()
         };
 
-        _pledgeService.Setup(x => x.GetApplications(0, 0, null, null)).ReturnsAsync(response);
+        _pledgeService.Setup(x => x.GetApplications(0, 0, null, null, null, ApplicationsRequest.DefaultPageSize)).ReturnsAsync(response);
         _encodingService.Setup(x => x.Encode(0, EncodingType.PledgeApplicationId)).Returns("123");
 
         var result = await _orchestrator.GetApplications(new ApplicationsRequest
@@ -307,7 +307,7 @@ public class PledgeOrchestratorTests
         };
 
         _userService.Setup(x => x.IsOwnerOrTransactor(_encodedAccountId)).Returns(ownerOrTransactorStatus);
-        _pledgeService.Setup(x => x.GetApplications(0, 0, null, null)).ReturnsAsync(response);
+        _pledgeService.Setup(x => x.GetApplications(0, 0, null, null, null, ApplicationsRequest.DefaultPageSize)).ReturnsAsync(response);
 
         var result = await _orchestrator.GetApplications(new ApplicationsRequest
         { EncodedAccountId = _encodedAccountId, EncodedPledgeId = _encodedPledgeId });
@@ -613,7 +613,7 @@ public class PledgeOrchestratorTests
         var getPledgeApplicationsResponse = _fixture.Create<GetApplicationsResponse>();
         _pledgeService.Setup(o =>
                 o.GetApplications(It.Is<long>(l => l == accountId),
-                    It.Is<int>(p => p == _pledgeId), null, null))
+                    It.Is<int>(p => p == _pledgeId), null, null, It.IsAny<int?>(), It.IsAny<int?>()))
             .ReturnsAsync(getPledgeApplicationsResponse);
 
         await _orchestrator.GetPledgeApplicationsDownloadModel(new ApplicationsRequest
@@ -623,7 +623,7 @@ public class PledgeOrchestratorTests
         });
 
         _pledgeService.Verify(
-            o => o.GetApplications(It.Is<long>(l => l == accountId), It.Is<int>(p => p == _pledgeId), null, null),
+            o => o.GetApplications(It.Is<long>(l => l == accountId), It.Is<int>(p => p == _pledgeId), null, null, It.IsAny<int?>(), It.IsAny<int?>()),
             Times.Once);
     }
 
