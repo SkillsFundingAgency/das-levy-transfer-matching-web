@@ -82,18 +82,18 @@ public class PledgeOrchestrator : IPledgeOrchestrator
             Page = response.Page,
             PageSize = response.PageSize,
             TotalPages = response.TotalPages,
-            TotalResults = response.TotalResults,
-            ShowPageLinks = response.Page != 1 || response.TotalResults > response.PageSize,
+            TotalResults = response.TotalItems,
+            ShowPageLinks = response.Page != 1 || response.TotalItems > response.PageSize,
             PageLinks = BuildPageLinks(response),
             PageStartRow = (response.Page - 1) * response.PageSize + 1,
-            PageEndRow = response.Page * response.PageSize > response.TotalResults ? response.TotalResults : response.Page * response.PageSize,
+            PageEndRow = response.Page * response.PageSize > response.TotalItems ? response.TotalItems : response.Page * response.PageSize,
         };
     }
 
     public IEnumerable<PageLink> BuildPageLinks(PagedModel pledgesResponse)
     {
         var links = new List<PageLink>();
-        var totalPages = (int)Math.Ceiling((double)pledgesResponse.TotalResults / pledgesResponse.PageSize);
+        var totalPages = (int)Math.Ceiling((double)pledgesResponse.TotalItems / pledgesResponse.PageSize);
         var totalPageLinks = totalPages < 5 ? totalPages : 5;
 
         //previous link

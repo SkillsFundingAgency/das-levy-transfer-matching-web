@@ -45,7 +45,7 @@ public class GetPledgesOrchestratorPagingTests
         result.Paging.Page.Should().Be(_pledgesResponse.Page);
         result.Paging.PageSize.Should().Be(_pledgesResponse.PageSize);
         result.Paging.TotalPages.Should().Be(_pledgesResponse.TotalPages);
-        result.Paging.TotalResults.Should().Be(_pledgesResponse.TotalResults);
+        result.Paging.TotalResults.Should().Be(_pledgesResponse.TotalItems);
     }
 
     [TestCase(3, 3, false)]
@@ -56,7 +56,7 @@ public class GetPledgesOrchestratorPagingTests
 
         _pledgesResponse.Page = 1;
         _pledgesResponse.PageSize = 50;
-        _pledgesResponse.TotalResults = totalPledges;
+        _pledgesResponse.TotalItems = totalPledges;
 
         var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest
         { EncodedAccountId = _encodedAccountId, AccountId = _accountId, Page = _page });
@@ -72,7 +72,7 @@ public class GetPledgesOrchestratorPagingTests
 
         _pledgesResponse.Page = page;
         _pledgesResponse.PageSize = 50;
-        _pledgesResponse.TotalResults = totalPledges;
+        _pledgesResponse.TotalItems = totalPledges;
 
         var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest
         { EncodedAccountId = _encodedAccountId, AccountId = _accountId, Page = page });
@@ -88,7 +88,7 @@ public class GetPledgesOrchestratorPagingTests
     {
         _pledgesResponse.Page = page;
         _pledgesResponse.PageSize = 50;
-        _pledgesResponse.TotalResults = totalPledges;
+        _pledgesResponse.TotalItems = totalPledges;
 
         var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest
         { EncodedAccountId = _encodedAccountId, AccountId = _accountId, Page = page });
@@ -101,7 +101,7 @@ public class GetPledgesOrchestratorPagingTests
     {
         _pledgesResponse.Page = 10;
         _pledgesResponse.PageSize = 50;
-        _pledgesResponse.TotalResults = 10000;
+        _pledgesResponse.TotalItems = 10000;
 
         var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest
         { EncodedAccountId = _encodedAccountId, AccountId = _accountId, Page = _page });
@@ -119,7 +119,7 @@ public class GetPledgesOrchestratorPagingTests
     {
         _pledgesResponse.Page = 10;
         _pledgesResponse.PageSize = 50;
-        _pledgesResponse.TotalResults = 10000;
+        _pledgesResponse.TotalItems = 10000;
 
         var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest
         { EncodedAccountId = _encodedAccountId, AccountId = _accountId, Page = _page });
@@ -135,7 +135,7 @@ public class GetPledgesOrchestratorPagingTests
     {
         _pledgesResponse.Page = 10;
         _pledgesResponse.PageSize = 50;
-        _pledgesResponse.TotalResults = 10000;
+        _pledgesResponse.TotalItems = 10000;
 
         var result = await _orchestrator.GetPledgesViewModel(new PledgesRequest
         { EncodedAccountId = _encodedAccountId, AccountId = _accountId, Page = _page });
