@@ -75,7 +75,7 @@ public class PledgeOrchestrator : IPledgeOrchestrator
         return (startingTransferAllowance - currentYearSpend) >= minimumTransferFunds;
     }
 
-    private PagingData GetPagingData(PagedModel response)
+    private PagingData GetPagingData(PagedModel response, SortColumn? sortColumn = null, SortOrder? sortOrder = null)
     {
         return new PagingData()
         {
@@ -84,13 +84,13 @@ public class PledgeOrchestrator : IPledgeOrchestrator
             TotalPages = response.TotalPages,
             TotalResults = response.TotalItems,
             ShowPageLinks = response.Page != 1 || response.TotalItems > response.PageSize,
-            PageLinks = BuildPageLinks(response),
+            PageLinks = BuildPageLinks(response, sortColumn, sortOrder),
             PageStartRow = (response.Page - 1) * response.PageSize + 1,
             PageEndRow = response.Page * response.PageSize > response.TotalItems ? response.TotalItems : response.Page * response.PageSize,
         };
     }
 
-    public IEnumerable<PageLink> BuildPageLinks(PagedModel pledgesResponse)
+    public IEnumerable<PageLink> BuildPageLinks(PagedModel pledgesResponse, SortColumn? sortColumn = null, SortOrder? sortOrder = null)
     {
         var links = new List<PageLink>();
         var totalPages = (int)Math.Ceiling((double)pledgesResponse.TotalItems / pledgesResponse.PageSize);
@@ -103,7 +103,7 @@ public class PledgeOrchestrator : IPledgeOrchestrator
             {
                 Label = "Previous",
                 AriaLabel = "Previous page",
-                RouteData = BuildRouteData(pledgesResponse.Page - 1)
+                RouteData = BuildRouteData(pledgesResponse.Page - 1, sortColumn, sortOrder)
             });
         }
 
@@ -124,7 +124,7 @@ public class PledgeOrchestrator : IPledgeOrchestrator
                 Label = (pageNumberSeed + i).ToString(),
                 AriaLabel = $"Page {pageNumberSeed + i}",
                 IsCurrent = pageNumberSeed + i == pledgesResponse.Page ? true : (bool?)null,
-                RouteData = BuildRouteData(pageNumberSeed + i)
+                RouteData = BuildRouteData(pageNumberSeed + i, sortColumn, sortOrder)
             };
             links.Add(link);
         }
@@ -136,16 +136,27 @@ public class PledgeOrchestrator : IPledgeOrchestrator
             {
                 Label = "Next",
                 AriaLabel = "Next page",
-                RouteData = BuildRouteData(pledgesResponse.Page + 1)
+                RouteData = BuildRouteData(pledgesResponse.Page + 1, sortColumn, sortOrder)
             });
         }
 
         return links;
     }
 
-    private static Dictionary<string, string> BuildRouteData(int pageNumber)
+    private static Dictionary<string, string> BuildRouteData(int pageNumber, SortColumn? sortColumn = null, SortOrder? sortOrder = null)
     {
-        return new Dictionary<string, string> { { "page", pageNumber.ToString() } };
+        var routeData = new Dictionary<string, string> { { "page", pageNumber.ToString() } };
+        
+        if (sortColumn.HasValue)
+        {
+            routeData.Add("sortColumn", sortColumn.ToString());
+        }
+        if (sortOrder.HasValue)
+        {
+            routeData.Add("sortOrder", sortOrder.ToString());
+        }
+
+        return routeData;
     }
 
     public DetailViewModel GetDetailViewModel(DetailRequest request)
@@ -293,7 +304,7 @@ public class PledgeOrchestrator : IPledgeOrchestrator
 
         return new ApplicationsViewModel
         {
-            Paging = GetPagingData(result),
+            Paging = GetPagingData(result, request.SortColumn, request.SortOrder),
             EncodedAccountId = request.EncodedAccountId,
             UserCanClosePledge = result.PledgeStatus != PledgeStatus.Closed && isOwnerOrTransactor,
             EncodedPledgeId = request.EncodedPledgeId,

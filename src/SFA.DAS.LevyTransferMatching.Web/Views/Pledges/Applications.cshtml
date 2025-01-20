@@ -8,6 +8,7 @@
     ViewBag.GaData.Vpv = "/accounts/applications";
     ViewBag.ZenDeskLabel = "LTM-S-pledge-details";
 
+    var currentPageRoute = $"/accounts/{@Model.EncodedAccountId}/pledges/{@Model.EncodedPledgeId}/applications";
     var breadCrumbs = new List<Tuple<string, string>>
     {
         new Tuple<string, string>(LinkGenerator.AccountsLink($"accounts/{Model.EncodedAccountId}/teams"), "Home"),
@@ -301,17 +302,25 @@
         }
         @if (Model.Paging.ShowPageLinks)
         {
-            <nav role="navigation" aria-label="Pagination">
+            <nav role="navigation" class="das-search-results__list--border" aria-label="Pagination">
                 <div class="das-pagination__summary">
-                    Showing @Model.Paging.PageStartRow to @Model.Paging.PageEndRow
-                    <br />of @Model.Paging.TotalResults opportunities
+                    @if (Model.Paging.Page == 1)
+                    {
+                        <text>Showing @Model.Paging.PageEndRow of @Model.Paging.TotalResults applications</text>
+                    }
+                    else if (Model.Paging.Page > 1)
+                    {
+                        <text>Showing @Model.Paging.PageStartRow to @Model.Paging.PageEndRow of @Model.Paging.TotalResults applications</text>
+                    }
                 </div>
                 <ul class="das-pagination">
                     @foreach (var pageLink in Model.Paging.PageLinks)
                     {
                         <li class="das-pagination__item">
                             <a class="das-pagination__link @(pageLink.IsCurrent.HasValue && pageLink.IsCurrent.Value ? "current" : "")"
-                               asp-route="opportunities" asp-all-route-data="@pageLink.RouteData"
+
+                               asp-all-route-data="@pageLink.RouteData"
+                               asp-route="@RouteNames.PledgeApplications"
                                aria-current="@pageLink.IsCurrent" aria-label="@pageLink.AriaLabel">
                                 @pageLink.Label
                             </a>
@@ -319,6 +328,7 @@
                     }
                 </ul>
             </nav>
+            <br/>
         }
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
