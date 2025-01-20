@@ -2,5 +2,6 @@
 
 public class AcceptedViewModel : AcceptedRequest
 {
-    public string EmployerNameAndReference { get; set;}
+    public string EmployerName { get; set;}
+    public string PledgeReference { get; set;}
 }
