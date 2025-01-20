@@ -299,6 +299,27 @@
                 </table>
             </fieldset>
         }
+        @if (Model.Paging.ShowPageLinks)
+        {
+            <nav role="navigation" aria-label="Pagination">
+                <div class="das-pagination__summary">
+                    Showing @Model.Paging.PageStartRow to @Model.Paging.PageEndRow
+                    <br />of @Model.Paging.TotalResults opportunities
+                </div>
+                <ul class="das-pagination">
+                    @foreach (var pageLink in Model.Paging.PageLinks)
+                    {
+                        <li class="das-pagination__item">
+                            <a class="das-pagination__link @(pageLink.IsCurrent.HasValue && pageLink.IsCurrent.Value ? "current" : "")"
+                               asp-route="opportunities" asp-all-route-data="@pageLink.RouteData"
+                               aria-current="@pageLink.IsCurrent" aria-label="@pageLink.AriaLabel">
+                                @pageLink.Label
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        }
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
                 <div class="govuk-button-group">

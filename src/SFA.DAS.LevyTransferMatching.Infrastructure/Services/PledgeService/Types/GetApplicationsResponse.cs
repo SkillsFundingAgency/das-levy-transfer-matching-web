@@ -5,7 +5,7 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types
 {
-    public class GetApplicationsResponse
+    public class GetApplicationsResponse : PagedModel
     {
         public IEnumerable<Application> Applications { get; set; }
 
@@ -13,7 +13,6 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Typ
         public int PledgeRemainingAmount { get; set; }
         public int PledgeTotalAmount { get; set; }
         public AutomaticApprovalOption AutomaticApprovalOption { get; set; }
-
 
         public class Application
         {

@@ -75,25 +75,25 @@ public class PledgeOrchestrator : IPledgeOrchestrator
         return (startingTransferAllowance - currentYearSpend) >= minimumTransferFunds;
     }
 
-    private PagingData GetPagingData(GetPledgesResponse pledgesResponse)
+    private PagingData GetPagingData(PagedModel response)
     {
         return new PagingData()
         {
-            Page = pledgesResponse.Page,
-            PageSize = pledgesResponse.PageSize,
-            TotalPages = pledgesResponse.TotalPages,
-            TotalResults = pledgesResponse.TotalPledges,
-            ShowPageLinks = pledgesResponse.Page != 1 || pledgesResponse.TotalPledges > pledgesResponse.PageSize,
-            PageLinks = BuildPageLinks(pledgesResponse),
-            PageStartRow = (pledgesResponse.Page - 1) * pledgesResponse.PageSize + 1,
-            PageEndRow = pledgesResponse.Page * pledgesResponse.PageSize > pledgesResponse.TotalPledges ? pledgesResponse.TotalPledges : pledgesResponse.Page * pledgesResponse.PageSize,
+            Page = response.Page,
+            PageSize = response.PageSize,
+            TotalPages = response.TotalPages,
+            TotalResults = response.TotalResults,
+            ShowPageLinks = response.Page != 1 || response.TotalResults > response.PageSize,
+            PageLinks = BuildPageLinks(response),
+            PageStartRow = (response.Page - 1) * response.PageSize + 1,
+            PageEndRow = response.Page * response.PageSize > response.TotalResults ? response.TotalResults : response.Page * response.PageSize,
         };
     }
 
-    public IEnumerable<PageLink> BuildPageLinks(GetPledgesResponse pledgesResponse)
+    public IEnumerable<PageLink> BuildPageLinks(PagedModel pledgesResponse)
     {
         var links = new List<PageLink>();
-        var totalPages = (int)Math.Ceiling((double)pledgesResponse.TotalPledges / pledgesResponse.PageSize);
+        var totalPages = (int)Math.Ceiling((double)pledgesResponse.TotalResults / pledgesResponse.PageSize);
         var totalPageLinks = totalPages < 5 ? totalPages : 5;
 
         //previous link
@@ -143,7 +143,7 @@ public class PledgeOrchestrator : IPledgeOrchestrator
         return links;
     }
 
-    private Dictionary<string, string> BuildRouteData(int pageNumber)
+    private static Dictionary<string, string> BuildRouteData(int pageNumber)
     {
         return new Dictionary<string, string> { { "page", pageNumber.ToString() } };
     }
@@ -260,7 +260,7 @@ public class PledgeOrchestrator : IPledgeOrchestrator
 
     public async Task<ApplicationsViewModel> GetApplications(ApplicationsRequest request)
     {
-        var result = await _pledgeService.GetApplications(request.AccountId, request.PledgeId, request.SortColumn, request.SortOrder);
+        var result = await _pledgeService.GetApplications(request.AccountId, request.PledgeId, request.SortColumn, request.SortOrder, request.Page, ApplicationsRequest.DefaultPageSize);
 
         var isOwnerOrTransactor = _userService.IsOwnerOrTransactor(request.EncodedAccountId);
 
@@ -293,6 +293,7 @@ public class PledgeOrchestrator : IPledgeOrchestrator
 
         return new ApplicationsViewModel
         {
+            Paging = GetPagingData(result),
             EncodedAccountId = request.EncodedAccountId,
             UserCanClosePledge = result.PledgeStatus != PledgeStatus.Closed && isOwnerOrTransactor,
             EncodedPledgeId = request.EncodedPledgeId,

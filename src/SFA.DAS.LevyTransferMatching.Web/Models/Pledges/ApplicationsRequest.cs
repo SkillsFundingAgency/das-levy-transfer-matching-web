@@ -14,5 +14,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public int PledgeId { get; set; }
         public SortColumn? SortColumn { get; set; }
         public SortOrder? SortOrder { get; set; }
+        public int? Page { get; set; }
+        public const int DefaultPageSize = 15;
     }
 }
