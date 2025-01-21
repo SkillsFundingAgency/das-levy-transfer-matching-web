@@ -1,4 +1,5 @@
 ﻿using SFA.DAS.Encoding;
+using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
@@ -41,7 +42,9 @@ public class OpportunitiesOrchestratorPagingTests : OpportunitiesOrchestratorBas
 
         _getIndexResponse = _fixture.Create<GetIndexResponse>();
         _indexRequest = _fixture.Create<IndexRequest>();
-        _opportunitiesService.Setup(x => x.GetIndex(_indexRequest.Sectors, _indexRequest.SortBy, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(_getIndexResponse);
+        _indexRequest.SortBy = OpportunitiesSortBy.ValueHighToLow.ToString();
+
+        _opportunitiesService.Setup(x => x.GetIndex(_indexRequest.Sectors, OpportunitiesSortBy.ValueHighToLow, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(_getIndexResponse);
         _encodingService.Setup(x => x.Encode(It.IsAny<long>(), EncodingType.PledgeId)).Returns("test");
 
         _orchestrator = new OpportunitiesOrchestrator(DateTimeService.Object, _opportunitiesService.Object, _userService.Object, _encodingService.Object, _cacheStorageService.Object);
@@ -170,7 +173,7 @@ public class OpportunitiesOrchestratorPagingTests : OpportunitiesOrchestratorBas
         _indexRequest.CommaSeparatedSectors = "Agriculture,Business,Charity";
         _indexRequest.Sectors = _indexRequest.GetSectorsList();
 
-        _opportunitiesService.Setup(x => x.GetIndex(_indexRequest.Sectors, _indexRequest.SortBy, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(_getIndexResponse);
+        _opportunitiesService.Setup(x => x.GetIndex(_indexRequest.Sectors, OpportunitiesSortBy.ValueHighToLow, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(_getIndexResponse);
 
         var result = await _orchestrator.GetIndexViewModel(_indexRequest);
 
@@ -184,7 +187,7 @@ public class OpportunitiesOrchestratorPagingTests : OpportunitiesOrchestratorBas
         _getIndexResponse.PageSize = 50;
         _getIndexResponse.TotalOpportunities = 10000;
 
-        _opportunitiesService.Setup(x => x.GetIndex(_indexRequest.Sectors, _indexRequest.SortBy, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(_getIndexResponse);
+        _opportunitiesService.Setup(x => x.GetIndex(_indexRequest.Sectors, OpportunitiesSortBy.ValueHighToLow, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(_getIndexResponse);
 
         var result = await _orchestrator.GetIndexViewModel(_indexRequest);
 

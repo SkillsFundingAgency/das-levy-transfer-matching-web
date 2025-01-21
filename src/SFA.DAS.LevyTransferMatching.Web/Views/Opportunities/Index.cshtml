@@ -69,13 +69,13 @@
                     <div class="govuk-grid-column-two-thirds">
                         <div class="govuk-grid-row">
 
-                            <label class="govuk-label govuk-grid-column-one-half" for="Sort-By">Sort opportunities</label>
+                            <label class="govuk-label govuk-grid-column-one-half" for="SortBy">Sort opportunities</label>
                             <select class="govuk-select govuk-grid-column-one-half" id="SortBy" name="SortBy">
-                                <option value="@OpportunitiesSortBy.ValueHighToLow" selected="@(Model.SortBy == OpportunitiesSortBy.ValueHighToLow)">Value (high to low)</option>
-                                <option value="@OpportunitiesSortBy.ValueLowToHigh" selected="@(Model.SortBy == OpportunitiesSortBy.ValueLowToHigh)">Value (low to high)</option>
-                                <option value="@OpportunitiesSortBy.MostRecent" selected="@(Model.SortBy == OpportunitiesSortBy.MostRecent)">Most Recent</option>
-                                <option value="@OpportunitiesSortBy.AtoZ" selected="@(Model.SortBy == OpportunitiesSortBy.AtoZ)">A to Z</option>
-                                <option value="@OpportunitiesSortBy.ZtoA" selected="@(Model.SortBy == OpportunitiesSortBy.ZtoA)">Z to A</option>
+                                <option value="@OpportunitiesSortBy.ValueHighToLow" selected="@(Model.SortBy == OpportunitiesSortBy.ValueHighToLow.ToString())">Value (high to low)</option>
+                                <option value="@OpportunitiesSortBy.ValueLowToHigh" selected="@(Model.SortBy == OpportunitiesSortBy.ValueLowToHigh.ToString())">Value (low to high)</option>
+                                <option value="@OpportunitiesSortBy.MostRecent" selected="@(Model.SortBy == OpportunitiesSortBy.MostRecent.ToString())">Most Recent</option>
+                                <option value="@OpportunitiesSortBy.AtoZ" selected="@(Model.SortBy == OpportunitiesSortBy.AtoZ.ToString())">A to Z</option>
+                                <option value="@OpportunitiesSortBy.ZtoA" selected="@(Model.SortBy == OpportunitiesSortBy.ZtoA.ToString())">Z to A</option>
                             </select>
                         </div>
                     </div>
@@ -151,13 +151,3 @@
         </form>
     </div>
 </main>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const sortBySelect = document.getElementById('SortBy');
-        const filterForm = document.getElementById('filterForm');
-
-        sortBySelect.addEventListener('change', function () {
-            filterForm.submit();
-        });
-    });
-</script>

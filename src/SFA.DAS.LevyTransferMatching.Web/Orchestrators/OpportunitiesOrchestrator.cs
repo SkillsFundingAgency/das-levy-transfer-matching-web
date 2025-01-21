@@ -1,4 +1,6 @@
-﻿using SFA.DAS.Encoding;
+﻿using Microsoft.IdentityModel.Tokens;
+using SFA.DAS.Encoding;
+using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
@@ -68,7 +70,15 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
 
     public async Task<IndexViewModel> GetIndexViewModel(IndexRequest request)
     {
-        var response = await _opportunitiesService.GetIndex(request.Sectors, request.SortBy, request.Page ?? 1, IndexRequest.DefaultPageSize);
+        var opportunitySort = OpportunitiesSortBy.ValueHighToLow;
+        if (!string.IsNullOrEmpty(request.SortBy))
+        {
+            if (Enum.TryParse<OpportunitiesSortBy>(request.SortBy, true, out var opportunitySortParsed))
+            {
+                opportunitySort = opportunitySortParsed;
+            }
+        }
+        var response = await _opportunitiesService.GetIndex(request.Sectors, opportunitySort, request.Page ?? 1, IndexRequest.DefaultPageSize);
 
         return new IndexViewModel
         {

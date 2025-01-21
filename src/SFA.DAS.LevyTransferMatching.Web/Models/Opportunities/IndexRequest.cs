@@ -8,7 +8,7 @@ public class IndexRequest
     public IEnumerable<string> Sectors { get; set; }
     public string CommaSeparatedSectors { get; set; }
     public int? Page { get; set; }
-    public string SortBy { get; set; } = OpportunitiesSortBy.ValueHighToLow;
+    public string SortBy { get; set; }
 
     public IEnumerable<string> GetSectorsList()
     {
