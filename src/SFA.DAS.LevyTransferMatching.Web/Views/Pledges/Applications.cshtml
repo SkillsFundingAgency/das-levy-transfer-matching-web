@@ -8,7 +8,6 @@
     ViewBag.GaData.Vpv = "/accounts/applications";
     ViewBag.ZenDeskLabel = "LTM-S-pledge-details";
 
-    var currentPageRoute = $"/accounts/{@Model.EncodedAccountId}/pledges/{@Model.EncodedPledgeId}/applications";
     var breadCrumbs = new List<Tuple<string, string>>
     {
         new Tuple<string, string>(LinkGenerator.AccountsLink($"accounts/{Model.EncodedAccountId}/teams"), "Home"),
@@ -321,7 +320,8 @@
 
                                asp-all-route-data="@pageLink.RouteData"
                                asp-route="@RouteNames.PledgeApplications"
-                               aria-current="@pageLink.IsCurrent" aria-label="@pageLink.AriaLabel">
+                               aria-current="@(pageLink.IsCurrent.HasValue && pageLink.IsCurrent.Value ? "page" : null)"
+                               aria-label="@pageLink.AriaLabel">
                                 @pageLink.Label
                             </a>
                         </li>

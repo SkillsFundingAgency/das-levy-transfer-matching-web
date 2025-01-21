@@ -18,7 +18,7 @@ public class GetApplicationsOrchestratorPagingTests
     private Mock<IPledgeService> _pledgeService;
     private Infrastructure.Configuration.FeatureToggles _featureToggles;
     private GetApplicationsResponse _applicationsResponse;
-    private readonly string _encodedAccountId;
+    private readonly string _encodedAccountId = "ABCD";
     private readonly int _accountId = 1;
     private readonly int _page = 1;
 
