@@ -89,14 +89,14 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
         };
     }
 
-    private IndexViewModel.PagingData GetPagingData(GetIndexResponse response)
+    private PagingData GetPagingData(GetIndexResponse response)
     {
-        return new IndexViewModel.PagingData()
+        return new PagingData()
         {
             Page = response.Page,
             PageSize = response.PageSize,
             TotalPages = response.TotalPages,
-            TotalOpportunities = response.TotalOpportunities,
+            TotalItems = response.TotalOpportunities,
             ShowPageLinks = response.Page != 1 || response.TotalOpportunities > response.PageSize,
             PageLinks = BuildPageLinks(response),
             PageStartRow = (response.Page - 1) * response.PageSize + 1,
@@ -104,16 +104,16 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
         };
     }
 
-    public IEnumerable<IndexViewModel.PageLink> BuildPageLinks(GetIndexResponse response)
+    public IEnumerable<PageLink> BuildPageLinks(GetIndexResponse response)
     {
-        var links = new List<IndexViewModel.PageLink>();
+        var links = new List<PageLink>();
         var totalPages = (int)Math.Ceiling((double)response.TotalOpportunities / response.PageSize);
         var totalPageLinks = totalPages < 5 ? totalPages : 5;
 
         //previous link
         if (totalPages > 1 && response.Page > 1)
         {
-            links.Add(new IndexViewModel.PageLink
+            links.Add(new PageLink
             {
                 Label = "Previous",
                 AriaLabel = "Previous page",
@@ -133,7 +133,7 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
 
         for (var i = 0; i < totalPageLinks; i++)
         {
-            var link = new IndexViewModel.PageLink
+            var link = new PageLink
             {
                 Label = (pageNumberSeed + i).ToString(),
                 AriaLabel = $"Page {pageNumberSeed + i}",
@@ -146,7 +146,7 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
         //next link
         if (totalPages > 1 && response.Page < totalPages)
         {
-            links.Add(new IndexViewModel.PageLink
+            links.Add(new PageLink
             {
                 Label = "Next",
                 AriaLabel = "Next page",
@@ -289,7 +289,7 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
         }
         else
         {
-            result.Locations = new List<string> {applicationTask.Result.SpecificLocation};
+            result.Locations = new List<string> { applicationTask.Result.SpecificLocation };
         }
 
         return result;
@@ -327,7 +327,7 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
 
         var placeholders = Enumerable.Range(0, MaximumNumberAdditionalEmailAddresses - additionalEmailAddresses.Count)
             .Select(x => (string)null);
-            
+
         additionalEmailAddresses.AddRange(placeholders);
 
         var viewModel = new ContactDetailsViewModel

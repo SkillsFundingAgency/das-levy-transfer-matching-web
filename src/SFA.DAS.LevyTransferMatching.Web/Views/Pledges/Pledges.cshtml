@@ -74,7 +74,7 @@
                 }
 
                 <br/>
-                <p><b>@Model.Paging.TotalPledges.ToString("N0") transfers pledges</b></p>
+                <p><b>@Model.Paging.TotalItems.ToString("N0") transfers pledges</b></p>
 
                 <table class="govuk-table govuk-!-margin-bottom-9 das-table--responsive"
                     aria-label="Transfer pledges table">
@@ -113,7 +113,8 @@
                 {
                     <nav role="navigation" aria-label="Pagination">
                         <div class="das-pagination__summary">Showing @Model.Paging.PageStartRow to @Model.Paging.PageEndRow
-                            of @Model.Paging.TotalPledges transfer records</div>
+                            of @Model.Paging.TotalItems transfer records
+                        </div>
                         <ul class="das-pagination">
                             @foreach (var pageLink in Model.Paging.PageLinks)
                             {
