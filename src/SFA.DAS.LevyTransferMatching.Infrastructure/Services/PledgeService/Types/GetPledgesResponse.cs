@@ -3,9 +3,8 @@ using System.Collections.Generic;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types
 {
-    public class GetPledgesResponse : PagedModel
+    public class GetPledgesResponse : PagedResponse<GetPledgesResponse.Pledge>
     {
-        public IEnumerable<Pledge> Pledges { get; set; }      
         public decimal StartingTransferAllowance { get; set; }
         public decimal CurrentYearEstimatedCommittedSpend { get; set; }
 

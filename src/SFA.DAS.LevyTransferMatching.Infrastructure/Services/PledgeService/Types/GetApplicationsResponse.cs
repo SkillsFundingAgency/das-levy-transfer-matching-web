@@ -5,10 +5,8 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types
 {
-    public class GetApplicationsResponse : PagedModel
+    public class GetApplicationsResponse : PagedResponse<GetApplicationsResponse.Application>
     {
-        public IEnumerable<Application> Applications { get; set; }
-
         public PledgeStatus PledgeStatus { get; set; }
         public int PledgeRemainingAmount { get; set; }
         public int PledgeTotalAmount { get; set; }

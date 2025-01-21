@@ -168,18 +168,18 @@ public class PledgeOrchestratorTests
     {
         var response = new GetApplicationsResponse
         {
-            Applications = new List<GetApplicationsResponse.Application>
-        {
-            new()
-            {
-                Id = 0,
-                StartDate = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1),
-                Status = ApplicationStatus.Pending
-            }
-        }
+            Items =
+            [
+                new()
+                {
+                    Id = 0,
+                    StartDate = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1),
+                    Status = ApplicationStatus.Pending
+                }
+            ]
         };
 
-        _pledgeService.Setup(x => x.GetApplications(0, 0, null, null, null, ApplicationsRequest.DefaultPageSize)).ReturnsAsync(response);
+        _pledgeService.Setup(x => x.GetApplications(0, 0, null, null, 1, ApplicationsRequest.PageSize)).ReturnsAsync(response);
         _encodingService.Setup(x => x.Encode(0, EncodingType.PledgeApplicationId)).Returns("123");
 
         var result = await _orchestrator.GetApplications(new ApplicationsRequest
@@ -202,7 +202,7 @@ public class PledgeOrchestratorTests
     {
         var response = new GetApplicationsResponse
         {
-            Applications = Enumerable.Range(0, numberOfPendingApplications)
+            Items = Enumerable.Range(0, numberOfPendingApplications)
                 .Select(_ => _fixture.Build<GetApplicationsResponse.Application>()
                     .With(p => p.Id, 0)
                     .With(p => p.Status, ApplicationStatus.Pending)
@@ -210,7 +210,7 @@ public class PledgeOrchestratorTests
                     .Create()).ToList()
         };
 
-        _pledgeService.Setup(x => x.GetApplications(0, 0, null, null, null, ApplicationsRequest.DefaultPageSize)).ReturnsAsync(response);
+        _pledgeService.Setup(x => x.GetApplications(0, 0, null, null, 1, ApplicationsRequest.PageSize)).ReturnsAsync(response);
         _encodingService.Setup(x => x.Encode(0, EncodingType.PledgeApplicationId)).Returns("123");
 
         var result = await _orchestrator.GetApplications(new ApplicationsRequest
@@ -226,7 +226,7 @@ public class PledgeOrchestratorTests
     {
         var response = new GetApplicationsResponse
         {
-            Applications = Enumerable.Range(0, 1)
+            Items = Enumerable.Range(0, 1)
                 .Select(_ => _fixture.Build<GetApplicationsResponse.Application>()
                     .With(p => p.Id, 0)
                     .With(p => p.Status, status)
@@ -234,7 +234,7 @@ public class PledgeOrchestratorTests
                     .Create()).ToList()
         };
 
-        _pledgeService.Setup(x => x.GetApplications(0, 0, null, null, null, ApplicationsRequest.DefaultPageSize)).ReturnsAsync(response);
+        _pledgeService.Setup(x => x.GetApplications(0, 0, null, null, 1, ApplicationsRequest.PageSize)).ReturnsAsync(response);
         _encodingService.Setup(x => x.Encode(0, EncodingType.PledgeApplicationId)).Returns("123");
 
         var result = await _orchestrator.GetApplications(new ApplicationsRequest
@@ -254,18 +254,18 @@ public class PledgeOrchestratorTests
 
         var response = _fixture.Create<GetRejectApplicationsResponse>();
         response.Applications = new List<GetRejectApplicationsResponse.Application>
-    {
-        new()
         {
-            Id = 4,
-            DasAccountName = "Mega Corp"
-        },
-        new()
-        {
-            Id = 5,
-            DasAccountName = "Mega Corp"
-        }
-    };
+            new()
+            {
+                Id = 4,
+                DasAccountName = "Mega Corp"
+            },
+            new()
+            {
+                Id = 5,
+                DasAccountName = "Mega Corp"
+            }
+        };
 
         _pledgeService.Setup(o => o.GetRejectApplications(request.AccountId, request.PledgeId)).ReturnsAsync(response);
         _encodingService.Setup(x => x.Decode("9RMK6Y", EncodingType.PledgeApplicationId)).Returns(4);
@@ -284,19 +284,19 @@ public class PledgeOrchestratorTests
     {
         var response = new GetApplicationsResponse
         {
-            Applications = new List<GetApplicationsResponse.Application>
-        {
-            new()
+            Items = new List<GetApplicationsResponse.Application>
             {
-                Id = 0,
-                StartDate = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1),
-                Status = ApplicationStatus.Pending
+                new()
+                {
+                    Id = 0,
+                    StartDate = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1),
+                    Status = ApplicationStatus.Pending
+                }
             }
-        }
         };
 
         _userService.Setup(x => x.IsOwnerOrTransactor(_encodedAccountId)).Returns(ownerOrTransactorStatus);
-        _pledgeService.Setup(x => x.GetApplications(0, 0, null, null, null, ApplicationsRequest.DefaultPageSize)).ReturnsAsync(response);
+        _pledgeService.Setup(x => x.GetApplications(0, 0, null, null, 1, ApplicationsRequest.PageSize)).ReturnsAsync(response);
 
         var result = await _orchestrator.GetApplications(new ApplicationsRequest
         { EncodedAccountId = _encodedAccountId, EncodedPledgeId = _encodedPledgeId });

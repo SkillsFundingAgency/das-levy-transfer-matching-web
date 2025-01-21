@@ -59,7 +59,7 @@ public class PledgeOrchestrator : IPledgeOrchestrator
             EncodedAccountId = request.EncodedAccountId,
             RenderCreatePledgeButton = renderCreatePledgesButton,
             HasMinimumTransferFunds = CheckForMinimumTransferFunds(pledgesResponse.StartingTransferAllowance, pledgesResponse.CurrentYearEstimatedCommittedSpend),
-            Pledges = pledgesResponse.Pledges.Select(x => new Pledge
+            Pledges = pledgesResponse.Items.Select(x => new Pledge
             {
                 ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),
                 Amount = x.Amount,
@@ -75,7 +75,7 @@ public class PledgeOrchestrator : IPledgeOrchestrator
         return (startingTransferAllowance - currentYearSpend) >= minimumTransferFunds;
     }
 
-    private PagingData GetPagingData(PagedModel response, SortColumn? sortColumn = null, SortOrder? sortOrder = null)
+    private PagingData GetPagingData<T>(PagedResponse<T> response, SortColumn? sortColumn = null, SortOrder? sortOrder = null)
     {
         return new PagingData()
         {
@@ -90,7 +90,7 @@ public class PledgeOrchestrator : IPledgeOrchestrator
         };
     }
 
-    public IEnumerable<PageLink> BuildPageLinks(PagedModel pledgesResponse, SortColumn? sortColumn = null, SortOrder? sortOrder = null)
+    public IEnumerable<PageLink> BuildPageLinks<T>(PagedResponse<T> pledgesResponse, SortColumn? sortColumn = null, SortOrder? sortOrder = null)
     {
         var links = new List<PageLink>();
         var totalPages = (int)Math.Ceiling((double)pledgesResponse.TotalItems / pledgesResponse.PageSize);
@@ -198,7 +198,7 @@ public class PledgeOrchestrator : IPledgeOrchestrator
 
         var pledgeAppModel = new PledgeApplicationsDownloadModel
         {
-            Applications = result.Applications?.Select(app => new PledgeApplicationDownloadModel
+            Applications = result.Items?.Select(app => new PledgeApplicationDownloadModel
             {
                 DateApplied = app.CreatedOn,
                 Status = app.GetDateDependentStatus(result.AutomaticApprovalOption),
@@ -271,12 +271,12 @@ public class PledgeOrchestrator : IPledgeOrchestrator
 
     public async Task<ApplicationsViewModel> GetApplications(ApplicationsRequest request)
     {
-        var result = await _pledgeService.GetApplications(request.AccountId, request.PledgeId, request.SortColumn, request.SortOrder, request.Page, ApplicationsRequest.DefaultPageSize);
+        var result = await _pledgeService.GetApplications(request.AccountId, request.PledgeId, request.SortColumn, request.SortOrder, request.Page, ApplicationsRequest.PageSize);
 
         var isOwnerOrTransactor = _userService.IsOwnerOrTransactor(request.EncodedAccountId);
 
-        var viewModels = (from application in result.Applications
-                          let pledgeApplication = result.Applications.First(x => x.PledgeId == application.PledgeId)
+        var viewModels = (from application in result.Items
+                          let pledgeApplication = result.Items.First(x => x.PledgeId == application.PledgeId)
                           select new ApplicationsViewModel.Application
                           {
                               EncodedApplicationId = _encodingService.Encode(application.Id, EncodingType.PledgeApplicationId),
