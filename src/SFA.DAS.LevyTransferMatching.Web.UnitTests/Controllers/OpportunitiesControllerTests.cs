@@ -38,12 +38,24 @@ public class OpportunitiesControllerTests
         var viewResult = await _opportunitiesController.Index(_indexRequest) as ViewResult;
         var indexViewModel = viewResult?.Model as IndexViewModel;
 
-        Assert.Multiple(() =>
-        {
-            // Assert
-            Assert.That(viewResult, Is.Not.Null);
-            Assert.That(indexViewModel, Is.Not.Null);
-        });
+        viewResult.Should().NotBeNull();
+        indexViewModel.Should().NotBeNull();
+    }
+
+
+    [Test]
+    public async Task GET_Index_With_CommaSeparatedSectors_Populates_Sectors_in_IndexRequest()
+    {
+        // Arrange
+        var commaSeparatedSectors = "Business,Charity,Finance";
+        var expectedSectors = new List<string> { "Business", "Charity", "Finance" };
+
+        _indexRequest.CommaSeparatedSectors = commaSeparatedSectors;
+        _indexRequest.Sectors = null;
+
+        // Act
+        await _opportunitiesController.Index(_indexRequest);
+        _indexRequest.Sectors.Should().BeEquivalentTo(expectedSectors);
     }
 
     [Test]
@@ -57,12 +69,8 @@ public class OpportunitiesControllerTests
         var viewResult = await _opportunitiesController.Index(indexRequest) as ViewResult;
         var indexViewModel = viewResult?.Model as IndexViewModel;
 
-        Assert.Multiple(() =>
-        {
-            // Assert
-            Assert.That(viewResult, Is.Not.Null);
-            Assert.That(indexViewModel, Is.Not.Null);
-        });
+        viewResult.Should().NotBeNull();
+        indexViewModel.Should().NotBeNull();
     }
 
     [Test]
@@ -80,13 +88,9 @@ public class OpportunitiesControllerTests
         var viewResult = await _opportunitiesController.Detail(detailRequest) as ViewResult;
         var actualDetailViewModel = viewResult?.Model as DetailViewModel;
 
-        Assert.Multiple(() =>
-        {
-            // Assert
-            Assert.That(viewResult, Is.Not.Null);
-            Assert.That(actualDetailViewModel, Is.Not.Null);
-            Assert.That(actualDetailViewModel, Is.EqualTo(expectedDetailViewModel));
-        });
+        viewResult.Should().NotBeNull();
+        actualDetailViewModel.Should().NotBeNull();
+        actualDetailViewModel.Should().BeEquivalentTo(expectedDetailViewModel);
     }
 
     [Test]
@@ -103,7 +107,7 @@ public class OpportunitiesControllerTests
         var notFoundResult = await _opportunitiesController.Detail(detailRequest) as NotFoundResult;
 
         // Assert
-        Assert.That(notFoundResult, Is.Not.Null);
+        notFoundResult.Should().NotBeNull();
     }
 
     [Test]
@@ -121,8 +125,8 @@ public class OpportunitiesControllerTests
         var redirectToActionResult = _opportunitiesController.Detail(detailPostRequest) as RedirectToActionResult;
 
         // Assert
-        Assert.That(redirectToActionResult, Is.Not.Null);
-        Assert.That(redirectToActionResult.ActionName, Is.EqualTo(nameof(OpportunitiesController.Index)));
+        redirectToActionResult.Should().NotBeNull();
+        redirectToActionResult.ActionName.Should().Be(nameof(OpportunitiesController.Index));
     }
 
     [Test]
@@ -136,17 +140,18 @@ public class OpportunitiesControllerTests
             HasConfirmed = true,
         };
 
-        // Assert
-        var redirectToActionResult = _opportunitiesController.Detail(detailPostRequest) as RedirectToActionResult;
+        // Act
+        var result = _opportunitiesController.Detail(detailPostRequest) as RedirectToActionResult;
 
         // Assert
-        Assert.That(redirectToActionResult, Is.Not.Null);
-        Assert.That(redirectToActionResult.ActionName, Is.EqualTo(nameof(OpportunitiesController.SelectAccount)));
+        result.Should().NotBeNull();
+        result.ActionName.Should().Be(nameof(OpportunitiesController.SelectAccount));
     }
 
     [Test]
     public async Task GET_SelectAccount_AccountsReturnedEqualsOne_ReturnsRedirectToApply()
     {
+        // Arrange
         var selectAccountRequest = _fixture.Create<SelectAccountRequest>();
         var viewModel = _fixture
             .Build<SelectAccountViewModel>()
@@ -157,22 +162,20 @@ public class OpportunitiesControllerTests
             .Setup(x => x.GetSelectAccountViewModel(It.Is<SelectAccountRequest>(y => y == selectAccountRequest)))
             .ReturnsAsync(viewModel);
 
-        var encodedPledgeId = _fixture.Create<string>();
+        // Act
+        var result = await _opportunitiesController.SelectAccount(selectAccountRequest);
+        var redirectToActionResult = result as RedirectToActionResult;
 
-        var actionResult = await _opportunitiesController.SelectAccount(selectAccountRequest);
-        var redirectToActionResult = actionResult as RedirectToActionResult;
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(actionResult, Is.Not.Null);
-            Assert.That(redirectToActionResult, Is.Not.Null);
-            Assert.That(redirectToActionResult.ActionName, Is.EqualTo(nameof(OpportunitiesController.Apply)));
-        });
+        // Assert
+        result.Should().NotBeNull();
+        redirectToActionResult.Should().NotBeNull();
+        redirectToActionResult.ActionName.Should().Be(nameof(OpportunitiesController.Apply));
     }
 
     [Test]
     public async Task GET_SelectAccount_AccountsReturnedMoreThanOne_ReturnsViewWithAccounts()
     {
+        // Arrange
         var selectAccountRequest = _fixture.Create<SelectAccountRequest>();
         var expectedViewModel = _fixture
             .Build<SelectAccountViewModel>()
@@ -182,25 +185,25 @@ public class OpportunitiesControllerTests
         _orchestrator
             .Setup(x => x.GetSelectAccountViewModel(It.Is<SelectAccountRequest>(y => y == selectAccountRequest)))
             .ReturnsAsync(expectedViewModel);
-        
-        var actionResult = await _opportunitiesController.SelectAccount(selectAccountRequest);
-        var viewResult = actionResult as ViewResult;
+
+        // Act
+        var result = await _opportunitiesController.SelectAccount(selectAccountRequest);
+        var viewResult = result as ViewResult;
         var model = viewResult.Model;
         var actualViewModel = model as SelectAccountViewModel;
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(actionResult, Is.Not.Null);
-            Assert.That(viewResult, Is.Not.Null);
-            Assert.That(model, Is.Not.Null);
-            Assert.That(actualViewModel, Is.Not.Null);
-            Assert.That(actualViewModel, Is.EqualTo(expectedViewModel));
-        });
+        // Assert
+        result.Should().NotBeNull();
+        viewResult.Should().NotBeNull();
+        model.Should().NotBeNull();
+        actualViewModel.Should().NotBeNull();
+        actualViewModel.Should().BeEquivalentTo(expectedViewModel);
     }
 
     [Test]
     public async Task GET_SelectAccount_NoAccountsReturned_ReturnsEmptyView()
     {
+        // Arrange
         var selectAccountRequest = _fixture.Create<SelectAccountRequest>();
         var expectedViewModel = _fixture
             .Build<SelectAccountViewModel>()
@@ -211,24 +214,24 @@ public class OpportunitiesControllerTests
             .Setup(x => x.GetSelectAccountViewModel(It.Is<SelectAccountRequest>(y => y == selectAccountRequest)))
             .ReturnsAsync(expectedViewModel);
 
-        var actionResult = await _opportunitiesController.SelectAccount(selectAccountRequest);
-        var viewResult = actionResult as ViewResult;
+        // Act
+        var result = await _opportunitiesController.SelectAccount(selectAccountRequest);
+        var viewResult = result as ViewResult;
         var model = viewResult.Model;
         var actualViewModel = model as SelectAccountViewModel;
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(actionResult, Is.Not.Null);
-            Assert.That(viewResult, Is.Not.Null);
-            Assert.That(model, Is.Not.Null);
-            Assert.That(actualViewModel, Is.Not.Null);
-            Assert.That(actualViewModel, Is.EqualTo(expectedViewModel));
-        });
+        // Assert
+        result.Should().NotBeNull();
+        viewResult.Should().NotBeNull();
+        model.Should().NotBeNull();
+        actualViewModel.Should().NotBeNull();
+        actualViewModel.Should().BeEquivalentTo(expectedViewModel);
     }
 
     [Test]
     public async Task GET_MoreDetails_Returns_Expected_View()
     {
+        // Arrange
         var request = _fixture.Create<MoreDetailsRequest>();
         var expectedViewModel = _fixture.Create<MoreDetailsViewModel>();
 
@@ -236,16 +239,15 @@ public class OpportunitiesControllerTests
             .Setup(x => x.GetMoreDetailsViewModel(request))
             .ReturnsAsync(expectedViewModel);
 
-        var viewResult = await _opportunitiesController.MoreDetails(request) as ViewResult;
-        var actualViewModel = viewResult.Model as MoreDetailsViewModel;
+        // Act
+        var result = await _opportunitiesController.MoreDetails(request) as ViewResult;
+        var actualViewModel = result?.Model as MoreDetailsViewModel;
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(viewResult, Is.Not.Null);
-            Assert.That(actualViewModel, Is.Not.Null);
-            Assert.That(actualViewModel, Is.EqualTo(expectedViewModel));
-            _orchestrator.Verify(x => x.GetMoreDetailsViewModel(request), Times.Once);
-        });
+        // Assert
+        result.Should().NotBeNull();
+        actualViewModel.Should().NotBeNull();
+        actualViewModel.Should().BeEquivalentTo(expectedViewModel);
+        _orchestrator.Verify(x => x.GetMoreDetailsViewModel(request), Times.Once);
     }
 
     [Test]
@@ -266,20 +268,16 @@ public class OpportunitiesControllerTests
 
         _orchestrator.Setup(x => x.UpdateCacheItem(request));
 
-        // Assert
-        var redirectToActionResult =
-            (await _opportunitiesController.MoreDetails(request)) as RedirectToActionResult;
+        // Act
+        var result = await _opportunitiesController.MoreDetails(request) as RedirectToActionResult;
 
         // Assert
-        Assert.Multiple(() =>
-        {
-            Assert.That(redirectToActionResult, Is.Not.Null);
-            Assert.That(redirectToActionResult.ActionName, Is.EqualTo(nameof(OpportunitiesController.Apply)));
-            Assert.That(encodedPledgeId, Is.EqualTo(redirectToActionResult.RouteValues["EncodedPledgeId"]));
-            Assert.That(encodedAccountId, Is.EqualTo(redirectToActionResult.RouteValues["EncodedAccountId"]));
-            Assert.That(cacheKey, Is.EqualTo(redirectToActionResult.RouteValues["CacheKey"]));
-            _orchestrator.Verify(x => x.UpdateCacheItem(request), Times.Once);
-        });
+        result.Should().NotBeNull();
+        result.ActionName.Should().Be(nameof(OpportunitiesController.Apply));
+        result.RouteValues["EncodedPledgeId"].Should().Be(encodedPledgeId);
+        result.RouteValues["EncodedAccountId"].Should().Be(encodedAccountId);
+        result.RouteValues["CacheKey"].Should().Be(cacheKey);
+        _orchestrator.Verify(x => x.UpdateCacheItem(request), Times.Once);
     }
 
     [Test]
@@ -293,15 +291,12 @@ public class OpportunitiesControllerTests
             .ReturnsAsync(() => new ContactDetailsViewModel());
 
         // Act
-        var viewResult = await _opportunitiesController.ContactDetails(contactDetailsRequest) as ViewResult;
-        var contactDetailsViewModel = viewResult?.Model as ContactDetailsViewModel;
+        var result = await _opportunitiesController.ContactDetails(contactDetailsRequest) as ViewResult;
+        var contactDetailsViewModel = result?.Model as ContactDetailsViewModel;
 
-        Assert.Multiple(() =>
-        {
-            // Assert
-            Assert.That(viewResult, Is.Not.Null);
-            Assert.That(contactDetailsViewModel, Is.Not.Null);
-        });
+        // Assert
+        result.Should().NotBeNull();
+        contactDetailsViewModel.Should().NotBeNull();
     }
 
     [Test]
@@ -323,25 +318,22 @@ public class OpportunitiesControllerTests
             .Setup(x => x.UpdateCacheItem(It.Is<ContactDetailsPostRequest>(y => y == contactDetailsPostRequest)))
             .Callback(() => { cacheUpdated = true; });
 
-        // Assert
-        var redirectToActionResult =
-            await _opportunitiesController.ContactDetails(contactDetailsPostRequest) as RedirectToActionResult;
+        // Act
+        var result = await _opportunitiesController.ContactDetails(contactDetailsPostRequest) as RedirectToActionResult;
 
         // Assert
-        Assert.Multiple(() =>
-        {
-            Assert.That(redirectToActionResult, Is.Not.Null);
-            Assert.That(redirectToActionResult.ActionName, Is.EqualTo(nameof(OpportunitiesController.Apply)));
-            Assert.That(cacheUpdated, Is.True);
-            Assert.That(encodedAccountId, Is.EqualTo(redirectToActionResult.RouteValues["encodedAccountId"]));
-            Assert.That(encodedPledgeId, Is.EqualTo(redirectToActionResult.RouteValues["encodedPledgeId"]));
-            Assert.That(cacheKey, Is.EqualTo(redirectToActionResult.RouteValues["cacheKey"]));
-        });
+        result.Should().NotBeNull();
+        result.ActionName.Should().Be(nameof(OpportunitiesController.Apply));
+        cacheUpdated.Should().BeTrue();
+        result.RouteValues["encodedAccountId"].Should().Be(encodedAccountId);
+        result.RouteValues["encodedPledgeId"].Should().Be(encodedPledgeId);
+        result.RouteValues["cacheKey"].Should().Be(cacheKey);
     }
 
     [Test]
     public async Task GET_ApplicationDetails_Returns_Expected_ViewModel()
     {
+        // Arrange
         var request = _fixture.Create<ApplicationDetailsRequest>();
         var expectedViewModel = _fixture.Create<ApplicationDetailsViewModel>();
 
@@ -349,16 +341,15 @@ public class OpportunitiesControllerTests
             .Setup(x => x.GetApplicationViewModel(request))
             .ReturnsAsync(expectedViewModel);
 
-        var viewResult = await _opportunitiesController.ApplicationDetails(request) as ViewResult;
-        var actualViewModel = viewResult.Model as ApplicationDetailsViewModel;
+        // Act
+        var result = await _opportunitiesController.ApplicationDetails(request) as ViewResult;
+        var actualViewModel = result?.Model as ApplicationDetailsViewModel;
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(viewResult, Is.Not.Null);
-            Assert.That(actualViewModel, Is.Not.Null);
-            Assert.That(actualViewModel, Is.EqualTo(expectedViewModel));
-            _orchestrator.Verify(x => x.GetApplicationViewModel(request), Times.Once);
-        });
+        // Assert
+        result.Should().NotBeNull();
+        actualViewModel.Should().NotBeNull();
+        actualViewModel.Should().BeEquivalentTo(expectedViewModel);
+        _orchestrator.Verify(x => x.GetApplicationViewModel(request), Times.Once);
     }
 
     [Test]
@@ -400,41 +391,36 @@ public class OpportunitiesControllerTests
                 },
                 Standards = new List<StandardsListItemDto>()
                 {
-                    new()
+                new()
+                {
+                    ApprenticeshipFunding = new List<ApprenticeshipFundingDto>()
                     {
-                        ApprenticeshipFunding = new List<ApprenticeshipFundingDto>()
+                        new()
                         {
-                            new()
-                            {
-                                Duration = 12,
-                                MaxEmployerLevyCap = 9_000,
-                                EffectiveFrom = new DateTime(DateTime.UtcNow.AddYears(-1).Year,
-                                    DateTime.UtcNow.Month, 1),
-                                EffectiveTo = null
-                            }
+                            Duration = 12,
+                            MaxEmployerLevyCap = 9_000,
+                            EffectiveFrom = new DateTime(DateTime.UtcNow.AddYears(-1).Year,
+                                DateTime.UtcNow.Month, 1),
+                            EffectiveTo = null
                         }
                     }
                 }
+                }
             });
-
 
         _orchestrator.Setup(x => x.PostApplicationViewModel(request)).ReturnsAsync(applicationRequest);
 
-        // Assert
-        var redirectToActionResult =
-            (await _opportunitiesController.ApplicationDetails(
-                new ApplicationDetailsPostRequestAsyncValidator(opportunitiesService.Object),
-                request)) as RedirectToActionResult;
+        // Act
+        var result = await _opportunitiesController.ApplicationDetails(
+            new ApplicationDetailsPostRequestAsyncValidator(opportunitiesService.Object),
+            request) as RedirectToActionResult;
 
         // Assert
-        Assert.Multiple(() =>
-        {
-            Assert.That(redirectToActionResult, Is.Not.Null);
-            Assert.That(redirectToActionResult.ActionName, Is.EqualTo(nameof(OpportunitiesController.Apply)));
-            Assert.That(redirectToActionResult.RouteValues["EncodedPledgeId"], Is.EqualTo(encodedPledgeId));
-            Assert.That(redirectToActionResult.RouteValues["EncodedAccountId"], Is.EqualTo(encodedAccountId));
-            Assert.That(redirectToActionResult.RouteValues["CacheKey"], Is.EqualTo(cacheKey));
-        });
+        result.Should().NotBeNull();
+        result.ActionName.Should().Be(nameof(OpportunitiesController.Apply));
+        result.RouteValues["EncodedPledgeId"].Should().Be(encodedPledgeId);
+        result.RouteValues["EncodedAccountId"].Should().Be(encodedAccountId);
+        result.RouteValues["CacheKey"].Should().Be(cacheKey);
     }
 
     [Test]
@@ -478,46 +464,42 @@ public class OpportunitiesControllerTests
                 },
                 Standards = new List<StandardsListItemDto>()
                 {
-                    new()
+                new()
+                {
+                    ApprenticeshipFunding = new List<ApprenticeshipFundingDto>()
                     {
-                        ApprenticeshipFunding = new List<ApprenticeshipFundingDto>()
+                        new()
                         {
-                            new()
-                            {
-                                Duration = 12,
-                                MaxEmployerLevyCap = 9_000,
-                                EffectiveFrom = new DateTime(DateTime.UtcNow.AddYears(-1).Year,
-                                    DateTime.UtcNow.Month, 1),
-                                EffectiveTo = null
-                            }
+                            Duration = 12,
+                            MaxEmployerLevyCap = 9_000,
+                            EffectiveFrom = new DateTime(DateTime.UtcNow.AddYears(-1).Year,
+                                DateTime.UtcNow.Month, 1),
+                            EffectiveTo = null
                         }
                     }
                 }
+                }
             });
-
 
         _orchestrator.Setup(x => x.PostApplicationViewModel(request)).ReturnsAsync(applicationRequest);
 
-        // Assert
-        var redirectToActionResult =
-            (await _opportunitiesController.ApplicationDetails(
-                new ApplicationDetailsPostRequestAsyncValidator(opportunitiesService.Object),
-                request)) as RedirectToActionResult;
+        // Act
+        var result = await _opportunitiesController.ApplicationDetails(
+            new ApplicationDetailsPostRequestAsyncValidator(opportunitiesService.Object),
+            request) as RedirectToActionResult;
 
         // Assert
-        Assert.Multiple(() =>
-        {
-            Assert.That(redirectToActionResult, Is.Not.Null);
-            Assert.That(redirectToActionResult.ActionName, Is.EqualTo(nameof(OpportunitiesController.ApplicationDetails)));
-            Assert.That(redirectToActionResult.RouteValues["EncodedPledgeId"], Is.EqualTo(encodedPledgeId));
-            Assert.That(redirectToActionResult.RouteValues["EncodedAccountId"], Is.EqualTo(encodedAccountId));
-            Assert.That(redirectToActionResult.RouteValues["CacheKey"], Is.EqualTo(cacheKey));
-        });
+        result.Should().NotBeNull();
+        result.ActionName.Should().Be(nameof(OpportunitiesController.ApplicationDetails));
+        result.RouteValues["EncodedPledgeId"].Should().Be(encodedPledgeId);
+        result.RouteValues["EncodedAccountId"].Should().Be(encodedAccountId);
+        result.RouteValues["CacheKey"].Should().Be(cacheKey);
     }
 
     [Test]
     public async Task GET_Confirmation_Returns_Expected_View()
     {
+        // Arrange
         var request = _fixture.Create<ConfirmationRequest>();
         var expectedViewModel = _fixture.Create<ConfirmationViewModel>();
 
@@ -525,31 +507,33 @@ public class OpportunitiesControllerTests
             .Setup(x => x.GetConfirmationViewModel(request))
             .ReturnsAsync(expectedViewModel);
 
-        var viewResult = await _opportunitiesController.Confirmation(request) as ViewResult;
-        var actualViewModel = viewResult.Model as ConfirmationViewModel;
+        // Act
+        var result = await _opportunitiesController.Confirmation(request) as ViewResult;
+        var actualViewModel = result?.Model as ConfirmationViewModel;
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(viewResult, Is.Not.Null);
-            Assert.That(actualViewModel, Is.Not.Null);
-            Assert.That(actualViewModel, Is.EqualTo(expectedViewModel));
-        });
+        // Assert
+        result.Should().NotBeNull();
+        actualViewModel.Should().NotBeNull();
+        actualViewModel.Should().BeEquivalentTo(expectedViewModel);
     }
 
     [Test]
     public async Task GET_Apply_Returns_Expected_View()
     {
+        // Arrange
         var expectedViewModel = new ApplyViewModel();
 
         _orchestrator.Setup(x => x.GetApplyViewModel(It.IsAny<ApplicationRequest>()))
             .ReturnsAsync(expectedViewModel);
 
-        var viewResult = await _opportunitiesController.Apply(new ApplicationRequest()) as ViewResult;
+        // Act
+        var result = await _opportunitiesController.Apply(new ApplicationRequest()) as ViewResult;
+        var actualViewModel = result?.Model as ApplyViewModel;
 
-        Assert.That(viewResult, Is.Not.Null);
-        var actualViewModel = viewResult.Model as ApplyViewModel;
-        Assert.That(actualViewModel, Is.Not.Null);
-        Assert.That(actualViewModel, Is.EqualTo(expectedViewModel));
+        // Assert
+        result.Should().NotBeNull();
+        actualViewModel.Should().NotBeNull();
+        actualViewModel.Should().BeEquivalentTo(expectedViewModel);
     }
 
     [Test]
@@ -557,8 +541,8 @@ public class OpportunitiesControllerTests
     {
         var request = new ApplyPostRequest();
         var result = await _opportunitiesController.Apply(request) as RedirectToActionResult;
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result.ActionName, Is.EqualTo("Confirmation"));
+        result.Should().NotBeNull();
+        result.ActionName.Should().Be(nameof(OpportunitiesController.Confirmation));
     }
 
     [Test]
@@ -572,8 +556,8 @@ public class OpportunitiesControllerTests
         var jsonResult =
             await _opportunitiesController.GetFundingEstimate(new GetFundingEstimateRequest()) as JsonResult;
 
-        Assert.That(jsonResult, Is.Not.Null);
-        Assert.That(jsonResult.Value, Is.EqualTo(expectedViewModel));
+        jsonResult.Should().NotBeNull();
+        jsonResult.Value.Should().BeEquivalentTo(expectedViewModel);
     }
 
     [Test]
@@ -589,13 +573,10 @@ public class OpportunitiesControllerTests
         var viewResult = await _opportunitiesController.Sector(request) as ViewResult;
         var actualViewModel = viewResult.Model as SectorViewModel;
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(viewResult, Is.Not.Null);
-            Assert.That(actualViewModel, Is.Not.Null);
-            Assert.That(actualViewModel, Is.EqualTo(expectedViewModel));
-            _orchestrator.Verify(x => x.GetSectorViewModel(request), Times.Once);
-        });
+        viewResult.Should().NotBeNull();
+        actualViewModel.Should().NotBeNull();
+        actualViewModel.Should().BeEquivalentTo(expectedViewModel);
+        _orchestrator.Verify(x => x.GetSectorViewModel(request), Times.Once);
     }
 
     [Test]
@@ -615,19 +596,17 @@ public class OpportunitiesControllerTests
         };
 
         _orchestrator.Setup(x => x.UpdateCacheItem(request));
-            
+
         // Assert
         var redirectToActionResult = await _opportunitiesController.Sector(request) as RedirectToActionResult;
 
         // Assert
-        Assert.Multiple(() =>
-        {
-            Assert.That(redirectToActionResult, Is.Not.Null);
-            Assert.That(redirectToActionResult.ActionName, Is.EqualTo(nameof(OpportunitiesController.Apply)));
-            Assert.That(encodedPledgeId, Is.EqualTo(redirectToActionResult.RouteValues["EncodedPledgeId"]));
-            Assert.That(encodedAccountId, Is.EqualTo(redirectToActionResult.RouteValues["EncodedAccountId"]));
-            Assert.That(cacheKey, Is.EqualTo(redirectToActionResult.RouteValues["CacheKey"]));
-            _orchestrator.Verify(x => x.UpdateCacheItem(request), Times.Once);
-        });
+
+        redirectToActionResult.Should().NotBeNull();
+        redirectToActionResult.ActionName.Should().Be(nameof(OpportunitiesController.Apply));
+        redirectToActionResult.RouteValues["EncodedPledgeId"].Should().Be(encodedPledgeId);
+        redirectToActionResult.RouteValues["EncodedAccountId"].Should().Be(encodedAccountId);
+        redirectToActionResult.RouteValues["CacheKey"].Should().Be(cacheKey);
+        _orchestrator.Verify(x => x.UpdateCacheItem(request), Times.Once);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using SFA.DAS.Encoding;
+using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
@@ -68,11 +69,18 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
 
     public async Task<IndexViewModel> GetIndexViewModel(IndexRequest request)
     {
-        var response = await _opportunitiesService.GetIndex(request.Sectors, request.Page ?? 1, IndexRequest.DefaultPageSize);
+        var opportunitySort = OpportunitiesSortBy.ValueHighToLow;
+        if (!string.IsNullOrEmpty(request.SortBy) 
+            && Enum.TryParse<OpportunitiesSortBy>(request.SortBy, true, out var opportunitySortParsed))
+        {
+            opportunitySort = opportunitySortParsed;
+        }
+        var response = await _opportunitiesService.GetIndex(request.Sectors, opportunitySort, request.Page ?? 1, IndexRequest.DefaultPageSize);
 
         return new IndexViewModel
         {
-            Paging = GetPagingData(response),
+            SortBy = request.SortBy,
+            Paging = GetPagingData(response, request),
             Opportunities = response?.Opportunities
                 .Select(x => new IndexViewModel.Opportunity
                 {
@@ -89,7 +97,7 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
         };
     }
 
-    private IndexViewModel.PagingData GetPagingData(GetIndexResponse response)
+    private IndexViewModel.PagingData GetPagingData(GetIndexResponse response, IndexRequest request)
     {
         return new IndexViewModel.PagingData()
         {
@@ -98,17 +106,17 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
             TotalPages = response.TotalPages,
             TotalOpportunities = response.TotalOpportunities,
             ShowPageLinks = response.Page != 1 || response.TotalOpportunities > response.PageSize,
-            PageLinks = BuildPageLinks(response),
+            PageLinks = BuildPageLinks(response, request),
             PageStartRow = (response.Page - 1) * response.PageSize + 1,
             PageEndRow = response.Page * response.PageSize > response.TotalOpportunities ? response.TotalOpportunities : response.Page * response.PageSize,
         };
     }
 
-    public IEnumerable<IndexViewModel.PageLink> BuildPageLinks(GetIndexResponse response)
+    public IEnumerable<IndexViewModel.PageLink> BuildPageLinks(GetIndexResponse response, IndexRequest request)
     {
         var links = new List<IndexViewModel.PageLink>();
         var totalPages = (int)Math.Ceiling((double)response.TotalOpportunities / response.PageSize);
-        var totalPageLinks = totalPages < 5 ? totalPages : 5;
+        var totalPageLinks = totalPages < 7 ? totalPages : 7;
 
         //previous link
         if (totalPages > 1 && response.Page > 1)
@@ -117,13 +125,13 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
             {
                 Label = "Previous",
                 AriaLabel = "Previous page",
-                RouteData = BuildRouteData(response.Page - 1)
+                RouteData = BuildRouteData(request, response.Page - 1)
             });
         }
 
         //numbered links
         var pageNumberSeed = 1;
-        if (totalPages > 5 && response.Page > 3)
+        if (totalPages > 7 && response.Page > 3)
         {
             pageNumberSeed = response.Page - 2;
 
@@ -138,7 +146,7 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
                 Label = (pageNumberSeed + i).ToString(),
                 AriaLabel = $"Page {pageNumberSeed + i}",
                 IsCurrent = pageNumberSeed + i == response.Page ? true : (bool?)null,
-                RouteData = BuildRouteData(pageNumberSeed + i)
+                RouteData = BuildRouteData(request, pageNumberSeed + i)
             };
             links.Add(link);
         }
@@ -150,16 +158,29 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
             {
                 Label = "Next",
                 AriaLabel = "Next page",
-                RouteData = BuildRouteData(response.Page + 1)
+                RouteData = BuildRouteData(request, response.Page + 1)
             });
         }
 
         return links;
     }
 
-    private Dictionary<string, string> BuildRouteData(int pageNumber)
+    private static Dictionary<string, string> BuildRouteData(IndexRequest request, int pageNumber)
     {
-        return new Dictionary<string, string> { { "page", pageNumber.ToString() } };
+        var routeData = new Dictionary<string, string> { { "page", pageNumber.ToString() } };
+
+        if (request.Sectors != null && request.Sectors.Any())
+        {
+            var allSectors = string.Join(",", request.Sectors.Select(Uri.EscapeDataString));
+            routeData.Add("CommaSeparatedSectors", allSectors);
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.SortBy))
+        {
+            routeData.Add("SortBy", request.SortBy);
+        }
+
+        return routeData;
     }
 
     public async Task<SelectAccountViewModel> GetSelectAccountViewModel(SelectAccountRequest request)
@@ -289,7 +310,7 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
         }
         else
         {
-            result.Locations = new List<string> {applicationTask.Result.SpecificLocation};
+            result.Locations = new List<string> { applicationTask.Result.SpecificLocation };
         }
 
         return result;
@@ -327,7 +348,7 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
 
         var placeholders = Enumerable.Range(0, MaximumNumberAdditionalEmailAddresses - additionalEmailAddresses.Count)
             .Select(x => (string)null);
-            
+
         additionalEmailAddresses.AddRange(placeholders);
 
         var viewModel = new ContactDetailsViewModel

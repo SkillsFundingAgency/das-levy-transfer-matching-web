@@ -1,11 +1,12 @@
-﻿using Newtonsoft.Json;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Extensions;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using SFA.DAS.LevyTransferMatching.Domain.Types;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Extensions;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService
 {
@@ -25,10 +26,11 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
             return JsonConvert.DeserializeObject<GetApplyResponse>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<GetIndexResponse> GetIndex(IEnumerable<string> sectors, int page, int? pageSize)
+        public async Task<GetIndexResponse> GetIndex(IEnumerable<string> sectors, OpportunitiesSortBy sortBy, int page, int? pageSize)
         {
             var filters = sectors != null ? sectors.ToNameValueCollection("sectors") : new NameValueCollection();
             filters.Add("page", page.ToString());
+            filters.Add("sortBy", sortBy.ToString());
             if (pageSize != null)
             {
                 filters.Add("pageSize", pageSize.ToString());
