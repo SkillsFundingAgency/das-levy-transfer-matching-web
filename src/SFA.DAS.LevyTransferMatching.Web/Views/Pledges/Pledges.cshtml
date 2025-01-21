@@ -32,17 +32,22 @@
                     My transfer pledges
                 </h1>
             </div>
-            <div class="govuk-grid-column-full">
-                <p>You have <strong>@Model.Paging.TotalPledges.ToString("N0")</strong> transfers pledges.</p>
-                <div class="govuk-inset-text">
-                    <p>
-                        You may have applications waiting to be approved or rejected. Applicants need a response from
-                        you in order to manage their apprenticeships.
-                    </p>
-                    <p>
-                        Select the transfer pledge you want to view details for.
-                    </p>
-                </div>
+            <div class="govuk-grid-column-full">                          
+                <p>Applications need to be approved or rejected. Applicants need a response from you in order to manage their apprenticeships</p>
+
+                <p>Applicants must:</p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>
+                        accept funds within 6 weeks of approval
+                    </li>
+                    <li>
+                        add apprentice details within 3 months of accepting funds
+                    </li>
+                </ul>
+
+                <p>Otherwise the transfer opportunity will no longer be available to them.</p>
+                <p>Select the transfer pledge you want to view details for.</p>
+
                 @if (Model.RenderCreatePledgeButton)
                 {
                     @if (!Model.HasMinimumTransferFunds)
@@ -62,11 +67,15 @@
                             method="get">
                             <button class="govuk-button" type="submit" data-module="govuk-button"
                             @(!Model.HasMinimumTransferFunds ? "disabled" : "")>
-                                Create new transfer pledge
+                                Create a new transfer pledge
                             </button>
                         </form>
                     </div>
                 }
+
+                <br/>
+                <p><b>@Model.Paging.TotalPledges.ToString("N0") transfers pledges</b></p>
+
                 <table class="govuk-table govuk-!-margin-bottom-9 das-table--responsive"
                     aria-label="Transfer pledges table">
                     <thead class="govuk-table__head">
