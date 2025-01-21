@@ -53,7 +53,7 @@ public class GetApplicationsOrchestratorPagingTests
         result.Paging.Page.Should().Be(_applicationsResponse.Page);
         result.Paging.PageSize.Should().Be(_applicationsResponse.PageSize);
         result.Paging.TotalPages.Should().Be(_applicationsResponse.TotalPages);
-        result.Paging.TotalResults.Should().Be(_applicationsResponse.TotalItems);
+        result.Paging.TotalItems.Should().Be(_applicationsResponse.TotalItems);
     }
 
     [TestCase(3, 3, false)]

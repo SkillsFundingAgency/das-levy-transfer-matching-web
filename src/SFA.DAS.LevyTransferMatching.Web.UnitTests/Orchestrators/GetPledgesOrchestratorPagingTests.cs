@@ -45,7 +45,7 @@ public class GetPledgesOrchestratorPagingTests
         result.Paging.Page.Should().Be(_pledgesResponse.Page);
         result.Paging.PageSize.Should().Be(_pledgesResponse.PageSize);
         result.Paging.TotalPages.Should().Be(_pledgesResponse.TotalPages);
-        result.Paging.TotalResults.Should().Be(_pledgesResponse.TotalItems);
+        result.Paging.TotalItems.Should().Be(_pledgesResponse.TotalItems);
     }
 
     [TestCase(3, 3, false)]

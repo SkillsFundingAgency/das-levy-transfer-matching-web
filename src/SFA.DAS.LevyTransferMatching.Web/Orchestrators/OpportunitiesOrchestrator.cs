@@ -96,7 +96,7 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
             Page = response.Page,
             PageSize = response.PageSize,
             TotalPages = response.TotalPages,
-            TotalResults = response.TotalOpportunities,
+            TotalItems = response.TotalOpportunities,
             ShowPageLinks = response.Page != 1 || response.TotalOpportunities > response.PageSize,
             PageLinks = BuildPageLinks(response),
             PageStartRow = (response.Page - 1) * response.PageSize + 1,

@@ -82,7 +82,7 @@ public class PledgeOrchestrator : IPledgeOrchestrator
             Page = response.Page,
             PageSize = response.PageSize,
             TotalPages = response.TotalPages,
-            TotalResults = response.TotalItems,
+            TotalItems = response.TotalItems,
             ShowPageLinks = response.Page != 1 || response.TotalItems > response.PageSize,
             PageLinks = BuildPageLinks(response, sortColumn, sortOrder),
             PageStartRow = (response.Page - 1) * response.PageSize + 1,

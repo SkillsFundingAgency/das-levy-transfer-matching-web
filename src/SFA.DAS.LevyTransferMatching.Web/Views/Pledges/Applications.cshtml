@@ -306,11 +306,11 @@
                 <div class="das-pagination__summary">
                     @if (Model.Paging.Page == 1)
                     {
-                        <text>Showing @Model.Paging.PageEndRow of @Model.Paging.TotalResults applications</text>
+                        <text>Showing @Model.Paging.PageEndRow of @Model.Paging.TotalItems applications</text>
                     }
                     else if (Model.Paging.Page > 1)
                     {
-                        <text>Showing @Model.Paging.PageStartRow to @Model.Paging.PageEndRow of @Model.Paging.TotalResults applications</text>
+                        <text>Showing @Model.Paging.PageStartRow to @Model.Paging.PageEndRow of @Model.Paging.TotalItems applications</text>
                     }
                 </div>
                 <ul class="das-pagination">
