@@ -1,6 +1,4 @@
-﻿using SFA.DAS.LevyTransferMatching.Domain.Types;
-
-namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
+﻿namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
 
 public class IndexRequest
 {

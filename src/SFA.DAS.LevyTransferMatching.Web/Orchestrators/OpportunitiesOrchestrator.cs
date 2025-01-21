@@ -1,5 +1,4 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using SFA.DAS.Encoding;
+﻿using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
@@ -71,12 +70,10 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
     public async Task<IndexViewModel> GetIndexViewModel(IndexRequest request)
     {
         var opportunitySort = OpportunitiesSortBy.ValueHighToLow;
-        if (!string.IsNullOrEmpty(request.SortBy))
+        if (!string.IsNullOrEmpty(request.SortBy) 
+            && Enum.TryParse<OpportunitiesSortBy>(request.SortBy, true, out var opportunitySortParsed))
         {
-            if (Enum.TryParse<OpportunitiesSortBy>(request.SortBy, true, out var opportunitySortParsed))
-            {
-                opportunitySort = opportunitySortParsed;
-            }
+            opportunitySort = opportunitySortParsed;
         }
         var response = await _opportunitiesService.GetIndex(request.Sectors, opportunitySort, request.Page ?? 1, IndexRequest.DefaultPageSize);
 
@@ -173,7 +170,7 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
         var routeData = new Dictionary<string, string> { { "page", pageNumber.ToString() } };
 
         if (request.Sectors != null && request.Sectors.Any())
-        {           
+        {
             var allSectors = string.Join(",", request.Sectors.Select(Uri.EscapeDataString));
             routeData.Add("CommaSeparatedSectors", allSectors);
         }
@@ -313,7 +310,7 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
         }
         else
         {
-            result.Locations = new List<string> {applicationTask.Result.SpecificLocation};
+            result.Locations = new List<string> { applicationTask.Result.SpecificLocation };
         }
 
         return result;
@@ -351,7 +348,7 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
 
         var placeholders = Enumerable.Range(0, MaximumNumberAdditionalEmailAddresses - additionalEmailAddresses.Count)
             .Select(x => (string)null);
-            
+
         additionalEmailAddresses.AddRange(placeholders);
 
         var viewModel = new ContactDetailsViewModel
