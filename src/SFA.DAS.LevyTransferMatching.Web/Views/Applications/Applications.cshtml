@@ -27,7 +27,7 @@
                     My applications
                 </h1>
 
-                <p>You have <strong>@Model.Applications.Count()</strong> @Model.ApplicationCountPostFix.</p>
+                <p>You have <strong>@Model.Paging.TotalItems</strong> @Model.ApplicationCountPostFix.</p>
                 <table class="govuk-table govuk-!-margin-bottom-9" aria-label="Transfer applications table">
                     <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
@@ -90,7 +90,7 @@
                                 <li class="das-pagination__item">
                                     <a class="das-pagination__link @(pageLink.IsCurrent.HasValue && pageLink.IsCurrent.Value ? "current" : "")"
                                        asp-all-route-data="@pageLink.RouteData"
-                                       asp-route="Applications"
+                                       asp-route="@RouteNames.Applications"
                                        aria-current="@(pageLink.IsCurrent.HasValue && pageLink.IsCurrent.Value ? "page" : null)"
                                        aria-label="@pageLink.AriaLabel">
                                        @pageLink.Label

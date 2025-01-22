@@ -11,7 +11,7 @@ public class GetApplicationsViewModel
     public PagingData Paging { get; set; }
 
     public string ApplicationCountPostFix =>
-        Applications.Count() switch
+        Paging.TotalItems switch
         {
             0 => "transfer applications",
             1 => "transfer application",
