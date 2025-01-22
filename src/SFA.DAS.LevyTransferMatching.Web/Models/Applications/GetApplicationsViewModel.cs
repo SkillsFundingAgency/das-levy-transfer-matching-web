@@ -1,9 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using SFA.DAS.LevyTransferMatching.Domain.Types;
-using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
-using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
+﻿using SFA.DAS.LevyTransferMatching.Domain.Types;
+using SFA.DAS.LevyTransferMatching.Web.Models.Shared;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications;
 
@@ -12,6 +8,7 @@ public class GetApplicationsViewModel
     public string EncodedAccountId { get; set; }
     public IEnumerable<ApplicationViewModel> Applications { get; set; }
     public bool RenderViewApplicationDetailsHyperlink { get; set; }
+    public PagingData Paging { get; set; }
 
     public string ApplicationCountPostFix =>
         Applications.Count() switch
@@ -20,7 +17,7 @@ public class GetApplicationsViewModel
             1 => "transfer application",
             _ => "transfers applications"
         };
-        
+
     public class ApplicationViewModel
     {
         public string DasAccountName { get; set; }

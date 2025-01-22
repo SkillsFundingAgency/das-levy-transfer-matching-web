@@ -16,9 +16,9 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsServi
             _httpClient = httpClient;
         }
 
-        public async Task<GetApplicationsResponse> GetApplications(long accountId, CancellationToken cancellationToken = default)
+        public async Task<GetApplicationsResponse> GetApplications(long accountId,int page, int pageSize, CancellationToken cancellationToken = default)
         {
-            var response = await _httpClient.GetAsync($"accounts/{accountId}/applications", cancellationToken);
+            var response = await _httpClient.GetAsync($"accounts/{accountId}/applications?page={page}&pageSize={pageSize}", cancellationToken);
             response.EnsureSuccessStatusCode();
 
             return JsonConvert.DeserializeObject<GetApplicationsResponse>(await response.Content.ReadAsStringAsync());
