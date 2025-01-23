@@ -20,7 +20,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
             public string JobRoles { get; set; }
             public string Levels { get; set; }
             public string DisplayAmount => Amount.ToString("C0", new CultureInfo("en-GB"));
-            public bool IsNew { get; set; }
+            public string CreatedOnDescription { get; set; }
+            public bool IsNew { get; set; } 
         }
 
         public class PagingData

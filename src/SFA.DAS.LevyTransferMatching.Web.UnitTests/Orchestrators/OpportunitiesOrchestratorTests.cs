@@ -65,7 +65,10 @@ public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
         {
             for (var i = 0; i < _getIndexResponse.Opportunities.Count; i++)
             {
-                Assert.That(viewModel.Opportunities[i].EmployerName, Is.EqualTo(_getIndexResponse.Opportunities[i].IsNamePublic ? _getIndexResponse.Opportunities[i].DasAccountName : "Opportunity"));
+                Assert.That(viewModel.Opportunities[i].EmployerName, Is.EqualTo(_getIndexResponse.Opportunities[i].IsNamePublic 
+                    ? _getIndexResponse.Opportunities[i].DasAccountName : "Opportunity"));
+
+                viewModel.Opportunities[i].CreatedOnDescription.Should().Be(_getIndexResponse.Opportunities[i].CreatedOn.ToString("'Created on' dd MMMM yyyy"));
             }
 
             viewModel.Opportunities.Select(x => x.Amount).Should().BeEquivalentTo(_getIndexResponse.Opportunities.Select(x => x.Amount));
