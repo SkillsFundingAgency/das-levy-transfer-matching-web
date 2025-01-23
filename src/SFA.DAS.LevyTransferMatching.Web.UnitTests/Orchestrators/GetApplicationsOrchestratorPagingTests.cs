@@ -33,11 +33,11 @@ public class GetApplicationsOrchestratorPagingTests
 
         _pledgeService.Setup(x => x.GetApplications(
             _accountId, 
-            It.IsAny<int>(), 
+            It.IsAny<int>(),
+            It.IsAny<int>(),            
             It.IsAny<SortColumn?>(),
             It.IsAny<SortOrder?>(),
-            It.IsAny<int?>(),
-            It.IsAny<int?>()
+            It.IsAny<int?>()            
             )).ReturnsAsync(_applicationsResponse);
 
         _orchestrator = new PledgeOrchestrator(_pledgeService.Object, Mock.Of<IEncodingService>(), Mock.Of<IUserService>(),

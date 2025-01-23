@@ -86,7 +86,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
             return JsonConvert.DeserializeObject<GetLevelResponse>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<GetApplicationsResponse> GetApplications(long accountId, int pledgeId, SortColumn? sortOrder, SortOrder? sortDirection, int? page = 1, int? pageSize = null)
+        public async Task<GetApplicationsResponse> GetApplications(long accountId, int pledgeId, int page, SortColumn? sortOrder, SortOrder? sortDirection, int? pageSize = null)
         {
             var sort = GetApplicationsParameters(sortOrder, sortDirection, page, pageSize);
             var response = await _client.GetAsync($"accounts/{accountId}/pledges/{pledgeId}/applications{sort}");

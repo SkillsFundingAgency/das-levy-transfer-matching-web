@@ -146,7 +146,7 @@ public class PledgeOrchestrator : IPledgeOrchestrator
     private static Dictionary<string, string> BuildRouteData(int pageNumber, SortColumn? sortColumn = null, SortOrder? sortOrder = null)
     {
         var routeData = new Dictionary<string, string> { { "page", pageNumber.ToString() } };
-        
+
         if (sortColumn.HasValue)
         {
             routeData.Add("sortColumn", sortColumn.ToString());
@@ -194,7 +194,7 @@ public class PledgeOrchestrator : IPledgeOrchestrator
 
     public async Task<byte[]> GetPledgeApplicationsDownloadModel(ApplicationsRequest request)
     {
-        var result = await _pledgeService.GetApplications(request.AccountId, request.PledgeId, request.SortColumn, request.SortOrder);
+        var result = await _pledgeService.GetApplications(request.AccountId, request.PledgeId, 1, request.SortColumn, request.SortOrder, int.MaxValue);
 
         var pledgeAppModel = new PledgeApplicationsDownloadModel
         {
@@ -271,7 +271,7 @@ public class PledgeOrchestrator : IPledgeOrchestrator
 
     public async Task<ApplicationsViewModel> GetApplications(ApplicationsRequest request)
     {
-        var result = await _pledgeService.GetApplications(request.AccountId, request.PledgeId, request.SortColumn, request.SortOrder, request.Page, ApplicationsRequest.PageSize);
+        var result = await _pledgeService.GetApplications(request.AccountId, request.PledgeId, request.Page, request.SortColumn, request.SortOrder, ApplicationsRequest.PageSize);
 
         var isOwnerOrTransactor = _userService.IsOwnerOrTransactor(request.EncodedAccountId);
 
