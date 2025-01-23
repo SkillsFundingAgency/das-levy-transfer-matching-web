@@ -82,7 +82,8 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
                     Sectors = x.Sectors.ToReferenceDataDescriptionList(response.Sectors, "; "),
                     JobRoles = x.JobRoles.ToReferenceDataDescriptionList(response.JobRoles, "; "),
                     Levels = x.Levels.ToReferenceDataDescriptionList(response.Levels, descriptionSource: y => y.ShortDescription),
-                    Locations = x.Locations.ToLocationsList()
+                    Locations = x.Locations.ToLocationsList(),
+                    IsNew = x.CreatedOn > _dateTimeService.UtcNow.AddDays(-7)
                 }).ToList(),
             Sectors = response?.Sectors,
             isSectorFilterApplied = request.Sectors != null && request.Sectors.Any()

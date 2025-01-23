@@ -71,6 +71,10 @@
                             @foreach (var opportunity in Model.Opportunities)
                             {
                                 <li class="das-search-results__list-item">
+                                    @if (opportunity.IsNew)
+                                    {
+                                        <p class="govuk-tag govuk-tag--light-blue">New</p>                                        
+                                    }
                                     <h2 class="govuk-heading-m das-search-results__heading govuk-!-margin-bottom-0">
                                         <a href="@Url.Action("Detail", new { EncodedPledgeId = opportunity.ReferenceNumber })"
                                             class="das-search-results__link">@opportunity.EmployerName
