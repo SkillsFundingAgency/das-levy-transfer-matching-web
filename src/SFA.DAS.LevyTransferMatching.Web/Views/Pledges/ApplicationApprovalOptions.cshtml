@@ -29,21 +29,21 @@
                                 <input class="govuk-radios__input" id="AutomaticApproval" name="AutomaticApproval" asp-for="AutomaticApproval" type="radio" value="false" das-highlight-error-for="AutomaticApproval" error-class="govuk-textarea--error" data-aria-controls="approval-content" />
                                 <label class="govuk-label govuk-radios__label" for="AutomaticApproval">
                                     <strong>Check and review apprenticeship details</strong>
+                                    <ul class="govuk-list govuk-list--bullet">
+                                        <li>you may get multiple prompts if the employer adds the apprenticeship details in batches</li>
+                                        <li>you will be able to check the standard, the cost and dates</li>
+                                    </ul>
                                 </label>
-                                <ul class="govuk-list govuk-list--bullet">
-                                    <li>you may get multiple prompts if the employer adds the apprenticeship details in batches</li>
-                                    <li>you will be able to check the standard, the cost and dates</li>
-                                </ul>
                             </div>
                             <div class="govuk-radios__item">
                                 <input class="govuk-radios__input" id="AutomaticApproval-2" name="AutomaticApproval" asp-for="AutomaticApproval" type="radio" value="true" das-highlight-error-for="AutomaticApproval" error-class="govuk-textarea--error" />
                                 <label class="govuk-label govuk-radios__label" for="AutomaticApproval-2">
                                     <strong>Automatically approve the apprenticeship details</strong>
+                                    <ul class="govuk-list govuk-list--bullet">
+                                        <li>you will not check and review the apprenticeship details such as the apprenticeship standard, the cost or the start date</li>
+                                        <li>the employer or training provider can choose a different apprenticeship standard, but the cost of the apprenticeship details cannot exceed the agreed transfer amount in the application</li>
+                                    </ul>
                                 </label>
-                                <ul class="govuk-list govuk-list--bullet">
-                                    <li>you will not check and review the apprenticeship details such as the apprenticeship standard, the cost or the start date</li>
-                                    <li>the employer or training provider can choose a different apprenticeship standard, but the cost of the apprenticeship details cannot exceed the agreed transfer amount in the application</li>
-                                </ul>
                             </div>
                         </div>
                     </fieldset>
