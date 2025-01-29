@@ -57,6 +57,21 @@ public class OpportunitiesControllerTests
         await _opportunitiesController.Index(_indexRequest);
         _indexRequest.Sectors.Should().BeEquivalentTo(expectedSectors);
     }
+    
+    [Test]
+    public async Task GET_Index_With_Sectors_Populates_CommaSeparatedSectors_in_IndexRequest()
+    {
+        // Arrange
+        var commaSeparatedSectors = "Business,Charity,Finance";
+        var sectors = new List<string> { "Business", "Charity", "Finance" };
+
+        _indexRequest.CommaSeparatedSectors = null;
+        _indexRequest.Sectors = sectors;
+
+        // Act
+        await _opportunitiesController.Index(_indexRequest);
+        _indexRequest.CommaSeparatedSectors.Should().BeEquivalentTo(commaSeparatedSectors);
+    }
 
     [Test]
     public async Task POST_Index_Returns_Expected_View_With_Expected_ViewModel()

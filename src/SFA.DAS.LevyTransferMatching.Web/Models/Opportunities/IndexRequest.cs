@@ -12,4 +12,9 @@ public class IndexRequest
     {
         return string.IsNullOrWhiteSpace(CommaSeparatedSectors) ? Sectors : CommaSeparatedSectors.Split(',');
     }
+
+    public string PopulateCommaSeparatedSectorsFromSectors()
+    {
+       return string.Join(",", Sectors.Select(Uri.EscapeDataString));
+    }
 }

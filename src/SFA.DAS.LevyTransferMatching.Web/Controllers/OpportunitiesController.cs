@@ -21,7 +21,15 @@ public class OpportunitiesController : Controller
     [Route("opportunities", Name = "opportunities")]
     public async Task<IActionResult> Index(IndexRequest request)
     {
-        request.Sectors = request.GetSectorsList();
+        if (string.IsNullOrEmpty(request.CommaSeparatedSectors) && request.Sectors != null)
+        {
+            request.CommaSeparatedSectors = request.PopulateCommaSeparatedSectorsFromSectors();
+        }
+        else
+        {
+            request.Sectors = request.GetSectorsList();          
+        }
+
         if (ModelState.ContainsKey(nameof(request.CommaSeparatedSectors)))
         {
             ModelState.SetModelValue(nameof(request.Sectors), new ValueProviderResult(request.CommaSeparatedSectors));
