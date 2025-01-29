@@ -54,9 +54,9 @@ public class OpportunitiesOrchestrator(
             EncodedPledgeId = encodedPledgeId,
             IsNamePublic = response.Opportunity.IsNamePublic,
             OpportunitySummaryView = opportunitySummaryViewModel,
-            CommaSeparatedSectors = detailsRequest.CommaSeparatedSectors,
-            Page = detailsRequest.Page,
-            SortBy = detailsRequest.SortBy
+            CommaSeparatedSectors = detailRequest.CommaSeparatedSectors,
+            Page = detailRequest.Page,
+            SortBy = detailRequest.SortBy
         };
     }
 
