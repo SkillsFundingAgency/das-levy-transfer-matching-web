@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService
 {
     public interface IOpportunitiesService
     {
-        Task<GetIndexResponse> GetIndex(IEnumerable<string> sectors, int page, int? pageSize);
+        Task<GetIndexResponse> GetIndex(IEnumerable<string> sectors, OpportunitiesSortBy sortBy, int page, int? pageSize);
         Task<GetApplyResponse> GetApply(long accountId, int opportunityId);
         Task<GetContactDetailsResponse> GetContactDetails(long accountId, int pledgeId); 
         Task<GetApplicationDetailsResponse> GetApplicationDetails(long accountId, int id, string standardId = default);

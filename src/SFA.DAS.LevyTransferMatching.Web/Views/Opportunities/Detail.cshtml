@@ -1,12 +1,20 @@
-﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Opportunities.DetailViewModel
+﻿@using Microsoft.AspNetCore.Routing
+@model SFA.DAS.LevyTransferMatching.Web.Models.Opportunities.DetailViewModel
 
 @{
     ViewData["Title"] = $"Transfer fund details for {(Model.IsNamePublic ? Model.EmployerName : "opportunity")} ({Model.EncodedPledgeId})";
     ViewBag.GaData.Vpv = "/opportunities/pledge";
     ViewBag.ZenDeskLabel = "LTM-R-viewoppty";
+
+    var routeValues = new RouteValueDictionary
+    {
+        { "page", Model.Page },
+        { "SortBy", Model.SortBy },
+        {"CommaSeparatedSectors", Model.CommaSeparatedSectors }
+    };
 }
 
-<a href="@Url.Action("index")" class="govuk-back-link">Back</a>
+<a href="@Url.Action("index", routeValues)" class="govuk-back-link">Back</a>
 <main class="govuk-main-wrapper" id="main-content" role="main">
     <partial name="_ValidationSummary" />
     <div class="govuk-grid-row">

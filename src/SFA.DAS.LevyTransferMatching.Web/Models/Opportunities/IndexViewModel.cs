@@ -1,5 +1,5 @@
-﻿using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
-using System.Globalization;
+﻿using System.Globalization;
+using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
 {
@@ -8,7 +8,9 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
         public List<Opportunity> Opportunities { get; set; }
         public PagingData Paging { get; set; }
         public List<ReferenceDataItem> Sectors { get; set; }
+        public string CommaSeparatedSectors { get; set; }
         public bool isSectorFilterApplied { get; set; }
+        public string SortBy { get; set; }
 
         public class Opportunity
         {

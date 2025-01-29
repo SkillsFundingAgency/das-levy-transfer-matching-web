@@ -484,3 +484,17 @@ if (sectorAdditionalLocationCheckBox) {
         }
     });
 }
+
+const sortSelect = document.getElementById("SortBy");
+
+if (sortSelect) {
+    sortSelect.addEventListener("change", (e) => {
+        const sortValue = e.target.value;
+        const queryString = window.location.search;
+        const params = new URLSearchParams(queryString);
+        params.delete("page");
+        params.delete("SortBy");
+        params.append("SortBy", sortValue);
+        document.location.href = "?" + params.toString();
+    });
+}

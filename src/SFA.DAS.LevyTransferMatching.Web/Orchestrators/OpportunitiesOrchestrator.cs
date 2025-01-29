@@ -1,4 +1,5 @@
 ﻿using SFA.DAS.Encoding;
+using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
@@ -12,33 +13,23 @@ using ApplyRequest = SFA.DAS.LevyTransferMatching.Infrastructure.Services.Opport
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 
-public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportunitiesOrchestrator
+public class OpportunitiesOrchestrator(
+    IDateTimeService dateTimeService, 
+    IOpportunitiesService opportunitiesService, 
+    IUserService userService, 
+    IEncodingService encodingService, 
+    ICacheStorageService cacheStorageService) : OpportunitiesOrchestratorBase, IOpportunitiesOrchestrator
 {
     private const int MaximumNumberAdditionalEmailAddresses = 4;
 
-    private readonly IDateTimeService _dateTimeService;
-    private readonly ICacheStorageService _cacheStorageService;
-    private readonly IOpportunitiesService _opportunitiesService;
-    private readonly IEncodingService _encodingService;
-    private readonly IUserService _userService;
-
-    public OpportunitiesOrchestrator(IDateTimeService dateTimeService, IOpportunitiesService opportunitiesService, IUserService userService, IEncodingService encodingService, ICacheStorageService cacheStorageService)
+    public async Task<DetailViewModel> GetDetailViewModel(DetailRequest detailRequest)
     {
-        _dateTimeService = dateTimeService;
-        _opportunitiesService = opportunitiesService;
-        _encodingService = encodingService;
-        _userService = userService;
-        _cacheStorageService = cacheStorageService;
-    }
-
-    public async Task<DetailViewModel> GetDetailViewModel(int pledgeId)
-    {
-        var response = await _opportunitiesService.GetDetail(pledgeId);
+        var response = await opportunitiesService.GetDetail(detailRequest.PledgeId);
 
         if (response.Opportunity == null)
             return null;
 
-        var encodedPledgeId = _encodingService.Encode(response.Opportunity.Id, EncodingType.PledgeId);
+        var encodedPledgeId = encodingService.Encode(response.Opportunity.Id, EncodingType.PledgeId);
 
         var opportunitySummaryViewModelOptions = new GetOpportunitySummaryViewModelOptions
         {
@@ -63,22 +54,33 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
             EncodedPledgeId = encodedPledgeId,
             IsNamePublic = response.Opportunity.IsNamePublic,
             OpportunitySummaryView = opportunitySummaryViewModel,
+            CommaSeparatedSectors = detailRequest.CommaSeparatedSectors,
+            Page = detailRequest.Page,
+            SortBy = detailRequest.SortBy
         };
     }
 
     public async Task<IndexViewModel> GetIndexViewModel(IndexRequest request)
     {
-        var response = await _opportunitiesService.GetIndex(request.Sectors, request.Page ?? 1, IndexRequest.DefaultPageSize);
+        var opportunitySort = OpportunitiesSortBy.ValueHighToLow;
+        if (!string.IsNullOrEmpty(request.SortBy) 
+            && Enum.TryParse<OpportunitiesSortBy>(request.SortBy, true, out var opportunitySortParsed))
+        {
+            opportunitySort = opportunitySortParsed;
+        }
+        var response = await opportunitiesService.GetIndex(request.Sectors, opportunitySort, request.Page ?? 1, IndexRequest.DefaultPageSize);
 
         return new IndexViewModel
         {
-            Paging = GetPagingData(response),
+            SortBy = request.SortBy,
+            CommaSeparatedSectors = request.CommaSeparatedSectors,
+            Paging = GetPagingData(response, request),
             Opportunities = response?.Opportunities
                 .Select(x => new IndexViewModel.Opportunity
                 {
                     Amount = x.Amount,
                     EmployerName = x.IsNamePublic ? x.DasAccountName : "Opportunity",
-                    ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),
+                    ReferenceNumber = encodingService.Encode(x.Id, EncodingType.PledgeId),
                     Sectors = x.Sectors.ToReferenceDataDescriptionList(response.Sectors, "; "),
                     JobRoles = x.JobRoles.ToReferenceDataDescriptionList(response.JobRoles, "; "),
                     Levels = x.Levels.ToReferenceDataDescriptionList(response.Levels, descriptionSource: y => y.ShortDescription),
@@ -89,7 +91,7 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
         };
     }
 
-    private IndexViewModel.PagingData GetPagingData(GetIndexResponse response)
+    private IndexViewModel.PagingData GetPagingData(GetIndexResponse response, IndexRequest request)
     {
         return new IndexViewModel.PagingData()
         {
@@ -98,17 +100,17 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
             TotalPages = response.TotalPages,
             TotalOpportunities = response.TotalOpportunities,
             ShowPageLinks = response.Page != 1 || response.TotalOpportunities > response.PageSize,
-            PageLinks = BuildPageLinks(response),
+            PageLinks = BuildPageLinks(response, request),
             PageStartRow = (response.Page - 1) * response.PageSize + 1,
             PageEndRow = response.Page * response.PageSize > response.TotalOpportunities ? response.TotalOpportunities : response.Page * response.PageSize,
         };
     }
 
-    public IEnumerable<IndexViewModel.PageLink> BuildPageLinks(GetIndexResponse response)
+    public IEnumerable<IndexViewModel.PageLink> BuildPageLinks(GetIndexResponse response, IndexRequest request)
     {
         var links = new List<IndexViewModel.PageLink>();
         var totalPages = (int)Math.Ceiling((double)response.TotalOpportunities / response.PageSize);
-        var totalPageLinks = totalPages < 5 ? totalPages : 5;
+        var totalPageLinks = totalPages < 7 ? totalPages : 7;
 
         //previous link
         if (totalPages > 1 && response.Page > 1)
@@ -117,13 +119,13 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
             {
                 Label = "Previous",
                 AriaLabel = "Previous page",
-                RouteData = BuildRouteData(response.Page - 1)
+                RouteData = BuildRouteData(request, response.Page - 1)
             });
         }
 
         //numbered links
         var pageNumberSeed = 1;
-        if (totalPages > 5 && response.Page > 3)
+        if (totalPages > 7 && response.Page > 3)
         {
             pageNumberSeed = response.Page - 2;
 
@@ -138,7 +140,7 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
                 Label = (pageNumberSeed + i).ToString(),
                 AriaLabel = $"Page {pageNumberSeed + i}",
                 IsCurrent = pageNumberSeed + i == response.Page ? true : (bool?)null,
-                RouteData = BuildRouteData(pageNumberSeed + i)
+                RouteData = BuildRouteData(request, pageNumberSeed + i)
             };
             links.Add(link);
         }
@@ -150,26 +152,39 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
             {
                 Label = "Next",
                 AriaLabel = "Next page",
-                RouteData = BuildRouteData(response.Page + 1)
+                RouteData = BuildRouteData(request, response.Page + 1)
             });
         }
 
         return links;
     }
 
-    private Dictionary<string, string> BuildRouteData(int pageNumber)
+    private static Dictionary<string, string> BuildRouteData(IndexRequest request, int pageNumber)
     {
-        return new Dictionary<string, string> { { "page", pageNumber.ToString() } };
+        var routeData = new Dictionary<string, string> { { "page", pageNumber.ToString() } };
+
+        if (request.Sectors != null && request.Sectors.Any())
+        {
+            var allSectors = string.Join(",", request.Sectors.Select(Uri.EscapeDataString));
+            routeData.Add("CommaSeparatedSectors", allSectors);
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.SortBy))
+        {
+            routeData.Add("SortBy", request.SortBy);
+        }
+
+        return routeData;
     }
 
     public async Task<SelectAccountViewModel> GetSelectAccountViewModel(SelectAccountRequest request)
     {
-        var userId = _userService.GetUserId();
+        var userId = userService.GetUserId();
 
-        var ownerTransactorAccounts = _userService.GetUserOwnerTransactorAccountIds();
+        var ownerTransactorAccounts = userService.GetUserOwnerTransactorAccountIds();
 
         // Get the full detail of accounts, that the user has access to
-        var result = await _opportunitiesService.GetSelectAccount(request.OpportunityId, userId);
+        var result = await opportunitiesService.GetSelectAccount(request.OpportunityId, userId);
 
         var filteredAccounts = result.Accounts
             .Where((x) => ownerTransactorAccounts.Contains(x.EncodedAccountId));
@@ -188,12 +203,12 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
 
     public async Task<ConfirmationViewModel> GetConfirmationViewModel(ConfirmationRequest request)
     {
-        var result = await _opportunitiesService.GetConfirmation(request.AccountId, request.PledgeId);
+        var result = await opportunitiesService.GetConfirmation(request.AccountId, request.PledgeId);
         return new ConfirmationViewModel
         {
             AccountName = result.AccountName,
             IsNamePublic = result.IsNamePublic,
-            Reference = _encodingService.Encode(request.PledgeId, EncodingType.PledgeId),
+            Reference = encodingService.Encode(request.PledgeId, EncodingType.PledgeId),
             EncodedAccountId = request.EncodedAccountId
         };
     }
@@ -218,19 +233,19 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
             LastName = cacheItem.LastName ?? string.Empty,
             EmailAddresses = cacheItem.EmailAddresses,
             BusinessWebsite = cacheItem.BusinessWebsite ?? string.Empty,
-            UserId = _userService.GetUserId(),
-            UserDisplayName = _userService.GetUserDisplayName()
+            UserId = userService.GetUserId(),
+            UserDisplayName = userService.GetUserDisplayName()
         };
 
-        await _opportunitiesService.PostApplication(request.AccountId, request.PledgeId, applyRequest);
+        await opportunitiesService.PostApplication(request.AccountId, request.PledgeId, applyRequest);
 
-        await _cacheStorageService.DeleteFromCache(request.CacheKey.ToString());
+        await cacheStorageService.DeleteFromCache(request.CacheKey.ToString());
     }
 
     public async Task<ApplyViewModel> GetApplyViewModel(ApplicationRequest request)
     {
         var applicationTask = RetrieveCacheItem(request.CacheKey);
-        var applyResponseTask = _opportunitiesService.GetApply(request.AccountId, request.PledgeId);
+        var applyResponseTask = opportunitiesService.GetApply(request.AccountId, request.PledgeId);
 
         await Task.WhenAll(applicationTask, applyResponseTask);
 
@@ -289,7 +304,7 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
         }
         else
         {
-            result.Locations = new List<string> {applicationTask.Result.SpecificLocation};
+            result.Locations = new List<string> { applicationTask.Result.SpecificLocation };
         }
 
         return result;
@@ -297,7 +312,7 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
 
     public async Task<ContactDetailsViewModel> GetContactDetailsViewModel(ContactDetailsRequest contactDetailsRequest)
     {
-        var getContactDetailsResult = await _opportunitiesService.GetContactDetails(contactDetailsRequest.AccountId, contactDetailsRequest.PledgeId);
+        var getContactDetailsResult = await opportunitiesService.GetContactDetails(contactDetailsRequest.AccountId, contactDetailsRequest.PledgeId);
 
         if (getContactDetailsResult == null)
         {
@@ -327,7 +342,7 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
 
         var placeholders = Enumerable.Range(0, MaximumNumberAdditionalEmailAddresses - additionalEmailAddresses.Count)
             .Select(x => (string)null);
-            
+
         additionalEmailAddresses.AddRange(placeholders);
 
         var viewModel = new ContactDetailsViewModel
@@ -360,13 +375,13 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
 
         cacheItem.BusinessWebsite = contactDetailsPostRequest.BusinessWebsite;
 
-        await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
+        await cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
     }
 
     public async Task<MoreDetailsViewModel> GetMoreDetailsViewModel(MoreDetailsRequest request)
     {
         var applicationTask = RetrieveCacheItem(request.CacheKey);
-        var moreDetailsResponseTask = _opportunitiesService.GetMoreDetails(request.AccountId, request.PledgeId);
+        var moreDetailsResponseTask = opportunitiesService.GetMoreDetails(request.AccountId, request.PledgeId);
 
         await Task.WhenAll(applicationTask, moreDetailsResponseTask);
 
@@ -398,7 +413,7 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
     public async Task<SectorViewModel> GetSectorViewModel(SectorRequest request)
     {
         var cacheItem = await RetrieveCacheItem(request.CacheKey);
-        var response = await _opportunitiesService.GetSector(request.AccountId, request.PledgeId);
+        var response = await opportunitiesService.GetSector(request.AccountId, request.PledgeId);
 
         var opportunitySummaryViewModelOptions = new GetOpportunitySummaryViewModelOptions
         {
@@ -438,7 +453,7 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
 
         cacheItem.Details = request.Details;
 
-        await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
+        await cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
     }
 
     public async Task UpdateCacheItem(ApplicationDetailsPostRequest request, int amount)
@@ -451,7 +466,7 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
         cacheItem.StartDate = request.StartDate;
         cacheItem.HasTrainingProvider = request.HasTrainingProvider.Value;
 
-        await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
+        await cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
     }
 
     public async Task UpdateCacheItem(SectorPostRequest request)
@@ -464,17 +479,17 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
         cacheItem.AdditionLocationText = request.AdditionalLocationText;
         cacheItem.SpecificLocation = request.SpecificLocation;
 
-        await _cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
+        await cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
     }
 
     private async Task<CreateApplicationCacheItem> RetrieveCacheItem(Guid key)
     {
-        var result = await _cacheStorageService.RetrieveFromCache<CreateApplicationCacheItem>(key.ToString());
+        var result = await cacheStorageService.RetrieveFromCache<CreateApplicationCacheItem>(key.ToString());
 
         if (result == null)
         {
             result = new CreateApplicationCacheItem(key);
-            await _cacheStorageService.SaveToCache(key.ToString(), result, 1);
+            await cacheStorageService.SaveToCache(key.ToString(), result, 1);
         }
 
         return result;
@@ -482,7 +497,7 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
 
     public async Task<ApplicationDetailsViewModel> GetApplicationViewModel(ApplicationDetailsRequest request)
     {
-        var applicationDetailsTask = _opportunitiesService.GetApplicationDetails(request.AccountId, request.PledgeId);
+        var applicationDetailsTask = opportunitiesService.GetApplicationDetails(request.AccountId, request.PledgeId);
         var applicationTask = RetrieveCacheItem(request.CacheKey);
 
         await Task.WhenAll(applicationDetailsTask, applicationTask);
@@ -529,13 +544,13 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
                     Selected = !string.IsNullOrEmpty(application.StandardId) && (app.StandardUId == application.StandardId) ? "selected" : null
                 }),
             },
-            CurrentFinancialYear = _dateTimeService.UtcNow.ToTaxYearDescription()
+            CurrentFinancialYear = dateTimeService.UtcNow.ToTaxYearDescription()
         };
     }
 
     public async Task<ApplicationRequest> PostApplicationViewModel(ApplicationDetailsPostRequest request)
     {
-        var applicationDetails = await _opportunitiesService.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId);
+        var applicationDetails = await opportunitiesService.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId);
 
         var amount = (await GetFundingEstimate(new GetFundingEstimateRequest
         {
@@ -560,7 +575,7 @@ public class OpportunitiesOrchestrator : OpportunitiesOrchestratorBase, IOpportu
 
     public async Task<GetFundingEstimateViewModel> GetFundingEstimate(GetFundingEstimateRequest request, GetApplicationDetailsResponse applicationDetails = null)
     {
-        applicationDetails ??= await _opportunitiesService.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId);
+        applicationDetails ??= await opportunitiesService.GetApplicationDetails(request.AccountId, request.PledgeId, request.SelectedStandardId);
 
         var amount = applicationDetails.Standards.Single()
             .ApprenticeshipFunding.GetEffectiveFundingLine(request.StartDate)
