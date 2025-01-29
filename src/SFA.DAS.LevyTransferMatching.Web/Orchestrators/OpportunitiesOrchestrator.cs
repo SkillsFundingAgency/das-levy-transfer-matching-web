@@ -22,9 +22,9 @@ public class OpportunitiesOrchestrator(
 {
     private const int MaximumNumberAdditionalEmailAddresses = 4;
 
-    public async Task<DetailViewModel> GetDetailViewModel(DetailRequest detailsRequest)
+    public async Task<DetailViewModel> GetDetailViewModel(DetailRequest detailRequest)
     {
-        var response = await opportunitiesService.GetDetail(detailsRequest.PledgeId);
+        var response = await opportunitiesService.GetDetail(detailRequest.PledgeId);
 
         if (response.Opportunity == null)
             return null;
