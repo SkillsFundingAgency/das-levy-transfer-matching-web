@@ -36,7 +36,7 @@ public class GetApplicationsResponseExtensionsTests
         var result = app.GetRemainingDaysForDelayedApproval(automaticApprovalOption);
 
         // Assert
-        Assert.That(result, Is.Null, "Result should be null");            
+        result.Should().BeNull();
     }
 
     [Test]
@@ -60,9 +60,9 @@ public class GetApplicationsResponseExtensionsTests
         var result = app.GetRemainingDaysForDelayedApproval(automaticApprovalOption);
 
         // Assert
-        Assert.That(result, Is.Not.Null, "Result should not be null");
-        Assert.That(result, Is.GreaterThan(0), "Result should be a positive number");
-        Assert.That(result, Is.LessThan(7), "Result should be less than 7");
+        result.Should().NotBeNull();
+        result.Should().BeGreaterThan(0);
+        result.Should().BeLessThan(7);
     }
 
     [Test]
@@ -86,7 +86,7 @@ public class GetApplicationsResponseExtensionsTests
         var result = app.GetRemainingDaysForDelayedApproval(automaticApprovalOption);
 
         // Assert
-        Assert.That(result, Is.Null, "Result should be null");        
+        result.Should().BeNull();
     }
 
 
@@ -110,7 +110,7 @@ public class GetApplicationsResponseExtensionsTests
         var result = app.GetRemainingDaysForAutoRejection();
 
         // Assert
-        Assert.That(result, Is.Null, "Result should be null");
+        result.Should().BeNull();
     }
 
     [Test]
@@ -133,7 +133,7 @@ public class GetApplicationsResponseExtensionsTests
         var result = app.GetRemainingDaysForAutoRejection();
 
         // Assert
-        Assert.That(result, Is.Null, "Result should be null");
+        result.Should().BeNull();
     }
 
     [Test]
@@ -156,9 +156,9 @@ public class GetApplicationsResponseExtensionsTests
         var result = app.GetRemainingDaysForAutoRejection();
 
         // Assert
-        Assert.That(result, Is.Not.Null, "Result should not be null");
-        Assert.That(result, Is.GreaterThan(0), "Result should be a positive number");
-        Assert.That(result, Is.LessThan(7), "Result should be less than 7");
+        result.Should().NotBeNull();
+        result.Should().BeGreaterThan(0);
+        result.Should().BeLessThan(7);
     }
 
     [Test]
@@ -182,7 +182,7 @@ public class GetApplicationsResponseExtensionsTests
         var result = app.GetDateDependentStatus(automaticApprovalOption);
 
         // Assert
-        Assert.That(result, Does.Contain("AUTO APPROVAL ON"));
+        result.Should().Contain("Auto approval on");
     }
 
 
@@ -207,7 +207,7 @@ public class GetApplicationsResponseExtensionsTests
         var result = app.GetDateDependentStatus(automaticApprovalOption);
 
         // Assert
-        Assert.That(result, Does.Contain("APPLICATION EXPIRES ON"));
+        result.Should().Contain("Application expires on");
     }
 
     [Test]
@@ -231,6 +231,6 @@ public class GetApplicationsResponseExtensionsTests
         var result = app.GetDateDependentStatus(automaticApprovalOption);
 
         // Assert
-        Assert.That(result, Does.Contain("AWAITING YOUR APPROVAL"));
+        result.Should().Contain("Awaiting your approval");
     }
 }
