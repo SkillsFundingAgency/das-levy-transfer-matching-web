@@ -26,6 +26,7 @@ public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
 
     private GetIndexResponse _getIndexResponse;
     private IndexRequest _indexRequest;
+    private DetailRequest _detailRequest;
     private string _userId;
     private string _userDisplayName;
     private int _page = 1;
@@ -48,6 +49,8 @@ public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
         _getIndexResponse = _fixture.Create<GetIndexResponse>();
         _indexRequest = _fixture.Build<IndexRequest>().With(p => p.Page, _page).Create();
         _indexRequest.SortBy = OpportunitiesSortBy.ValueHighToLow.ToString();
+
+        _detailRequest = _fixture.Create<DetailRequest>();
 
         _opportunitiesService.Setup(x => x.GetIndex(_indexRequest.Sectors, OpportunitiesSortBy.ValueHighToLow, _page, IndexRequest.DefaultPageSize)).ReturnsAsync(_getIndexResponse);
         _encodingService.Setup(x => x.Encode(It.IsAny<long>(), EncodingType.PledgeId)).Returns("test");
@@ -87,11 +90,11 @@ public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
         var id = _fixture.Create<int>();
 
         _opportunitiesService
-            .Setup(x => x.GetDetail(It.Is<int>(y => y == id)))
+            .Setup(x => x.GetDetail(It.Is<int>(y => y == _detailRequest.PledgeId)))
             .ReturnsAsync(new GetDetailResponse());
 
         // Act
-        var result = await _orchestrator.GetDetailViewModel(id);
+        var result = await _orchestrator.GetDetailViewModel(_detailRequest);
 
         // Assert
         result.Should().BeNull();
@@ -102,8 +105,7 @@ public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
     {
         // Arrange
         var encodedId = _fixture.Create<string>();
-        var id = _fixture.Create<int>();
-
+      
         SetupGetOpportunityViewModelServices();
 
         var sectors = SectorReferenceDataItems.Take(4);
@@ -112,7 +114,7 @@ public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
 
         var opportunity = _fixture
             .Build<GetDetailResponse.OpportunityData>()
-            .With(x => x.Id, id)
+            .With(x => x.Id, _detailRequest.PledgeId)
             .With(x => x.Sectors, sectors.Select(y => y.Id))
             .With(x => x.JobRoles, jobRoles.Select(y => y.Id))
             .With(x => x.Levels, levels.Select(y => y.Id))
@@ -123,15 +125,15 @@ public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
             .Create();
 
         _encodingService
-            .Setup(x => x.Encode(It.Is<long>(y => y == id), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
+            .Setup(x => x.Encode(It.Is<long>(y => y == _detailRequest.PledgeId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
             .Returns(encodedId);
 
         _opportunitiesService
-            .Setup(x => x.GetDetail(It.Is<int>(y => y == id)))
+            .Setup(x => x.GetDetail(It.Is<int>(y => y == _detailRequest.PledgeId)))
             .ReturnsAsync(getDetailResponse);
 
         // Act
-        var result = await _orchestrator.GetDetailViewModel(id);
+        var result = await _orchestrator.GetDetailViewModel(_detailRequest);
 
         Assert.Multiple(() =>
         {

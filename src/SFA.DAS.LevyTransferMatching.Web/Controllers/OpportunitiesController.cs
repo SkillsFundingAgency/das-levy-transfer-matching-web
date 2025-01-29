@@ -34,7 +34,7 @@ public class OpportunitiesController : Controller
     [Route("opportunities/{encodedPledgeId}")]
     public async Task<IActionResult> Detail(DetailRequest detailRequest)
     {
-        var viewModel = await _opportunitiesOrchestrator.GetDetailViewModel(detailRequest.PledgeId);
+        var viewModel = await _opportunitiesOrchestrator.GetDetailViewModel(detailRequest);
 
         if (viewModel != null)
         {

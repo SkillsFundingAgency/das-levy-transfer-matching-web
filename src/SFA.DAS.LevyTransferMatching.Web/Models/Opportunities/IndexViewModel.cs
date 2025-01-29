@@ -8,6 +8,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
         public List<Opportunity> Opportunities { get; set; }
         public PagingData Paging { get; set; }
         public List<ReferenceDataItem> Sectors { get; set; }
+        public string CommaSeparatedSectors { get; set; }
         public bool isSectorFilterApplied { get; set; }
         public string SortBy { get; set; }
 

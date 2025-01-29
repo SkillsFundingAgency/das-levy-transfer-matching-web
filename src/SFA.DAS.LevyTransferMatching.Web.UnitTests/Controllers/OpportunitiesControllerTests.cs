@@ -81,7 +81,7 @@ public class OpportunitiesControllerTests
         var expectedDetailViewModel = _fixture.Create<DetailViewModel>();
 
         _orchestrator
-            .Setup(x => x.GetDetailViewModel(It.Is<int>(y => y == detailRequest.PledgeId)))
+            .Setup(x => x.GetDetailViewModel(detailRequest))
             .ReturnsAsync(expectedDetailViewModel);
 
         // Act
@@ -100,7 +100,7 @@ public class OpportunitiesControllerTests
         var detailRequest = _fixture.Create<DetailRequest>();
 
         _orchestrator
-            .Setup(x => x.GetDetailViewModel(It.Is<int>(y => y == detailRequest.PledgeId)))
+            .Setup(x => x.GetDetailViewModel(detailRequest))
             .ReturnsAsync((DetailViewModel)null);
 
         // Act
