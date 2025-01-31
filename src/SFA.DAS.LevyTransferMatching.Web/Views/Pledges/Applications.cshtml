@@ -188,7 +188,7 @@
         @if (Model.RenderApplicationsList)
         {
             <br />
-            <div class="govuk-body-l"><b>@Model.Applications.Count() @Pluralise(Model.Applications.Count(), "application")</b></div>
+            <div class="govuk-body-l"><b>@Model.Paging.TotalItems @Pluralise(Model.Paging.TotalItems, "application")</b></div>
             <form method="post" id="applications_actions_form">
                 <div class="govuk-form-group" das-highlight-error-for="ApplicationsToReject"
                     error-class="govuk-form-group--error" id="ApplicationsToReject">
