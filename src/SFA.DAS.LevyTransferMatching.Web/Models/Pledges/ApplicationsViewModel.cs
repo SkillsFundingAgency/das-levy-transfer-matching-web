@@ -19,7 +19,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public string PledgeTotalAmount { get; set; }
         public string PledgeRemainingAmount { get; set; }
         public AutomaticApprovalOption AutomaticApprovalOption { get; set; }
-        public int ApplicationsPendingApproval { get => Applications.Count(x => x.Status == ApplicationStatus.Pending); }
+        public int ApplicationsPendingApproval { get; set; }
         public bool RenderApplicationsList { get => Applications != null && Applications.Any(); }
 
         public class Application

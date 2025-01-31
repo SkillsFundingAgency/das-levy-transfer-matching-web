@@ -310,6 +310,7 @@ public class PledgeOrchestrator : IPledgeOrchestrator
             EncodedPledgeId = request.EncodedPledgeId,
             RenderCreatePledgeButton = isOwnerOrTransactor,
             RenderRejectButton = viewModels.Any(x => x.Status == ApplicationStatus.Pending),
+            ApplicationsPendingApproval = result.TotalPendingApplications,
             PledgeTotalAmount = result.PledgeTotalAmount.ToCurrencyString(),
             AutomaticApprovalOption = result.AutomaticApprovalOption,
             PledgeRemainingAmount = result.PledgeRemainingAmount.ToCurrencyString(),
