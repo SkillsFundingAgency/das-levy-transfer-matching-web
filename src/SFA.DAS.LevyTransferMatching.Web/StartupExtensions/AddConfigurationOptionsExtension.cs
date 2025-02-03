@@ -16,9 +16,6 @@ public static class AddConfigurationOptionsExtension
         services.Configure<LevyTransferMatchingApi>(configuration.GetSection("LevyTransferMatchingApi"));
         services.AddSingleton(cfg => cfg.GetService<IOptions<LevyTransferMatchingApi>>().Value);
             
-        services.Configure<Infrastructure.Configuration.Authentication>(configuration.GetSection("Authentication"));
-        services.AddSingleton(cfg => cfg.GetService<IOptions<Infrastructure.Configuration.Authentication>>().Value);
-            
         services.Configure<EncodingConfig>(configuration.GetSection("EncodingService"));
         services.AddSingleton(cfg => cfg.GetService<IOptions<EncodingConfig>>().Value);
             
