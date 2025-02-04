@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using SFA.DAS.GovUK.Auth.Employer;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
@@ -15,16 +14,15 @@ public interface IEmployerAccountAuthorizationHandler
 
 public class EmployerAccountAuthorizationHandler(
     IHttpContextAccessor httpContextAccessor,
-    IAccountUserService accountsService,
-    IConfiguration configuration,
+    IAccountClaimsService accountClaimsService,
     ILogger<EmployerAccountAuthorizationHandler> logger)
     : IEmployerAccountAuthorizationHandler
 {
-    public Task<bool> IsEmployerAuthorized(AuthorizationHandlerContext context, UserRole minimumAllowedRole)
+    public async Task<bool> IsEmployerAuthorized(AuthorizationHandlerContext context, UserRole minimumAllowedRole)
     {
         if (!httpContextAccessor.HttpContext.Request.RouteValues.TryGetValue(RouteValueKeys.EncodedAccountId, out var routeValue))
         {
-            return Task.FromResult(false);
+            return false;
         }
 
         var accountIdFromUrl = routeValue.ToString().ToUpper();
@@ -32,19 +30,19 @@ public class EmployerAccountAuthorizationHandler(
 
         if (employerAccountClaim?.Value == null)
         {
-            return Task.FromResult(false);
+            return false;
         }
 
         Dictionary<string, EmployerUserAccountItem> employerAccounts;
 
         try
         {
-            employerAccounts = JsonConvert.DeserializeObject<Dictionary<string, EmployerUserAccountItem>>(employerAccountClaim.Value);
+            employerAccounts = await accountClaimsService.GetAssociatedAccounts(forceRefresh: false);
         }
         catch (JsonSerializationException e)
         {
             logger.LogError(e, "Could not deserialize employer account claim for user");
-            return Task.FromResult(false);
+            return false;
         }
 
         EmployerUserAccountItem employerIdentifier = null;
@@ -57,47 +55,22 @@ public class EmployerAccountAuthorizationHandler(
 
         if (employerAccounts == null || !employerAccounts.ContainsKey(accountIdFromUrl))
         {
-            var requiredIdClaim = ClaimIdentifierConfiguration.Id;
-
-            if (configuration[$"{nameof(Infrastructure.Configuration.FeatureToggles)}:UseGovSignIn"] != null
-                && configuration[$"{nameof(Infrastructure.Configuration.FeatureToggles)}:UseGovSignIn"]
-                    .Equals("true", StringComparison.CurrentCultureIgnoreCase))
+            if (!context.User.HasClaim(c => c.Type.Equals(ClaimTypes.NameIdentifier)))
             {
-                requiredIdClaim = ClaimTypes.NameIdentifier;
+                return false;
             }
 
-            if (!context.User.HasClaim(c => c.Type.Equals(requiredIdClaim)))
+            var updatedEmployerAccounts = await accountClaimsService.GetAssociatedAccounts(forceRefresh: true);
+
+            if (!updatedEmployerAccounts.ContainsKey(accountIdFromUrl))
             {
-                return Task.FromResult(false);
+                return false;
             }
 
-            var userClaim = context.User.Claims
-                .First(c => c.Type.Equals(requiredIdClaim));
-
-            var email = context.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email))?.Value;
-
-            var userId = userClaim.Value;
-
-            var result = accountsService.GetUserAccounts(userId, email).Result;
-
-            var accountsAsJson = JsonConvert.SerializeObject(result.EmployerAccounts.ToDictionary(k => k.AccountId));
-            var associatedAccountsClaim = new Claim(ClaimIdentifierConfiguration.Account, accountsAsJson, JsonClaimValueTypes.Json);
-
-            var updatedEmployerAccounts = JsonConvert.DeserializeObject<Dictionary<string, EmployerUserAccountItem>>(associatedAccountsClaim.Value);
-
-            userClaim.Subject.AddClaim(associatedAccountsClaim);
-
-            if (!updatedEmployerAccounts.TryGetValue(accountIdFromUrl, out var accountItem))
-            {
-                return Task.FromResult(false);
-            }
-
-            employerIdentifier = accountItem;
+            employerIdentifier = updatedEmployerAccounts[accountIdFromUrl];
         }
 
-        var hasAccess = CheckUserRoleForAccess(employerIdentifier, minimumAllowedRole);
-        
-        return Task.FromResult(hasAccess);
+        return CheckUserRoleForAccess(employerIdentifier, minimumAllowedRole);
     }
 
     private static bool CheckUserRoleForAccess(EmployerUserAccountItem employerIdentifier, UserRole minimumAllowedRole)
