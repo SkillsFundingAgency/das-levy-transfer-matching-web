@@ -39,8 +39,8 @@
                 <p>Otherwise the transfer opportunity will no longer be available.</p>
 
                 <br/>
-                <p>You have <strong>@Model.Paging.TotalItems</strong> @Model.ApplicationCountPostFix.</p>
-                <table class="govuk-table govuk-!-margin-bottom-9" aria-label="Transfer applications table">
+                <div class="govuk-body-l"><b>@Model.Paging.TotalItems @Model.ApplicationCountPostFix</b></div>
+                <table class="govuk-table govuk-!-margin-bottom-3" aria-label="Transfer applications table">
                     <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
                             <th scope="col" class="govuk-table__header app-custom-class">Opportunity</th>
@@ -84,7 +84,7 @@
 
                 @if (Model.Paging.ShowPageLinks)
                 {
-                    <nav role="navigation" class="das-search-results__list--border" aria-label="Pagination">
+                    <nav role="navigation" aria-label="Pagination">
                         <div class="das-pagination__summary">
                             @if (Model.Paging.Page == 1)
                             {
@@ -112,9 +112,6 @@
                     </nav>
                     <br />
                 }
-
-                <a href="@LinkGenerator.FinanceLink($"accounts/{Model.EncodedAccountId}/transfers")" class="govuk-link govuk-back-link" )>Back to transfers</a>
-
             </div>
         </div>
     </div>
