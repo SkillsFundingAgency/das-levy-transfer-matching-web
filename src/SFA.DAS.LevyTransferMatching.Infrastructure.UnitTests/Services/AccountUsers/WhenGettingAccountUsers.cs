@@ -21,16 +21,19 @@ public class WhenGettingAccountUsers
         _userId = fixture.Create<string>();
         _response = fixture.Create<GetUserAccountsResponse>();
         var httpMessageHandler = new Mock<HttpMessageHandler>();
+        
         var response = new HttpResponseMessage
         {
             Content = new StringContent(JsonConvert.SerializeObject(_response)),
             StatusCode = HttpStatusCode.OK
         };
+        
         var notFoundResponse = new HttpResponseMessage
         {
             Content = new StringContent(JsonConvert.SerializeObject(new GetUserAccountsResponse())),
             StatusCode = HttpStatusCode.OK
         };
+        
         httpMessageHandler.Protected()
             .Setup<Task<HttpResponseMessage>>(
                 "SendAsync",
@@ -41,6 +44,7 @@ public class WhenGettingAccountUsers
                 ItExpr.IsAny<CancellationToken>()
             )
             .ReturnsAsync((HttpRequestMessage _, CancellationToken _) => response);
+        
         httpMessageHandler.Protected()
             .Setup<Task<HttpResponseMessage>>(
                 "SendAsync",
@@ -63,7 +67,7 @@ public class WhenGettingAccountUsers
     {
         var actual = await _service.GetUserAccounts(_userId, _email);
 
-        actual.Should().BeEquivalentTo(_response);
+        actual.EmployerAccounts.Should().BeEquivalentTo(_response.UserAccounts);
     }
 
     [Test]
@@ -71,6 +75,9 @@ public class WhenGettingAccountUsers
     {
         var actual = await _service.GetUserAccounts(_userId, _emailNotMatch);
 
-        actual.Should().BeEquivalentTo(new EmployerUserAccounts());
+        actual.Should().BeEquivalentTo(new EmployerUserAccounts
+        {
+            EmployerAccounts = []
+        });
     }
 }
