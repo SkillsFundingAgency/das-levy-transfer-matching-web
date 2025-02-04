@@ -26,7 +26,7 @@ public class ViewAccountAuthorizationHandlerTests
             .ReturnsAsync(false);
             
         await _handler.HandleAsync(_context);
-        Assert.That(_context.HasSucceeded, Is.False);
+        _context.HasSucceeded.Should().BeFalse();
     }
 
     [Test]
@@ -36,6 +36,6 @@ public class ViewAccountAuthorizationHandlerTests
             .ReturnsAsync(true);
             
         await _handler.HandleAsync(_context);
-        Assert.That(_context.HasSucceeded, Is.True);
+        _context.HasSucceeded.Should().BeTrue();
     }
 }

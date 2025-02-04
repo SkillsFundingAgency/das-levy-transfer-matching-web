@@ -137,10 +137,10 @@ public class ContactDetailsPostRequestValidatorTests
         // Note - we should have 2 validation errors,
         //        for AdditionalEmailAddresses[2] and AdditionalEmailAddresses[3]
         var index2Error = results.Errors.SingleOrDefault(x => x.PropertyName == "AdditionalEmailAddresses[2]");
-        Assert.That(index2Error, Is.Not.Null);
+        index2Error.Should().NotBeNull();
 
         var index3Error = results.Errors.SingleOrDefault(x => x.PropertyName == "AdditionalEmailAddresses[3]");
-        Assert.That(index3Error, Is.Not.Null);
+        index3Error.Should().NotBeNull();
     }
 
     [Test]
@@ -172,13 +172,13 @@ public class ContactDetailsPostRequestValidatorTests
         //        for AdditionalEmailAddresses[1] and AdditionalEmailAddresses[3]
         //        But *not* for AdditionalEmailAddresses[0]!
         var index1Error = results.Errors.SingleOrDefault(x => x.PropertyName == "AdditionalEmailAddresses[1]");
-        Assert.That(index1Error, Is.Not.Null);
+        index1Error.Should().NotBeNull();
 
         var index3Error = results.Errors.SingleOrDefault(x => x.PropertyName == "AdditionalEmailAddresses[3]");
-        Assert.That(index3Error, Is.Not.Null);
+        index3Error.Should().NotBeNull();
 
         var index0Error = results.Errors.SingleOrDefault(x => x.PropertyName == "AdditionalEmailAddresses[0]");
-        Assert.That(index0Error, Is.Null);
+        index0Error.Should().BeNull();
     }
 
     [Test]

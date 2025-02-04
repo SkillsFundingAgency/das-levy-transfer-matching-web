@@ -4,29 +4,18 @@ using SFA.DAS.LevyTransferMatching.Web.Attributes;
 
 namespace SFA.DAS.LevyTransferMatching.Web.ModelBinders;
 
-public class AutoDecodeModelBinder : IModelBinder
+public class AutoDecodeModelBinder(IModelBinder fallbackBinder, IEncodingService encodingService)
+    : IModelBinder
 {
-    private readonly IModelBinder _fallbackBinder;
-    private readonly IEncodingService _encodingService;
-
-    public AutoDecodeModelBinder(IModelBinder fallbackBinder, IEncodingService encodingService)
-    {
-        _encodingService = encodingService;
-        _fallbackBinder = fallbackBinder;
-    }
-
     public Task BindModelAsync(ModelBindingContext bindingContext)
     {
-        if (bindingContext == null)
-        {
-            throw new ArgumentNullException(nameof(bindingContext));
-        }
+        ArgumentNullException.ThrowIfNull(bindingContext);
 
         var attribute = GetAutoDecodeAttribute(bindingContext);
 
         if (attribute == null)
         {
-            return _fallbackBinder.BindModelAsync(bindingContext);
+            return fallbackBinder.BindModelAsync(bindingContext);
         }
 
         try
@@ -35,12 +24,12 @@ public class AutoDecodeModelBinder : IModelBinder
 
             if (GetTargetType(bindingContext) == typeof(long))
             {
-                var decodedValue = _encodingService.Decode(encodedValue, attribute.EncodingType);
+                var decodedValue = encodingService.Decode(encodedValue, attribute.EncodingType);
                 bindingContext.Result = ModelBindingResult.Success(decodedValue);
             }
             else if (GetTargetType(bindingContext) == typeof(int))
             {
-                var decodedValue = (int)_encodingService.Decode(encodedValue, attribute.EncodingType);
+                var decodedValue = (int)encodingService.Decode(encodedValue, attribute.EncodingType);
                 bindingContext.Result = ModelBindingResult.Success(decodedValue);
             }
             else

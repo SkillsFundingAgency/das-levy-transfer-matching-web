@@ -12,7 +12,7 @@ public static class AddAsyncValidatorsExtensions
 {
     public static void AddAsyncValidators(this IServiceCollection services)
     {
-        services.AddTransient<AsyncValidator<ApplicationDetailsPostRequest>>((s) => new ApplicationDetailsPostRequestAsyncValidator(s.GetService<IOpportunitiesService>()));
-        services.AddTransient<AbstractValidator<ApplicationPostRequest>>((s) => new ApplicationPostRequestValidator());
+        services.AddTransient<AsyncValidator<ApplicationDetailsPostRequest>>(s => new ApplicationDetailsPostRequestAsyncValidator(s.GetService<IOpportunitiesService>()));
+        services.AddTransient<AbstractValidator<ApplicationPostRequest>>(s => new ApplicationPostRequestValidator());
     }
 }

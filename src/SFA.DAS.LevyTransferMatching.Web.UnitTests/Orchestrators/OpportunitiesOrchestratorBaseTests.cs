@@ -1,4 +1,5 @@
-﻿using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
+﻿using FluentAssertions.Execution;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
 using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
@@ -63,27 +64,26 @@ public class OpportunitiesOrchestratorBaseTests
         };
 
         // Act
-        var result = _orchestrator.GetOpportunitySummaryViewModel(opportunitySummaryViewModelOptions);
+        var result = GetOpportunitySummaryViewModel(opportunitySummaryViewModelOptions);
 
         // Assert
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
             var jobRoleDescriptions = JobRoleReferenceDataItems
                 .Where(x => opportunity.JobRoles.Contains(x.Id))
                 .Select(x => x.Description);
-            Assert.That(jobRoleDescriptions.Single(), Is.EqualTo(result.JobRoleList));
+            jobRoleDescriptions.Single().Should().Be(result.JobRoleList);
 
             var levelDescriptions = LevelReferenceDataItems
                 .Where(x => opportunity.Levels.Contains(x.Id))
                 .Select(x => x.ShortDescription);
-            Assert.That(levelDescriptions.Single(), Is.EqualTo(result.LevelList));
+            levelDescriptions.Single().Should().Be(result.LevelList);
 
             var sectorDescriptions = SectorReferenceDataItems
                 .Where(x => opportunity.Sectors.Contains(x.Id))
                 .Select(x => x.Description);
-            Assert.That(sectorDescriptions.Single(), Is.EqualTo(result.SectorList));
-        });
-
+            sectorDescriptions.Single().Should().Be(result.SectorList);
+        }
     }
 
     [Test]
@@ -118,16 +118,16 @@ public class OpportunitiesOrchestratorBaseTests
         };
 
         // Act
-        var result = _orchestrator.GetOpportunitySummaryViewModel(opportunitySummaryViewModelOptions);
+        var result = GetOpportunitySummaryViewModel(opportunitySummaryViewModelOptions);
 
         // Assert
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
-            Assert.That(result.JobRoleList, Is.EqualTo("All"));
-            Assert.That(result.LevelList, Is.EqualTo("All"));
-            Assert.That(result.SectorList, Is.EqualTo("All"));
-            Assert.That(result.Description, Does.Not.Contain(encodedPledgeId));
-        });
+            result.JobRoleList.Should().Be("All");
+            result.LevelList.Should().Be("All");
+            result.SectorList.Should().Be("All");
+            result.Description.Should().NotContain(encodedPledgeId);
+        }
     }
 
     [Test]
@@ -166,29 +166,28 @@ public class OpportunitiesOrchestratorBaseTests
         };
 
         // Act
-        var result = _orchestrator.GetOpportunitySummaryViewModel(opportunitySummaryViewModelOptions);
+        var result = GetOpportunitySummaryViewModel(opportunitySummaryViewModelOptions);
 
         // Assert
-        Assert.Multiple(() =>
+        using (new AssertionScope())
         {
             var jobRoleDescriptions = JobRoleReferenceDataItems
                 .Where(x => opportunity.JobRoles.Contains(x.Id))
                 .Select(x => x.Description);
-            Assert.That(string.Join("; ", jobRoleDescriptions), Is.EqualTo(result.JobRoleList));
+            string.Join("; ", jobRoleDescriptions).Should().Be(result.JobRoleList);
 
             var levelDescriptions = LevelReferenceDataItems
                 .Where(x => opportunity.Levels.Contains(x.Id))
                 .Select(x => x.ShortDescription);
-            Assert.That(string.Join(", ", levelDescriptions), Is.EqualTo(result.LevelList));
+            string.Join(", ", levelDescriptions).Should().Be(result.LevelList);
 
             var sectorDescriptions = SectorReferenceDataItems
                 .Where(x => opportunity.Sectors.Contains(x.Id))
                 .Select(x => x.Description);
-            Assert.That(string.Join("; ", sectorDescriptions), Is.EqualTo(result.SectorList));
+            string.Join("; ", sectorDescriptions).Should().Be(result.SectorList);
 
-
-            Assert.That(result.Description, Does.Contain(encodedPledgeId));
-        });
+            result.Description.Should().Contain(encodedPledgeId);
+        }
     }
 
     protected void SetupGetOpportunityViewModelServices()
@@ -203,7 +202,7 @@ public class OpportunitiesOrchestratorBaseTests
 
         LevelReferenceDataItems = _fixture
             .CreateMany<ReferenceDataItem>(7)
-            .ToList();           
+            .ToList();
 
         _currentDateTime = _fixture.Create<DateTime>();
         DateTimeService
@@ -211,5 +210,5 @@ public class OpportunitiesOrchestratorBaseTests
             .Returns(_currentDateTime);
     }
 
-    private class TestOrchestrator : OpportunitiesOrchestratorBase { }
+    private class TestOrchestrator : OpportunitiesOrchestratorBase;
 }

@@ -1,7 +1,6 @@
-﻿namespace SFA.DAS.LevyTransferMatching.Infrastructure.Dto
+﻿namespace SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
+
+public class LocationInformationDto
 {
-    public class LocationInformationDto
-    {
-        public string Name { get; set; }
-    }
+    public string Name { get; set; }
 }

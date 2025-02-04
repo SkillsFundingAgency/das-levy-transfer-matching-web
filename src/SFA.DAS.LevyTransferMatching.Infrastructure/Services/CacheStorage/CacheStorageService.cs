@@ -3,36 +3,28 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 
-namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage
+namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
+
+public class CacheStorageService(IDistributedCache distributedCache) : ICacheStorageService
 {
-    public class CacheStorageService : ICacheStorageService
+    public async Task SaveToCache<T>(string key, T item, int expirationInHours)
     {
-        private readonly IDistributedCache _distributedCache;
+        var json = JsonConvert.SerializeObject(item);
 
-        public CacheStorageService(IDistributedCache distributedCache)
+        await distributedCache.SetStringAsync(key, json, new DistributedCacheEntryOptions
         {
-            _distributedCache = distributedCache;
-        }
+            AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(expirationInHours)
+        });
+    }
 
-        public async Task SaveToCache<T>(string key, T item, int expirationInHours)
-        {
-            var json = JsonConvert.SerializeObject(item);
+    public async Task<T> RetrieveFromCache<T>(string key)
+    {
+        var json = await distributedCache.GetStringAsync(key);
+        return json == null ? default(T) : JsonConvert.DeserializeObject<T>(json);
+    }
 
-            await _distributedCache.SetStringAsync(key, json, new DistributedCacheEntryOptions
-            {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(expirationInHours)
-            });
-        }
-
-        public async Task<T> RetrieveFromCache<T>(string key)
-        {
-            var json = await _distributedCache.GetStringAsync(key);
-            return json == null ? default(T) : JsonConvert.DeserializeObject<T>(json);
-        }
-
-        public async Task DeleteFromCache(string key)
-        {
-            await _distributedCache.RemoveAsync(key);
-        }
+    public async Task DeleteFromCache(string key)
+    {
+        await distributedCache.RemoveAsync(key);
     }
 }

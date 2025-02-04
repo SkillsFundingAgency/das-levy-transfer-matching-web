@@ -45,7 +45,7 @@
                                 <legend class="govuk-visually-hidden">Select one or more business sectors to filter by
                                 </legend>
                                 <checkbox-list asp-for="Sectors" source="@Model.Sectors"
-                                    css-class="govuk-checkboxes govuk-checkboxes--small"></checkbox-list>
+                                               css-class="govuk-checkboxes govuk-checkboxes--small"></checkbox-list>
                             </fieldset>
                         </div>
                     </div>
@@ -72,7 +72,7 @@
                                 <li class="das-search-results__list-item">
                                     <h2 class="govuk-heading-m das-search-results__heading govuk-!-margin-bottom-0">
                                         <a href="@Url.Action("Detail", new { EncodedPledgeId = opportunity.ReferenceNumber })"
-                                            class="das-search-results__link">@opportunity.EmployerName
+                                           class="das-search-results__link">@opportunity.EmployerName
                                             (@opportunity.ReferenceNumber)</a>
                                     </h2>
                                     <p class="govuk-hint">up to @opportunity.DisplayAmount available</p>
@@ -110,8 +110,8 @@
                             {
                                 <li class="das-pagination__item">
                                     <a class="das-pagination__link @(pageLink.IsCurrent.HasValue && pageLink.IsCurrent.Value ? "current" : "")"
-                                        asp-route="opportunities" asp-all-route-data="@pageLink.RouteData"
-                                        aria-current="@pageLink.IsCurrent" aria-label="@pageLink.AriaLabel">
+                                       asp-route="opportunities" asp-all-route-data="@pageLink.RouteData"
+                                       aria-current="@pageLink.IsCurrent" aria-label="@pageLink.AriaLabel">
                                         @pageLink.Label
                                     </a>
                                 </li>

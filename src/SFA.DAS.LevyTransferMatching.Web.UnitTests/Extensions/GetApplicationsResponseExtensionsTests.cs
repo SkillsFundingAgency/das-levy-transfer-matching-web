@@ -89,7 +89,6 @@ public class GetApplicationsResponseExtensionsTests
         result.Should().BeNull();
     }
 
-
     [Test]
     public void GetRemainingDaysForAutoRejection_Returns_Null_If_Not_Pending()
     {
@@ -184,7 +183,6 @@ public class GetApplicationsResponseExtensionsTests
         // Assert
         result.Should().Contain("Auto approval on");
     }
-
 
     [Test]
     public void GetDateDependentStatus_Returns_AutoRejection_String()
