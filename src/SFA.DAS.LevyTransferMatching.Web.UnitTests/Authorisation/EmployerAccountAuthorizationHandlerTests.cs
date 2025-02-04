@@ -7,7 +7,6 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsers.Types;
 using SFA.DAS.LevyTransferMatching.Web.Authentication;
 using SFA.DAS.LevyTransferMatching.Web.Authorization;
 using SFA.DAS.Testing.AutoFixture;
-using EmployerUserAccounts = SFA.DAS.GovUK.Auth.Employer.EmployerUserAccounts;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Authorisation;
 
@@ -29,20 +28,34 @@ public class EmployerAccountAuthorizationHandlerTests
         bool accessResult,
         string roleOnClaims,
         EmployerIdentifier employerIdentifier,
+        EmployerUserAccountItem serviceResponse,
         ManageAccountRequirement ownerRequirement,
         [Frozen] Mock<IHttpContextAccessor> httpContextAccessor,
+        [Frozen] Mock<IAccountClaimsService> accountClaimsService,
         EmployerAccountAuthorizationHandler authorizationHandler)
     {
         //Arrange
-        employerIdentifier.Role = roleOnClaims;
+        serviceResponse.AccountId = employerIdentifier.AccountId.ToUpper();
+        serviceResponse.Role = roleOnClaims;
+        
         employerIdentifier.AccountId = employerIdentifier.AccountId.ToUpper();
+       
         var employerAccounts = new Dictionary<string, EmployerIdentifier> { { employerIdentifier.AccountId, employerIdentifier } };
+        
         var claim = new Claim(ClaimIdentifierConfiguration.Account, JsonConvert.SerializeObject(employerAccounts));
         var claimsPrinciple = new ClaimsPrincipal([new ClaimsIdentity([claim])]);
         var context = new AuthorizationHandlerContext([ownerRequirement], claimsPrinciple, null);
         var httpContext = new DefaultHttpContext(new FeatureCollection());
         httpContext.Request.RouteValues.Add(RouteValueKeys.EncodedAccountId, employerIdentifier.AccountId);
         httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
+        
+        var accounts = new List<EmployerUserAccountItem>
+        {
+            serviceResponse
+        };
+
+        var accountsDictionary = accounts.ToDictionary(x => x.AccountId);
+        accountClaimsService.Setup(x => x.GetAssociatedAccounts(false)).ReturnsAsync(accountsDictionary);
 
         //Act
         var actual = await authorizationHandler.IsEmployerAuthorized(context, minimumRole);
@@ -87,7 +100,7 @@ public class EmployerAccountAuthorizationHandlerTests
         ManageAccountRequirement ownerRequirement,
         EmployerUserAccountItem serviceResponse,
         [Frozen] Mock<IHttpContextAccessor> httpContextAccessor,
-        [Frozen] Mock<IAccountClaimsService> associatedAccountsService,
+        [Frozen] Mock<IAccountClaimsService> accountClaimsService,
         [Frozen] Mock<IConfiguration> configuration,
         EmployerAccountAuthorizationHandler authorizationHandler)
     {
@@ -105,7 +118,7 @@ public class EmployerAccountAuthorizationHandlerTests
         };
 
         var accountsDictionary = accounts.ToDictionary(x => x.AccountId);
-        associatedAccountsService.Setup(x => x.GetAssociatedAccounts(false)).ReturnsAsync(accountsDictionary);
+        accountClaimsService.Setup(x => x.GetAssociatedAccounts(false)).ReturnsAsync(accountsDictionary);
 
         var userClaim = new Claim(ClaimIdentifierConfiguration.Id, userId);
         var employerAccounts = new Dictionary<string, EmployerUserAccountItem> { { employerIdentifier.AccountId, employerIdentifier } };
@@ -125,7 +138,7 @@ public class EmployerAccountAuthorizationHandlerTests
     }
 
     [Test, MoqAutoData]
-    public async Task Then_If_Not_In_Context_Claims_AssociatedAccountService_Checked_And_True_Returned_If_Exists_For_GovSignIn(
+    public async Task Then_If_Not_In_Context_Claims_AccountClaimsService_Checked_And_True_Returned_If_Exists_For_GovSignIn(
         string accountId,
         string userId,
         string email,
@@ -134,7 +147,7 @@ public class EmployerAccountAuthorizationHandlerTests
         EmployerIdentifier claimEmployerIdentifier,
         ManageAccountRequirement ownerRequirement,
         [Frozen] Mock<IHttpContextAccessor> httpContextAccessor,
-        [Frozen] Mock<IAccountClaimsService> associatedAccountsService,
+        [Frozen] Mock<IAccountClaimsService> accountClaimsService,
         [Frozen] Mock<IConfiguration> configuration,
         EmployerAccountAuthorizationHandler authorizationHandler)
     {
@@ -152,7 +165,7 @@ public class EmployerAccountAuthorizationHandlerTests
         };
 
         var accountsDictionary = accounts.ToDictionary(x => x.AccountId);
-        associatedAccountsService.Setup(x => x.GetAssociatedAccounts(false)).ReturnsAsync(accountsDictionary);
+        accountClaimsService.Setup(x => x.GetAssociatedAccounts(false)).ReturnsAsync(accountsDictionary);
 
         var userClaim = new Claim(ClaimTypes.NameIdentifier, userId);
         var employerAccounts = new Dictionary<string, EmployerIdentifier> { { claimEmployerIdentifier.AccountId, claimEmployerIdentifier } };
