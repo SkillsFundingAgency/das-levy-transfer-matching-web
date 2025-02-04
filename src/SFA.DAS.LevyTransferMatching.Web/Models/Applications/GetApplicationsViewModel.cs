@@ -1,4 +1,5 @@
 ﻿using SFA.DAS.LevyTransferMatching.Domain.Types;
+using SFA.DAS.LevyTransferMatching.Web.Models.Shared;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Applications;
 
@@ -7,9 +8,10 @@ public class GetApplicationsViewModel
     public string EncodedAccountId { get; set; }
     public IEnumerable<ApplicationViewModel> Applications { get; set; }
     public bool RenderViewApplicationDetailsHyperlink { get; set; }
+    public PagingData Paging { get; set; }
 
     public string ApplicationCountPostFix =>
-        Applications.Count() switch
+        Paging.TotalItems switch
         {
             1 => "transfer application",
             _ => "transfer applications"

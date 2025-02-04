@@ -33,6 +33,101 @@ public class ApplicationsOrchestratorTests
     }
 
     [Test]
+    public async Task GetApplications_ShouldReturnViewModel_WithCorrectData()
+    {
+        // Arrange
+        var request = _fixture.Create<GetApplicationsRequest>();
+        var cancellationToken = CancellationToken.None;
+        var pagedResponse = _fixture.Build<GetApplicationsResponse>()
+            .With(x => x.Items, _fixture.CreateMany<GetApplicationsResponse.Application>(5).ToList())
+            .Create();
+
+        _mockApplicationsService
+            .Setup(x => x.GetApplications(request.AccountId, request.Page.Value, It.IsAny<int>(), cancellationToken))
+            .ReturnsAsync(pagedResponse);
+
+        _mockEncodingService
+            .Setup(x => x.Encode(It.IsAny<int>(), It.IsAny<EncodingType>()))
+            .Returns<int, EncodingType>((id, type) => $"Encoded{type}_{id}");
+
+        // Act
+        var result = await _applicationsOrchestrator.GetApplications(request, cancellationToken);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Applications.Should().HaveCount(pagedResponse.Items.Count());
+        result.EncodedAccountId.Should().Be(request.EncodedAccountId);
+        result.RenderViewApplicationDetailsHyperlink.Should().BeTrue();
+
+        result.Paging.Should().NotBeNull();
+        result.Paging.Page.Should().Be(pagedResponse.Page);
+        result.Paging.PageSize.Should().Be(pagedResponse.PageSize);
+        result.Paging.TotalPages.Should().Be(pagedResponse.TotalPages);
+        result.Paging.TotalItems.Should().Be(pagedResponse.TotalItems);
+        result.Paging.ShowPageLinks.Should().Be(pagedResponse.Page != 1 || pagedResponse.TotalItems > pagedResponse.PageSize);
+    }
+
+    [Test]
+    public async Task GetApplications_ShouldReturnViewModel_WithCorrectPagingLinks()
+    {
+        // Arrange
+        var request = _fixture.Create<GetApplicationsRequest>();
+        var cancellationToken = CancellationToken.None;
+        var pagedResponse = _fixture.Build<GetApplicationsResponse>()
+            .With(x => x.Page, 3)
+            .With(x => x.PageSize, 10)
+            .With(x => x.TotalItems, 50)
+            .With(x => x.TotalPages, 5)
+            .With(x => x.Items, _fixture.CreateMany<GetApplicationsResponse.Application>(10).ToList())
+            .Create();
+
+        _mockApplicationsService
+            .Setup(x => x.GetApplications(request.AccountId, request.Page.Value, GetApplicationsRequest.PageSize, cancellationToken))
+            .ReturnsAsync(pagedResponse);
+
+        _mockEncodingService
+            .Setup(x => x.Encode(It.IsAny<int>(), It.IsAny<EncodingType>()))
+            .Returns<int, EncodingType>((id, type) => $"Encoded{type}_{id}");
+
+
+        // Act
+        var result = await _applicationsOrchestrator.GetApplications(request, cancellationToken);
+
+        // Assert
+        var pageLinks = result.Paging.PageLinks.ToList();
+        pageLinks.Should().HaveCount(7);
+
+        // Verify Previous link
+        pageLinks[0].Label.Should().Be("Previous");
+        pageLinks[0].AriaLabel.Should().Be("Previous page");
+
+        // Verify numbered links
+        pageLinks[1].Label.Should().Be("1");
+        pageLinks[1].AriaLabel.Should().Be("Page 1");
+        pageLinks[1].IsCurrent.Should().BeNull();
+
+        pageLinks[2].Label.Should().Be("2");
+        pageLinks[2].AriaLabel.Should().Be("Page 2");
+        pageLinks[2].IsCurrent.Should().BeNull();
+
+        pageLinks[3].Label.Should().Be("3");
+        pageLinks[3].AriaLabel.Should().Be("Page 3");
+        pageLinks[3].IsCurrent.Should().BeTrue();
+
+        pageLinks[4].Label.Should().Be("4");
+        pageLinks[4].AriaLabel.Should().Be("Page 4");
+        pageLinks[4].IsCurrent.Should().BeNull();
+
+        pageLinks[5].Label.Should().Be("5");
+        pageLinks[5].AriaLabel.Should().Be("Page 5");
+        pageLinks[5].IsCurrent.Should().BeNull();
+
+        // Verify Next link
+        pageLinks[6].Label.Should().Be("Next");
+        pageLinks[6].AriaLabel.Should().Be("Next page");
+    }
+
+    [Test]
     public async Task GetApplicationViewModel_ApplicationExists_ReturnsViewModel()
     {
         // Arrange

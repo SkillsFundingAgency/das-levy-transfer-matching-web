@@ -17,7 +17,7 @@ public class ApplicationsController : Controller
 
     [HttpGet]
     [HideAccountNavigation(false)]
-    [Route("/accounts/{encodedAccountId}/applications")]
+    [Route("/accounts/{encodedAccountId}/applications", Name = RouteNames.Applications)]
     public async Task<IActionResult> Applications(GetApplicationsRequest request)
     {
         var viewModel = await _applicationsOrchestrator.GetApplications(request);
