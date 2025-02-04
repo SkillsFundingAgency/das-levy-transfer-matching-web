@@ -12,7 +12,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsers;
 
 public interface IAccountClaimsService
 {
-    Task<Dictionary<string, SFA.DAS.GovUK.Auth.Employer.EmployerUserAccountItem>> GetAssociatedAccounts(bool forceRefresh);
+    Task<Dictionary<string, EmployerUserAccountItem>> GetAssociatedAccounts(bool forceRefresh);
 }
 
 public class AccountClaimsService(IGovAuthEmployerAccountService accountsService, IHttpContextAccessor httpContextAccessor, ILogger<AccountClaimsService> logger) : IAccountClaimsService
@@ -26,7 +26,7 @@ public class AccountClaimsService(IGovAuthEmployerAccountService accountsService
     /// </summary>
     /// <param name="forceRefresh">Forces data to be refreshed from UserAccountsService and persisted to user claims regardless of claims state.</param>
     /// <returns>Dictionary of string, EmployerUserAccountItem</returns>
-    public async Task<Dictionary<string, SFA.DAS.GovUK.Auth.Employer.EmployerUserAccountItem>> GetAssociatedAccounts(bool forceRefresh)
+    public async Task<Dictionary<string, EmployerUserAccountItem>> GetAssociatedAccounts(bool forceRefresh)
     {
         var user = httpContextAccessor.HttpContext.User;
         var employerAccountsClaim = user.FindFirst(c => c.Type.Equals(EmployerClaims.AccountsClaimsTypeIdentifier));
@@ -36,7 +36,7 @@ public class AccountClaimsService(IGovAuthEmployerAccountService accountsService
             logger.LogWarning("AssociatedAccountsService.GetAccounts: ForceRefresh {ForceRefresh}.", forceRefresh);
             try
             {
-                var accountsFromClaim = JsonConvert.DeserializeObject<Dictionary<string, SFA.DAS.GovUK.Auth.Employer.EmployerUserAccountItem>>(employerAccountsClaim.Value);
+                var accountsFromClaim = JsonConvert.DeserializeObject<Dictionary<string, EmployerUserAccountItem>>(employerAccountsClaim.Value);
 
                 logger.LogWarning("AssociatedAccountsService.GetAccounts: accountsFromClaim {AccountsFromClaim}.", accountsFromClaim);
 
@@ -74,7 +74,7 @@ public class AccountClaimsService(IGovAuthEmployerAccountService accountsService
         return associatedAccounts;
     }
 
-    private void PersistToClaims(Dictionary<string, SFA.DAS.GovUK.Auth.Employer.EmployerUserAccountItem> associatedAccounts, Claim employerAccountsClaim, Claim userClaim)
+    private void PersistToClaims(Dictionary<string, EmployerUserAccountItem> associatedAccounts, Claim employerAccountsClaim, Claim userClaim)
     {
         // Some users have 100's of employer accounts. The claims cannot handle that volume of data.
         var accountsAsJson = JsonConvert.SerializeObject(associatedAccounts.Count <= MaxPermittedNumberOfAccountsOnClaim
