@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
+using SFA.DAS.GovUK.Auth.Employer;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsers;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
