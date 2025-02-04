@@ -53,7 +53,7 @@
                 <button class="govuk-button" data-module="govuk-button" id="opportunity-filter-sector">Apply filters</button>
             </div>
             <div class="govuk-grid-column-two-thirds">
-                <h2 class="govuk-heading-m">@Model.Paging.TotalOpportunities @(Model.Paging.TotalOpportunities == 1 ?
+                <h2 class="govuk-heading-m">@Model.Paging.TotalItems @(Model.Paging.TotalItems == 1 ?
                     "opportunity" : "opportunities")</h2>
 
                 @if (Model.Opportunities.Count == 0)
@@ -102,9 +102,9 @@
 
                 @if (Model.Paging.ShowPageLinks)
                 {
-                    <nav role="navigation" aria-label="Pagination">
+                    <nav role="navigation" class="das-search-results__list-item" aria-label="Pagination">
                         <div class="das-pagination__summary">Showing @Model.Paging.PageStartRow to @Model.Paging.PageEndRow
-                            <br />of @Model.Paging.TotalOpportunities opportunities</div>
+                            <br />of @Model.Paging.TotalItems opportunities</div>
                         <ul class="das-pagination">
                             @foreach (var pageLink in Model.Paging.PageLinks)
                             {

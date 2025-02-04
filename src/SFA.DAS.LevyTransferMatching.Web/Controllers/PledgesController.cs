@@ -54,10 +54,8 @@ public class PledgesController : Controller
         return View(viewModel);
     }
 
-
-
     [HttpGet]
-    [Route("{encodedPledgeId}/applications")]
+    [Route("{encodedPledgeId}/applications", Name = RouteNames.PledgeApplications)]
     public async Task<IActionResult> Applications(ApplicationsRequest request)
     {
         var response = await _orchestrator.GetApplications(request);

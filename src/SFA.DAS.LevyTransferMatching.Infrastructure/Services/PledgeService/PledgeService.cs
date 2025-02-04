@@ -86,23 +86,24 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService
             return JsonConvert.DeserializeObject<GetLevelResponse>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<GetApplicationsResponse> GetApplications(long accountId, int pledgeId, SortColumn? sortOrder, SortOrder? sortDirection)
+        public async Task<GetApplicationsResponse> GetApplications(long accountId, int pledgeId, int page, SortColumn? sortOrder, SortOrder? sortDirection, int? pageSize = null)
         {
-            var sort = GetApplicationsSortParameters(sortOrder, sortDirection);
+            var sort = GetApplicationsParameters(sortOrder, sortDirection, page, pageSize);
             var response = await _client.GetAsync($"accounts/{accountId}/pledges/{pledgeId}/applications{sort}");
             response.EnsureSuccessStatusCode();
 
             return JsonConvert.DeserializeObject<GetApplicationsResponse>(await response.Content.ReadAsStringAsync());
         }
 
-        public static string GetApplicationsSortParameters(SortColumn? sortColumn, SortOrder? sortDirection)
+        public static string GetApplicationsParameters(SortColumn? sortColumn, SortOrder? sortDirection, int? page = 1, int? pageSize = null)
         {
+            var pagingQueryStrings = $"&page={page}&pageSize={pageSize}";
             if (sortColumn.HasValue && sortDirection.HasValue && sortColumn != SortColumn.Default)
             {
-                return $"?sortOrder={sortColumn.Value}&sortDirection={sortDirection.Value}";
+                return $"?sortOrder={sortColumn.Value}&sortDirection={sortDirection.Value}{pagingQueryStrings}";
             }
 
-            return $"?sortOrder=status&sortDirection=ascending";
+            return $"?sortOrder=status&sortDirection=ascending{pagingQueryStrings}";
         }
 
         public async Task<GetRejectApplicationsResponse> GetRejectApplications(long accountId, int pledgeId)

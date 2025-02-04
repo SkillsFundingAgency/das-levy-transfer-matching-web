@@ -9,6 +9,7 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
+using SFA.DAS.LevyTransferMatching.Web.Models.Shared;
 using SFA.DAS.LevyTransferMatching.Web.Services;
 using static SFA.DAS.LevyTransferMatching.Web.Models.Pledges.PledgesViewModel;
 
@@ -58,7 +59,7 @@ public class PledgeOrchestrator : IPledgeOrchestrator
             EncodedAccountId = request.EncodedAccountId,
             RenderCreatePledgeButton = renderCreatePledgesButton,
             HasMinimumTransferFunds = CheckForMinimumTransferFunds(pledgesResponse.StartingTransferAllowance, pledgesResponse.CurrentYearEstimatedCommittedSpend),
-            Pledges = pledgesResponse.Pledges.Select(x => new PledgesViewModel.Pledge
+            Pledges = pledgesResponse.Items.Select(x => new Pledge
             {
                 ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),
                 Amount = x.Amount,
@@ -74,25 +75,25 @@ public class PledgeOrchestrator : IPledgeOrchestrator
         return (startingTransferAllowance - currentYearSpend) >= minimumTransferFunds;
     }
 
-    private PledgesViewModel.PagingData GetPagingData(GetPledgesResponse pledgesResponse)
+    private PagingData GetPagingData<T>(PagedResponse<T> response, SortColumn? sortColumn = null, SortOrder? sortOrder = null)
     {
-        return new PledgesViewModel.PagingData()
+        return new PagingData()
         {
-            Page = pledgesResponse.Page,
-            PageSize = pledgesResponse.PageSize,
-            TotalPages = pledgesResponse.TotalPages,
-            TotalPledges = pledgesResponse.TotalPledges,
-            ShowPageLinks = pledgesResponse.Page != 1 || pledgesResponse.TotalPledges > pledgesResponse.PageSize,
-            PageLinks = BuildPageLinks(pledgesResponse),
-            PageStartRow = (pledgesResponse.Page-1) * pledgesResponse.PageSize + 1,
-            PageEndRow = pledgesResponse.Page * pledgesResponse.PageSize > pledgesResponse.TotalPledges ? pledgesResponse.TotalPledges : pledgesResponse.Page * pledgesResponse.PageSize,
+            Page = response.Page,
+            PageSize = response.PageSize,
+            TotalPages = response.TotalPages,
+            TotalItems = response.TotalItems,
+            ShowPageLinks = response.Page != 1 || response.TotalItems > response.PageSize,
+            PageLinks = BuildPageLinks(response, sortColumn, sortOrder),
+            PageStartRow = (response.Page - 1) * response.PageSize + 1,
+            PageEndRow = response.Page * response.PageSize > response.TotalItems ? response.TotalItems : response.Page * response.PageSize,
         };
     }
 
-    public IEnumerable<PledgesViewModel.PageLink> BuildPageLinks(GetPledgesResponse pledgesResponse) 
+    public IEnumerable<PageLink> BuildPageLinks<T>(PagedResponse<T> pledgesResponse, SortColumn? sortColumn = null, SortOrder? sortOrder = null)
     {
-        var links = new List<PledgesViewModel.PageLink>();
-        var totalPages = (int)Math.Ceiling((double)pledgesResponse.TotalPledges / pledgesResponse.PageSize);
+        var links = new List<PageLink>();
+        var totalPages = (int)Math.Ceiling((double)pledgesResponse.TotalItems / pledgesResponse.PageSize);
         var totalPageLinks = totalPages < 5 ? totalPages : 5;
 
         //previous link
@@ -102,7 +103,7 @@ public class PledgeOrchestrator : IPledgeOrchestrator
             {
                 Label = "Previous",
                 AriaLabel = "Previous page",
-                RouteData = BuildRouteData(pledgesResponse.Page - 1)
+                RouteData = BuildRouteData(pledgesResponse.Page - 1, sortColumn, sortOrder)
             });
         }
 
@@ -118,12 +119,12 @@ public class PledgeOrchestrator : IPledgeOrchestrator
 
         for (var i = 0; i < totalPageLinks; i++)
         {
-            var link = new PledgesViewModel.PageLink
+            var link = new PageLink
             {
                 Label = (pageNumberSeed + i).ToString(),
                 AriaLabel = $"Page {pageNumberSeed + i}",
                 IsCurrent = pageNumberSeed + i == pledgesResponse.Page ? true : (bool?)null,
-                RouteData = BuildRouteData(pageNumberSeed + i)
+                RouteData = BuildRouteData(pageNumberSeed + i, sortColumn, sortOrder)
             };
             links.Add(link);
         }
@@ -135,16 +136,27 @@ public class PledgeOrchestrator : IPledgeOrchestrator
             {
                 Label = "Next",
                 AriaLabel = "Next page",
-                RouteData = BuildRouteData(pledgesResponse.Page + 1)
+                RouteData = BuildRouteData(pledgesResponse.Page + 1, sortColumn, sortOrder)
             });
         }
 
         return links;
     }
 
-    private Dictionary<string, string> BuildRouteData(int pageNumber)
+    private static Dictionary<string, string> BuildRouteData(int pageNumber, SortColumn? sortColumn = null, SortOrder? sortOrder = null)
     {
-        return new Dictionary<string, string> { {"page", pageNumber.ToString() } };
+        var routeData = new Dictionary<string, string> { { "page", pageNumber.ToString() } };
+
+        if (sortColumn.HasValue)
+        {
+            routeData.Add("sortColumn", sortColumn.ToString());
+        }
+        if (sortOrder.HasValue)
+        {
+            routeData.Add("sortOrder", sortOrder.ToString());
+        }
+
+        return routeData;
     }
 
     public DetailViewModel GetDetailViewModel(DetailRequest request)
@@ -182,11 +194,11 @@ public class PledgeOrchestrator : IPledgeOrchestrator
 
     public async Task<byte[]> GetPledgeApplicationsDownloadModel(ApplicationsRequest request)
     {
-        var result = await _pledgeService.GetApplications(request.AccountId, request.PledgeId, request.SortColumn, request.SortOrder);
+        var result = await _pledgeService.GetApplications(request.AccountId, request.PledgeId, 1, request.SortColumn, request.SortOrder, int.MaxValue);
 
         var pledgeAppModel = new PledgeApplicationsDownloadModel
         {
-            Applications = result.Applications?.Select(app => new PledgeApplicationDownloadModel
+            Applications = result.Items?.Select(app => new PledgeApplicationDownloadModel
             {
                 DateApplied = app.CreatedOn,
                 Status = app.GetDateDependentStatus(result.AutomaticApprovalOption),
@@ -259,12 +271,12 @@ public class PledgeOrchestrator : IPledgeOrchestrator
 
     public async Task<ApplicationsViewModel> GetApplications(ApplicationsRequest request)
     {
-        var result = await _pledgeService.GetApplications(request.AccountId, request.PledgeId, request.SortColumn, request.SortOrder);
+        var result = await _pledgeService.GetApplications(request.AccountId, request.PledgeId, request.Page, request.SortColumn, request.SortOrder, ApplicationsRequest.PageSize);
 
         var isOwnerOrTransactor = _userService.IsOwnerOrTransactor(request.EncodedAccountId);
 
-        var viewModels = (from application in result.Applications
-                          let pledgeApplication = result.Applications.First(x => x.PledgeId == application.PledgeId)
+        var viewModels = (from application in result.Items
+                          let pledgeApplication = result.Items.First(x => x.PledgeId == application.PledgeId)
                           select new ApplicationsViewModel.Application
                           {
                               EncodedApplicationId = _encodingService.Encode(application.Id, EncodingType.PledgeApplicationId),
@@ -292,11 +304,13 @@ public class PledgeOrchestrator : IPledgeOrchestrator
 
         return new ApplicationsViewModel
         {
+            Paging = GetPagingData(result, request.SortColumn, request.SortOrder),
             EncodedAccountId = request.EncodedAccountId,
             UserCanClosePledge = result.PledgeStatus != PledgeStatus.Closed && isOwnerOrTransactor,
             EncodedPledgeId = request.EncodedPledgeId,
             RenderCreatePledgeButton = isOwnerOrTransactor,
             RenderRejectButton = viewModels.Any(x => x.Status == ApplicationStatus.Pending),
+            ApplicationsPendingApproval = result.TotalPendingApplications,
             PledgeTotalAmount = result.PledgeTotalAmount.ToCurrencyString(),
             AutomaticApprovalOption = result.AutomaticApprovalOption,
             PledgeRemainingAmount = result.PledgeRemainingAmount.ToCurrencyString(),

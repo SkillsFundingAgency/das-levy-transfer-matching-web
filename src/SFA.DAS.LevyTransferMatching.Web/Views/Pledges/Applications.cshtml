@@ -188,7 +188,7 @@
         @if (Model.RenderApplicationsList)
         {
             <br />
-            <div class="govuk-body-l"><b>@Model.Applications.Count() @Pluralise(Model.Applications.Count(), "application")</b></div>
+            <div class="govuk-body-l"><b>@Model.Paging.TotalItems @Pluralise(Model.Paging.TotalItems, "application")</b></div>
             <form method="post" id="applications_actions_form">
                 <div class="govuk-form-group" das-highlight-error-for="ApplicationsToReject"
                     error-class="govuk-form-group--error" id="ApplicationsToReject">
@@ -301,6 +301,37 @@
                     </tbody>
                 </table>
             </fieldset>
+        }
+        @if (Model.Paging.ShowPageLinks)
+        {
+            <nav role="navigation" class="@(Model.RenderRejectButton ? "app-pagination-navigation" : "")" aria-label="Pagination">
+                <div class="das-pagination__summary">
+                    @if (Model.Paging.Page == 1)
+                    {
+                        <text>Showing @Model.Paging.PageEndRow of @Model.Paging.TotalItems applications</text>
+                    }
+                    else if (Model.Paging.Page > 1)
+                    {
+                        <text>Showing @Model.Paging.PageStartRow to @Model.Paging.PageEndRow of @Model.Paging.TotalItems applications</text>
+                    }
+                </div>
+                <ul class="das-pagination">
+                    @foreach (var pageLink in Model.Paging.PageLinks)
+                    {
+                        <li class="das-pagination__item">
+                            <a class="das-pagination__link @(pageLink.IsCurrent.HasValue && pageLink.IsCurrent.Value ? "current" : "")"
+
+                               asp-all-route-data="@pageLink.RouteData"
+                               asp-route="@RouteNames.PledgeApplications"
+                               aria-current="@(pageLink.IsCurrent.HasValue && pageLink.IsCurrent.Value ? "page" : null)"
+                               aria-label="@pageLink.AriaLabel">
+                                @pageLink.Label
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+            <br/>
         }
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
