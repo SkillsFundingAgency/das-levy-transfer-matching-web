@@ -1,16 +1,16 @@
+using System.Collections.Generic;
 using System.Security.Claims;
 using AutoFixture.NUnit3;
-using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Logging;
-using Moq;
-using Newtonsoft.Json;
-using SFA.DAS.Employer.Profiles.Application.EmployerAccount;
 using SFA.DAS.GovUK.Auth.Employer;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsers;
 using SFA.DAS.Testing.AutoFixture;
+using EmployerUserAccountItem = SFA.DAS.GovUK.Auth.Employer.EmployerUserAccountItem;
+using EmployerUserAccounts = SFA.DAS.GovUK.Auth.Employer.EmployerUserAccounts;
 
-namespace SFA.DAS.Employer.Profiles.Application.UnitTests.Employer.AccountsClaims;
+namespace SFA.DAS.LevyTransferMatching.Infrastructure.UnitTests.Services.AccountUsers;
 
 public class WhenGettingAssociatedAccounts
 {

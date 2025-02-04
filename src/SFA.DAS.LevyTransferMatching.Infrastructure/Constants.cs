@@ -1,4 +1,4 @@
-namespace SFA.DAS.Employer.Profiles.Application;
+namespace SFA.DAS.LevyTransferMatching.Infrastructure;
 
 public static class Constants
 {
