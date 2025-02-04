@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
-namespace SFA.DAS.LevyTransferMatching.Infrastructure.Dto
+namespace SFA.DAS.LevyTransferMatching.Infrastructure.Dto;
+
+public class LocationsDto
 {
-    public class LocationsDto
-    {
-        public IEnumerable<string> Names { get; set; }
-    }
+    public IEnumerable<string> Names { get; set; }
 }

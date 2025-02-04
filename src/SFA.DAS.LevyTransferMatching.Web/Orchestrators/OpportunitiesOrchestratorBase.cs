@@ -6,14 +6,14 @@ namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 
 public abstract class OpportunitiesOrchestratorBase
 {
-    public OpportunitySummaryViewModel GetOpportunitySummaryViewModel(GetOpportunitySummaryViewModelOptions options)
+    public static OpportunitySummaryViewModel GetOpportunitySummaryViewModel(GetOpportunitySummaryViewModelOptions options)
     {
         var sectorList = options.Sectors.ToReferenceDataDescriptionList(options.AllSectors, "; ");
         var jobRoleList = options.JobRoles.ToReferenceDataDescriptionList(options.AllJobRoles, "; ");
         var levelList = options.Levels.ToReferenceDataDescriptionList(options.AllLevels, descriptionSource: x => x.ShortDescription);
         var locationList = options.Locations.ToLocationsList();
 
-        return new OpportunitySummaryViewModel()
+        return new OpportunitySummaryViewModel
         {
             Amount = options.Amount,
             Description = options.IsNamePublic ? $"{options.DasAccountName} ({options.EncodedPledgeId})" : "A levy-paying business",

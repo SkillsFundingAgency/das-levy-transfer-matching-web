@@ -15,7 +15,7 @@ public class DateTimeExtensionsTests
         var taxYear = dateTime.ToTaxYear("yyyy");
 
         // Assert
-        Assert.That(taxYear, Is.EqualTo("2008"));
+        taxYear.Should().Be("2008");
     }
 
     [Test]
@@ -28,7 +28,7 @@ public class DateTimeExtensionsTests
         var taxYear = dateTime.ToTaxYear("yy");
 
         // Assert
-        Assert.That(taxYear, Is.EqualTo("84"));
+        taxYear.Should().Be("84");
     }
 
     [Test]
@@ -41,7 +41,7 @@ public class DateTimeExtensionsTests
         var taxYear = dateTime.ToTaxYearDescription();
 
         // Assert
-        Assert.That(taxYear, Is.EqualTo("1991/92"));
+        taxYear.Should().Be("1991/92");
     }
 
     [Test]
@@ -54,6 +54,6 @@ public class DateTimeExtensionsTests
         var taxYear = dateTime.ToTaxYearDescription();
 
         // Assert
-        Assert.That(taxYear, Is.EqualTo("2015/16"));
+        taxYear.Should().Be("2015/16");
     }
 }

@@ -3,21 +3,13 @@
 namespace SFA.DAS.LevyTransferMatching.Web.Attributes;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-public class HideAccountNavigationAttribute : ResultFilterAttribute
+public class HideAccountNavigationAttribute(bool hideNavigation, bool hideNavigationLinks = false) : ResultFilterAttribute
 {
-    private bool HideNavigation { get; }
-    private bool HideNavigationLinks { get; }
+    private bool HideNavigation { get; } = hideNavigation;
+    private bool HideNavigationLinks { get; } = hideNavigationLinks;
 
-    public HideAccountNavigationAttribute()
+    public HideAccountNavigationAttribute() : this(false, false)
     {
-        HideNavigation = false;
-        HideNavigationLinks = false;
-    }
-
-    public HideAccountNavigationAttribute(bool hideNavigation, bool hideNavigationLinks = false)
-    {
-        HideNavigation = hideNavigation;
-        HideNavigationLinks = hideNavigationLinks;
     }
 
     public override void OnResultExecuting(ResultExecutingContext context)

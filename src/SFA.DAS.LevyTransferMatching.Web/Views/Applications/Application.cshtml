@@ -5,12 +5,12 @@
 @{
     ViewData["Title"] = Model.Title;
     ViewBag.GaData.Vpv = "/accounts/applications/application";
-    ViewBag.ZenDeskLabel = "LTM-R-application-det";    
+    ViewBag.ZenDeskLabel = "LTM-R-application-det";
 }
 
-<a href="@Url.Action("Applications", new { EncodedAccountId = Model.EncodedAccountId })" class="govuk-back-link">Back</a>
+<a href="@Url.Action("Applications", new { Model.EncodedAccountId })" class="govuk-back-link">Back</a>
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
-    <partial name="_ValidationSummary" />
+    <partial name="_ValidationSummary"/>
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
@@ -19,7 +19,8 @@
                 <div class="govuk-grid-column-two-thirds">
                     <div class="govuk-body">
                         <b> Application status: </b>
-                        <strong class="@Model.Status.GetCssClassForReceiver()">@Model.Status.GetLabelForReceiver()</strong>
+                        <strong
+                            class="@Model.Status.GetCssClassForReceiver()">@Model.Status.GetLabelForReceiver()</strong>
                     </div>
                 </div>
             </div>
@@ -114,22 +115,23 @@
                     </dl>
                 </div>
             </div>
-           
+
             @if (Model.Status == ApplicationStatus.Approved)
             {
-                <p class="govuk-body">After you have accepted the funding, you will have 3 months to add apprentice details before it expires.</p>
+                <p class="govuk-body">After you have accepted the funding, you will have 3 months to add apprentice
+                    details before it expires.</p>
             }
 
-            <partial name="_ApplicationCanAcceptFundingPartial" model="Model" />
+            <partial name="_ApplicationCanAcceptFundingPartial" model="Model"/>
 
-            <partial name="_ApplicationCanUseTransferFundsPartial" model="Model" />
+            <partial name="_ApplicationCanUseTransferFundsPartial" model="Model"/>
 
-            <partial name="_ApplicationCanWithdrawPartial" model="Model" />
+            <partial name="_ApplicationCanWithdrawPartial" model="Model"/>
 
         </div>
 
         <div class="govuk-grid-column-one-third">
-            <partial name="_OpportunitySummary" for="OpportunitySummaryViewModel" />
+            <partial name="_OpportunitySummary" for="OpportunitySummaryViewModel"/>
         </div>
 
     </div>

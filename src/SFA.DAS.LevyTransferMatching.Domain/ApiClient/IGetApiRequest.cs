@@ -1,10 +1,9 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace SFA.DAS.LevyTransferMatching.Domain.ApiClient
+namespace SFA.DAS.LevyTransferMatching.Domain.ApiClient;
+
+public interface IGetApiRequest : IBaseApiRequest
 {
-    public interface IGetApiRequest : IBaseApiRequest
-    {
-        [JsonIgnore]
-        string GetUrl { get; }
-    }
+    [JsonIgnore]
+    string GetUrl { get; }
 }

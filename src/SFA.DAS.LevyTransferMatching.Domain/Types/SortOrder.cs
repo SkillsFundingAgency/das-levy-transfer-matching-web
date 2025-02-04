@@ -1,8 +1,7 @@
-﻿namespace SFA.DAS.LevyTransferMatching.Domain.Types
+﻿namespace SFA.DAS.LevyTransferMatching.Domain.Types;
+
+public enum SortOrder
 {
-    public enum SortOrder
-    {
-        Ascending,
-        Descending
-    }
+    Ascending,
+    Descending
 }

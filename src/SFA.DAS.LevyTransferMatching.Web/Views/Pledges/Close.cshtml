@@ -6,7 +6,7 @@
     ViewBag.ZenDeskLabel = "LTM-S-pledge-close";
 }
 
-<a href="@Url.Action("Applications", new { EncodedAccountId = Model.EncodedAccountId, EncodedPledgeId = Model.EncodedPledgeId })" class="govuk-back-link">Back</a>
+<a href="@Url.Action("Applications", new { Model.EncodedAccountId, Model.EncodedPledgeId })" class="govuk-back-link">Back</a>
 
 <main class="govuk-main-wrapper" id="main-content" role="main">
 
@@ -67,7 +67,7 @@
                       <button class="govuk-button" data-module="govuk-button" id="close-application-continue" type="submit">Continue</button>
                     }
 
-                    <a class="govuk-link" href="@Url.Action("Applications", new { EncodedAccountId = Model.EncodedAccountId, EncodedPledgeId = Model.EncodedPledgeId })">Cancel</a>
+                    <a class="govuk-link" href="@Url.Action("Applications", new { Model.EncodedAccountId, Model.EncodedPledgeId })">Cancel</a>
                 </div>
             </form>
         </div>
