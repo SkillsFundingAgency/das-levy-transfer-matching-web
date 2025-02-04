@@ -196,7 +196,8 @@ public class ApplicationsOrchestrator(IApplicationsService applicationsService, 
         {
             EncodedAccountId = request.EncodedAccountId,
             EncodedApplicationId = request.EncodedApplicationId,
-            EmployerNameAndReference = $"{result.EmployerAccountName} ({encodedPledgeId})",
+            EmployerName = result.EmployerAccountName,
+            PledgeReference = encodedPledgeId
         };
     }
 
