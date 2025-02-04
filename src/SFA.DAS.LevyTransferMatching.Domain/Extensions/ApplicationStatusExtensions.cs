@@ -5,49 +5,63 @@ namespace SFA.DAS.LevyTransferMatching.Domain.Extensions;
 
 public static class ApplicationStatusExtensions
 {
-    public static string GetLabelForSender(this ApplicationStatus status, int? remainingDaysForDelayedApproval, int? remainingDaysForAutoRejection)
+    public static string GetLabelForSender(this ApplicationStatus status,
+        AutomaticApprovalOption automaticApprovalOption,
+        int? RemainingDaysForDelayedApproval,
+        int? RemainingDaysForAutoRejection)
     {
-        if (remainingDaysForDelayedApproval.HasValue)
+        if (RemainingDaysForDelayedApproval.HasValue)
         {
-            var autoApprovalDate = GetAutoApprovalDate(remainingDaysForDelayedApproval.Value);
-            return $"AUTO APPROVAL ON {autoApprovalDate}";
+            string autoApprovalDate = GetAutoApprovalDate(RemainingDaysForDelayedApproval.Value);
+            return $"Auto approval on {autoApprovalDate}";
         }
 
-        if (remainingDaysForAutoRejection.HasValue)
+        if (RemainingDaysForAutoRejection.HasValue)
         {
-            var autoApprovalDate = GetAutoApprovalDate(remainingDaysForAutoRejection.Value);
-            return $"APPLICATION EXPIRES ON {autoApprovalDate}";
+            string autoApprovalDate = GetAutoApprovalDate(RemainingDaysForAutoRejection.Value);
+            return $"Application expires on {autoApprovalDate}";
+        }
+
+        if (status == ApplicationStatus.Approved)
+        {
+            if (automaticApprovalOption == AutomaticApprovalOption.NotApplicable)
+            {
+                return "Awaiting acceptance by applicant";
+            }
+
+            string prefix = automaticApprovalOption == AutomaticApprovalOption.DelayedAutoApproval ? "Delayed" : "Auto";
+            return $"{prefix} approval: Awaiting acceptance by applicant";
         }
 
         return status switch
         {
-            ApplicationStatus.Pending => "AWAITING YOUR APPROVAL",
-            ApplicationStatus.Approved => "AWAITING ACCEPTANCE BY APPLICANT",
-            ApplicationStatus.Accepted => "OFFER OF FUNDING ACCEPTED",
-            ApplicationStatus.FundsUsed => "FUNDS USED",
-            ApplicationStatus.Rejected => "REJECTED",
-            ApplicationStatus.Declined => "WITHDRAWN BY APPLICANT",
-            ApplicationStatus.Withdrawn => "WITHDRAWN BY APPLICANT",
-            ApplicationStatus.WithdrawnAfterAcceptance => "WITHDRAWN BY APPLICANT",
-            _ => string.Empty
+            ApplicationStatus.Pending => "Awaiting your approval",
+            ApplicationStatus.Accepted => "Offer of funding accepted",
+            ApplicationStatus.FundsUsed => "Funds used",
+            ApplicationStatus.Rejected => "Rejected",
+            ApplicationStatus.Declined => "Declined by applicant",
+            ApplicationStatus.Withdrawn => "Withdrawn by applicant",
+            ApplicationStatus.WithdrawnAfterAcceptance => "Withdrawn by applicant",
+            ApplicationStatus.FundsExpired => "Funds no longer available",
+            _ => string.Empty,
         };
     }
 
     private static string GetAutoApprovalDate(int remainingDays)
     {
-        var futureDate = DateTime.Today.AddDays(remainingDays);
-        var formattedDate = futureDate.ToString("dd MMM yyyy").ToUpper();
+        DateTime futureDate = DateTime.Today.AddDays(remainingDays);
+        string formattedDate = futureDate.ToString("dd MMM yyyy").ToUpper();
         return formattedDate;
     }
 
-    public static string GetCssClassForSender(this ApplicationStatus status, int? remainingDaysForDelayedApproval, int? remainingDaysForAutoRejection)
+    public static string GetCssClassForSender(this ApplicationStatus status, int? RemainingDaysForDelayedApproval, int? RemainingDaysForAutoRejection)
     {
-        if (remainingDaysForDelayedApproval.HasValue)
+        if (RemainingDaysForDelayedApproval.HasValue)
         {
             return "govuk-tag govuk-tag--yellow";
         }
 
-        if (remainingDaysForAutoRejection.HasValue)
+        if (RemainingDaysForAutoRejection.HasValue)
         {
             return "govuk-tag govuk-tag--orange";
         }
@@ -56,15 +70,16 @@ public static class ApplicationStatusExtensions
         {
             ApplicationStatus.Pending => "govuk-tag govuk-tag--blue",
             ApplicationStatus.Approved => "govuk-tag govuk-tag--yellow",
-            ApplicationStatus.Accepted => "govuk-tag govuk-tag--turquoise",
+            ApplicationStatus.Accepted => "govuk-tag govuk-tag--green",
             ApplicationStatus.FundsUsed => "govuk-tag govuk-tag--pink",
-            ApplicationStatus.Rejected => "govuk-tag govuk-tag--red",
-            ApplicationStatus.Declined => "govuk-tag govuk-tag--yellow",
-            ApplicationStatus.Withdrawn => "govuk-tag govuk-tag--yellow",
-            ApplicationStatus.WithdrawnAfterAcceptance => "govuk-tag govuk-tag--yellow",
-            _ => string.Empty
+            ApplicationStatus.Rejected => "govuk-tag govuk-tag--grey",
+            ApplicationStatus.Declined => "govuk-tag govuk-tag--grey",
+            ApplicationStatus.Withdrawn => "govuk-tag govuk-tag--grey",
+            ApplicationStatus.WithdrawnAfterAcceptance => "govuk-tag govuk-tag--grey",
+            ApplicationStatus.FundsExpired => "govuk-tag govuk-tag--grey",
+            _ => string.Empty,
         };
-    }       
+    }
     public static string GetLabelForReceiver(this ApplicationStatus status)
     {
         return status switch
@@ -77,6 +92,7 @@ public static class ApplicationStatusExtensions
             ApplicationStatus.Declined => "Withdrawn",
             ApplicationStatus.Withdrawn => "Withdrawn",
             ApplicationStatus.WithdrawnAfterAcceptance => "Withdrawn",
+            ApplicationStatus.FundsExpired => "Funds no longer available",
             _ => string.Empty,
         };
     }
@@ -85,15 +101,16 @@ public static class ApplicationStatusExtensions
     {
         return status switch
         {
-            ApplicationStatus.Pending => "govuk-tag govuk-tag--grey",
+            ApplicationStatus.Pending => "govuk-tag govuk-tag--yellow",
             ApplicationStatus.Approved => "govuk-tag govuk-tag--blue",
-            ApplicationStatus.Rejected => "govuk-tag govuk-tag--red",
-            ApplicationStatus.Accepted => "govuk-tag govuk-tag--turquoise",
+            ApplicationStatus.Rejected => "govuk-tag govuk-tag--grey",
+            ApplicationStatus.Accepted => "govuk-tag govuk-tag--green",
             ApplicationStatus.FundsUsed => "govuk-tag govuk-tag--pink",
-            ApplicationStatus.Declined => "govuk-tag govuk-tag--yellow",
-            ApplicationStatus.Withdrawn => "govuk-tag govuk-tag--yellow",
-            ApplicationStatus.WithdrawnAfterAcceptance => "govuk-tag govuk-tag--yellow",
-            _ => string.Empty
+            ApplicationStatus.Declined => "govuk-tag govuk-tag--grey",
+            ApplicationStatus.Withdrawn => "govuk-tag govuk-tag--grey",
+            ApplicationStatus.WithdrawnAfterAcceptance => "govuk-tag govuk-tag--grey",
+            ApplicationStatus.FundsExpired => "govuk-tag govuk-tag--grey",
+            _ => string.Empty,
         };
     }
 }

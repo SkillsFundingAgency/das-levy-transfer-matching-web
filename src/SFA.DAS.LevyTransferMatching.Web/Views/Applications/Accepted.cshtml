@@ -15,29 +15,21 @@
 
                 <div class="govuk-panel govuk-panel--confirmation application-complete govuk-!-margin-bottom-9">
                     <h1 class="govuk-panel__title">You have successfully accepted a transfer</h1>
+                    <div class="govuk-panel__body">
+                        @Model.EmployerName<br/>(@Model.PledgeReference)
+                    </div>
                 </div>
 
-                <h2 class="govuk-heading-m ">What happens next</h2>
+                <h2 class="govuk-heading-m ">What happens next?</h2>
 
-                <p>You can now add apprentices for this transfer of funding from
-                    <strong>@Model.EmployerNameAndReference</strong>.</p>
+                <p>You can now <a href="@Url.Action("Application", "Applications", new {encodedAccountId = Model.EncodedAccountId, encodedApplicationId = Model.EncodedApplicationId})" class="govuk-link">add apprentices</a> to use this transfer funding.</p>
 
-                <p><strong>@Model.EmployerNameAndReference</strong> will need to review and approve the details after
-                    you have added them.</p>
+                <p>You must use this funding and add apprentice details within 3 months. After 3 months the transfer funds will no longer be available to you.</p>
+                
+                <p><b>@Model.EmployerName</b> will need to review and approve apprentice details after you’ve added them. </p>
 
                 <p>
-                    <a href="@Url.Action("Application", "Applications", new { encodedAccountId = Model.EncodedAccountId, encodedApplicationId = Model.EncodedApplicationId })"
-                       class="govuk-link">Add apprentices</a>
-                    <br/>
-                    or
-                    <br/>
-                    <a href="@Url.Action("Applications", "Applications", new { encodedAccountId = Model.EncodedAccountId })"
-                       class="govuk-link">View my applications</a>
-                    <br>
-                    or
-                    <br>
-                    <a href="@LinkGenerator.AccountsLink($"accounts/{Model.EncodedAccountId}/teams")"
-                       class="govuk-link">Return to my account</a>
+                    <a href="@Url.Action("Applications", "Applications", new {encodedAccountId = Model.EncodedAccountId})" class="govuk-link">View other applications</a>
                 </p>
 
             </div>

@@ -26,14 +26,26 @@
                     My applications
                 </h1>
 
-                <p>You have <strong>@Model.Applications.Count()</strong> @Model.ApplicationCountPostFix.</p>
+                <p>To make use of transfer opportunities you will need to:</p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>
+                        accept funds within 6 weeks of approval
+                    </li>
+                    <li>
+                        add apprentice details within 3 months of accepting funds
+                    </li>
+                </ul>
+                <p>Otherwise the transfer opportunity will no longer be available.</p>
+
+                <br/>
+                <div class="govuk-body-l"><b>@Model.Applications.Count() @Model.ApplicationCountPostFix</b></div>
                 <table class="govuk-table govuk-!-margin-bottom-9" aria-label="Transfer applications table">
                     <thead class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header app-custom-class">Opportunity</th>
-                        <th scope="col" class="govuk-table__header">Estimated total<br/>cost</th>
-                        <th scope="col" class="govuk-table__header">Approval status</th>
-                    </tr>
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header app-custom-class">Opportunity</th>
+                            <th scope="col" class="govuk-table__header">Estimated total<br />cost</th>
+                            <th scope="col" class="govuk-table__header">Status</th>
+                        </tr>
                     </thead>
                     @if (Model.Applications.Any())
                     {
@@ -73,12 +85,7 @@
                         </tr>
                         </tbody>
                     }
-
                 </table>
-
-                <a href="@LinkGenerator.FinanceLink($"accounts/{Model.EncodedAccountId}/transfers")"
-                   class="govuk-link govuk-back-link" )>Back to transfers</a>
-
             </div>
         </div>
     </div>

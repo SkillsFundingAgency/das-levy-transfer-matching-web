@@ -51,9 +51,10 @@ public class ApplicationsOrchestratorTests
                 It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
             .Returns(encodedPledgeId);
 
-        // Act
+        // Act        
         var viewModel = await _applicationsOrchestrator.GetApplication(request);
 
+        //Assert
         viewModel.Should().NotBeNull();
         viewModel.EncodedOpportunityId.Should().Be(encodedPledgeId);
     }
@@ -84,7 +85,7 @@ public class ApplicationsOrchestratorTests
         // Act
         var viewModel = await _applicationsOrchestrator.GetApplication(request);
 
-        // Assert
+        //Assert
         viewModel.Should().NotBeNull();
         viewModel.CanWithdraw.Should().Be(expectCanWithdraw);
     }
@@ -169,7 +170,8 @@ public class ApplicationsOrchestratorTests
 
         // Assert
         viewModel.Should().NotBeNull();
-        viewModel.EmployerNameAndReference.Should().Be($"{response.EmployerAccountName} ({encodedPledgeId})");
+        viewModel.EmployerName.Should().Be(response.EmployerAccountName);
+        viewModel.PledgeReference.Should().Be(encodedPledgeId);
     }
 
     [Test]
@@ -261,7 +263,7 @@ public class ApplicationsOrchestratorTests
 
         // Assert
         viewModel.Should().NotBeNull();
-        viewModel.CanAcceptFunding.Should().Be(true);
+        viewModel.CanAcceptFunding.Should().BeTrue();
     }
 
     [Test]
@@ -291,7 +293,7 @@ public class ApplicationsOrchestratorTests
 
         // Assert
         viewModel.Should().NotBeNull();
-        viewModel.CanUseTransferFunds.Should().Be(true);
+        viewModel.CanUseTransferFunds.Should().BeTrue();
     }
 
     [Test]
@@ -322,7 +324,7 @@ public class ApplicationsOrchestratorTests
 
         // Assert
         viewModel.Should().NotBeNull();
-        viewModel.RenderWithdrawAfterAcceptanceButton.Should().Be(true);
+        viewModel.RenderWithdrawAfterAcceptanceButton.Should().BeTrue();
     }
 
     [Test]
