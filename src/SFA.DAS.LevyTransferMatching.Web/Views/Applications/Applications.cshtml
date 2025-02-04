@@ -64,7 +64,7 @@
                                             @application.DasAccountName <text> (@application.PledgeReference)</text>
                                         }
 
-                                        <span class="govuk-caption-m">Date: @application.CreatedOn.ToString("dd/MM/yyyy")</span>
+                                        <span class="govuk-caption-m">Date applied: @application.CreatedOn.ToString("dd/MM/yyyy")</span>
                                     </td>
                                     <td class="govuk-table__cell">@application.EstimatedTotalCost</td>
                                     <td class="govuk-table__cell"><span class=" @application.Status.GetCssClassForReceiver()">@application.Status.GetLabelForReceiver()</span></td>
