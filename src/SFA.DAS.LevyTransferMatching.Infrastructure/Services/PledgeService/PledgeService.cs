@@ -79,24 +79,25 @@ public class PledgeService(HttpClient client) : IPledgeService
         return JsonConvert.DeserializeObject<GetLevelResponse>(await response.Content.ReadAsStringAsync());
     }
 
-    public async Task<GetApplicationsResponse> GetApplications(long accountId, int pledgeId, SortColumn? sortOrder, SortOrder? sortDirection)
-    {
-        var sort = GetApplicationsSortParameters(sortOrder, sortDirection);
-        var response = await client.GetAsync($"accounts/{accountId}/pledges/{pledgeId}/applications{sort}");
-        response.EnsureSuccessStatusCode();
+        public async Task<GetApplicationsResponse> GetApplications(long accountId, int pledgeId, int page, SortColumn? sortOrder, SortOrder? sortDirection, int? pageSize = null)
+        {
+            var sort = GetApplicationsParameters(sortOrder, sortDirection, page, pageSize);
+            var response = await client.GetAsync($"accounts/{accountId}/pledges/{pledgeId}/applications{sort}");
+            response.EnsureSuccessStatusCode();
 
         return JsonConvert.DeserializeObject<GetApplicationsResponse>(await response.Content.ReadAsStringAsync());
     }
 
-    private static string GetApplicationsSortParameters(SortColumn? sortColumn, SortOrder? sortDirection)
-    {
-        if (sortColumn.HasValue && sortDirection.HasValue && sortColumn != SortColumn.Default)
+        public static string GetApplicationsParameters(SortColumn? sortColumn, SortOrder? sortDirection, int? page = 1, int? pageSize = null)
         {
-            return $"?sortOrder={sortColumn.Value}&sortDirection={sortDirection.Value}";
-        }
+            var pagingQueryStrings = $"&page={page}&pageSize={pageSize}";
+            if (sortColumn.HasValue && sortDirection.HasValue && sortColumn != SortColumn.Default)
+            {
+                return $"?sortOrder={sortColumn.Value}&sortDirection={sortDirection.Value}{pagingQueryStrings}";
+            }
 
-        return $"?sortOrder=status&sortDirection=ascending";
-    }
+            return $"?sortOrder=status&sortDirection=ascending{pagingQueryStrings}";
+        }
 
     public async Task<GetRejectApplicationsResponse> GetRejectApplications(long accountId, int pledgeId)
     {

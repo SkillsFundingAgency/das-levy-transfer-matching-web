@@ -335,3 +335,8 @@
     padding: .5em .5em .5em 2.4em;
     display: inline-block;
 }
+
+/*ltm pagination*/
+.app-pagination-navigation {
+    border-top: 1px solid #b1b4b6
+}
