@@ -48,7 +48,7 @@ public class PledgesController(IPledgeOrchestrator orchestrator) : Controller
     }
 
     [HttpGet]
-    [Route("{encodedPledgeId}/applications")]
+    [Route("{encodedPledgeId}/applications", Name = RouteNames.PledgeApplications)]
     public async Task<IActionResult> Applications(ApplicationsRequest request)
     {
         var response = await orchestrator.GetApplications(request);
