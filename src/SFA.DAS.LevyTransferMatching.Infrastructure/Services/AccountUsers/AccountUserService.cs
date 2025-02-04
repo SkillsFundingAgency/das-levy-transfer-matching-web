@@ -11,26 +11,26 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsers;
 
 public interface IAccountUserService
 {
-    Task<GovUK.Auth.Employer.EmployerUserAccounts> GetUserAccounts(string userId, string email);
+    Task<EmployerUserAccounts> GetUserAccounts(string userId, string email);
 }
 
 public class AccountUserService(HttpClient httpClient) : IAccountUserService, IGovAuthEmployerAccountService
 {
-    public async Task<GovUK.Auth.Employer.EmployerUserAccounts> GetUserAccounts(string userId, string email)
+    public async Task<EmployerUserAccounts> GetUserAccounts(string userId, string email)
     {
         var response = await httpClient.GetAsync($"AccountUsers/{userId}/accounts?email={WebUtility.UrlEncode(email)}");
 
         if (!response.IsSuccessStatusCode)
         {
-            return new GovUK.Auth.Employer.EmployerUserAccounts();
+            return new EmployerUserAccounts();
         }
 
         var result = JsonConvert.DeserializeObject<GetUserAccountsResponse>(await response.Content.ReadAsStringAsync());
         
-        return new GovUK.Auth.Employer.EmployerUserAccounts
+        return new EmployerUserAccounts
         {
             EmployerAccounts = result.UserAccounts != null
-                ? result.UserAccounts.Select(c => new GovUK.Auth.Employer.EmployerUserAccountItem
+                ? result.UserAccounts.Select(c => new EmployerUserAccountItem
                 {
                     Role = c.Role,
                     AccountId = c.AccountId,

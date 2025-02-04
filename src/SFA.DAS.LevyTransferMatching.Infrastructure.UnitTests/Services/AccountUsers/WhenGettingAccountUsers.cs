@@ -1,3 +1,4 @@
+using SFA.DAS.GovUK.Auth.Employer;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsers;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.AccountUsers.Types;
 
@@ -62,7 +63,7 @@ public class WhenGettingAccountUsers
     {
         var actual = await _service.GetUserAccounts(_userId, _email);
 
-        actual.Should().BeEquivalentTo((EmployerUserAccounts)_response);
+        actual.Should().BeEquivalentTo(_response);
     }
 
     [Test]
