@@ -14,10 +14,10 @@ using ApplyRequest = SFA.DAS.LevyTransferMatching.Infrastructure.Services.Opport
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 
 public class OpportunitiesOrchestrator(
-    IDateTimeService dateTimeService, 
-    IOpportunitiesService opportunitiesService, 
-    IUserService userService, 
-    IEncodingService encodingService, 
+    IDateTimeService dateTimeService,
+    IOpportunitiesService opportunitiesService,
+    IUserService userService,
+    IEncodingService encodingService,
     ICacheStorageService cacheStorageService) : OpportunitiesOrchestratorBase, IOpportunitiesOrchestrator
 {
     private const int MaximumNumberAdditionalEmailAddresses = 4;
@@ -27,7 +27,9 @@ public class OpportunitiesOrchestrator(
         var response = await opportunitiesService.GetDetail(detailRequest.PledgeId);
 
         if (response.Opportunity == null)
+        {
             return null;
+        }
 
         var encodedPledgeId = encodingService.Encode(response.Opportunity.Id, EncodingType.PledgeId);
 
@@ -63,7 +65,7 @@ public class OpportunitiesOrchestrator(
     public async Task<IndexViewModel> GetIndexViewModel(IndexRequest request)
     {
         var opportunitySort = OpportunitiesSortBy.ValueHighToLow;
-        if (!string.IsNullOrEmpty(request.SortBy) 
+        if (!string.IsNullOrEmpty(request.SortBy)
             && Enum.TryParse<OpportunitiesSortBy>(request.SortBy, true, out var opportunitySortParsed))
         {
             opportunitySort = opportunitySortParsed;
@@ -91,14 +93,15 @@ public class OpportunitiesOrchestrator(
         };
     }
 
-    private IndexViewModel.PagingData GetPagingData(GetIndexResponse response, IndexRequest request)
+
+    private PagingData GetPagingData(GetIndexResponse response, IndexRequest request)
     {
-        return new IndexViewModel.PagingData()
+        return new PagingData()
         {
             Page = response.Page,
             PageSize = response.PageSize,
             TotalPages = response.TotalPages,
-            TotalOpportunities = response.TotalOpportunities,
+            TotalItems = response.TotalOpportunities,
             ShowPageLinks = response.Page != 1 || response.TotalOpportunities > response.PageSize,
             PageLinks = BuildPageLinks(response, request),
             PageStartRow = (response.Page - 1) * response.PageSize + 1,
@@ -106,16 +109,16 @@ public class OpportunitiesOrchestrator(
         };
     }
 
-    public IEnumerable<IndexViewModel.PageLink> BuildPageLinks(GetIndexResponse response, IndexRequest request)
+    public IEnumerable<PageLink> BuildPageLinks(GetIndexResponse response, IndexRequest request)
     {
-        var links = new List<IndexViewModel.PageLink>();
+        var links = new List<PageLink>();
         var totalPages = (int)Math.Ceiling((double)response.TotalOpportunities / response.PageSize);
         var totalPageLinks = totalPages < 7 ? totalPages : 7;
 
         //previous link
         if (totalPages > 1 && response.Page > 1)
         {
-            links.Add(new IndexViewModel.PageLink
+            links.Add(new PageLink
             {
                 Label = "Previous",
                 AriaLabel = "Previous page",
@@ -130,12 +133,14 @@ public class OpportunitiesOrchestrator(
             pageNumberSeed = response.Page - 2;
 
             if (response.Page > totalPages - 2)
+            {
                 pageNumberSeed = totalPages - 4;
+            }
         }
 
         for (var i = 0; i < totalPageLinks; i++)
         {
-            var link = new IndexViewModel.PageLink
+            var link = new PageLink
             {
                 Label = (pageNumberSeed + i).ToString(),
                 AriaLabel = $"Page {pageNumberSeed + i}",
@@ -148,7 +153,7 @@ public class OpportunitiesOrchestrator(
         //next link
         if (totalPages > 1 && response.Page < totalPages)
         {
-            links.Add(new IndexViewModel.PageLink
+            links.Add(new PageLink
             {
                 Label = "Next",
                 AriaLabel = "Next page",
@@ -362,22 +367,6 @@ public class OpportunitiesOrchestrator(
         return viewModel;
     }
 
-    public async Task UpdateCacheItem(ContactDetailsPostRequest contactDetailsPostRequest)
-    {
-        var cacheItem = await RetrieveCacheItem(contactDetailsPostRequest.CacheKey);
-
-        cacheItem.FirstName = contactDetailsPostRequest.FirstName;
-        cacheItem.LastName = contactDetailsPostRequest.LastName;
-
-        cacheItem.EmailAddresses.Clear();
-        cacheItem.EmailAddresses.Add(contactDetailsPostRequest.EmailAddress);
-        cacheItem.EmailAddresses.AddRange(contactDetailsPostRequest.AdditionalEmailAddresses.Where(x => !string.IsNullOrWhiteSpace(x)));
-
-        cacheItem.BusinessWebsite = contactDetailsPostRequest.BusinessWebsite;
-
-        await cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
-    }
-
     public async Task<MoreDetailsViewModel> GetMoreDetailsViewModel(MoreDetailsRequest request)
     {
         var applicationTask = RetrieveCacheItem(request.CacheKey);
@@ -445,6 +434,22 @@ public class OpportunitiesOrchestrator(
             AdditionalLocationText = cacheItem.AdditionLocationText,
             SpecificLocation = cacheItem.SpecificLocation
         };
+    }
+
+    public async Task UpdateCacheItem(ContactDetailsPostRequest contactDetailsPostRequest)
+    {
+        var cacheItem = await RetrieveCacheItem(contactDetailsPostRequest.CacheKey);
+
+        cacheItem.FirstName = contactDetailsPostRequest.FirstName;
+        cacheItem.LastName = contactDetailsPostRequest.LastName;
+
+        cacheItem.EmailAddresses.Clear();
+        cacheItem.EmailAddresses.Add(contactDetailsPostRequest.EmailAddress);
+        cacheItem.EmailAddresses.AddRange(contactDetailsPostRequest.AdditionalEmailAddresses.Where(x => !string.IsNullOrWhiteSpace(x)));
+
+        cacheItem.BusinessWebsite = contactDetailsPostRequest.BusinessWebsite;
+
+        await cacheStorageService.SaveToCache(cacheItem.Key.ToString(), cacheItem, 1);
     }
 
     public async Task UpdateCacheItem(MoreDetailsPostRequest request)

@@ -2,25 +2,21 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
 
-namespace SFA.DAS.LevyTransferMatching.Web.Attributes
-{
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-    public class SetZenDeskValuesAttribute : ResultFilterAttribute
-    {
-        public ZenDesk ZenDeskConfiguration { get; }
+namespace SFA.DAS.LevyTransferMatching.Web.Attributes;
 
-        public SetZenDeskValuesAttribute(ZenDesk zenDeskConfiguration)
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
+public class SetZenDeskValuesAttribute(ZenDesk zenDeskConfiguration) : ResultFilterAttribute
+{
+    public override void OnResultExecuting(ResultExecutingContext context)
+    {
+        if (context.Controller is PageModel page)
         {
-            ZenDeskConfiguration = zenDeskConfiguration;
+            page.ViewData[ViewDataKeys.ViewDataKeys.ZenDeskConfiguration] = zenDeskConfiguration;
         }
 
-        public override void OnResultExecuting(ResultExecutingContext context)
+        if (context.Controller is Controller controller)
         {
-            if (context.Controller is PageModel page)
-                page.ViewData[ViewDataKeys.ViewDataKeys.ZenDeskConfiguration] = ZenDeskConfiguration;
-
-            if (context.Controller is Controller controller)
-                controller.ViewData[ViewDataKeys.ViewDataKeys.ZenDeskConfiguration] = ZenDeskConfiguration;
+            controller.ViewData[ViewDataKeys.ViewDataKeys.ZenDeskConfiguration] = zenDeskConfiguration;
         }
     }
 }

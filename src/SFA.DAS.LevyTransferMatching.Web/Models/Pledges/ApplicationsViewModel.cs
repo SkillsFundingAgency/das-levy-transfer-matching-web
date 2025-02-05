@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Linq;
 using SFA.DAS.LevyTransferMatching.Domain.Types;
+using SFA.DAS.LevyTransferMatching.Web.Models.Shared;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
 {
@@ -9,6 +10,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
     {
     
         public IEnumerable<Application> Applications { get; set; }
+        public PagingData Paging { get; set; }
         public bool UserCanClosePledge { get; set; }
         public bool DisplayRejectedBanner { get; set; }
         public string RejectedEmployerName { get; set; }
@@ -17,7 +19,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Pledges
         public string PledgeTotalAmount { get; set; }
         public string PledgeRemainingAmount { get; set; }
         public AutomaticApprovalOption AutomaticApprovalOption { get; set; }
-        public int ApplicationsPendingApproval { get => Applications.Count(x => x.Status == ApplicationStatus.Pending); }
+        public int ApplicationsPendingApproval { get; set; }
         public bool RenderApplicationsList { get => Applications != null && Applications.Any(); }
 
         public class Application

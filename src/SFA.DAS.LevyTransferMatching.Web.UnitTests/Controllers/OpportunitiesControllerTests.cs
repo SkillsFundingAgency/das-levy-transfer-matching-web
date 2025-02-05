@@ -84,6 +84,7 @@ public class OpportunitiesControllerTests
         var viewResult = await _opportunitiesController.Index(indexRequest) as ViewResult;
         var indexViewModel = viewResult?.Model as IndexViewModel;
 
+        // Assert
         viewResult.Should().NotBeNull();
         indexViewModel.Should().NotBeNull();
     }
@@ -103,9 +104,10 @@ public class OpportunitiesControllerTests
         var viewResult = await _opportunitiesController.Detail(detailRequest) as ViewResult;
         var actualDetailViewModel = viewResult?.Model as DetailViewModel;
 
+        // Assert
         viewResult.Should().NotBeNull();
         actualDetailViewModel.Should().NotBeNull();
-        actualDetailViewModel.Should().BeEquivalentTo(expectedDetailViewModel);
+        actualDetailViewModel.Should().Be(expectedDetailViewModel);
     }
 
     [Test]
@@ -149,7 +151,7 @@ public class OpportunitiesControllerTests
     {
         // Arrange
         var encodedPledgeId = _fixture.Create<string>();
-        var detailPostRequest = new DetailPostRequest()
+        var detailPostRequest = new DetailPostRequest
         {
             EncodedPledgeId = encodedPledgeId,
             HasConfirmed = true,
@@ -159,8 +161,8 @@ public class OpportunitiesControllerTests
         var result = _opportunitiesController.Detail(detailPostRequest) as RedirectToActionResult;
 
         // Assert
-        result.Should().NotBeNull();
-        result.ActionName.Should().Be(nameof(OpportunitiesController.SelectAccount));
+        redirectToActionResult.Should().NotBeNull();
+        redirectToActionResult.ActionName.Should().Be(nameof(OpportunitiesController.SelectAccount));
     }
 
     [Test]
@@ -273,7 +275,7 @@ public class OpportunitiesControllerTests
         var encodedAccountId = _fixture.Create<string>();
         var cacheKey = _fixture.Create<Guid>();
 
-        var request = new MoreDetailsPostRequest()
+        var request = new MoreDetailsPostRequest
         {
             EncodedPledgeId = encodedPledgeId,
             EncodedAccountId = encodedAccountId,
@@ -321,7 +323,7 @@ public class OpportunitiesControllerTests
         var encodedAccountId = _fixture.Create<string>();
         var encodedPledgeId = _fixture.Create<string>();
         var cacheKey = _fixture.Create<Guid>();
-        var contactDetailsPostRequest = new ContactDetailsPostRequest()
+        var contactDetailsPostRequest = new ContactDetailsPostRequest
         {
             EncodedAccountId = encodedAccountId,
             EncodedPledgeId = encodedPledgeId,
@@ -397,29 +399,29 @@ public class OpportunitiesControllerTests
 
         var opportunitiesService = new Mock<IOpportunitiesService>();
         opportunitiesService.Setup(x => x.GetApplicationDetails(1, 1, selectedStandardId)).ReturnsAsync(
-            new GetApplicationDetailsResponse()
+            new GetApplicationDetailsResponse
             {
-                Opportunity = new GetApplicationDetailsResponse.OpportunityData()
+                Opportunity = new GetApplicationDetailsResponse.OpportunityData
                 {
                     Amount = 100_000,
                     RemainingAmount = 100_000
                 },
-                Standards = new List<StandardsListItemDto>()
+                Standards = new List<StandardsListItemDto>
                 {
-                new()
-                {
-                    ApprenticeshipFunding = new List<ApprenticeshipFundingDto>()
+                    new()
                     {
-                        new()
-                        {
-                            Duration = 12,
-                            MaxEmployerLevyCap = 9_000,
-                            EffectiveFrom = new DateTime(DateTime.UtcNow.AddYears(-1).Year,
-                                DateTime.UtcNow.Month, 1),
-                            EffectiveTo = null
-                        }
+                        ApprenticeshipFunding =
+                        [
+                            new()
+                            {
+                                Duration = 12,
+                                MaxEmployerLevyCap = 9_000,
+                                EffectiveFrom = new DateTime(DateTime.UtcNow.AddYears(-1).Year,
+                                    DateTime.UtcNow.Month, 1),
+                                EffectiveTo = null
+                            }
+                        ]
                     }
-                }
                 }
             });
 
@@ -470,29 +472,29 @@ public class OpportunitiesControllerTests
 
         var opportunitiesService = new Mock<IOpportunitiesService>();
         opportunitiesService.Setup(x => x.GetApplicationDetails(1, 1, selectedStandardId)).ReturnsAsync(
-            new GetApplicationDetailsResponse()
+            new GetApplicationDetailsResponse
             {
-                Opportunity = new GetApplicationDetailsResponse.OpportunityData()
+                Opportunity = new GetApplicationDetailsResponse.OpportunityData
                 {
                     Amount = 100_000,
                     RemainingAmount = 0
                 },
-                Standards = new List<StandardsListItemDto>()
+                Standards = new List<StandardsListItemDto>
                 {
-                new()
-                {
-                    ApprenticeshipFunding = new List<ApprenticeshipFundingDto>()
+                    new()
                     {
-                        new()
-                        {
-                            Duration = 12,
-                            MaxEmployerLevyCap = 9_000,
-                            EffectiveFrom = new DateTime(DateTime.UtcNow.AddYears(-1).Year,
-                                DateTime.UtcNow.Month, 1),
-                            EffectiveTo = null
-                        }
+                        ApprenticeshipFunding =
+                        [
+                            new()
+                            {
+                                Duration = 12,
+                                MaxEmployerLevyCap = 9_000,
+                                EffectiveFrom = new DateTime(DateTime.UtcNow.AddYears(-1).Year,
+                                    DateTime.UtcNow.Month, 1),
+                                EffectiveTo = null
+                            }
+                        ]
                     }
-                }
                 }
             });
 
@@ -604,7 +606,7 @@ public class OpportunitiesControllerTests
 
         var request = new SectorPostRequest
         {
-            Sectors = new List<string> { "Sector" },
+            Sectors = ["Sector"],
             EncodedPledgeId = encodedPledgeId,
             EncodedAccountId = encodedAccountId,
             CacheKey = cacheKey

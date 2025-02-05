@@ -1,14 +1,13 @@
 ﻿using SFA.DAS.LevyTransferMatching.Domain.Types;
 
-namespace SFA.DAS.LevyTransferMatching.Domain.Extensions
+namespace SFA.DAS.LevyTransferMatching.Domain.Extensions;
+
+public static class SortOrderExtensions
 {
-    public static class SortOrderExtensions
+    public static SortOrder Reverse(this SortOrder sortOrder)
     {
-        public static SortOrder Reverse(this SortOrder sortOrder)
-        {
-            return sortOrder == SortOrder.Ascending
-                ? SortOrder.Descending
-                : SortOrder.Ascending;
-        }
+        return sortOrder == SortOrder.Ascending
+            ? SortOrder.Descending
+            : SortOrder.Ascending;
     }
 }

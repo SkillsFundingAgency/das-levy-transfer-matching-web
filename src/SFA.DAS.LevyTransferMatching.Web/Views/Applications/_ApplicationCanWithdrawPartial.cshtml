@@ -1,9 +1,9 @@
 ﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Applications.ApplicationViewModel
 
-@{ 
+@{
     var withdraw = SFA.DAS.LevyTransferMatching.Web.Models.Applications.ApplicationPostRequest.ApprovalAction.Withdraw;
     var none = SFA.DAS.LevyTransferMatching.Web.Models.Applications.ApplicationPostRequest.ApprovalAction.None;
- }
+}
 
 @if (Model.CanWithdraw)
 {
@@ -17,7 +17,10 @@
                 <span das-validation-for="SelectedAction" class="govuk-error-message"></span>
                 <div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios">
                     <div class="govuk-radios__item">
-                        <input class="govuk-radios__input" id="SelectedAction" name="SelectedAction" asp-for="SelectedAction" type="radio" value="@withdraw" das-highlight-error-for="SelectedAction" error-class="govuk-textarea--error" data-aria-controls="withdrawal-content" />
+                        <input class="govuk-radios__input" id="SelectedAction" name="SelectedAction"
+                               asp-for="SelectedAction" type="radio" value="@withdraw"
+                               das-highlight-error-for="SelectedAction" error-class="govuk-textarea--error"
+                               data-aria-controls="withdrawal-content"/>
                         <label class="govuk-label govuk-radios__label" for="SelectedAction">
                             Yes, withdraw the application
                         </label>
@@ -25,14 +28,20 @@
                     <div class="govuk-radios__conditional" id="withdrawal-content">
                         <div class="govuk-form-group">
                             <fieldset class="govuk-fieldset">
-                                <span id="IsWithdrawalConfirmed" das-validation-for="IsWithdrawalConfirmed" class="govuk-error-message"></span>
-                                <checkbox asp-for="IsWithdrawalConfirmed" label="I confirm I want to withdraw the application" aria-controls="IsWithdrawalConfirmed" css-class="govuk-checkboxes govuk-checkboxes--small">
+                                <span id="IsWithdrawalConfirmed" das-validation-for="IsWithdrawalConfirmed"
+                                      class="govuk-error-message"></span>
+                                <checkbox asp-for="IsWithdrawalConfirmed"
+                                          label="I confirm I want to withdraw the application"
+                                          aria-controls="IsWithdrawalConfirmed"
+                                          css-class="govuk-checkboxes govuk-checkboxes--small">
                                 </checkbox>
                             </fieldset>
                         </div>
                     </div>
                     <div class="govuk-radios__item">
-                        <input class="govuk-radios__input" id="SelectedAction-2" name="SelectedAction" asp-for="SelectedAction" type="radio" value="@none" das-highlight-error-for="SelectedAction" error-class="govuk-textarea--error" />
+                        <input class="govuk-radios__input" id="SelectedAction-2" name="SelectedAction"
+                               asp-for="SelectedAction" type="radio" value="@none"
+                               das-highlight-error-for="SelectedAction" error-class="govuk-textarea--error"/>
                         <label class="govuk-label govuk-radios__label" for="SelectedAction-2">
                             No, keep this application and return to my applications
                         </label>

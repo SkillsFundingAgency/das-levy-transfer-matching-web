@@ -8,7 +8,7 @@
     ViewBag.Title = "title";
     Layout = "_Layout";
     var accounts = JsonConvert.DeserializeObject<Dictionary<string, EmployerUserAccountItem>>(
-        User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimIdentifierConfiguration.Account))?.Value)
+            User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimIdentifierConfiguration.Account))?.Value)
         .Select(c => c.Value)
         .ToList();
 }
@@ -19,8 +19,8 @@
             You've signed in
         </h1>
 
-        <p>Id: @User.Claims.FirstOrDefault(c=>c.Type.Equals(ClaimTypes.NameIdentifier))?.Value</p>
-        <p>Email: @User.Claims.FirstOrDefault(c=>c.Type.Equals(ClaimTypes.Email))?.Value</p>
+        <p>Id: @User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.NameIdentifier))?.Value</p>
+        <p>Email: @User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email))?.Value</p>
         <table class="govuk-table">
             <thead class="govuk-table__head">
             <tr class="govuk-table__row">
@@ -40,7 +40,5 @@
             }
             </tbody>
         </table>
-    
-   
     </div>
 </div>
