@@ -2,25 +2,22 @@
 
 namespace SFA.DAS.LevyTransferMatching.Web.Authentication;
 
-public class ManageAccountAuthorizationHandler : AuthorizationHandler<ManageAccountRequirement>
+public class ManageAccountRequirement : IAuthorizationRequirement;
+
+public class ManageAccountAuthorizationHandler(
+    IEmployerAccountAuthorizationHandler accountAuthorizationHandler)
+    : AuthorizationHandler<ManageAccountRequirement>
 {
-    private readonly IEmployerAccountAuthorizationHandler _accountAuthorizationHandler;
-
-    public ManageAccountAuthorizationHandler(IEmployerAccountAuthorizationHandler accountAuthorizationHandler)
-    {
-        _accountAuthorizationHandler = accountAuthorizationHandler;
-    }
-
     protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, ManageAccountRequirement requirement)
     {
-        var isAuthorized = await _accountAuthorizationHandler.IsEmployerAuthorized(context, UserRole.Transactor);
+        var isAuthorized = await accountAuthorizationHandler.IsEmployerAuthorized(context, UserRole.Transactor);
 
         if (isAuthorized)
         {
             context.Succeed(requirement);
             return;
         }
-            
+
         context.Fail();
     }
 }

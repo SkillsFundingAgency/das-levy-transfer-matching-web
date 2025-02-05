@@ -44,7 +44,7 @@
                     <ul class="das-task-list__items">
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="@Url.Action("ApplicationDetails", new { EncodedAccountId = Model.EncodedAccountId, EncodedPledgeId = Model.EncodedPledgeId, CacheKey = Model.CacheKey })">
+                                <a class="govuk-link" href="@Url.Action("ApplicationDetails", new { Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey })">
                                     Job role
                                 </a>
                             </span>
@@ -54,7 +54,7 @@
                         </li>
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="@Url.Action("ApplicationDetails", new { EncodedAccountId = Model.EncodedAccountId, EncodedPledgeId = Model.EncodedPledgeId, CacheKey = Model.CacheKey })">
+                                <a class="govuk-link" href="@Url.Action("ApplicationDetails", new { Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey })">
                                     Number of apprentices
                                 </a>
                             </span>
@@ -64,7 +64,7 @@
                         </li>
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="@Url.Action("ApplicationDetails", new { EncodedAccountId = Model.EncodedAccountId, EncodedPledgeId = Model.EncodedPledgeId, CacheKey = Model.CacheKey })">
+                                <a class="govuk-link" href="@Url.Action("ApplicationDetails", new { Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey })">
                                     Start by
                                 </a>
                             </span>
@@ -74,7 +74,7 @@
                         </li>
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="@Url.Action("ApplicationDetails", new { EncodedAccountId = Model.EncodedAccountId, EncodedPledgeId = Model.EncodedPledgeId, CacheKey = Model.CacheKey })">
+                                <a class="govuk-link" href="@Url.Action("ApplicationDetails", new { Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey })">
                                     Have you found a training provider?
                                 </a>
                             </span>
@@ -105,7 +105,7 @@
                     <ul class="das-task-list__items">
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="@Url.Action("Sector", new { EncodedAccountId = Model.EncodedAccountId, EncodedPledgeId = Model.EncodedPledgeId, CacheKey = Model.CacheKey })">
+                                <a class="govuk-link" href="@Url.Action("Sector", new { Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey })">
                                     Sector
                                 </a>
                             </span>
@@ -122,7 +122,7 @@
                         </li>
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="@Url.Action("Sector", new { EncodedAccountId = Model.EncodedAccountId, EncodedPledgeId = Model.EncodedPledgeId, CacheKey = Model.CacheKey })">
+                                <a class="govuk-link" href="@Url.Action("Sector", new { Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey })">
                                     Location
                                 </a>
                             </span>
@@ -165,7 +165,7 @@
                     <ul class="das-task-list__items">
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
-                                <a class="govuk-link" href="@Url.Action("MoreDetails", new { EncodedAccountId = Model.EncodedAccountId, EncodedPledgeId = Model.EncodedPledgeId, CacheKey = Model.CacheKey })">
+                                <a class="govuk-link" href="@Url.Action("MoreDetails", new { Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey })">
                                     More detail
                                 </a>
                             </span>
@@ -211,7 +211,7 @@
                                 </a>
                             </span>
                             <span class="das-task-list__task-tag">
-                                @if (Model.EmailAddresses.Count() > 0)
+                                @if (Model.EmailAddresses.Any())
                                 {
                                     <ul class="govuk-list das-!-text-align-right--from-tablet govuk-!-margin-bottom-0">
                                         @foreach (var emailAddress in Model.EmailAddresses)

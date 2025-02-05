@@ -8,19 +8,12 @@ namespace SFA.DAS.LevyTransferMatching.Web.Controllers;
 
 [Authorize(Policy = PolicyNames.ViewAccount)]
 [Route("accounts/{encodedAccountId}/pledges")]
-public class PledgesController : Controller
+public class PledgesController(IPledgeOrchestrator orchestrator) : Controller
 {
-    private readonly IPledgeOrchestrator _orchestrator;
-
-    public PledgesController(IPledgeOrchestrator orchestrator)
-    {
-        _orchestrator = orchestrator;
-    }
-
     [Route("", Name = "pledges")]
     public async Task<IActionResult> Pledges(PledgesRequest request)
     {
-        var viewModel = await _orchestrator.GetPledgesViewModel(request);
+        var viewModel = await orchestrator.GetPledgesViewModel(request);
         return View(viewModel);
     }
 
@@ -29,7 +22,7 @@ public class PledgesController : Controller
     [Route("{encodedPledgeId}/close")]
     public IActionResult Close(CloseRequest request)
     {
-        var viewModel = _orchestrator.GetCloseViewModel(request);
+        var viewModel = orchestrator.GetCloseViewModel(request);
         return View(viewModel);
     }
 
@@ -39,28 +32,26 @@ public class PledgesController : Controller
     {
         if (closePostRequest.HasConfirmed.Value)
         {
-            await _orchestrator.ClosePledge(closePostRequest);
+            await orchestrator.ClosePledge(closePostRequest);
 
             TempData.AddFlashMessage("Transfer pledge closed", $"You closed the transfer pledge {closePostRequest.EncodedPledgeId}.", TempDataDictionaryExtensions.FlashMessageLevel.Success);
-            return RedirectToAction(nameof(Pledges), new { EncodedAccountId = closePostRequest.EncodedAccountId });
+            return RedirectToAction(nameof(Pledges), new { closePostRequest.EncodedAccountId });
         }
-        return RedirectToAction(nameof(Applications), new { EncodedAccountId = closePostRequest.EncodedAccountId, EncodedPledgeId = closePostRequest.EncodedPledgeId });
+        return RedirectToAction(nameof(Applications), new { closePostRequest.EncodedAccountId, closePostRequest.EncodedPledgeId });
     }
 
     [Route("{EncodedPledgeId}/detail")]
     public IActionResult Detail(DetailRequest request)
     {
-        var viewModel = _orchestrator.GetDetailViewModel(request);
+        var viewModel = orchestrator.GetDetailViewModel(request);
         return View(viewModel);
     }
 
-
-
     [HttpGet]
-    [Route("{encodedPledgeId}/applications")]
+    [Route("{encodedPledgeId}/applications", Name = RouteNames.PledgeApplications)]
     public async Task<IActionResult> Applications(ApplicationsRequest request)
     {
-        var response = await _orchestrator.GetApplications(request);
+        var response = await orchestrator.GetApplications(request);
         return View(response);
     }
 
@@ -77,7 +68,7 @@ public class PledgesController : Controller
     [Route("{encodedPledgeId}/applications/reject-applications")]
     public async Task<IActionResult> RejectApplications(RejectApplicationsRequest request)
     {
-        var rejectApplicationsViewModel = await _orchestrator.GetRejectApplicationsViewModel(request);
+        var rejectApplicationsViewModel = await orchestrator.GetRejectApplicationsViewModel(request);
         return View(rejectApplicationsViewModel);
     }
 
@@ -88,10 +79,10 @@ public class PledgesController : Controller
     {
         if (request.RejectConfirm.Value)
         {
-            await _orchestrator.RejectApplications(request);
+            await orchestrator.RejectApplications(request);
             SetRejectedApplicationsBanner(request.ApplicationsToReject.Count);
         }
-        return RedirectToAction(nameof(Applications), new { EncodedAccountId = request.EncodedAccountId, EncodedPledgeId = request.EncodedPledgeId });
+        return RedirectToAction(nameof(Applications), new { request.EncodedAccountId, request.EncodedPledgeId });
     }
         
     private void SetRejectedApplicationsBanner(int rejectedApplications)
@@ -106,7 +97,7 @@ public class PledgesController : Controller
     [Route("{encodedPledgeId}/applications/download")]
     public async Task<IActionResult> DownloadApplicationsCsv(ApplicationsRequest request)
     {
-        var response = await _orchestrator.GetPledgeApplicationsDownloadModel(request);
+        var response = await orchestrator.GetPledgeApplicationsDownloadModel(request);
 
         return new FileContentResult(response, "text/csv");
     }
@@ -116,7 +107,7 @@ public class PledgesController : Controller
     public async Task<IActionResult> Application(ApplicationRequest request,
         CancellationToken cancellationToken = default)
     {
-        var response = await _orchestrator.GetApplicationViewModel(request, cancellationToken);
+        var response = await orchestrator.GetApplicationViewModel(request, cancellationToken);
 
         if (response != null)
         {
@@ -135,7 +126,7 @@ public class PledgesController : Controller
             return RedirectToAction("ApplicationApprovalOptions", new { request.EncodedAccountId, request.EncodedPledgeId, request.EncodedApplicationId });
         }
 
-        await _orchestrator.SetApplicationOutcome(request);
+        await orchestrator.SetApplicationOutcome(request);
 
         if (request.SelectedAction == ApplicationPostRequest.ApprovalAction.Approve)
         {
@@ -150,7 +141,7 @@ public class PledgesController : Controller
     [Route("{encodedPledgeId}/applications/{encodedApplicationId}/approved")]
     public async Task<IActionResult> ApplicationApproved(ApplicationApprovedRequest request)
     {
-        var viewModel = await _orchestrator.GetApplicationApprovedViewModel(request);
+        var viewModel = await orchestrator.GetApplicationApprovedViewModel(request);
 
         return View(viewModel);
     }
@@ -159,19 +150,21 @@ public class PledgesController : Controller
     [Route("{encodedPledgeId}/applications/{encodedApplicationId}/approval-options")]
     public async Task<IActionResult> ApplicationApprovalOptions(ApplicationApprovalOptionsRequest request)
     {
-        var viewModel = await _orchestrator.GetApplicationApprovalOptionsViewModel(request);
+        var viewModel = await orchestrator.GetApplicationApprovalOptionsViewModel(request);
 
         if (viewModel.IsApplicationPending)
+        {
             return View(viewModel);
-        else
-            return RedirectToAction("Application", new { request.EncodedAccountId, request.EncodedPledgeId, request.EncodedApplicationId });
+        }
+
+        return RedirectToAction("Application", new { request.EncodedAccountId, request.EncodedPledgeId, request.EncodedApplicationId });
     }
 
     [HttpPost]
     [Route("{encodedPledgeId}/applications/{encodedApplicationId}/approval-options")]
     public async Task<IActionResult> ApplicationApprovalOptions(ApplicationApprovalOptionsPostRequest request)
     {
-        await _orchestrator.SetApplicationApprovalOptions(request);
+        await orchestrator.SetApplicationApprovalOptions(request);
         return RedirectToAction("ApplicationApproved", new { request.EncodedAccountId, request.EncodedPledgeId, request.EncodedApplicationId });
     }
 }

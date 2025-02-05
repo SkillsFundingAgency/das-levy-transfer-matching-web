@@ -7,18 +7,18 @@ public class DoubleExtensionsTest
     [Test]
     public void ToNearest_Accurately_Rounds_Up_OnMidPoint()
     {
-        Assert.That(4_650d.ToNearest(100), Is.EqualTo(4700));
+        4_650d.ToNearest(100).Should().Be(4700);
     }
 
     [Test]
     public void ToNearest_Accurately_Rounds_Down()
     {
-        Assert.That(4_649d.ToNearest(100), Is.EqualTo(4600));
+        4_649d.ToNearest(100).Should().Be(4600);
     }
 
     [Test]
     public void ToNearest_Accurately_Rounds_Up()
     {
-        Assert.That(4_651d.ToNearest(100), Is.EqualTo(4700));
+        4_651d.ToNearest(100).Should().Be(4700);
     }
 }

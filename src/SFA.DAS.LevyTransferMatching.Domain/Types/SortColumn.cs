@@ -1,13 +1,12 @@
-﻿namespace SFA.DAS.LevyTransferMatching.Domain.Types
+﻿namespace SFA.DAS.LevyTransferMatching.Domain.Types;
+
+public enum SortColumn
 {
-    public enum SortColumn
-    {
-        Default,
-        ApplicationDate,
-        Applicant,
-        CurrentFinancialYearAmount,
-        Duration,
-        CriteriaMatch,
-        Status
-    }
+    Default,
+    ApplicationDate,
+    Applicant,
+    CurrentFinancialYearAmount,
+    Duration,
+    CriteriaMatch,
+    Status
 }

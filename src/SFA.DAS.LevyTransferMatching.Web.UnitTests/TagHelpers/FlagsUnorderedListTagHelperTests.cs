@@ -23,21 +23,21 @@ public class FlagsUnorderedListTagHelperTests
     {
         _tagHelper = new UnorderedListTagHelper();
 
-        _tagHelperSource = new List<ReferenceDataItem>
-        {
+        _tagHelperSource =
+        [
             new() { Id = "Option1", Description = "Option one" },
             new() { Id = "Option2", Description = "Option two" },
             new() { Id = "Option3", Description = "Option three" }
-        };
+        ];
 
         _tagHelperContext = new TagHelperContext(
-            new TagHelperAttributeList(),
+            [],
             new Dictionary<object, object>(),
             Guid.NewGuid().ToString("N"));
-            
+
         _tagHelperOutput = new TagHelperOutput("div",
-            new TagHelperAttributeList(),
-            (result, encoder) =>
+            [],
+            (_, _) =>
             {
                 var tagHelperContent = new DefaultTagHelperContent();
                 tagHelperContent.SetHtmlContent(string.Empty);
@@ -55,7 +55,6 @@ public class FlagsUnorderedListTagHelperTests
                 typeof(TestClass)),
             ModelAttributes.GetAttributesForProperty(typeof(TestClass),
                 propertyInfo));
-
     }
 
     [TestCase("", "<ul></ul>")]
@@ -74,7 +73,7 @@ public class FlagsUnorderedListTagHelperTests
 
         var output = _tagHelperOutput.PostContent;
 
-        Assert.That(output.GetContent(), Is.EqualTo(expectedOutput));
+        output.GetContent().Should().Be(expectedOutput);
     }
 
     private class TestClass

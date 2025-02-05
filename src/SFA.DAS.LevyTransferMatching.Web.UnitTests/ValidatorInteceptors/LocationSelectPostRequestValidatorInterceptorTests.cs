@@ -42,7 +42,7 @@ public class LocationSelectPostRequestValidatorInterceptorTests
 
         foreach (var expectedKey in expectedModelStateKeys)
         {
-            Assert.That(actualModelStateKeys, Has.Member(expectedKey));
+            actualModelStateKeys.Should().Contain(expectedKey);
         }
     }
 }
