@@ -21,8 +21,8 @@ public static class HealthCheckStartupExtensions
     {
         app.UseHealthChecks("/ping", new HealthCheckOptions
         {
-            Predicate = (_) => false,
-            ResponseWriter = (context, report) =>
+            Predicate = _ => false,
+            ResponseWriter = (context, _) =>
             {
                 context.Response.ContentType = "application/json";
                 return context.Response.WriteAsync("");
@@ -31,18 +31,18 @@ public static class HealthCheckStartupExtensions
 
         return app.UseHealthChecks("/health", new HealthCheckOptions
         {
-            ResponseWriter = (c, r) => c.Response.WriteJsonAsync(new
+            ResponseWriter = (httpContext, healthReport) => httpContext.Response.WriteJsonAsync(new
             {
-                r.Status,
-                r.TotalDuration,
-                Results = r.Entries.ToDictionary(
-                    e => e.Key,
-                    e => new
+                healthReport.Status,
+                healthReport.TotalDuration,
+                Results = healthReport.Entries.ToDictionary(
+                    key => key.Key,
+                    entry => new
                     {
-                        e.Value.Status,
-                        e.Value.Duration,
-                        e.Value.Description,
-                        e.Value.Data
+                        entry.Value.Status,
+                        entry.Value.Duration,
+                        entry.Value.Description,
+                        entry.Value.Data
                     })
             })
         });

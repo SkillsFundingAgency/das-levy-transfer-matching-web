@@ -9,9 +9,13 @@ using SFA.DAS.LevyTransferMatching.Web.Models.Shared;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 
-public class ApplicationsOrchestrator(IApplicationsService applicationsService, IEncodingService encodingService,
-        Infrastructure.Configuration.FeatureToggles featureToggles, IUserService userService) : OpportunitiesOrchestratorBase, IApplicationsOrchestrator
-{    
+public class ApplicationsOrchestrator(
+    IApplicationsService applicationsService,
+    IEncodingService encodingService,
+    Infrastructure.Configuration.FeatureToggles featureToggles,
+    IUserService userService)
+    : OpportunitiesOrchestratorBase, IApplicationsOrchestrator
+{
     public async Task<GetApplicationsViewModel> GetApplications(GetApplicationsRequest request, CancellationToken cancellationToken = default)
     {
         var result = await applicationsService.GetApplications(request.AccountId, request.Page.Value, GetApplicationsRequest.PageSize, cancellationToken);

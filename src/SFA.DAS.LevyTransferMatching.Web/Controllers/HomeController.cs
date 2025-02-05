@@ -11,19 +11,8 @@ using SFA.DAS.LevyTransferMatching.Web.Models;
 namespace SFA.DAS.LevyTransferMatching.Web.Controllers;
 
 [HideAccountNavigation(true)]
-public class HomeController : Controller
+public class HomeController(IConfiguration config, IStubAuthenticationService stubAuthenticationService) : Controller
 {
-    private readonly ILogger<HomeController> _logger;
-    private readonly IConfiguration _config;
-    private readonly IStubAuthenticationService _stubAuthenticationService;
-
-    public HomeController(ILogger<HomeController> logger, IConfiguration config, IStubAuthenticationService stubAuthenticationService)
-    {
-        _logger = logger;
-        _config = config;
-        _stubAuthenticationService = stubAuthenticationService;
-    }
-
     public IActionResult Index()
     {
         return View();
@@ -40,12 +29,12 @@ public class HomeController : Controller
     {
         var idToken = await HttpContext.GetTokenAsync("id_token");
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        
-        _ = bool.TryParse(_config["StubAuth"], out var stubAuth);
-        
+
+        _ = bool.TryParse(config["StubAuth"], out var stubAuth);
+
         if (!stubAuth)
         {
-            await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme, new AuthenticationProperties { RedirectUri = "/", Parameters = { {"id_token",idToken}}});    
+            await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme, new AuthenticationProperties { RedirectUri = "/", Parameters = { { "id_token", idToken } } });
         }
     }
 
@@ -54,25 +43,25 @@ public class HomeController : Controller
     {
         Response.Cookies.Delete(CookieNames.Authentication);
     }
-    
+
 #if DEBUG
     [AllowAnonymous]
     [HttpGet]
     [Route("SignIn-Stub")]
     public IActionResult SigninStub()
     {
-        return View("SigninStub", new List<string> { _config["StubId"], _config["StubEmail"] });
+        return View("SigninStub", new List<string> { config["StubId"], config["StubEmail"] });
     }
 
-    [AllowAnonymous()]
+    [AllowAnonymous]
     [HttpPost]
     [Route("SignIn-Stub")]
     public async Task<IActionResult> SigninStubPost()
     {
-        var claims = await _stubAuthenticationService.GetStubSignInClaims(new StubAuthUserDetails
+        var claims = await stubAuthenticationService.GetStubSignInClaims(new StubAuthUserDetails
         {
-            Email = _config["StubEmail"],
-            Id = _config["StubId"]
+            Email = config["StubEmail"],
+            Id = config["StubId"]
         });
 
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claims,
@@ -81,12 +70,13 @@ public class HomeController : Controller
         return RedirectToRoute("Signed-in-stub");
     }
 
-    [Authorize()]
+    [Authorize]
     [HttpGet]
     [Route("signed-in-stub", Name = "Signed-in-stub")]
     public IActionResult SignedInStub()
     {
         return View();
     }
+    
 #endif
 }

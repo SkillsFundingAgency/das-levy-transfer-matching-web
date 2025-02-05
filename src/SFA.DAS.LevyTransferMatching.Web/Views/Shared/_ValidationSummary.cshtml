@@ -2,13 +2,14 @@
 @using Microsoft.AspNetCore.Mvc.ModelBinding
 @if (!ViewData.ModelState.IsValid)
 {
-    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1"
+         data-module="govuk-error-summary">
         <h2 class="govuk-error-summary__title" id="error-summary-title">
             There is a problem
         </h2>
         <div class="govuk-error-summary__body">
             <ul class="govuk-list govuk-error-summary__list">
-                
+
                 @{
                     var explorer = ViewData.ModelExplorer;
                     foreach (var property in explorer.Properties)
@@ -35,8 +36,6 @@
     </div>
 }
 
-
-
 @functions{
 
     Dictionary<string, string> GetErrors(ModelMetadata property)
@@ -53,11 +52,9 @@
             {
                 result.Add(property.PropertyName, error.ErrorMessage);
             }
-
         }
 
         return result;
-
     }
 
     Dictionary<string, string> GetErrorsForIEnumerable(ModelMetadata property)
@@ -68,33 +65,31 @@
         if (propertyErrors != null && propertyErrors.Any())
             result.Add(property.PropertyName, propertyErrors.First().ErrorMessage);
 
-        var i = 0;
+        var index = 0;
+        
         while (true)
         {
-            var key = $"{property.PropertyName}[{i}]";
+            var key = $"{property.PropertyName}[{index}]";
 
             if (!ViewData.ModelState.ContainsKey(key))
             {
                 break;
             }
-            else
+
+            var state = ViewData.ModelState[key];
+            var errors = state?.Errors ?? null;
+            if (errors != null)
             {
-                var state = ViewData.ModelState[key];
-                var errors = state?.Errors ?? null;
-                if (errors != null)
+                foreach (var error in errors)
                 {
-                    foreach (var error in errors)
-                    {
-                        result.Add($"{property.PropertyName}_{i}_", error.ErrorMessage);
-                    }
+                    result.Add($"{property.PropertyName}_{index}_", error.ErrorMessage);
                 }
             }
 
-            i++;
+            index++;
         }
 
         return result;
-
     }
 
 }

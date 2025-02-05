@@ -1,19 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Specialized;
 
-namespace SFA.DAS.LevyTransferMatching.Infrastructure.Extensions
-{
-    public static class EnumerableStringExtensions
-    {
-        public static NameValueCollection ToNameValueCollection(this IEnumerable<string> value, string key)
-        {
-            var result = new NameValueCollection();
-            foreach (var sector in value)
-            {
-                result.Add(key, sector);
-            }
+namespace SFA.DAS.LevyTransferMatching.Infrastructure.Extensions;
 
-            return result;
+public static class EnumerableStringExtensions
+{
+    public static NameValueCollection ToNameValueCollection(this IEnumerable<string> value, string key)
+    {
+        var result = new NameValueCollection();
+        
+        foreach (var sector in value)
+        {
+            result.Add(key, sector);
         }
+
+        return result;
     }
 }

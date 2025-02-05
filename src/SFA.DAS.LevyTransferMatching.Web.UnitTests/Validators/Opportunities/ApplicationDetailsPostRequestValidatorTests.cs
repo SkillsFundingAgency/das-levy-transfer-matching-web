@@ -28,7 +28,7 @@ public class ApplicationDetailsPostRequestValidatorTests
 
         var result = (await _validator.ValidateAsync(request));
 
-        Assert.That(result.IsValid, Is.True);
+        result.IsValid.Should().BeTrue();
     }
 
     [Test]
@@ -45,12 +45,8 @@ public class ApplicationDetailsPostRequestValidatorTests
 
         var result = (await _validator.ValidateAsync(request));
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.IsValid, Is.False);
-            Assert.That(result.Errors.First().ErrorMessage,
-                Is.EqualTo("There is not enough funding to support this many apprentices"));
-        });
+        result.IsValid.Should().BeFalse();
+        result.Errors.First().ErrorMessage.Should().Be("There is not enough funding to support this many apprentices");
     }
 
     [Test]
@@ -63,11 +59,8 @@ public class ApplicationDetailsPostRequestValidatorTests
 
         var result = (await _validator.ValidateAsync(request));
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.IsValid, Is.False);
-            Assert.That(result.Errors.First().ErrorMessage, Is.EqualTo("You must enter the number of apprentices"));
-        });
+        result.IsValid.Should().BeFalse();
+        result.Errors.First().ErrorMessage.Should().Be("You must enter the number of apprentices");
     }
 
     [Test]
@@ -80,11 +73,8 @@ public class ApplicationDetailsPostRequestValidatorTests
 
         var result = (await _validator.ValidateAsync(request));
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.IsValid, Is.False);
-            Assert.That(result.Errors.First().ErrorMessage, Is.EqualTo("You must enter the number of apprentices"));
-        });
+        result.IsValid.Should().BeFalse();
+        result.Errors.First().ErrorMessage.Should().Be("You must enter the number of apprentices");
     }
 
     [Test]
@@ -97,11 +87,8 @@ public class ApplicationDetailsPostRequestValidatorTests
 
         var result = (await _validator.ValidateAsync(request));
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.IsValid, Is.False);
-            Assert.That(result.Errors.First().ErrorMessage, Is.EqualTo("You must enter the number of apprentices"));
-        });
+        result.IsValid.Should().BeFalse();
+        result.Errors.First().ErrorMessage.Should().Be("You must enter the number of apprentices");
     }
 
     [Test]
@@ -114,11 +101,8 @@ public class ApplicationDetailsPostRequestValidatorTests
 
         var result = (await _validator.ValidateAsync(request));
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.IsValid, Is.False);
-            Assert.That(result.Errors.First().ErrorMessage, Is.EqualTo("Enter a valid job role"));
-        });
+        result.IsValid.Should().BeFalse();
+        result.Errors.First().ErrorMessage.Should().Be("Enter a valid job role");
     }
 
     [Test]
@@ -131,11 +115,8 @@ public class ApplicationDetailsPostRequestValidatorTests
 
         var result = (await _validator.ValidateAsync(request));
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.IsValid, Is.False);
-            Assert.That(result.Errors.First().ErrorMessage, Is.EqualTo("Enter a valid job role"));
-        });
+        result.IsValid.Should().BeFalse();
+        result.Errors.First().ErrorMessage.Should().Be("Enter a valid job role");
     }
 
     [Test]
@@ -149,7 +130,7 @@ public class ApplicationDetailsPostRequestValidatorTests
 
         var result = (await _validator.ValidateAsync(request));
 
-        Assert.That(result.IsValid, Is.False);
+        result.IsValid.Should().BeFalse();
     }
 
     [Test]
@@ -162,12 +143,8 @@ public class ApplicationDetailsPostRequestValidatorTests
 
         var result = (await _validator.ValidateAsync(request));
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.IsValid, Is.False);
-            Assert.That(result.Errors.First().ErrorMessage,
-                Is.EqualTo("You must select whether or not you have found a training provider"));
-        });
+        result.IsValid.Should().BeFalse();
+        result.Errors.First().ErrorMessage.Should().Be("You must select whether or not you have found a training provider");
     }
 
     private ApplicationDetailsPostRequest CreateApplicationDetailsPostRequest() => new()
@@ -196,8 +173,8 @@ public class ApplicationDetailsPostRequestValidatorTests
         {
             new()
             {
-                ApprenticeshipFunding = new List<ApprenticeshipFundingDto>
-                {
+                ApprenticeshipFunding =
+                [
                     new()
                     {
                         Duration = 12,
@@ -205,6 +182,7 @@ public class ApplicationDetailsPostRequestValidatorTests
                         EffectiveFrom = new DateTime(DateTime.UtcNow.AddYears(-1).Year, DateTime.UtcNow.Month, 1),
                         EffectiveTo = null
                     },
+
                     new()
                     {
                         Duration = 15,
@@ -215,7 +193,7 @@ public class ApplicationDetailsPostRequestValidatorTests
                             DateTime.UtcNow.AddMonths(-1).Month,
                             new DateTime(DateTime.UtcNow.AddYears(-1).Year, DateTime.UtcNow.Month, 1).AddDays(-1).Day)
                     }
-                }
+                ]
             }
         }
     };

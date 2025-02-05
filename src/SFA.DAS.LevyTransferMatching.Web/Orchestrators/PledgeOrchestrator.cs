@@ -1,4 +1,5 @@
-﻿using System.Dynamic;
+﻿using System;
+using System.Dynamic;
 using Humanizer;
 using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Domain.Types;
@@ -9,32 +10,22 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
 using SFA.DAS.LevyTransferMatching.Web.Extensions;
 using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
+using SFA.DAS.LevyTransferMatching.Web.Models.Shared;
 using SFA.DAS.LevyTransferMatching.Web.Services;
 using static SFA.DAS.LevyTransferMatching.Web.Models.Pledges.PledgesViewModel;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 
-public class PledgeOrchestrator : IPledgeOrchestrator
+public class PledgeOrchestrator(
+    IPledgeService pledgeService,
+    IEncodingService encodingService,
+    IUserService userService,
+    Infrastructure.Configuration.FeatureToggles featureToggles,
+    IDateTimeService dateTimeService,
+    ICsvHelperService csvService)
+    : IPledgeOrchestrator
 {
-    private readonly IPledgeService _pledgeService;
-    private readonly IEncodingService _encodingService;
-    private readonly IUserService _userService;
-    private readonly Infrastructure.Configuration.FeatureToggles _featureToggles;
-    private readonly IDateTimeService _dateTimeService;
-    private readonly ICsvHelperService _csvService;
-    private const int minimumTransferFunds = 2000;
-
-    public PledgeOrchestrator(IPledgeService pledgeService, IEncodingService encodingService, IUserService userService,
-        Infrastructure.Configuration.FeatureToggles featureToggles, IDateTimeService dateTimeService,
-        ICsvHelperService csvService)
-    {
-        _pledgeService = pledgeService;
-        _encodingService = encodingService;
-        _userService = userService;
-        _featureToggles = featureToggles;
-        _dateTimeService = dateTimeService;
-        _csvService = csvService;
-    }
+    private const int MinimumTransferFunds = 2000;
 
     public CloseViewModel GetCloseViewModel(CloseRequest request)
     {
@@ -43,14 +34,14 @@ public class PledgeOrchestrator : IPledgeOrchestrator
             EncodedAccountId = request.EncodedAccountId,
             EncodedPledgeId = request.EncodedPledgeId,
             CacheKey = Guid.NewGuid(),
-            UserCanClosePledge = _userService.IsUserChangeAuthorized(request.EncodedAccountId)
+            UserCanClosePledge = userService.IsUserChangeAuthorized(request.EncodedAccountId)
         };
     }
 
     public async Task<PledgesViewModel> GetPledgesViewModel(PledgesRequest request)
     {
-        var pledgesResponse = await _pledgeService.GetPledges(request.AccountId, request.Page, PledgesRequest.DefaultPageSize);
-        var renderCreatePledgesButton = _userService.IsUserChangeAuthorized(request.EncodedAccountId);
+        var pledgesResponse = await pledgeService.GetPledges(request.AccountId, request.Page, PledgesRequest.DefaultPageSize);
+        var renderCreatePledgesButton = userService.IsUserChangeAuthorized(request.EncodedAccountId);
 
         return new PledgesViewModel
         {
@@ -58,9 +49,9 @@ public class PledgeOrchestrator : IPledgeOrchestrator
             EncodedAccountId = request.EncodedAccountId,
             RenderCreatePledgeButton = renderCreatePledgesButton,
             HasMinimumTransferFunds = CheckForMinimumTransferFunds(pledgesResponse.StartingTransferAllowance, pledgesResponse.CurrentYearEstimatedCommittedSpend),
-            Pledges = pledgesResponse.Pledges.Select(x => new PledgesViewModel.Pledge
+            Pledges = pledgesResponse.Items.Select(x => new Pledge
             {
-                ReferenceNumber = _encodingService.Encode(x.Id, EncodingType.PledgeId),
+                ReferenceNumber = encodingService.Encode(x.Id, EncodingType.PledgeId),
                 Amount = x.Amount,
                 RemainingAmount = x.RemainingAmount,
                 ApplicationCount = x.ApplicationCount,
@@ -71,28 +62,28 @@ public class PledgeOrchestrator : IPledgeOrchestrator
 
     private static bool CheckForMinimumTransferFunds(decimal startingTransferAllowance, decimal currentYearSpend)
     {
-        return (startingTransferAllowance - currentYearSpend) >= minimumTransferFunds;
+        return startingTransferAllowance - currentYearSpend >= MinimumTransferFunds;
     }
 
-    private PledgesViewModel.PagingData GetPagingData(GetPledgesResponse pledgesResponse)
+    private PagingData GetPagingData<T>(PagedResponse<T> response, SortColumn? sortColumn = null, SortOrder? sortOrder = null)
     {
-        return new PledgesViewModel.PagingData()
+        return new PagingData()
         {
-            Page = pledgesResponse.Page,
-            PageSize = pledgesResponse.PageSize,
-            TotalPages = pledgesResponse.TotalPages,
-            TotalPledges = pledgesResponse.TotalPledges,
-            ShowPageLinks = pledgesResponse.Page != 1 || pledgesResponse.TotalPledges > pledgesResponse.PageSize,
-            PageLinks = BuildPageLinks(pledgesResponse),
-            PageStartRow = (pledgesResponse.Page-1) * pledgesResponse.PageSize + 1,
-            PageEndRow = pledgesResponse.Page * pledgesResponse.PageSize > pledgesResponse.TotalPledges ? pledgesResponse.TotalPledges : pledgesResponse.Page * pledgesResponse.PageSize,
+            Page = response.Page,
+            PageSize = response.PageSize,
+            TotalPages = response.TotalPages,
+            TotalItems = response.TotalItems,
+            ShowPageLinks = response.Page != 1 || response.TotalItems > response.PageSize,
+            PageLinks = BuildPageLinks(response, sortColumn, sortOrder),
+            PageStartRow = (response.Page - 1) * response.PageSize + 1,
+            PageEndRow = response.Page * response.PageSize > response.TotalItems ? response.TotalItems : response.Page * response.PageSize,
         };
     }
 
-    public IEnumerable<PledgesViewModel.PageLink> BuildPageLinks(GetPledgesResponse pledgesResponse) 
+    public IEnumerable<PageLink> BuildPageLinks<T>(PagedResponse<T> pledgesResponse, SortColumn? sortColumn = null, SortOrder? sortOrder = null)
     {
-        var links = new List<PledgesViewModel.PageLink>();
-        var totalPages = (int)Math.Ceiling((double)pledgesResponse.TotalPledges / pledgesResponse.PageSize);
+        var links = new List<PageLink>();
+        var totalPages = (int)Math.Ceiling((double)pledgesResponse.TotalItems / pledgesResponse.PageSize);
         var totalPageLinks = totalPages < 5 ? totalPages : 5;
 
         //previous link
@@ -102,7 +93,7 @@ public class PledgeOrchestrator : IPledgeOrchestrator
             {
                 Label = "Previous",
                 AriaLabel = "Previous page",
-                RouteData = BuildRouteData(pledgesResponse.Page - 1)
+                RouteData = BuildRouteData(pledgesResponse.Page - 1, sortColumn, sortOrder)
             });
         }
 
@@ -113,17 +104,19 @@ public class PledgeOrchestrator : IPledgeOrchestrator
             pageNumberSeed = pledgesResponse.Page - 2;
 
             if (pledgesResponse.Page > totalPages - 2)
+            {
                 pageNumberSeed = totalPages - 4;
+            }
         }
 
-        for (var i = 0; i < totalPageLinks; i++)
+        for (var index = 0; index < totalPageLinks; index++)
         {
-            var link = new PledgesViewModel.PageLink
+            var link = new PageLink
             {
-                Label = (pageNumberSeed + i).ToString(),
-                AriaLabel = $"Page {pageNumberSeed + i}",
-                IsCurrent = pageNumberSeed + i == pledgesResponse.Page ? true : (bool?)null,
-                RouteData = BuildRouteData(pageNumberSeed + i)
+                Label = (pageNumberSeed + index).ToString(),
+                AriaLabel = $"Page {pageNumberSeed + index}",
+                IsCurrent = pageNumberSeed + index == pledgesResponse.Page ? true : (bool?)null,
+                RouteData = BuildRouteData(pageNumberSeed + index, sortColumn, sortOrder)
             };
             links.Add(link);
         }
@@ -135,16 +128,27 @@ public class PledgeOrchestrator : IPledgeOrchestrator
             {
                 Label = "Next",
                 AriaLabel = "Next page",
-                RouteData = BuildRouteData(pledgesResponse.Page + 1)
+                RouteData = BuildRouteData(pledgesResponse.Page + 1, sortColumn, sortOrder)
             });
         }
 
         return links;
     }
 
-    private Dictionary<string, string> BuildRouteData(int pageNumber)
+    private static Dictionary<string, string> BuildRouteData(int pageNumber, SortColumn? sortColumn = null, SortOrder? sortOrder = null)
     {
-        return new Dictionary<string, string> { {"page", pageNumber.ToString() } };
+        var routeData = new Dictionary<string, string> { { "page", pageNumber.ToString() } };
+
+        if (sortColumn.HasValue)
+        {
+            routeData.Add("sortColumn", sortColumn.ToString());
+        }
+        if (sortOrder.HasValue)
+        {
+            routeData.Add("sortOrder", sortOrder.ToString());
+        }
+
+        return routeData;
     }
 
     public DetailViewModel GetDetailViewModel(DetailRequest request)
@@ -159,16 +163,16 @@ public class PledgeOrchestrator : IPledgeOrchestrator
     {
         var closePledgeRequest = new ClosePledgeRequest
         {
-            UserId = _userService.GetUserId(),
-            UserDisplayName = _userService.GetUserDisplayName()
+            UserId = userService.GetUserId(),
+            UserDisplayName = userService.GetUserDisplayName()
         };
 
-        await _pledgeService.ClosePledge(request.AccountId, request.PledgeId, closePledgeRequest);
+        await pledgeService.ClosePledge(request.AccountId, request.PledgeId, closePledgeRequest);
     }
 
     public async Task<ApplicationApprovedViewModel> GetApplicationApprovedViewModel(ApplicationApprovedRequest request)
     {
-        var response = await _pledgeService.GetApplicationApproved(request.AccountId, request.PledgeId, request.ApplicationId);
+        var response = await pledgeService.GetApplicationApproved(request.AccountId, request.PledgeId, request.ApplicationId);
 
         return new ApplicationApprovedViewModel
         {
@@ -179,14 +183,13 @@ public class PledgeOrchestrator : IPledgeOrchestrator
         };
     }
 
-
     public async Task<byte[]> GetPledgeApplicationsDownloadModel(ApplicationsRequest request)
     {
-        var result = await _pledgeService.GetApplications(request.AccountId, request.PledgeId, request.SortColumn, request.SortOrder);
+        var result = await pledgeService.GetApplications(request.AccountId, request.PledgeId, 1, request.SortColumn, request.SortOrder, int.MaxValue);
 
         var pledgeAppModel = new PledgeApplicationsDownloadModel
         {
-            Applications = result.Applications?.Select(app => new PledgeApplicationDownloadModel
+            Applications = result.Items?.Select(app => new PledgeApplicationDownloadModel
             {
                 DateApplied = app.CreatedOn,
                 Status = app.GetDateDependentStatus(result.AutomaticApprovalOption),
@@ -204,8 +207,8 @@ public class PledgeOrchestrator : IPledgeOrchestrator
                 NumberOfApprentices = app.NumberOfApprentices,
                 StartBy = app.StartDate,
                 TypeOfJobRole = app.JobRole,
-                EncodedPledgeId = _encodingService.Encode(app.PledgeId, EncodingType.PledgeId),
-                EncodedApplicationId = _encodingService.Encode(app.Id, EncodingType.PledgeApplicationId),
+                EncodedPledgeId = encodingService.Encode(app.PledgeId, EncodingType.PledgeId),
+                EncodedApplicationId = encodingService.Encode(app.Id, EncodingType.PledgeApplicationId),
                 MatchJobRole = app.IsJobRoleMatch,
                 MatchLevel = app.IsLevelMatch,
                 MatchLocation = app.IsLocationMatch,
@@ -222,18 +225,18 @@ public class PledgeOrchestrator : IPledgeOrchestrator
             })
         };
 
-        var fileContents = _csvService.GenerateCsvFileFromModel(pledgeAppModel);
+        var fileContents = csvService.GenerateCsvFileFromModel(pledgeAppModel);
 
         return fileContents;
     }
 
-    private static IEnumerable<dynamic> GetListOfLocations(IEnumerable<GetApplyResponse.PledgeLocation> pledgeLocations, IEnumerable<GetApplicationsResponse.ApplicationLocation> applicationLocations, string specificLocation, string additionalLocations)
+    private static List<dynamic> GetListOfLocations(IEnumerable<GetApplyResponse.PledgeLocation> pledgeLocations, IEnumerable<GetApplicationsResponse.ApplicationLocation> applicationLocations, string specificLocation, string additionalLocations)
     {
         var listOfMatchingLocations = (from location in applicationLocations
-                                       select pledgeLocations?.FirstOrDefault(o => o.Id == location.PledgeLocationId)
+            select pledgeLocations?.FirstOrDefault(o => o.Id == location.PledgeLocationId)
             into matchedLocation
-                                       where matchedLocation != null && !string.IsNullOrWhiteSpace(matchedLocation.Name)
-                                       select matchedLocation.Name).ToList();
+            where matchedLocation != null && !string.IsNullOrWhiteSpace(matchedLocation.Name)
+            select matchedLocation.Name).ToList();
 
         if (!string.IsNullOrWhiteSpace(specificLocation))
         {
@@ -259,15 +262,15 @@ public class PledgeOrchestrator : IPledgeOrchestrator
 
     public async Task<ApplicationsViewModel> GetApplications(ApplicationsRequest request)
     {
-        var result = await _pledgeService.GetApplications(request.AccountId, request.PledgeId, request.SortColumn, request.SortOrder);
+        var result = await pledgeService.GetApplications(request.AccountId, request.PledgeId, request.Page, request.SortColumn, request.SortOrder, ApplicationsRequest.PageSize);
 
-        var isOwnerOrTransactor = _userService.IsOwnerOrTransactor(request.EncodedAccountId);
+        var isOwnerOrTransactor = userService.IsOwnerOrTransactor(request.EncodedAccountId);
 
-        var viewModels = (from application in result.Applications
-                          let pledgeApplication = result.Applications.First(x => x.PledgeId == application.PledgeId)
+        var viewModels = (from application in result.Items
+                          let pledgeApplication = result.Items.First(x => x.PledgeId == application.PledgeId)
                           select new ApplicationsViewModel.Application
                           {
-                              EncodedApplicationId = _encodingService.Encode(application.Id, EncodingType.PledgeApplicationId),
+                              EncodedApplicationId = encodingService.Encode(application.Id, EncodingType.PledgeApplicationId),
                               DasAccountName = application.DasAccountName,
                               Amount = application.Amount,
                               Duration = application.StandardDuration,
@@ -292,11 +295,13 @@ public class PledgeOrchestrator : IPledgeOrchestrator
 
         return new ApplicationsViewModel
         {
+            Paging = GetPagingData(result, request.SortColumn, request.SortOrder),
             EncodedAccountId = request.EncodedAccountId,
             UserCanClosePledge = result.PledgeStatus != PledgeStatus.Closed && isOwnerOrTransactor,
             EncodedPledgeId = request.EncodedPledgeId,
             RenderCreatePledgeButton = isOwnerOrTransactor,
             RenderRejectButton = viewModels.Any(x => x.Status == ApplicationStatus.Pending),
+            ApplicationsPendingApproval = result.TotalPendingApplications,
             PledgeTotalAmount = result.PledgeTotalAmount.ToCurrencyString(),
             AutomaticApprovalOption = result.AutomaticApprovalOption,
             PledgeRemainingAmount = result.PledgeRemainingAmount.ToCurrencyString(),
@@ -310,9 +315,9 @@ public class PledgeOrchestrator : IPledgeOrchestrator
     public async Task<ApplicationViewModel> GetApplicationViewModel(ApplicationRequest request, CancellationToken cancellationToken = default)
     {
         var result =
-            await _pledgeService.GetApplication(request.AccountId, request.PledgeId, request.ApplicationId, cancellationToken);
+            await pledgeService.GetApplication(request.AccountId, request.PledgeId, request.ApplicationId, cancellationToken);
 
-        var isOwnerOrTransactor = _userService.IsOwnerOrTransactor(request.EncodedAccountId);
+        var isOwnerOrTransactor = userService.IsOwnerOrTransactor(request.EncodedAccountId);
 
         if (result != null)
         {
@@ -347,7 +352,7 @@ public class PledgeOrchestrator : IPledgeOrchestrator
                 Affordability = GetAffordabilityViewModel(result.PledgeRemainingAmount, result.NumberOfApprentices, result.MaxFunding, result.EstimatedDurationMonths, result.StartBy),
                 AllowApproval = result.Status == ApplicationStatus.Pending && result.Amount <= result.PledgeRemainingAmount && isOwnerOrTransactor,
                 AllowRejection = result.Status == ApplicationStatus.Pending && isOwnerOrTransactor,
-                DisplayApplicationApprovalOptions = _featureToggles.FeatureToggleApplicationApprovalOptions,
+                DisplayApplicationApprovalOptions = featureToggles.FeatureToggleApplicationApprovalOptions,
                 Status = result.Status
             };
         }
@@ -357,7 +362,7 @@ public class PledgeOrchestrator : IPledgeOrchestrator
 
     public async Task<ApplicationApprovalOptionsViewModel> GetApplicationApprovalOptionsViewModel(ApplicationApprovalOptionsRequest request, CancellationToken cancellationToken = default)
     {
-        var response = await _pledgeService.GetApplicationApprovalOptions(request.AccountId, request.PledgeId, request.ApplicationId, cancellationToken);
+        var response = await pledgeService.GetApplicationApprovalOptions(request.AccountId, request.PledgeId, request.ApplicationId, cancellationToken);
 
         return new ApplicationApprovalOptionsViewModel
         {
@@ -373,31 +378,34 @@ public class PledgeOrchestrator : IPledgeOrchestrator
     {
         var serviceRequest = new SetApplicationApprovalOptionsRequest
         {
-            UserId = _userService.GetUserId(),
-            UserDisplayName = _userService.GetUserDisplayName(),
+            UserId = userService.GetUserId(),
+            UserDisplayName = userService.GetUserDisplayName(),
             AutomaticApproval = request.AutomaticApproval.Value
         };
 
-        await _pledgeService.SetApplicationApprovalOptions(request.AccountId, request.ApplicationId, request.PledgeId, serviceRequest);
+        await pledgeService.SetApplicationApprovalOptions(request.AccountId, request.ApplicationId, request.PledgeId, serviceRequest);
     }
 
     public async Task SetApplicationOutcome(ApplicationPostRequest request)
     {
         var outcomeRequest = new SetApplicationOutcomeRequest
         {
-            UserId = _userService.GetUserId(),
-            UserDisplayName = _userService.GetUserDisplayName(),
+            UserId = userService.GetUserId(),
+            UserDisplayName = userService.GetUserDisplayName(),
             Outcome = request.SelectedAction == ApplicationPostRequest.ApprovalAction.Approve
                 ? SetApplicationOutcomeRequest.ApplicationOutcome.Approve
                 : SetApplicationOutcomeRequest.ApplicationOutcome.Reject
         };
 
-        await _pledgeService.SetApplicationOutcome(request.AccountId, request.ApplicationId, request.PledgeId, outcomeRequest);
+        await pledgeService.SetApplicationOutcome(request.AccountId, request.ApplicationId, request.PledgeId, outcomeRequest);
     }
 
     private static string GetUrlWithPrefix(string url)
     {
-        if (string.IsNullOrWhiteSpace(url)) return url;
+        if (string.IsNullOrWhiteSpace(url))
+        {
+            return url;
+        }
 
         if (url.StartsWith("http://") || url.StartsWith("https://"))
         {
@@ -417,16 +425,16 @@ public class PledgeOrchestrator : IPledgeOrchestrator
         {
             EstimatedCostOverDuration = totalCost,
             YearlyPayments = yearlyBreakdown,
-            YearDescription = _dateTimeService.UtcNow.ToTaxYearDescription(),
-            RemainingFundsIfApproved = remainingAmount - (int)yearlyBreakdown.First().Amount
+            YearDescription = dateTimeService.UtcNow.ToTaxYearDescription(),
+            RemainingFundsIfApproved = remainingAmount - yearlyBreakdown.First().Amount
         };
     }
 
-    private static IEnumerable<YearlyPayments> CalculateYearlyPayments(decimal totalAmount, int durationInMonths)
+    private static List<YearlyPayments> CalculateYearlyPayments(decimal totalAmount, int durationInMonths)
     {
         if (durationInMonths <= 12)
         {
-            return new List<YearlyPayments> { new(string.Empty, (int)totalAmount) };
+            return [new(string.Empty, (int)totalAmount)];
         }
 
         var completionPayment = totalAmount / 5;
@@ -438,9 +446,9 @@ public class PledgeOrchestrator : IPledgeOrchestrator
 
         var paymentPerMonth = (totalAmount - completionPayment) / durationInMonths;
 
-        for (var i = 0; i < years; i++)
+        for (var index = 0; index < years; index++)
         {
-            if ((i == years - 1) && (months == 0))
+            if (index == years - 1 && months == 0)
             {
                 var finalYearAmount = (int)Math.Round(paymentPerMonth * 12);
                 finalYearAmount += (int)completionPayment;
@@ -449,7 +457,7 @@ public class PledgeOrchestrator : IPledgeOrchestrator
             else
             {
                 var yearAmount = (int)Math.Round(paymentPerMonth * 12);
-                var yearLabel = $"{(i + 1).ToOrdinalWords()} year";
+                var yearLabel = $"{(index + 1).ToOrdinalWords()} year";
                 yearlyPayments.Add(new YearlyPayments(yearLabel, yearAmount));
             }
         }
@@ -468,26 +476,26 @@ public class PledgeOrchestrator : IPledgeOrchestrator
     {
         var serviceRequest = new SetRejectApplicationsRequest
         {
-            UserId = _userService.GetUserId(),
-            UserDisplayName = _userService.GetUserDisplayName(),
-            ApplicationsToReject = request.ApplicationsToReject.Select(applicationId => (int)_encodingService.Decode(applicationId,
+            UserId = userService.GetUserId(),
+            UserDisplayName = userService.GetUserDisplayName(),
+            ApplicationsToReject = request.ApplicationsToReject.Select(applicationId => (int)encodingService.Decode(applicationId,
                 EncodingType.PledgeApplicationId)).ToList()
         };
 
-        await _pledgeService.RejectApplications(serviceRequest, request.AccountId, request.PledgeId);
+        await pledgeService.RejectApplications(serviceRequest, request.AccountId, request.PledgeId);
     }
 
     public async Task<RejectApplicationsViewModel> GetRejectApplicationsViewModel(RejectApplicationsRequest request)
     {
-        var applicationsList = await _pledgeService.GetRejectApplications(request.AccountId, request.PledgeId);
+        var applicationsList = await pledgeService.GetRejectApplications(request.AccountId, request.PledgeId);
 
         return new RejectApplicationsViewModel
         {
             EncodedAccountId = request.EncodedAccountId,
             EncodedPledgeId = request.EncodedPledgeId,
             DasAccountNames = applicationsList.Applications.Where(x =>
-                    request.ApplicationsToReject.Any((s =>
-                        (int)_encodingService.Decode(s, EncodingType.PledgeApplicationId) == x.Id)))
+                    request.ApplicationsToReject.Any(s =>
+                        (int)encodingService.Decode(s, EncodingType.PledgeApplicationId) == x.Id))
                 .Select(app => app.DasAccountName).ToList()
         };
     }

@@ -45,16 +45,15 @@
                                 <legend class="govuk-visually-hidden">Select one or more business sectors to filter by
                                 </legend>
                                 <checkbox-list asp-for="Sectors" source="@Model.Sectors"
-                                    css-class="govuk-checkboxes govuk-checkboxes--small"></checkbox-list>
+                                               css-class="govuk-checkboxes govuk-checkboxes--small"></checkbox-list>
                             </fieldset>
                         </div>
                     </div>
                 </details>
-                <button class="govuk-button" data-module="govuk-button" id="opportunity-filter-sector">Update
-                    results</button>
+                <button class="govuk-button" data-module="govuk-button" id="opportunity-filter-sector">Apply filters</button>
             </div>
             <div class="govuk-grid-column-two-thirds">
-                <h2 class="govuk-heading-m">@Model.Paging.TotalOpportunities @(Model.Paging.TotalOpportunities == 1 ?
+                <h2 class="govuk-heading-m">@Model.Paging.TotalItems @(Model.Paging.TotalItems == 1 ?
                     "opportunity" : "opportunities")</h2>
 
                 @if (Model.Opportunities.Count == 0)
@@ -73,7 +72,7 @@
                                 <li class="das-search-results__list-item">
                                     <h2 class="govuk-heading-m das-search-results__heading govuk-!-margin-bottom-0">
                                         <a href="@Url.Action("Detail", new { EncodedPledgeId = opportunity.ReferenceNumber })"
-                                            class="das-search-results__link">@opportunity.EmployerName
+                                           class="das-search-results__link">@opportunity.EmployerName
                                             (@opportunity.ReferenceNumber)</a>
                                     </h2>
                                     <p class="govuk-hint">up to @opportunity.DisplayAmount available</p>
@@ -103,16 +102,16 @@
 
                 @if (Model.Paging.ShowPageLinks)
                 {
-                    <nav role="navigation" aria-label="Pagination">
+                    <nav role="navigation" class="das-search-results__list-item" aria-label="Pagination">
                         <div class="das-pagination__summary">Showing @Model.Paging.PageStartRow to @Model.Paging.PageEndRow
-                            <br />of @Model.Paging.TotalOpportunities opportunities</div>
+                            <br />of @Model.Paging.TotalItems opportunities</div>
                         <ul class="das-pagination">
                             @foreach (var pageLink in Model.Paging.PageLinks)
                             {
                                 <li class="das-pagination__item">
                                     <a class="das-pagination__link @(pageLink.IsCurrent.HasValue && pageLink.IsCurrent.Value ? "current" : "")"
-                                        asp-route="opportunities" asp-all-route-data="@pageLink.RouteData"
-                                        aria-current="@pageLink.IsCurrent" aria-label="@pageLink.AriaLabel">
+                                       asp-route="opportunities" asp-all-route-data="@pageLink.RouteData"
+                                       aria-current="@pageLink.IsCurrent" aria-label="@pageLink.AriaLabel">
                                         @pageLink.Label
                                     </a>
                                 </li>
