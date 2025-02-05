@@ -161,8 +161,8 @@ public class OpportunitiesControllerTests
         var result = _opportunitiesController.Detail(detailPostRequest) as RedirectToActionResult;
 
         // Assert
-        redirectToActionResult.Should().NotBeNull();
-        redirectToActionResult.ActionName.Should().Be(nameof(OpportunitiesController.SelectAccount));
+        result.Should().NotBeNull();
+        result.ActionName.Should().Be(nameof(OpportunitiesController.SelectAccount));
     }
 
     [Test]
