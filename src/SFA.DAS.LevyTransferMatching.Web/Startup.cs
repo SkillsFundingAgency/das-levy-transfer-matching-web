@@ -3,6 +3,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.Extensions.Configuration;
 using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.EmployerUrlHelper.DependencyResolution;
+using SFA.DAS.GovUK.Auth.Extensions;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
 using SFA.DAS.LevyTransferMatching.Web.Attributes;
 using SFA.DAS.LevyTransferMatching.Web.FeatureToggles;
@@ -100,7 +101,7 @@ public class Startup(IConfiguration configuration, IHostEnvironment environment)
 
         app.UseEndpoints(endpoints =>
         {
-            
+            endpoints.MapSessionKeepAliveEndpoint();
             endpoints.MapDefaultControllerRoute();
         });
     }
