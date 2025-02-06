@@ -54,6 +54,7 @@ public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
 
         _opportunitiesService.Setup(x => x.GetIndex(_indexRequest.Sectors, OpportunitiesSortBy.ValueHighToLow, _page, IndexRequest.DefaultPageSize)).ReturnsAsync(_getIndexResponse);
         _encodingService.Setup(x => x.Encode(It.IsAny<long>(), EncodingType.PledgeId)).Returns("test");
+        SetupGetOpportunityViewModelServices();
 
         _orchestrator = new OpportunitiesOrchestrator(DateTimeService.Object, _opportunitiesService.Object, _userService.Object, _encodingService.Object, _cacheStorageService.Object);
     }
@@ -66,9 +67,11 @@ public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
 
         var viewModel = await _orchestrator.GetIndexViewModel(_indexRequest);
 
-        for (var index = 0; index < _getIndexResponse.Opportunities.Count; index++)
+        for (var i = 0; i < _getIndexResponse.Opportunities.Count; i++)
         {
-            viewModel.Opportunities[index].EmployerName.Should().Be(_getIndexResponse.Opportunities[index].IsNamePublic ? _getIndexResponse.Opportunities[index].DasAccountName : "Opportunity");
+            viewModel.Opportunities[i].CreatedOnDescription.Should().Be(_getIndexResponse.Opportunities[i].CreatedOn.ToString("'Created on' dd MMMM yyyy"));
+
+            viewModel.Opportunities[i].EmployerName.Should().Be(_getIndexResponse.Opportunities[i].IsNamePublic ? _getIndexResponse.Opportunities[i].DasAccountName : "Opportunity");
         }
 
         viewModel.Opportunities.Select(x => x.Amount).Should().BeEquivalentTo(_getIndexResponse.Opportunities.Select(x => x.Amount));

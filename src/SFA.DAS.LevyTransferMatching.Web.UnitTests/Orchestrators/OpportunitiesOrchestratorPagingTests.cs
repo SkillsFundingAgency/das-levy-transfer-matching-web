@@ -46,6 +46,7 @@ public class OpportunitiesOrchestratorPagingTests : OpportunitiesOrchestratorBas
 
         _opportunitiesService.Setup(x => x.GetIndex(_indexRequest.Sectors, OpportunitiesSortBy.ValueHighToLow, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(_getIndexResponse);
         _encodingService.Setup(x => x.Encode(It.IsAny<long>(), EncodingType.PledgeId)).Returns("test");
+        SetupGetOpportunityViewModelServices();
 
         _orchestrator = new OpportunitiesOrchestrator(DateTimeService.Object, _opportunitiesService.Object, _userService.Object, _encodingService.Object, _cacheStorageService.Object);
     }

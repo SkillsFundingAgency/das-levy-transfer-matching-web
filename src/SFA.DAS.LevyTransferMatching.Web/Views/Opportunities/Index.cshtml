@@ -102,6 +102,10 @@
                                 };
 
                                 <li class="das-search-results__list-item">
+                                    @if (opportunity.IsNew)
+                                    {
+                                        <p class="govuk-tag govuk-tag">New</p>                                        
+                                    }
                                     <h2 class="govuk-heading-m das-search-results__heading govuk-!-margin-bottom-0">
                                         <a href="@Url.Action("Detail", routeValues)"
                                            class="das-search-results__link">
@@ -128,6 +132,8 @@
                                             <span class="das-!-color-dark-grey">@opportunity.Levels</span>
                                         </li>
                                     </ul>
+                                    <br/>
+                                    <p class="govuk-hint">@opportunity.CreatedOnDescription</p>
                                 </li>
                             }
                         </ol>
