@@ -8,10 +8,7 @@ public class AutoDecodeModelBinderProvider : IModelBinderProvider
 {
     public IModelBinder GetBinder(ModelBinderProviderContext context)
     {
-        if (context == null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
+        ArgumentNullException.ThrowIfNull(context);
 
         if (context.Metadata.IsComplexType || (context.Metadata.ModelType != typeof(long) && context.Metadata.ModelType != typeof(int)))
         {
@@ -23,6 +20,5 @@ public class AutoDecodeModelBinderProvider : IModelBinderProvider
         var fallBackBinder = new SimpleTypeModelBinder(context.Metadata.ModelType, loggerFactory);
 
         return new AutoDecodeModelBinder(fallBackBinder, encodingService);
-
     }
 }

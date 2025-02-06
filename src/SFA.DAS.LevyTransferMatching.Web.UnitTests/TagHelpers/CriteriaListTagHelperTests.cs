@@ -17,12 +17,12 @@ public class CriteriaListTagHelperTests
         _tagHelper = new CriteriaListTagHelper();
 
         _tagHelperContext = new TagHelperContext(
-            new TagHelperAttributeList(),
+            [],
             new Dictionary<object, object>(),
             Guid.NewGuid().ToString("N"));
 
         _tagHelperOutput = new TagHelperOutput("div",
-            new TagHelperAttributeList(),
+            [],
             (result, encoder) =>
             {
                 var tagHelperContent = new DefaultTagHelperContent();
@@ -46,13 +46,13 @@ public class CriteriaListTagHelperTests
             IsJobRoleMatch = isJobRoleMatch,
             IsLevelMatch = isLevelMatch
         };
-            
+
         _tagHelper.Application = application;
 
         _tagHelper.Process(_tagHelperContext, _tagHelperOutput);
 
         var output = _tagHelperOutput.PostContent;
 
-        Assert.That(output.GetContent(), Is.EqualTo(expectedOutput));
+        output.GetContent().Should().Be(expectedOutput);
     }
 }

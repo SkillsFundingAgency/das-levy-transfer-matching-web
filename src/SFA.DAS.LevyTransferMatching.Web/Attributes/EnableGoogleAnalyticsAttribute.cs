@@ -6,15 +6,8 @@ using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
 namespace SFA.DAS.LevyTransferMatching.Web.Attributes;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-public class EnableGoogleAnalyticsAttribute : ResultFilterAttribute
+public class EnableGoogleAnalyticsAttribute(GoogleAnalytics configuration) : ResultFilterAttribute
 {
-    private readonly GoogleAnalytics _googleAnalyticsConfiguration;
-
-    public EnableGoogleAnalyticsAttribute(GoogleAnalytics configuration)
-    {
-        _googleAnalyticsConfiguration = configuration;
-    }
-
     public override void OnResultExecuting(ResultExecutingContext context)
     {
         switch (context.Controller)
@@ -30,6 +23,6 @@ public class EnableGoogleAnalyticsAttribute : ResultFilterAttribute
 
     private void SetViewData(ViewDataDictionary viewData)
     {
-        viewData[ViewDataKeys.ViewDataKeys.GoogleAnalyticsConfiguration] = _googleAnalyticsConfiguration;
+        viewData[ViewDataKeys.ViewDataKeys.GoogleAnalyticsConfiguration] = configuration;
     }
 }

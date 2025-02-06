@@ -1,5 +1,6 @@
 ﻿using CsvHelper;
 using SFA.DAS.Encoding;
+using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types;
@@ -25,6 +26,7 @@ public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
 
     private GetIndexResponse _getIndexResponse;
     private IndexRequest _indexRequest;
+    private DetailRequest _detailRequest;
     private string _userId;
     private string _userDisplayName;
     private int _page = 1;
@@ -46,7 +48,11 @@ public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
 
         _getIndexResponse = _fixture.Create<GetIndexResponse>();
         _indexRequest = _fixture.Build<IndexRequest>().With(p => p.Page, _page).Create();
-        _opportunitiesService.Setup(x => x.GetIndex(_indexRequest.Sectors, _page, IndexRequest.DefaultPageSize)).ReturnsAsync(_getIndexResponse);
+        _indexRequest.SortBy = OpportunitiesSortBy.ValueHighToLow.ToString();
+
+        _detailRequest = _fixture.Create<DetailRequest>();
+
+        _opportunitiesService.Setup(x => x.GetIndex(_indexRequest.Sectors, OpportunitiesSortBy.ValueHighToLow, _page, IndexRequest.DefaultPageSize)).ReturnsAsync(_getIndexResponse);
         _encodingService.Setup(x => x.Encode(It.IsAny<long>(), EncodingType.PledgeId)).Returns("test");
         SetupGetOpportunityViewModelServices();
 
@@ -60,25 +66,21 @@ public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
         _encodingService.Setup(x => x.Encode(It.IsAny<long>(), EncodingType.PledgeId)).Returns(encodedId);
 
         var viewModel = await _orchestrator.GetIndexViewModel(_indexRequest);
-        
-        Assert.Multiple(() =>
+
+        for (var i = 0; i < _getIndexResponse.Opportunities.Count; i++)
         {
-            for (var i = 0; i < _getIndexResponse.Opportunities.Count; i++)
-            {
-                Assert.That(viewModel.Opportunities[i].EmployerName, Is.EqualTo(_getIndexResponse.Opportunities[i].IsNamePublic 
-                    ? _getIndexResponse.Opportunities[i].DasAccountName : "Opportunity"));
+            viewModel.Opportunities[i].CreatedOnDescription.Should().Be(_getIndexResponse.Opportunities[i].CreatedOn.ToString("'Created on' dd MMMM yyyy"));
 
-                viewModel.Opportunities[i].CreatedOnDescription.Should().Be(_getIndexResponse.Opportunities[i].CreatedOn.ToString("'Created on' dd MMMM yyyy"));
-            }
+            viewModel.Opportunities[i].EmployerName.Should().Be(_getIndexResponse.Opportunities[i].IsNamePublic ? _getIndexResponse.Opportunities[i].DasAccountName : "Opportunity");
+        }
 
-            viewModel.Opportunities.Select(x => x.Amount).Should().BeEquivalentTo(_getIndexResponse.Opportunities.Select(x => x.Amount));
+        viewModel.Opportunities.Select(x => x.Amount).Should().BeEquivalentTo(_getIndexResponse.Opportunities.Select(x => x.Amount));
 
-            viewModel.Opportunities[0].ReferenceNumber.Should().Be(encodedId);
-            viewModel.Opportunities.Select(x => x.Locations).Should().BeEquivalentTo(_getIndexResponse.Opportunities.Select(x => x.Locations.ToLocationsList()));
-            viewModel.Opportunities.Select(x => x.Sectors).Should().BeEquivalentTo(_getIndexResponse.Opportunities.Select(x => x.Sectors.ToReferenceDataDescriptionList(_getIndexResponse.Sectors)));
-            viewModel.Opportunities.Select(x => x.JobRoles).Should().BeEquivalentTo(_getIndexResponse.Opportunities.Select(x => x.JobRoles.ToReferenceDataDescriptionList(_getIndexResponse.JobRoles)));
-            viewModel.Opportunities.Select(x => x.Levels).Should().BeEquivalentTo(_getIndexResponse.Opportunities.Select(x => x.Levels.ToReferenceDataDescriptionList(_getIndexResponse.Levels, descriptionSource: y => y.ShortDescription)));
-        });
+        viewModel.Opportunities[0].ReferenceNumber.Should().Be(encodedId);
+        viewModel.Opportunities.Select(x => x.Locations).Should().BeEquivalentTo(_getIndexResponse.Opportunities.Select(x => x.Locations.ToLocationsList()));
+        viewModel.Opportunities.Select(x => x.Sectors).Should().BeEquivalentTo(_getIndexResponse.Opportunities.Select(x => x.Sectors.ToReferenceDataDescriptionList(_getIndexResponse.Sectors)));
+        viewModel.Opportunities.Select(x => x.JobRoles).Should().BeEquivalentTo(_getIndexResponse.Opportunities.Select(x => x.JobRoles.ToReferenceDataDescriptionList(_getIndexResponse.JobRoles)));
+        viewModel.Opportunities.Select(x => x.Levels).Should().BeEquivalentTo(_getIndexResponse.Opportunities.Select(x => x.Levels.ToReferenceDataDescriptionList(_getIndexResponse.Levels, descriptionSource: y => y.ShortDescription)));
     }
 
     [Test]
@@ -88,11 +90,11 @@ public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
         var id = _fixture.Create<int>();
 
         _opportunitiesService
-            .Setup(x => x.GetDetail(It.Is<int>(y => y == id)))
+            .Setup(x => x.GetDetail(It.Is<int>(y => y == _detailRequest.PledgeId)))
             .ReturnsAsync(new GetDetailResponse());
 
         // Act
-        var result = await _orchestrator.GetDetailViewModel(id);
+        var result = await _orchestrator.GetDetailViewModel(_detailRequest);
 
         // Assert
         result.Should().BeNull();
@@ -103,8 +105,7 @@ public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
     {
         // Arrange
         var encodedId = _fixture.Create<string>();
-        var id = _fixture.Create<int>();
-
+      
         SetupGetOpportunityViewModelServices();
 
         var sectors = SectorReferenceDataItems.Take(4);
@@ -113,7 +114,7 @@ public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
 
         var opportunity = _fixture
             .Build<GetDetailResponse.OpportunityData>()
-            .With(x => x.Id, id)
+            .With(x => x.Id, _detailRequest.PledgeId)
             .With(x => x.Sectors, sectors.Select(y => y.Id))
             .With(x => x.JobRoles, jobRoles.Select(y => y.Id))
             .With(x => x.Levels, levels.Select(y => y.Id))
@@ -124,15 +125,15 @@ public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
             .Create();
 
         _encodingService
-            .Setup(x => x.Encode(It.Is<long>(y => y == id), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
+            .Setup(x => x.Encode(It.Is<long>(y => y == _detailRequest.PledgeId), It.Is<EncodingType>(y => y == EncodingType.PledgeId)))
             .Returns(encodedId);
 
         _opportunitiesService
-            .Setup(x => x.GetDetail(It.Is<int>(y => y == id)))
+            .Setup(x => x.GetDetail(It.Is<int>(y => y == _detailRequest.PledgeId)))
             .ReturnsAsync(getDetailResponse);
 
         // Act
-        var result = await _orchestrator.GetDetailViewModel(id);
+        var result = await _orchestrator.GetDetailViewModel(_detailRequest);
 
         Assert.Multiple(() =>
         {
@@ -154,7 +155,7 @@ public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
         // The list of accounts that the user has access to, across all
         // levels of access.
         var accountIds = _fixture.CreateMany<string>(3).ToArray();
-            
+
         // The list of accounts that the user has access to with
         // Owner/Transactor privileges (a subset of the above)
         var userAccessAccountIds = accountIds.Take(2).ToArray();
@@ -307,9 +308,9 @@ public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
         var applicationDetailsResponse = _fixture.Create<GetApplicationDetailsResponse>();
 
         _cacheStorageService.Setup(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString())).ReturnsAsync(cacheItem);
-        _opportunitiesService.Setup(x => x.GetApplicationDetails(1,1, default)).ReturnsAsync(applicationDetailsResponse);
+        _opportunitiesService.Setup(x => x.GetApplicationDetails(1, 1, default)).ReturnsAsync(applicationDetailsResponse);
 
-        var result = await _orchestrator.GetApplicationViewModel(new ApplicationDetailsRequest { EncodedAccountId = encodedAccountId, CacheKey = cacheKey, EncodedPledgeId = encodedPledgeId, PledgeId = 1, AccountId = 1  });
+        var result = await _orchestrator.GetApplicationViewModel(new ApplicationDetailsRequest { EncodedAccountId = encodedAccountId, CacheKey = cacheKey, EncodedPledgeId = encodedPledgeId, PledgeId = 1, AccountId = 1 });
 
         Assert.Multiple(() =>
         {
@@ -368,7 +369,7 @@ public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
     {
         var applicationRequest = SetupForGetApplyViewModel(false);
         var orchestrator = new OpportunitiesOrchestrator(DateTimeService.Object, _opportunitiesService.Object,
-            _userService.Object, _encodingService.Object, _cacheStorageService.Object); 
+            _userService.Object, _encodingService.Object, _cacheStorageService.Object);
 
         var result = await orchestrator.GetApplyViewModel(applicationRequest);
 
@@ -391,7 +392,7 @@ public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
             .Returns(reference);
 
         var result =
-            await _orchestrator.GetConfirmationViewModel(new ConfirmationRequest {PledgeId = opportunityId, AccountId = accountId, EncodedAccountId = encodedAccountId});
+            await _orchestrator.GetConfirmationViewModel(new ConfirmationRequest { PledgeId = opportunityId, AccountId = accountId, EncodedAccountId = encodedAccountId });
 
         Assert.Multiple(() =>
         {
@@ -415,10 +416,10 @@ public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
         _cacheStorageService.Setup(x => x.RetrieveFromCache<CreateApplicationCacheItem>(cacheKey.ToString()))
             .ReturnsAsync(cacheItem);
 
-        var request = new ApplyPostRequest {CacheKey = cacheKey, EncodedAccountId = encodedAccountId, EncodedPledgeId = encodedPledgeId, AccountId = accountId, PledgeId = opportunityId};
+        var request = new ApplyPostRequest { CacheKey = cacheKey, EncodedAccountId = encodedAccountId, EncodedPledgeId = encodedPledgeId, AccountId = accountId, PledgeId = opportunityId };
 
         await _orchestrator.SubmitApplication(request);
-            
+
         _opportunitiesService.Verify(x => x.PostApplication(accountId, opportunityId,
             It.Is<ApplyRequest>(r => r.EncodedAccountId == encodedAccountId &&
                                      r.Details == cacheItem.Details &&

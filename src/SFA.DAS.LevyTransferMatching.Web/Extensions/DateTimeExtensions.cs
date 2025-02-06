@@ -4,8 +4,8 @@ public static class DateTimeExtensions
 {
     public static string ToTaxYear(this DateTime dateTime, string format)
     {
-        DateTime taxYear = dateTime;
-        DateTime newTaxYear = new DateTime(taxYear.Year, 4, 6);
+        var taxYear = dateTime;
+        var newTaxYear = new DateTime(taxYear.Year, 4, 6);
 
         if (taxYear.Date < newTaxYear)
         {
@@ -25,22 +25,11 @@ public static class DateTimeExtensions
         return dateTime.Month >= 4 ? new DateTime(dateTime.Year + 1, 4, 5) : new DateTime(dateTime.Year, 4, 5);
     }
 
-    public static DateTime EndOfMarchOfFinancialYear(this DateTime dateTime)
-    {
-        return dateTime.Month >= 4 ? new DateTime(dateTime.Year + 1, 3, 31) : new DateTime(dateTime.Year, 3, 31);
-    }
-
     public static string ToShortDisplayString(this DateTime dateTime)
     {
         return dateTime.ToString("MM/yyyy");
     }
-
-    public static int MonthsTillFinancialYearEnd(this DateTime date)
-    {
-        var financialYear = FinancialYearEnd(date);
-        return ((financialYear.Year - date.Year) * 12) + financialYear.Month - date.Month;
-    }
-
+    
     public static bool IsNull(this DateTime? date)
     {
         return !date.HasValue || date == new DateTime(1900, 1, 1);
@@ -50,5 +39,4 @@ public static class DateTimeExtensions
     {
         return date.ToString("dd/MM/yyyy");
     }
-
 }

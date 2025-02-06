@@ -26,10 +26,10 @@ public class LocationControllerTests
                 o.GetLocationsTypeAheadViewModel(It.IsAny<string>()))
             .ReturnsAsync(new LocationsTypeAheadViewModel
             {
-                Locations = new List<LocationTypeAheadViewModel>()
+                Locations = []
             });
 
         var result = await _controller.GetLocations("test") as JsonResult;
-        Assert.That(result, Is.Not.Null);
+        result.Should().NotBeNull();
     }
 }
