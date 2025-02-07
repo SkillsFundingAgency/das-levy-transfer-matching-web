@@ -38,8 +38,8 @@
                 <p>Otherwise the transfer opportunity will no longer be available.</p>
 
                 <br/>
-                <div class="govuk-body-l"><b>@Model.Applications.Count() @Model.ApplicationCountPostFix</b></div>
-                <table class="govuk-table govuk-!-margin-bottom-9" aria-label="Transfer applications table">
+                <div class="govuk-body-l"><b>@Model.Paging.TotalItems @Model.ApplicationCountPostFix</b></div>
+                <table class="govuk-table govuk-!-margin-bottom-3" aria-label="Transfer applications table">
                     <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
                             <th scope="col" class="govuk-table__header app-custom-class">Opportunity</th>
@@ -66,15 +66,12 @@
                                         <text> (@application.PledgeReference)</text>
                                     }
 
-                                    <span
-                                        class="govuk-caption-m">Date: @application.CreatedOn.ToString("dd/MM/yyyy")</span>
-                                </td>
-                                <td class="govuk-table__cell">@application.EstimatedTotalCost</td>
-                                <td class="govuk-table__cell"><span
-                                        class=" @application.Status.GetCssClassForReceiver()">@application.Status.GetLabelForReceiver()</span>
-                                </td>
-                            </tr>
-                        }
+                                        <span class="govuk-caption-m">Date applied: @application.CreatedOn.ToString("dd/MM/yyyy")</span>
+                                    </td>
+                                    <td class="govuk-table__cell">@application.EstimatedTotalCost</td>
+                                    <td class="govuk-table__cell"><span class=" @application.Status.GetCssClassForReceiver()">@application.Status.GetLabelForReceiver()</span></td>
+                                </tr>
+                            }
                         </tbody>
                     }
                     else
@@ -86,6 +83,37 @@
                         </tbody>
                     }
                 </table>
+
+                @if (Model.Paging.ShowPageLinks)
+                {
+                    <nav role="navigation" aria-label="Pagination">
+                        <div class="das-pagination__summary">
+                            @if (Model.Paging.Page == 1)
+                            {
+                                <text>Showing @Model.Paging.PageEndRow of @Model.Paging.TotalItems applications</text>
+                            }
+                            else if (Model.Paging.Page > 1)
+                            {
+                                <text>Showing @Model.Paging.PageStartRow to @Model.Paging.PageEndRow of @Model.Paging.TotalItems applications</text>
+                            }
+                        </div>
+                        <ul class="das-pagination">
+                            @foreach (var pageLink in Model.Paging.PageLinks)
+                            {
+                                <li class="das-pagination__item">
+                                    <a class="das-pagination__link @(pageLink.IsCurrent.HasValue && pageLink.IsCurrent.Value ? "current" : "")"
+                                       asp-all-route-data="@pageLink.RouteData"
+                                       asp-route="@RouteNames.Applications"
+                                       aria-current="@(pageLink.IsCurrent.HasValue && pageLink.IsCurrent.Value ? "page" : null)"
+                                       aria-label="@pageLink.AriaLabel">
+                                       @pageLink.Label
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </nav>
+                    <br />
+                }
             </div>
         </div>
     </div>

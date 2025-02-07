@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using SFA.DAS.LevyTransferMatching.Domain.Types;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService.Types
 {
-    public class GetApplicationsResponse
+    public class GetApplicationsResponse : PagedResponse<GetApplicationsResponse.Application>
     {
-        public IEnumerable<Application> Applications { get; set; }
-
         public class Application
         {
             public int Id { get; set; }

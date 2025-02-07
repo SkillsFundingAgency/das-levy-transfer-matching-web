@@ -1,45 +1,54 @@
 ﻿using SFA.DAS.Encoding;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService;
-using SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsService.Types;
+using SFA.DAS.LevyTransferMatching.Domain.Types;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService;
+using SFA.DAS.LevyTransferMatching.Infrastructure.Services.PledgeService.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.UserService;
-using SFA.DAS.LevyTransferMatching.Web.Models.Applications;
+using SFA.DAS.LevyTransferMatching.Web.Models.Pledges;
 using SFA.DAS.LevyTransferMatching.Web.Orchestrators;
 using SFA.DAS.LevyTransferMatching.Web.Services;
 
 namespace SFA.DAS.LevyTransferMatching.Web.UnitTests.Orchestrators;
 
 [TestFixture]
-public class GetApplicationsOrchestratorPagingTests
+public class GetPledgeApplicationsPagingTests
 {
-    private ApplicationsOrchestrator _orchestrator;
+    private PledgeOrchestrator _orchestrator;
     private Fixture _fixture;
-    private Mock<IApplicationsService> _applicationsService;
+    private Mock<IPledgeService> _pledgeService;
     private Infrastructure.Configuration.FeatureToggles _featureToggles;
     private GetApplicationsResponse _applicationsResponse;
     private readonly string _encodedAccountId = "ABCD";
-    private readonly long _accountId = 1;
+    private readonly int _accountId = 1;
     private readonly int _page = 1;
 
     [SetUp]
     public void Setup()
     {
         _fixture = new Fixture();
-        _applicationsService = new Mock<IApplicationsService>();
+        _pledgeService = new Mock<IPledgeService>();
 
         _featureToggles = new Infrastructure.Configuration.FeatureToggles();
         _applicationsResponse = _fixture.Create<GetApplicationsResponse>();
 
-        _applicationsService.Setup(x => x.GetApplications(
-            It.Is<long>(x => x == _accountId), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()
+        _pledgeService.Setup(x => x.GetApplications(
+            _accountId,
+            It.IsAny<int>(),
+            It.IsAny<int>(),
+            It.IsAny<SortColumn?>(),
+            It.IsAny<SortOrder?>(),
+            It.IsAny<int?>()
             )).ReturnsAsync(_applicationsResponse);
 
-        _orchestrator = new ApplicationsOrchestrator(_applicationsService.Object, Mock.Of<IEncodingService>(), _featureToggles, Mock.Of<IUserService>());
+        _orchestrator = new PledgeOrchestrator(_pledgeService.Object, Mock.Of<IEncodingService>(), Mock.Of<IUserService>(),
+            _featureToggles,
+            Mock.Of<IDateTimeService>(), Mock.Of<ICsvHelperService>());
     }
 
     [Test]
     public async Task GetApplications_PagingData_Should_Be_Populated()
     {
-        var result = await _orchestrator.GetApplications(new GetApplicationsRequest
+        var result = await _orchestrator.GetApplications(new ApplicationsRequest
         { EncodedAccountId = _encodedAccountId, AccountId = _accountId, Page = _page });
         result.Paging.Page.Should().Be(_applicationsResponse.Page);
         result.Paging.PageSize.Should().Be(_applicationsResponse.PageSize);
@@ -50,14 +59,14 @@ public class GetApplicationsOrchestratorPagingTests
     [TestCase(3, 3, false)]
     [TestCase(50, 50, false)]
     [TestCase(51, 50, true)]
-    public async Task GetApplications_PagingData_Returns_Calculated_First_Page_Data_Correctly(int TotalItems, int endRow, bool expectedShowPageLinksStatus)
+    public async Task GetApplications_PagingData_Returns_Calculated_First_Page_Data_Correctly(int totalPledges, int endRow, bool expectedShowPageLinksStatus)
     {
 
         _applicationsResponse.Page = 1;
         _applicationsResponse.PageSize = 50;
-        _applicationsResponse.TotalItems = TotalItems;
+        _applicationsResponse.TotalItems = totalPledges;
 
-        var result = await _orchestrator.GetApplications(new GetApplicationsRequest
+        var result = await _orchestrator.GetApplications(new ApplicationsRequest
         { EncodedAccountId = _encodedAccountId, AccountId = _accountId, Page = _page });
         result.Paging.ShowPageLinks.Should().Be(expectedShowPageLinksStatus);
         result.Paging.PageStartRow.Should().Be(1);
@@ -66,14 +75,14 @@ public class GetApplicationsOrchestratorPagingTests
 
     [TestCase(2, 150, 51, 100)]
     [TestCase(3, 151, 101, 150)]
-    public async Task GetApplications_PagingData_Returns_Calculated_Other_Page_Data_Correctly(int page, int TotalItems, int startRow, int endRow)
+    public async Task GetApplications_PagingData_Returns_Calculated_Other_Page_Data_Correctly(int page, int totalPledges, int startRow, int endRow)
     {
 
         _applicationsResponse.Page = page;
         _applicationsResponse.PageSize = 50;
-        _applicationsResponse.TotalItems = TotalItems;
+        _applicationsResponse.TotalItems = totalPledges;
 
-        var result = await _orchestrator.GetApplications(new GetApplicationsRequest
+        var result = await _orchestrator.GetApplications(new ApplicationsRequest
         { EncodedAccountId = _encodedAccountId, AccountId = _accountId, Page = page });
         result.Paging.ShowPageLinks.Should().BeTrue();
         result.Paging.PageStartRow.Should().Be(startRow);
@@ -83,13 +92,13 @@ public class GetApplicationsOrchestratorPagingTests
     [TestCase(1, 10, false, false)]
     [TestCase(1, 1000, false, true)]
     [TestCase(10, 500, true, false)]
-    public async Task GetApplications_PagingData_Returns_Expected_Next_Previous_PageLinks(int page, int TotalItems, bool hasPreviousLink, bool hasNextLink)
+    public async Task GetApplications_PagingData_Returns_Expected_Next_Previous_PageLinks(int page, int totalPledges, bool hasPreviousLink, bool hasNextLink)
     {
         _applicationsResponse.Page = page;
         _applicationsResponse.PageSize = 50;
-        _applicationsResponse.TotalItems = TotalItems;
+        _applicationsResponse.TotalItems = totalPledges;
 
-        var result = await _orchestrator.GetApplications(new GetApplicationsRequest
+        var result = await _orchestrator.GetApplications(new ApplicationsRequest
         { EncodedAccountId = _encodedAccountId, AccountId = _accountId, Page = page });
         (result.Paging.PageLinks.First().Label == "Previous").Should().Be(hasPreviousLink);
         (result.Paging.PageLinks.Last().Label == "Next").Should().Be(hasNextLink);
@@ -102,7 +111,7 @@ public class GetApplicationsOrchestratorPagingTests
         _applicationsResponse.PageSize = 50;
         _applicationsResponse.TotalItems = 10000;
 
-        var result = await _orchestrator.GetApplications(new GetApplicationsRequest
+        var result = await _orchestrator.GetApplications(new ApplicationsRequest
         { EncodedAccountId = _encodedAccountId, AccountId = _accountId, Page = _page });
         result.Paging.PageLinks.FirstOrDefault(x => x.Label == "7").Should().BeNull();
         result.Paging.PageLinks.FirstOrDefault(x => x.Label == "8").Should().NotBeNull();
@@ -120,7 +129,7 @@ public class GetApplicationsOrchestratorPagingTests
         _applicationsResponse.PageSize = 50;
         _applicationsResponse.TotalItems = 10000;
 
-        var result = await _orchestrator.GetApplications(new GetApplicationsRequest
+        var result = await _orchestrator.GetApplications(new ApplicationsRequest
         { EncodedAccountId = _encodedAccountId, AccountId = _accountId, Page = _page });
         result.Paging.PageLinks.First(x => x.Label == "8").RouteData["page"].Should().Be("8");
         result.Paging.PageLinks.First(x => x.Label == "9").RouteData["page"].Should().Be("9");
@@ -136,7 +145,7 @@ public class GetApplicationsOrchestratorPagingTests
         _applicationsResponse.PageSize = 50;
         _applicationsResponse.TotalItems = 10000;
 
-        var result = await _orchestrator.GetApplications(new GetApplicationsRequest
+        var result = await _orchestrator.GetApplications(new ApplicationsRequest
         { EncodedAccountId = _encodedAccountId, AccountId = _accountId, Page = _page });
         result.Paging.PageLinks.First().RouteData["page"].Should().Be("9");
         result.Paging.PageLinks.Last().RouteData["page"].Should().Be("11");
