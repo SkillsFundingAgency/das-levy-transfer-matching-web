@@ -1,4 +1,5 @@
 ﻿using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using SFA.DAS.LevyTransferMatching.Web.Attributes;
 using SFA.DAS.LevyTransferMatching.Web.Authentication;
 using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities;
@@ -13,6 +14,20 @@ public class OpportunitiesController(IOpportunitiesOrchestrator opportunitiesOrc
     [Route("opportunities", Name = "opportunities")]
     public async Task<IActionResult> Index(IndexRequest request)
     {
+        if (string.IsNullOrEmpty(request.CommaSeparatedSectors) && request.Sectors != null)
+        {
+            request.CommaSeparatedSectors = request.PopulateCommaSeparatedSectorsFromSectors();
+        }
+        else
+        {
+            request.Sectors = request.GetSectorsList();          
+        }
+
+        if (ModelState.ContainsKey(nameof(request.CommaSeparatedSectors)))
+        {
+            ModelState.SetModelValue(nameof(request.Sectors), new ValueProviderResult(request.CommaSeparatedSectors));
+        }
+
         var viewModel = await opportunitiesOrchestrator.GetIndexViewModel(request);
         return View(viewModel);
     }
@@ -20,7 +35,7 @@ public class OpportunitiesController(IOpportunitiesOrchestrator opportunitiesOrc
     [Route("opportunities/{encodedPledgeId}")]
     public async Task<IActionResult> Detail(DetailRequest detailRequest)
     {
-        var viewModel = await opportunitiesOrchestrator.GetDetailViewModel(detailRequest.PledgeId);
+        var viewModel = await opportunitiesOrchestrator.GetDetailViewModel(detailRequest);
 
         if (viewModel != null)
         {

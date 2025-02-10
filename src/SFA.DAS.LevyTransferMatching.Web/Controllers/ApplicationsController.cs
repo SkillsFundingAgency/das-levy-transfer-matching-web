@@ -10,7 +10,7 @@ public class ApplicationsController(IApplicationsOrchestrator applicationsOrches
 {
     [HttpGet]
     [HideAccountNavigation(false)]
-    [Route("/accounts/{encodedAccountId}/applications")]
+    [Route("/accounts/{encodedAccountId}/applications", Name = RouteNames.Applications)]
     public async Task<IActionResult> Applications(GetApplicationsRequest request)
     {
         var viewModel = await applicationsOrchestrator.GetApplications(request);

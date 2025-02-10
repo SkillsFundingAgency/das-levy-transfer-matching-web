@@ -9,13 +9,13 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.ApplicationsServi
 
 public class ApplicationsService(HttpClient httpClient) : IApplicationsService
 {
-    public async Task<GetApplicationsResponse> GetApplications(long accountId, CancellationToken cancellationToken = default)
+    public async Task<GetApplicationsResponse> GetApplications(long accountId, int page, int pageSize, CancellationToken cancellationToken = default)
     {
-        var response = await httpClient.GetAsync($"accounts/{accountId}/applications", cancellationToken);
+        var response = await httpClient.GetAsync($"accounts/{accountId}/applications?page={page}&pageSize={pageSize}", cancellationToken);
         response.EnsureSuccessStatusCode();
 
-        return JsonConvert.DeserializeObject<GetApplicationsResponse>(await response.Content.ReadAsStringAsync(cancellationToken));
-    }      
+        return JsonConvert.DeserializeObject<GetApplicationsResponse>(await response.Content.ReadAsStringAsync());
+    }
 
     public async Task<GetApplicationResponse> GetApplication(long accountId, int applicationId, CancellationToken cancellationToken = default)
     {
