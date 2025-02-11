@@ -25,6 +25,7 @@ public class HomeController(IConfiguration config, IStubAuthenticationService st
     }
 
     [Route("signout", Name = RouteNames.SignOut)]
+    [Route("service/signout")]
     public async Task SignOut()
     {
         var idToken = await HttpContext.GetTokenAsync("id_token");

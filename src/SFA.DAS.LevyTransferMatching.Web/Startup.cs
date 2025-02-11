@@ -3,6 +3,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.Extensions.Configuration;
 using SFA.DAS.Employer.Shared.UI;
 using SFA.DAS.EmployerUrlHelper.DependencyResolution;
+using SFA.DAS.GovUK.Auth.Extensions;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Configuration;
 using SFA.DAS.LevyTransferMatching.Web.Attributes;
 using SFA.DAS.LevyTransferMatching.Web.FeatureToggles;
@@ -13,16 +14,9 @@ using SFA.DAS.Validation.Mvc.Extensions;
 
 namespace SFA.DAS.LevyTransferMatching.Web;
 
-public class Startup
+public class Startup(IConfiguration configuration, IHostEnvironment environment)
 {
-    private readonly IHostEnvironment _environment;
-    private readonly IConfiguration _configuration;
-
-    public Startup(IConfiguration configuration, IHostEnvironment environment)
-    {
-        _environment = environment;
-        _configuration = configuration.BuildDasConfiguration();
-    }
+    private readonly IConfiguration _configuration = configuration.BuildDasConfiguration();
 
     public void ConfigureServices(IServiceCollection services)
     {
@@ -66,10 +60,10 @@ public class Startup
 
         services.AddEmployerAuthentication(_configuration);
         services.AddAuthorizationPolicies();
-        services.AddCache(_environment, config);
+        services.AddCache(environment, config);
         services.AddMemoryCache();
         services.AddCookieTempDataProvider();
-        services.AddDasDataProtection(config, _environment);
+        services.AddDasDataProtection(config, environment);
         services.AddDasHealthChecks(config);
         services.AddEncodingService();
         services.AddHttpContextAccessor();
@@ -105,6 +99,10 @@ public class Startup
         app.UseAuthorization();
         app.UseMiddleware<SecurityHeadersMiddleware>();
 
-        app.UseEndpoints(endpoints => endpoints.MapDefaultControllerRoute());
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapSessionKeepAliveEndpoint();
+            endpoints.MapDefaultControllerRoute();
+        });
     }
 }

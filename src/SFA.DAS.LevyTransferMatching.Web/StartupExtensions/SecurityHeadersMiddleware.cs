@@ -3,12 +3,8 @@ using SFA.DAS.LevyTransferMatching.Web.Extensions;
 
 namespace SFA.DAS.LevyTransferMatching.Web.StartupExtensions;
 
-public class SecurityHeadersMiddleware
+public class SecurityHeadersMiddleware(RequestDelegate next)
 {
-    private readonly RequestDelegate _next;
-
-    public SecurityHeadersMiddleware(RequestDelegate next) => _next = next;
-
     public async Task InvokeAsync(HttpContext context)
     {
         const string dasCdn = "das-at-frnt-end.azureedge.net das-pp-frnt-end.azureedge.net das-mo-frnt-end.azureedge.net das-test-frnt-end.azureedge.net das-test2-frnt-end.azureedge.net das-prd-frnt-end.azureedge.net  das-demo-frnt-end.azureedge.net";
@@ -28,6 +24,6 @@ public class SecurityHeadersMiddleware
                 $"font-src {dasCdn} https://fonts.gstatic.com https://*.rcrsv.io data: ;" +
                 "connect-src 'self' https://*.google-analytics.com https://*.zendesk.com https://*.zdassets.com wss://*.zopim.com https://*.rcrsv.io ;"));
 
-        await _next(context);
+        await next(context);
     }
 }
