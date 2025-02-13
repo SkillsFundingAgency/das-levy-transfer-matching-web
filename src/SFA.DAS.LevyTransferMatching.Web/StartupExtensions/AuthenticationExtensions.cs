@@ -11,6 +11,7 @@ public static class AuthenticationExtensions
     public static void AddEmployerAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<GovUkOidcConfiguration>(configuration.GetSection("GovUkOidcConfiguration"));
+        
         services.AddAndConfigureGovUkAuthentication(configuration, new AuthRedirects
         {
             SignedOutRedirectUrl = string.Empty,
