@@ -1,5 +1,7 @@
-﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Opportunities.IndexViewModel
-
+﻿@using Microsoft.AspNetCore.Routing
+@using SFA.DAS.LevyTransferMatching.Domain.Types
+@using SFA.DAS.LevyTransferMatching.Web.Models.Opportunities
+@model SFA.DAS.LevyTransferMatching.Web.Models.Opportunities.IndexViewModel
 @{
     ViewData["Title"] = "Search funding opportunities";
     ViewBag.GaData.Vpv = "/opportunities";
@@ -11,11 +13,13 @@
     </h1>
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <p>Large businesses that want to fund the apprenticeships of other businesses can set funding criteria to
-                show the training they want to support.</p>
+            <p>
+                Large businesses that want to fund the apprenticeships of other businesses can set funding criteria to
+                show the training they want to support.
+            </p>
             <details class="govuk-details" data-module="govuk-details">
                 <summary class="govuk-details__summary">
-                    <span class="govuk-details__summary-text">Examples</span>
+                    <span class="govuk-details__summary-text">Opportunity examples</span>
                 </summary>
                 <div class="govuk-details__text">
                     <p>
@@ -32,7 +36,7 @@
         </div>
     </div>
     <div class="govuk-grid-row">
-        <form method="get">
+        <form method="get" id="filterForm">
             <div class="govuk-grid-column-one-third">
                 <h2 class="govuk-heading-m">Apply filter</h2>
                 <details class="govuk-details" data-module="govuk-details" @(Model.isSectorFilterApplied ? "open" : "")>
@@ -42,10 +46,11 @@
                     <div class="govuk-details__text">
                         <div class="govuk-form-group">
                             <fieldset class="govuk-fieldset">
-                                <legend class="govuk-visually-hidden">Select one or more business sectors to filter by
+                                <legend class="govuk-visually-hidden">
+                                    Select one or more business sectors to filter by
                                 </legend>
                                 <checkbox-list asp-for="Sectors" source="@Model.Sectors"
-                                               css-class="govuk-checkboxes govuk-checkboxes--small"></checkbox-list>
+                                css-class="govuk-checkboxes govuk-checkboxes--small"></checkbox-list>
                             </fieldset>
                         </div>
                     </div>
@@ -53,8 +58,27 @@
                 <button class="govuk-button" data-module="govuk-button" id="opportunity-filter-sector">Apply filters</button>
             </div>
             <div class="govuk-grid-column-two-thirds">
-                <h2 class="govuk-heading-m">@Model.Paging.TotalItems @(Model.Paging.TotalItems == 1 ?
-                    "opportunity" : "opportunities")</h2>
+                <h2 class="govuk-heading-m das-search-results__list-item">
+                    Showing @Model.Paging.PageStartRow to @Model.Paging.PageEndRow of @Model.Paging.TotalItems opportunities
+                </h2>
+
+                <div class="govuk-grid-row das-search-results__list-item">
+                    <div class="govuk-grid-column-one-third">&nbsp</div>
+                    <div class="govuk-grid-column-two-thirds">
+                        <div class="govuk-grid-row">
+
+                            <label class="govuk-label govuk-grid-column-one-half" for="SortBy">Sort opportunities</label>
+                            <select class="govuk-select govuk-grid-column-one-half" id="SortBy" name="SortBy">
+                                <option value="@OpportunitiesSortBy.ValueHighToLow" selected="@(Model.SortBy == OpportunitiesSortBy.ValueHighToLow.ToString())">Value (high to low)</option>
+                                <option value="@OpportunitiesSortBy.ValueLowToHigh" selected="@(Model.SortBy == OpportunitiesSortBy.ValueLowToHigh.ToString())">Value (low to high)</option>
+                                <option value="@OpportunitiesSortBy.MostRecent" selected="@(Model.SortBy == OpportunitiesSortBy.MostRecent.ToString())">Most recent</option>
+                                <option value="@OpportunitiesSortBy.AtoZ" selected="@(Model.SortBy == OpportunitiesSortBy.AtoZ.ToString())">A to Z</option>
+                                <option value="@OpportunitiesSortBy.ZtoA" selected="@(Model.SortBy == OpportunitiesSortBy.ZtoA.ToString())">Z to A</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
 
                 @if (Model.Opportunities.Count == 0)
                 {
@@ -69,11 +93,25 @@
                         <ol class="das-search-results__list">
                             @foreach (var opportunity in Model.Opportunities)
                             {
+                                var routeValues = new RouteValueDictionary
+                                {
+                                    { "page", Model.Paging.Page },
+                                    { "SortBy", Model.SortBy },
+                                    {"CommaSeparatedSectors", Model.CommaSeparatedSectors },
+                                    {"EncodedPledgeId",opportunity.ReferenceNumber }
+                                };
+
                                 <li class="das-search-results__list-item">
+                                    @if (opportunity.IsNew)
+                                    {
+                                        <p class="govuk-tag govuk-tag">New</p>                                        
+                                    }
                                     <h2 class="govuk-heading-m das-search-results__heading govuk-!-margin-bottom-0">
-                                        <a href="@Url.Action("Detail", new { EncodedPledgeId = opportunity.ReferenceNumber })"
-                                           class="das-search-results__link">@opportunity.EmployerName
-                                            (@opportunity.ReferenceNumber)</a>
+                                        <a href="@Url.Action("Detail", routeValues)"
+                                           class="das-search-results__link">
+                                            @opportunity.EmployerName
+                                            (@opportunity.ReferenceNumber)
+                                        </a>
                                     </h2>
                                     <p class="govuk-hint">up to @opportunity.DisplayAmount available</p>
                                     <ul class="govuk-list govuk-!-margin-bottom-0">
@@ -94,6 +132,8 @@
                                             <span class="das-!-color-dark-grey">@opportunity.Levels</span>
                                         </li>
                                     </ul>
+                                    <br/>
+                                    <p class="govuk-hint">@opportunity.CreatedOnDescription</p>
                                 </li>
                             }
                         </ol>
@@ -102,9 +142,8 @@
 
                 @if (Model.Paging.ShowPageLinks)
                 {
-                    <nav role="navigation" class="das-search-results__list-item" aria-label="Pagination">
-                        <div class="das-pagination__summary">Showing @Model.Paging.PageStartRow to @Model.Paging.PageEndRow
-                            <br />of @Model.Paging.TotalItems opportunities</div>
+                    <nav role="navigation" aria-label="Pagination">
+
                         <ul class="das-pagination">
                             @foreach (var pageLink in Model.Paging.PageLinks)
                             {

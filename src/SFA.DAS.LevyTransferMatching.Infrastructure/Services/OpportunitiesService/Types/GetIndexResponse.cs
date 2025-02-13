@@ -1,4 +1,5 @@
 ﻿using SFA.DAS.LevyTransferMatching.Infrastructure.ReferenceData;
+using System;
 using System.Collections.Generic;
 
 namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService.Types
@@ -26,6 +27,7 @@ namespace SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesServ
             public IEnumerable<string> Locations { get; set; }
             public int Amount { get; set; }
             public bool IsNamePublic { get; set; }
+            public DateTime CreatedOn { get; set; }
         }
     }
 }
