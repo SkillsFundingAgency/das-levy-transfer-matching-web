@@ -101,7 +101,6 @@ public class Startup(IConfiguration configuration, IHostEnvironment environment)
 
         app.UseEndpoints(endpoints =>
         {
-            endpoints.MapSessionKeepAliveEndpoint();
             endpoints.MapDefaultControllerRoute();
         });
     }
