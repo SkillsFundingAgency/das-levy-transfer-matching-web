@@ -1,4 +1,5 @@
-﻿using SFA.DAS.Encoding;
+﻿using Newtonsoft.Json;
+using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.DateTimeService;
@@ -18,7 +19,8 @@ public class OpportunitiesOrchestrator(
     IOpportunitiesService opportunitiesService,
     IUserService userService,
     IEncodingService encodingService,
-    ICacheStorageService cacheStorageService) : OpportunitiesOrchestratorBase, IOpportunitiesOrchestrator
+    ICacheStorageService cacheStorageService,
+    ILogger<OpportunitiesOrchestrator> logger) : OpportunitiesOrchestratorBase, IOpportunitiesOrchestrator
 {
     private const int MaximumNumberAdditionalEmailAddresses = 4;
 
@@ -96,9 +98,9 @@ public class OpportunitiesOrchestrator(
     }
 
 
-    private PagingData GetPagingData(GetIndexResponse response, IndexRequest request)
+    private static PagingData GetPagingData(GetIndexResponse response, IndexRequest request)
     {
-        return new PagingData()
+        return new PagingData
         {
             Page = response.Page,
             PageSize = response.PageSize,
@@ -111,7 +113,7 @@ public class OpportunitiesOrchestrator(
         };
     }
 
-    public IEnumerable<PageLink> BuildPageLinks(GetIndexResponse response, IndexRequest request)
+    public static IEnumerable<PageLink> BuildPageLinks(GetIndexResponse response, IndexRequest request)
     {
         var links = new List<PageLink>();
         var totalPages = (int)Math.Ceiling((double)response.TotalOpportunities / response.PageSize);
@@ -140,14 +142,14 @@ public class OpportunitiesOrchestrator(
             }
         }
 
-        for (var i = 0; i < totalPageLinks; i++)
+        for (var index = 0; index < totalPageLinks; index++)
         {
             var link = new PageLink
             {
-                Label = (pageNumberSeed + i).ToString(),
-                AriaLabel = $"Page {pageNumberSeed + i}",
-                IsCurrent = pageNumberSeed + i == response.Page ? true : (bool?)null,
-                RouteData = BuildRouteData(request, pageNumberSeed + i)
+                Label = (pageNumberSeed + index).ToString(),
+                AriaLabel = $"Page {pageNumberSeed + index}",
+                IsCurrent = pageNumberSeed + index == response.Page ? true : null,
+                RouteData = BuildRouteData(request, pageNumberSeed + index)
             };
             links.Add(link);
         }
@@ -189,12 +191,18 @@ public class OpportunitiesOrchestrator(
         var userId = userService.GetUserId();
 
         var ownerTransactorAccounts = userService.GetUserOwnerTransactorAccountIds();
+        
+        logger.LogInformation("OpportunitiesOrchestrator.GetSelectAccountViewModel: userId {UserId}, ownerTransactorAccounts {OwnerTransactorAccounts}", userId, JsonConvert.SerializeObject(ownerTransactorAccounts));
 
         // Get the full detail of accounts, that the user has access to
         var result = await opportunitiesService.GetSelectAccount(request.OpportunityId, userId);
+        
+        logger.LogInformation("OpportunitiesOrchestrator.GetSelectAccountViewModel: userId {UserId}, Accounts user has access to {Result}", userId, JsonConvert.SerializeObject(result));
 
         var filteredAccounts = result.Accounts
-            .Where((x) => ownerTransactorAccounts.Contains(x.EncodedAccountId));
+            .Where(x => ownerTransactorAccounts.Contains(x.EncodedAccountId));
+        
+        logger.LogInformation("OpportunitiesOrchestrator.GetSelectAccountViewModel: userId {UserId}, FilteredAccounts {FilteredAccounts}", userId, JsonConvert.SerializeObject(filteredAccounts));
 
         return new SelectAccountViewModel
         {

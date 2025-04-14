@@ -1,4 +1,5 @@
-﻿using SFA.DAS.Encoding;
+﻿using Microsoft.Extensions.Logging;
+using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.OpportunitiesService;
@@ -48,7 +49,7 @@ public class OpportunitiesOrchestratorPagingTests : OpportunitiesOrchestratorBas
         _encodingService.Setup(x => x.Encode(It.IsAny<long>(), EncodingType.PledgeId)).Returns("test");
         SetupGetOpportunityViewModelServices();
 
-        _orchestrator = new OpportunitiesOrchestrator(DateTimeService.Object, _opportunitiesService.Object, _userService.Object, _encodingService.Object, _cacheStorageService.Object);
+        _orchestrator = new OpportunitiesOrchestrator(DateTimeService.Object, _opportunitiesService.Object, _userService.Object, _encodingService.Object, _cacheStorageService.Object, Mock.Of<ILogger<OpportunitiesOrchestrator>>());
     }
 
     [Test]

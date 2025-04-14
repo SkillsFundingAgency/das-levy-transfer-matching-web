@@ -61,7 +61,10 @@ public class OpportunitiesController(IOpportunitiesOrchestrator opportunitiesOrc
     {
         var viewModel = await opportunitiesOrchestrator.GetSelectAccountViewModel(selectAccountRequest);
 
-        if (viewModel.Accounts.Count() != 1) return View(viewModel);
+        if (viewModel.Accounts.Count() != 1)
+        {
+            return View(viewModel);
+        }
 
         return RedirectToAction("Apply", new
         {
