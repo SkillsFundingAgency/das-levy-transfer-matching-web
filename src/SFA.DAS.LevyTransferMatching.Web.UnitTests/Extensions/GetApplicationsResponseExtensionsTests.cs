@@ -139,7 +139,7 @@ public class GetApplicationsResponseExtensionsTests
     public void GetRemainingDaysForAutoRejection_Returns_Value_if_due_to_autoreject()
     {
         // Arrange
-        var createdOn = DateTime.UtcNow.AddDays(-89);
+        var createdOn = DateTime.UtcNow.AddMonths(-3).AddDays(1);
         const ApplicationStatus status = ApplicationStatus.Pending;
 
         var app = _fixture.Build<GetApplicationsResponse.Application>()
@@ -188,7 +188,7 @@ public class GetApplicationsResponseExtensionsTests
     public void GetDateDependentStatus_Returns_AutoRejection_String()
     {
         // Arrange
-        var createdOn = DateTime.UtcNow.AddDays(-89);
+        var createdOn = DateTime.UtcNow.AddMonths(-3).AddDays(1);
         const ApplicationStatus status = ApplicationStatus.Pending;
         const AutomaticApprovalOption automaticApprovalOption = AutomaticApprovalOption.DelayedAutoApproval;
 
