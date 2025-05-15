@@ -1,4 +1,5 @@
 ﻿using CsvHelper;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.Encoding;
 using SFA.DAS.LevyTransferMatching.Domain.Types;
 using SFA.DAS.LevyTransferMatching.Infrastructure.Services.CacheStorage;
@@ -56,7 +57,7 @@ public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
         _encodingService.Setup(x => x.Encode(It.IsAny<long>(), EncodingType.PledgeId)).Returns("test");
         SetupGetOpportunityViewModelServices();
 
-        _orchestrator = new OpportunitiesOrchestrator(DateTimeService.Object, _opportunitiesService.Object, _userService.Object, _encodingService.Object, _cacheStorageService.Object);
+        _orchestrator = new OpportunitiesOrchestrator(DateTimeService.Object, _opportunitiesService.Object, _userService.Object, _encodingService.Object, _cacheStorageService.Object, Mock.Of<ILogger<OpportunitiesOrchestrator>>());
     }
 
     [Test]
@@ -345,7 +346,7 @@ public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
         var applicationRequest = SetupForGetApplyViewModel();
 
         var orchestrator = new OpportunitiesOrchestrator(DateTimeService.Object, _opportunitiesService.Object,
-            _userService.Object, _encodingService.Object, _cacheStorageService.Object);
+            _userService.Object, _encodingService.Object, _cacheStorageService.Object, Mock.Of<ILogger<OpportunitiesOrchestrator>>());
 
         var result = await orchestrator.GetApplyViewModel(applicationRequest);
 
@@ -357,7 +358,7 @@ public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
     {
         var applicationRequest = SetupForGetApplyViewModel(true);
         var orchestrator = new OpportunitiesOrchestrator(DateTimeService.Object, _opportunitiesService.Object,
-            _userService.Object, _encodingService.Object, _cacheStorageService.Object);
+            _userService.Object, _encodingService.Object, _cacheStorageService.Object, Mock.Of<ILogger<OpportunitiesOrchestrator>>());
 
         var result = await orchestrator.GetApplyViewModel(applicationRequest);
 
@@ -369,7 +370,7 @@ public class OpportunitiesOrchestratorTests : OpportunitiesOrchestratorBaseTests
     {
         var applicationRequest = SetupForGetApplyViewModel(false);
         var orchestrator = new OpportunitiesOrchestrator(DateTimeService.Object, _opportunitiesService.Object,
-            _userService.Object, _encodingService.Object, _cacheStorageService.Object);
+            _userService.Object, _encodingService.Object, _cacheStorageService.Object, Mock.Of<ILogger<OpportunitiesOrchestrator>>());
 
         var result = await orchestrator.GetApplyViewModel(applicationRequest);
 
