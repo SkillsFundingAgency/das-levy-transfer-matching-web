@@ -22,7 +22,8 @@ public class SecurityHeadersMiddleware(RequestDelegate next)
                 $"style-src 'self' 'unsafe-inline' {dasCdn} https://tagmanager.google.com https://fonts.googleapis.com https://*.rcrsv.io ; " +
                 $"img-src 'self' {dasCdn} www.googletagmanager.com https://ssl.gstatic.com https://www.gstatic.com https://www.google-analytics.com ; " +
                 $"font-src {dasCdn} https://fonts.gstatic.com https://*.rcrsv.io data: ;" +
-                "connect-src 'self' https://*.google-analytics.com https://*.zendesk.com https://*.zdassets.com wss://*.zopim.com https://*.rcrsv.io ;"));
+                "connect-src 'self' https://*.google-analytics.com https://*.zendesk.com https://*.zdassets.com wss://*.zopim.com https://*.rcrsv.io ; " +
+                "worker-src 'self' blob:;"));
 
         await next(context);
     }
