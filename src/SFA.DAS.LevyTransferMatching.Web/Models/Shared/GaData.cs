@@ -9,6 +9,7 @@ namespace SFA.DAS.LevyTransferMatching.Web.Models.Shared
         public string Vpv { get; set; }
         public string Acc { get; set; }
         public string Org { get; set; }
+        public string LevyFlag { get; set; }
         public IDictionary<string, string> Extras { get; set; } = new Dictionary<string, string>();
     }
 }
