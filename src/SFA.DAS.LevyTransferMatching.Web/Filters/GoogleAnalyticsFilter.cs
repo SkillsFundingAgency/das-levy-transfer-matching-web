@@ -28,7 +28,7 @@ public class GoogleAnalyticsFilter : ActionFilterAttribute
 
         var userId = context.HttpContext.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimIdentifierConfiguration.Id))?.Value;
 
-        if (context.RouteData.Values.TryGetValue("AccountHashedId", out var accountHashedId))
+        if (context.RouteData.Values.TryGetValue("encodedAccountId", out var accountHashedId))
         {
             hashedAccountId = accountHashedId.ToString();
 
