@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace SFA.DAS.LevyTransferMatching.Web.Attributes;
 
@@ -21,5 +21,6 @@ public class HideAccountNavigationAttribute(bool hideNavigation, bool hideNaviga
             
         controller.ViewData[ViewDataKeys.ViewDataKeys.HideAccountNavigation] = HideNavigation;
         controller.ViewData[ViewDataKeys.ViewDataKeys.ShowNav] = !HideNavigationLinks;
+        controller.ViewBag.ShowNav = !HideNavigationLinks;
     }
 }
