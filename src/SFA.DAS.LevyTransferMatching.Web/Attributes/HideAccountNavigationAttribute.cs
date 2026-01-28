@@ -21,6 +21,6 @@ public class HideAccountNavigationAttribute(bool hideNavigation, bool hideNaviga
             
         controller.ViewData[ViewDataKeys.ViewDataKeys.HideAccountNavigation] = HideNavigation;
         controller.ViewData[ViewDataKeys.ViewDataKeys.ShowNav] = !HideNavigationLinks;
-        controller.ViewBag.ShowNav = !HideNavigationLinks;
+        controller.ViewBag.ShowNav = HideNavigation ? false : !HideNavigationLinks;
     }
 }
