@@ -15,18 +15,18 @@
 }
 
 <!DOCTYPE html>
-<html lang="en" class="govuk-template">
+<html lang="en" class="govuk-template govuk-template--rebranded">
 
 <head>
     <partial name="_GoogleAnalytics" model="GoogleAnalyticsTag.Head" />
     <meta charset="utf-8" />
     <title>@(ViewData["Title"] ?? "Manage apprenticeships")</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#0b0c0c" />
-    <link rel="icon" sizes="48x48" href="/assets/images/favicon.ico" />
-    <link rel="icon" sizes="any" href="/assets/images/favicon.svg" type="image/svg+xml" />
-    <link rel="mask-icon" href="/assets/images/govuk-icon-mask.svg" color="#0b0c0c" />
-    <link rel="apple-touch-icon" href="/assets/images/govuk-icon-180.png" />
+    <meta name="theme-color" content="#1d70b8" />
+    <link rel="icon" sizes="48x48" href="/assets/rebrand/images/favicon.ico" />
+    <link rel="icon" sizes="any" href="/assets/rebrand/images/favicon.svg" type="image/svg+xml" />
+    <link rel="mask-icon" href="/assets/rebrand/images/govuk-icon-mask.svg" color="#1d70b8" />
+    <link rel="apple-touch-icon" href="/assets/rebrand/images/govuk-icon-180.png" />
     <link href="/css/main.css" rel="stylesheet" />
     <link href="/css/app.css" rel="stylesheet" no-cdn />
 </head>
@@ -43,13 +43,9 @@
 
     <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
 
-    <partial name="_CookieBanner" />
+    <partial name="_CookieBanner" model="@(new CookieBannerModel { AccountId = accountId })" />
 
-    <partial name="_Header" />
-    @if ((accountId != null && !hideHeader) || (!hideHeader && hideNavigationLinks))
-    {
-        <partial name="_Menu" model="@accountId" />
-    }
+    <partial name="_Header" model="@accountId" />
 
     <div class="govuk-phase-banner govuk-width-container">
         <p class="govuk-phase-banner__content">
@@ -67,10 +63,9 @@
     </div>
 
     <partial name="_Footer" model="@footerModel" />
-    <partial name="_GoogleAnalyticsInfo" />
 
     <script type="module" src="/libs/govuk-frontend/govuk-frontend.min.js"></script>
-    <script type="module" cdnify>
+    <script type="module" nws-csp-add-nonce="true">
         import {
             initAll
         } from '@Configuration["cdn:url"]/libs/govuk-frontend/govuk-frontend.min.js'

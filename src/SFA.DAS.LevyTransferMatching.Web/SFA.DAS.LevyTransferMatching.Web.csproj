@@ -30,7 +30,7 @@
     <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.8.0" />
     <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="8.8.0" />
     <PackageReference Include="SFA.DAS.Configuration.AzureTableStorage" Version="17.1.113" />
-    <PackageReference Include="SFA.DAS.Employer.Shared.UI" Version="17.1.131" />
+    <PackageReference Include="SFA.DAS.Employer.Shared.UI" Version="17.1.163" />
     <PackageReference Include="SFA.DAS.EmployerUrlHelper" Version="3.0.43" />
     <PackageReference Include="SFA.DAS.Encoding" Version="1.1.76" />
     <PackageReference Include="SFA.DAS.GovUK.Auth" Version="17.1.141" />
