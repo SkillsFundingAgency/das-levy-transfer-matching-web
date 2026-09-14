@@ -11,7 +11,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <span class="govuk-caption-m">Find a business to transfer your levy to</span>
-            <h1 class="govuk-heading-xl">Create a transfers application</h1>
+            <h1 class="govuk-heading-xl">Create a transfer application</h1>
         </div>
     </div>
     <div class="govuk-grid-row">
@@ -19,7 +19,7 @@
             <div class="govuk-warning-text">
                 <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                 <strong class="govuk-warning-text__text">
-                    <span class="govuk-warning-text__assistive">Warning</span> All your details will be passed to the employer who owns the transfer funding.
+                    <span class="govuk-warning-text__assistive govuk-visually-hidden">Warning</span> All your details will be passed to the employer who owns the transfer funding.
                 </strong>
             </div>
             <ol class="das-task-list app-task-list">
@@ -27,7 +27,7 @@
                     <div class="govuk-grid-row app-task-list__group-header">
                         <div class="govuk-grid-column-two-thirds">
                             <h2 class="das-task-list__section">
-                                <span class="das-task-list__section-number">1. </span> Apprenticeship training
+                                <span class="das-task-list__section-number">1. </span> Training details
                             </h2>
                         </div>
                         <div class="govuk-grid-column-one-third">
@@ -55,7 +55,7 @@
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
                                 <a class="govuk-link" href="@Url.Action("ApplicationDetails", new { Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey })">
-                                    Number of apprentices
+                                    Number of learners
                                 </a>
                             </span>
                             <span class="das-task-list__task-tag">
@@ -65,7 +65,7 @@
                         <li class="das-task-list__item">
                             <span class="das-task-list__task-name">
                                 <a class="govuk-link" href="@Url.Action("ApplicationDetails", new { Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey })">
-                                    Start by
+                                    Start date
                                 </a>
                             </span>
                             <span class="das-task-list__task-tag">
@@ -148,7 +148,7 @@
                     <div class="govuk-grid-row app-task-list__group-header">
                         <div class="govuk-grid-column-three-quarters">
                             <h2 class="das-task-list__section">
-                                <span class="das-task-list__section-number">3. </span> About your apprenticeship
+                                <span class="das-task-list__section-number">3. </span> About your training
                             </h2>
                         </div>
                         <div class="govuk-grid-column-one-quarter">
@@ -239,7 +239,7 @@
                     </ul>
                 </li>
             </ol>
-    
+
             @if (Model.IsComplete)
             {
                 <form method="post">
