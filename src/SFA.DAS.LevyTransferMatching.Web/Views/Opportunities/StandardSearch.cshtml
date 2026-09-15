@@ -5,7 +5,7 @@
 <div class="govuk-form-group" das-highlight-error-for="SelectedStandardId" error-class="govuk-form-group--error" id="job-role">
     <label class="govuk-label govuk-label--s" for="SelectedStandardId">Job role</label>
     <div class="govuk-hint">
-        Start typing a job role or keywords to find an apprenticeship training course
+        Start typing a job role or keywords to find a training course.
         <br>
         You can search and browse courses on <a href="https://findapprenticeshiptraining.apprenticeships.education.gov.uk/" target="_blank" rel="noopener" class="govuk-link">Find apprenticeship training</a>.
     </div>
@@ -15,6 +15,6 @@
             @ViewData.ModelState["SelectedStandardId"].Errors.First().ErrorMessage
         </span>
     }
-    
+
     <type-ahead class="govuk-select" asp-for="SelectedStandardId" source="@Model.Standards"></type-ahead>
 </div>
