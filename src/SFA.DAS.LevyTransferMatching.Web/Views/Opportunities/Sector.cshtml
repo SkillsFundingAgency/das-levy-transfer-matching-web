@@ -2,7 +2,7 @@
 @model SFA.DAS.LevyTransferMatching.Web.Models.Opportunities.SectorViewModel
 
 @{
-    ViewData["Title"] = "Apprenticeship Training";
+    ViewData["Title"] = "Training details";
     ViewBag.GaData.Vpv = "/accounts/opportunities/apply/sector";
     ViewBag.ZenDeskLabel = "LTM-R-apply-busdetails";
 }
@@ -12,12 +12,12 @@
     <partial name="_ValidationSummary" />
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-            <span class="govuk-caption-m">Find a business to fund training for your apprentices</span>
+            <span class="govuk-caption-m">Find a business to fund your training</span>
             <h1 class="govuk-heading-xl">Add your business details</h1>
         </div>
     </div>
     <form method="post" class="validate-auto-complete">
-        <input type="hidden" asp-for="HasPledgeLocations"/>
+        <input type="hidden" asp-for="HasPledgeLocations" />
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <div class="govuk-form-group govuk-!-margin-bottom-9" das-highlight-error-for="Sectors" error-class="govuk-form-group--error">
@@ -33,7 +33,7 @@
                     <div class="govuk-form-group @Html.AddClassIfPropertyInError(x => x.AdditionalLocationText, "govuk-form-group--error ") @Html.AddClassIfPropertyInError(x => x.Locations, "govuk-form-group--error ")">
                         <fieldset class="govuk-fieldset" aria-describedby="locations-hint">
                             <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
-                                Select the location where your apprentice will work
+                                Select the location where your learner will work
                             </legend>
                             <div id="locations-hint" class="govuk-hint">
                                 Select all locations that apply
@@ -69,10 +69,10 @@
                         <div></div>
                         <fieldset class="govuk-fieldset" aria-describedby="locations-hint">
                             <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
-                                Enter the location where your apprentice will work
+                                Enter the location where your learner will work
                             </legend>
                             <div id="locations-hint" class="govuk-hint">
-                                If your apprentice will work in more than one location, enter the one where they will spend most of their time. If they are based at home, use your business location.
+                                If your learner will work in more than one location, enter the location where they will spend most of their time. If they are based at home, use your business location.
                             </div>
                             <br />
                             <div id="locations-hint2" class="govuk-hint">
@@ -101,7 +101,7 @@
                     <button id="opportunity-criteria-continue" class="govuk-button" data-module="govuk-button">
                         Continue
                     </button>
-                    <a href="@Url.Action("Apply", new {Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey})" class="govuk-back-link">Back</a>
+                    <a href="@Url.Action("Apply", new { Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey })" class="govuk-link">Back</a>
                 </div>
             </div>
         </div>

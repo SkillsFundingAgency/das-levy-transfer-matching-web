@@ -1,7 +1,7 @@
 ﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Opportunities.MoreDetailsViewModel
 
 @{
-    ViewData["Title"] = "Provide more detail about your apprenticeship";
+    ViewData["Title"] = "Provide more details about your training";
     ViewBag.GaData.Vpv = "/accounts/opportunities/apply/more-details";
     ViewBag.ZenDeskLabel = "LTM-R-apply-moredetails";
 }
@@ -15,15 +15,15 @@
 
                 <h1 class="govuk-label-wrapper">
                     <label class="govuk-label govuk-label--xl" for="more-detail">
-                        Provide more detail about your apprenticeship
+                        Provide more details about your training
                     </label>
                 </h1>
-                <p>This information will help the business offering the funding opportunity to make a decision about accepting your application.</p>
+                <p>Help the business offering the funding opportunity to make a decision about accepting your application by giving more detail about the training.</p>
                 <p>In the box below, tell us about:</p>
                 <ul class="govuk-list govuk-list--bullet">
                     <li>your organisation</li>
-                    <li>why you want an apprentice</li>
-                    <li>how you will support the apprentice</li>
+                    <li>why you want training for employees</li>
+                    <li>how you will support the learner</li>
                 </ul>
                 <div class="govuk-character-count" data-module="govuk-character-count" data-maxwords="200">
                     <div class="govuk-form-group" das-highlight-error-for="Details" error-class="govuk-form-group--error" id="more-details">
@@ -48,7 +48,7 @@
                     <button id="opportunity-criteria-continue" class="govuk-button" data-module="govuk-button">
                         Continue
                     </button>
-                    <a href="@Url.Action("Apply", new {Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey})" class="govuk-back-link">Back</a>
+                    <a href="@Url.Action("Apply", new { Model.EncodedAccountId, Model.EncodedPledgeId, Model.CacheKey })" class="govuk-link">Back</a>
                 </div>
             </div>
         </form>
