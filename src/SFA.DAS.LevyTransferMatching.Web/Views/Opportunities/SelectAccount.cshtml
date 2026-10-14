@@ -6,26 +6,26 @@
 }
 
 <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content">
-    <h1 class="govuk-heading-xl">My accounts</h1>
-    <p>Select the account you want to use to apply for the transfer funding opportunity</p>
+    <h1 class="govuk-heading-xl">Choose the account you want to use to apply for funding</h1>
     <table class="govuk-table">
         <caption class="govuk-visually-hidden">List of my accounts</caption>
         <thead class="govuk-table__head">
-        <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header">Account name</th>
-            <th scope="col" class="govuk-table__header">What you can do</th>
-        </tr>
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">Account name</th>
+                <th scope="col" class="govuk-table__header">What you can do</th>
+            </tr>
         </thead>
         <tbody class="govuk-table__body">
-        @foreach (var account in Model.Accounts)
-        {
-            <tr class="govuk-table__row">
-                <td class="govuk-table__cell"><a class="govuk-link"
-                                                 href="@Url.Action("Apply", new { CacheKey = Guid.NewGuid(), EncodedAccountId = account.EncodedAccountId, EncodedPledgeId = Model.EncodedOpportunityId, accessToMultipleAccounts = true })">@account.Name</a>
-                </td>
-                <td class="govuk-table__cell">Apply for the transfer opportunity</td>
-            </tr>
-        }
+            @foreach (var account in Model.Accounts)
+            {
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">
+                        <a class="govuk-link"
+                           href="@Url.Action("Apply", new { CacheKey = Guid.NewGuid(), EncodedAccountId = account.EncodedAccountId, EncodedPledgeId = Model.EncodedOpportunityId, accessToMultipleAccounts = true })">@account.Name</a>
+                    </td>
+                    <td class="govuk-table__cell">Apply for the transfer opportunity</td>
+                </tr>
+            }
         </tbody>
     </table>
 </main>

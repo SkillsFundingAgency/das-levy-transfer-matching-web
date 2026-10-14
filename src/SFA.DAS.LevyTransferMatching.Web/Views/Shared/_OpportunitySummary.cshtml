@@ -1,7 +1,7 @@
 ﻿@model SFA.DAS.LevyTransferMatching.Web.Models.Shared.OpportunitySummaryViewModel
 
 <div class="das-highlight">
-    <h2 class="govuk-heading-s">@Model.Description wants to fund apprenticeship training in:</h2>
+    <h2 class="govuk-heading-s">@Model.Description wants to fund training in:</h2>
     <ul class="govuk-list">
         <li>
             <span>Location: </span>
@@ -21,9 +21,9 @@
         </li>
     </ul>
     @if (!Model.HideFooter)
-   {
+    {
         <div class="app-highlight__footer">
             <p class="govuk-heading-s">Total funding available: £@Model.Amount.ToString("N0")</p>
         </div>
-   }
+    }
 </div>

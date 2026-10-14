@@ -19,7 +19,7 @@
     <partial name="_ValidationSummary" />
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-m">Find a business to fund training for your apprentices</span>
+            <span class="govuk-caption-m">Find a business to fund your training</span>
             <h1 class="govuk-heading-xl">Transfer fund details for @(Model.IsNamePublic ? Model.EmployerName : "opportunity") (@Model.EncodedPledgeId)</h1>
             <h2 class="govuk-heading-m">Details of the opportunity</h2>
             <partial name="_OpportunitySummary" for="OpportunitySummaryView" />
@@ -40,8 +40,8 @@
                                     <div class="govuk-warning-text">
                                         <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                                         <strong class="govuk-warning-text__text">
-                                            <span class="govuk-warning-text__assistive">Warning</span>
-                                            You'll need an apprenticeship service account to apply to be considered for funding
+                                            <span class="govuk-warning-text__assistive govuk-visually-hidden">Warning</span>
+                                            You'll need an Apprenticeship service account to apply to be considered for funding
                                         </strong>
                                     </div>
                                 </div>
@@ -55,7 +55,7 @@
                 </div>
                 <div class="govuk-button-group">
                     <button class="govuk-button" data-module="govuk-button" id="apply-application-continue">Continue</button>
-                    <a href="@Url.Action("Index")" class="govuk-back-link">Back</a>
+                    <a href="@Url.Action("Index")" class="govuk-link">Back</a>
                 </div>
             </form>
         </div>
