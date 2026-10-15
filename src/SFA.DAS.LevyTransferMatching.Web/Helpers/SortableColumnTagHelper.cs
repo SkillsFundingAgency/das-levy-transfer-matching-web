@@ -24,6 +24,9 @@ public class SortableColumnTagHelper : TagHelper
     [HtmlAttributeName("default-order")]
     public SortOrder DefaultSortOrder { get; set; }
 
+    [HtmlAttributeName("column-type")]
+    public SortColumnType ColumnType { get; set; } = SortColumnType.Text;
+
     [ViewContext]
     [HtmlAttributeNotBound]
     public ViewContext ViewContext { get; set; }
@@ -44,6 +47,8 @@ public class SortableColumnTagHelper : TagHelper
         var sortOrder = GetSortOrderFromQueryString();
         var isSortColumn = sortColumn == ColumnName || (sortColumn == SortColumn.Default && IsDefault);
 
+        var nextSortOrder = isSortColumn ? sortOrder.Reverse() : DefaultSortOrder;
+
         var values = new
         {
             SearchTerm = GetSearchTermFromQueryString(),
@@ -59,16 +64,14 @@ public class SortableColumnTagHelper : TagHelper
             sortOrderCssSuffix = sortOrder == SortOrder.Ascending ? "das-table__sort--asc" : "das-table__sort--desc";
         }
 
-        var ariaSort = sortOrder.ToString().ToLower();
+        var directionText = nextSortOrder == SortOrder.Ascending ? "A to Z" : "Z to A";
 
-        var content = new StringBuilder();
-        content.Append($"<a class=\"{CssClass} {sortOrderCssSuffix}\" href=\"{href}\" aria-sort=\"{ariaSort}\">");
-        content.Append(Label);
-        content.Append("</a>");
+        output.TagName = "a";
+        output.Attributes.SetAttribute("href", href);
+        output.Attributes.SetAttribute("class", $"{CssClass} {sortOrderCssSuffix}".Trim());
+        output.Attributes.SetAttribute("aria-label",GetSortLabel(nextSortOrder));
 
-        output.TagName = "";
-        output.PostContent.SetHtmlContent(content.ToString());
-        output.Attributes.Clear();
+        output.Content.SetContent(Label);
     }
 
     private SortOrder GetSortOrderFromQueryString()
@@ -100,4 +103,26 @@ public class SortableColumnTagHelper : TagHelper
 
         return string.Empty;
     }
+
+    private string GetSortLabel(SortOrder nextSortOrder)
+    {
+        
+        var directionText = ColumnType switch
+        {
+            SortColumnType.Text => nextSortOrder == SortOrder.Ascending ? "A to Z" : "Z to A",
+            SortColumnType.Date => nextSortOrder == SortOrder.Ascending ? "oldest to newest" : "newest to oldest",
+            SortColumnType.Amount => nextSortOrder == SortOrder.Ascending ? "low to high" : "high to low",
+            _ => nextSortOrder == SortOrder.Ascending? "ascending" : "descending",
+        };
+
+        return $"Sort {Label} {directionText}";
+    }
+
+}
+
+public enum SortColumnType
+{
+    Text,    
+    Date,
+    Amount
 }
