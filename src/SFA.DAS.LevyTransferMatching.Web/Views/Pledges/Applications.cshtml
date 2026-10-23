@@ -196,28 +196,17 @@
                         <table class="govuk-table" aria-label="Pledge applications">
                             <thead class="govuk-table__head">
                                 <tr class="govuk-table__row">
-                                    <th scope="col" class="govuk-table__header das-table-cell-width-5" aria-sort="ascending"></th>
-                                    <th scope="col" class="govuk-table__header das-table-cell-width-25">
-                                        <sortable-column column-name="Applicant" column-label="Applicant" role="button" default="false" column-type="Text"
-                                            default-order="Ascending"></sortable-column>
-                                    </th>
-                                    <th scope="col" class="govuk-table__header das-table-cell-width-15" aria-sort="descending">
-                                        <sortable-column column-name="CurrentFinancialYearAmount" role="button" column-type="Amount"
-                                            column-label="Estimated yearly cost" default="false"
-                                            default-order="Descending"></sortable-column>
-                                    </th>
-                                    <th scope="col" class="govuk-table__header das-table-cell-width-15" aria-sort="descending">
-                                        <sortable-column column-name="Duration" role="button" column-type="Text" column-label="Typical duration"
-                                            default="false" default-order="Descending"></sortable-column>
-                                    </th>
-                                    <th scope="col" class="govuk-table__header das-table-cell-width-20" aria-sort="ascending">
-                                        <sortable-column column-name="CriteriaMatch" role="button" column-type="Text" column-label="Criteria" default="false"
-                                            default-order="Descending"></sortable-column>
-                                    </th>
-                                    <th scope="col" class="govuk-table__header status" aria-sort="descending">
-                                        <sortable-column column-name="Status" role="button" column-type="Text" column-label="Status" default="false"
-                                            default-order="Descending"></sortable-column>
-                                    </th>
+                                    <th scope="col" class="govuk-table__header das-table-cell-width-5"></th>
+                                    <sortable-column header-class="das-table-cell-width-25" column-name="Applicant" column-label="Applicant"
+                                        column-type="Text" default="false" default-order="Ascending"></sortable-column>
+                                    <sortable-column header-class="das-table-cell-width-15" column-name="CurrentFinancialYearAmount" column-label="Estimated yearly cost"
+                                        column-type="Amount" default="false" default-order="Descending"></sortable-column>
+                                    <sortable-column header-class="das-table-cell-width-15" column-name="Duration" column-label="Typical duration"
+                                        column-type="Text" default="false" default-order="Descending"></sortable-column>
+                                    <sortable-column header-class="das-table-cell-width-20" column-name="CriteriaMatch" column-label="Criteria"
+                                        column-type="Text" default="false" default-order="Descending"></sortable-column>
+                                    <sortable-column header-class="status" column-name="Status" column-label="Status"
+                                        column-type="Text" default="false" default-order="Descending"></sortable-column>
                                 </tr>
                             </thead>
                             <tbody class="govuk-table__body">
