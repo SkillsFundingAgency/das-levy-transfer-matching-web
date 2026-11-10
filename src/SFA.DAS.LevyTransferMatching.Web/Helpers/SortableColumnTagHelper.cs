@@ -10,7 +10,8 @@ namespace SFA.DAS.LevyTransferMatching.Web.Helpers;
 [HtmlTargetElement("sortable-column")]
 public class SortableColumnTagHelper : TagHelper
 {
-    private const string CssClass = "govuk-link das-table__sort";
+    private const string HeaderCssClass = "govuk-table__header";
+    private const string LinkCssClass = "govuk-link das-table__sort";
 
     [HtmlAttributeName("column-name")]
     public SortColumn ColumnName { get; set; }
@@ -23,6 +24,12 @@ public class SortableColumnTagHelper : TagHelper
 
     [HtmlAttributeName("default-order")]
     public SortOrder DefaultSortOrder { get; set; }
+
+    [HtmlAttributeName("column-type")]
+    public SortColumnType ColumnType { get; set; } = SortColumnType.Text;
+
+    [HtmlAttributeName("header-class")]
+    public string HeaderClass { get; set; }
 
     [ViewContext]
     [HtmlAttributeNotBound]
@@ -37,38 +44,72 @@ public class SortableColumnTagHelper : TagHelper
 
     public override void Process(TagHelperContext context, TagHelperOutput output)
     {
-        var action = ViewContext.RouteData.Values["action"] as string;
-        var controller = ViewContext.RouteData.Values["controller"] as string;
-
         var sortColumn = GetSortColumnFromQueryString();
         var sortOrder = GetSortOrderFromQueryString();
         var isSortColumn = sortColumn == ColumnName || (sortColumn == SortColumn.Default && IsDefault);
+
+        output.TagName = "th";
+        output.TagMode = TagMode.StartTagAndEndTag;
+        output.Attributes.SetAttribute("scope", "col");
+        output.Attributes.SetAttribute("class", $"{HeaderCssClass} {HeaderClass}".Trim());
+
+        if (isSortColumn)
+        {
+            output.Attributes.SetAttribute("aria-sort", sortOrder == SortOrder.Ascending ? "ascending" : "descending");
+        }
+
+        output.Content.SetHtmlContent(BuildSortLink(isSortColumn, sortOrder));
+    }
+
+    private TagBuilder BuildSortLink(bool isSortColumn, SortOrder sortOrder)
+    {
+        var linkId = $"sort-{ColumnName}";
+        var nextSortOrder = isSortColumn ? sortOrder.Reverse() : DefaultSortOrder;
 
         var values = new
         {
             SearchTerm = GetSearchTermFromQueryString(),
             SortColumn = ColumnName,
-            SortOrder = isSortColumn ? sortOrder.Reverse().ToString() : DefaultSortOrder.ToString()
+            SortOrder = nextSortOrder.ToString()
         };
 
-        var href = _urlHelper.Action(action, controller, values, null, null, null);
+        var link = new TagBuilder("a");
+        link.Attributes["id"] = linkId;
+        link.Attributes["href"] = _urlHelper.Action(
+            ViewContext.RouteData.Values["action"] as string,
+            ViewContext.RouteData.Values["controller"] as string,
+            values, null, null, linkId);
+        link.Attributes["data-sort-column"] = ColumnName.ToString();
+        link.Attributes["title"] = $"Sort the table by {Label}";
+        link.AddCssClass(isSortColumn ? $"{LinkCssClass} {GetSortOrderCssClass(sortOrder)}" : LinkCssClass);
+        link.InnerHtml.Append(Label);
 
-        var sortOrderCssSuffix = string.Empty;
         if (isSortColumn)
         {
-            sortOrderCssSuffix = sortOrder == SortOrder.Ascending ? "das-table__sort--asc" : "das-table__sort--desc";
+            var currentSortState = new TagBuilder("span");
+            currentSortState.AddCssClass("govuk-visually-hidden");
+            currentSortState.InnerHtml.Append($", sorted {GetDirectionText(sortOrder)}");
+            link.InnerHtml.AppendHtml(currentSortState);
         }
 
-        var ariaSort = sortOrder.ToString().ToLower();
+        return link;
+    }
 
-        var content = new StringBuilder();
-        content.Append($"<a class=\"{CssClass} {sortOrderCssSuffix}\" href=\"{href}\" aria-sort=\"{ariaSort}\">");
-        content.Append(Label);
-        content.Append("</a>");
+    private static string GetSortOrderCssClass(SortOrder sortOrder)
+    {
+        return sortOrder == SortOrder.Ascending ? "das-table__sort--asc" : "das-table__sort--desc";
+    }
 
-        output.TagName = "";
-        output.PostContent.SetHtmlContent(content.ToString());
-        output.Attributes.Clear();
+    private string GetDirectionText(SortOrder sortOrder)
+    {
+        var isAscending = sortOrder == SortOrder.Ascending;
+
+        return ColumnType switch
+        {
+            SortColumnType.Date => isAscending ? "oldest to newest" : "newest to oldest",
+            SortColumnType.Amount => isAscending ? "low to high" : "high to low",
+            _ => isAscending ? "A to Z" : "Z to A"
+        };
     }
 
     private SortOrder GetSortOrderFromQueryString()
@@ -100,4 +141,11 @@ public class SortableColumnTagHelper : TagHelper
 
         return string.Empty;
     }
+}
+
+public enum SortColumnType
+{
+    Text,
+    Date,
+    Amount
 }

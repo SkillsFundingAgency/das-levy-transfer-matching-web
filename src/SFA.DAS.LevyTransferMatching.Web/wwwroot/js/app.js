@@ -498,3 +498,10 @@ if (sortSelect) {
         document.location.href = "?" + params.toString();
     });
 }
+
+const activeSortLinkId = window.location.hash.substring(1);
+const activeSortLink = activeSortLinkId ? document.getElementById(activeSortLinkId) : null;
+
+if (activeSortLink && activeSortLink.hasAttribute("data-sort-column")) {
+    activeSortLink.focus();
+}
